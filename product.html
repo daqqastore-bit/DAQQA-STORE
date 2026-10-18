@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>DAQQA STORE - دقة ستور</title>
+<title>DAQQA STORE - دقّة ستور</title>
 <meta name="description" content="منتج من DAQQA — الدفع عند الاستلام وشحن لكل مصر.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#20160E">
 <link rel="canonical" id="canon" href="https://daqqastore-bit.github.io/DAQQA-STORE/product.html">
 <meta property="og:type" content="product">
-<meta property="og:site_name" content="DAQQA STORE - دقة ستور">
+<meta property="og:site_name" content="DAQQA STORE - دقّة ستور">
 <meta property="og:locale" content="ar_EG">
-<meta property="og:title" id="ogTitle" content="DAQQA STORE - دقة ستور">
+<meta property="og:title" id="ogTitle" content="DAQQA STORE - دقّة ستور">
 <meta property="og:description" id="ogDesc" content="ساعات رجالي وحريمي — الدفع عند الاستلام.">
 <meta property="og:image" id="ogImg" content="https://daqqastore-bit.github.io/DAQQA-STORE/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -178,7 +178,7 @@ const pid = parseInt(key, 10);
 let q = 1;
 
 function notFound() {
-  document.title = 'المنتج مش موجود | DAQQA STORE - دقة ستور';
+  document.title = 'المنتج مش موجود | DAQQA STORE - دقّة ستور';
   $('#page').innerHTML = `<div class="nf"><div class="m">${RC.logo()}</div><h1 style="font:400 34px var(--f-display)">المنتج ده مش متاح دلوقتي</h1><p style="color:var(--muted)">ممكن يكون اتباع أو اتشال. شوف باقي الكولكشن.</p><a class="btn btn-amber" href="./">كل المنتجات</a></div>`;
 }
 
@@ -193,7 +193,7 @@ function render() {
 
   // SEO
   const cat = categories[p.category] || '', kind = RC.kindOf(p), K = RC.kinds[kind], noun = RC.noun(p);
-  document.title = `${p.name} | DAQQA STORE - دقة ستور`;
+  document.title = `${p.name} | DAQQA STORE - دقّة ستور`;
   const LUX = RC.isLuxury(p);
   if (LUX) document.documentElement.classList.add('lux-mode');
   const desc = `${p.name} من DAQQA بـ ${money(finalPrice(p))}${off ? ` بدل ${money(p.price)} (خصم ${off}%)` : ''}. ${body ? body.slice(0, 110) + ' — ' : ''}الدفع عند الاستلام وشحن لكل مصر.`;

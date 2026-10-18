@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>رجالي وحريمي | DAQQA STORE - دقة ستور</title>
+<title>رجالي وحريمي | DAQQA STORE - دقّة ستور</title>
 <meta name="description" content="DAQQA — ساعات ونضارات واكسسوارات رجالي وحريمي. الدفع عند الاستلام وشحن لكل مصر.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#20160E">
 <link rel="canonical" id="canon" href="https://daqqastore-bit.github.io/DAQQA-STORE/collection.html">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="DAQQA STORE - دقة ستور">
+<meta property="og:site_name" content="DAQQA STORE - دقّة ستور">
 <meta property="og:locale" content="ar_EG">
-<meta property="og:title" id="ogTitle" content="DAQQA STORE - دقة ستور">
+<meta property="og:title" id="ogTitle" content="DAQQA STORE - دقّة ستور">
 <meta property="og:image" content="https://daqqastore-bit.github.io/DAQQA-STORE/assets/og.jpg">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-512.png">
@@ -124,7 +124,7 @@ DQ.start(PAGE, () => {
   // a page with no photographed products doesn't exist
   if (!all.length && !DQ.loadError) return location.replace('./');
   const V = RC.pages[PAGE], K = COPY[PAGE];
-  document.title = `${V.ar} | DAQQA STORE - دقة ستور`;
+  document.title = `${V.ar} | DAQQA STORE - دقّة ستور`;
   document.getElementById('ogTitle').content = document.title;
   document.getElementById('canon').href = location.origin + location.pathname + '?c=' + PAGE;
   const kinds = Object.keys(RC.kinds).filter(k => all.some(p => RC.kindOf(p) === k));
