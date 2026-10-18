@@ -224,7 +224,7 @@ function render() {
         <span class="cat">${K.ar} · ${esc(cat)}${p.brand && !/recharge/i.test(p.brand) ? ' · <span class="en">' + esc(p.brand) + '</span>' : ''}</span>
         ${LUX ? '<span class="lux-ribbon en">DAQQA PRIVÉ</span>' : ''}<h1 class="en" dir="ltr" style="text-align:right">${esc(p.name)}</h1>
         <span class="pd-sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        ${RC.colors(p).length ? `<div class="pd-colors"><span>الألوان المتاحة</span><div class="sw">${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div></div>` : ''}
+        ${RC.colors(p).length ? `<div class="pd-colors"><span>${esc(p.colors_label || 'الألوان المتاحة')}</span><div class="sw">${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div></div>` : ''}
         <div class="price-box"><span class="price-new">${money(finalPrice(p))}</span>${off ? `<span class="price-old">${money(p.price)}</span><span class="badge-off">-${off}%</span><span class="save-tag">هتوفّر ${money(p.price - finalPrice(p))}</span>` : ''}</div>
         <div class="stock ${stockCls}"><i></i>${stockTxt}</div>
         ${body ? `<p class="lead-d">${esc(body)}</p>` : ''}
@@ -271,7 +271,7 @@ function render() {
         <span class="lxp-sku en">${RC.sku(p)} · ${esc(cat)}</span>
         ${body ? `<p class="lxp-lead">${esc(body)}</p>` : ''}
         ${specs.length ? `<div class="lxp-specs">${specs.map(([k, v]) => `<div><span>${esc(k)}</span><i></i><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
-        ${RC.colors(p).length ? `<div class="lxp-sw"><span>الألوان</span>${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
+        ${RC.colors(p).length ? `<div class="lxp-sw"><span>${esc(p.colors_label || 'الألوان')}</span>${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
         <div class="lxp-price"><span class="now">${money(finalPrice(p))}</span>${off ? `<s>${money(p.price)}</s><span class="off en">-${off}%</span>` : ''}</div>
         <div class="lxp-stock ${stockCls}">${stockTxt}</div>
         ${p.stock > 0 ? `<div class="lxp-buy" id="buy">

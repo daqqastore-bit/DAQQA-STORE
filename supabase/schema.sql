@@ -26,6 +26,7 @@ create table if not exists public.shop_products (
   kind text not null default 'watches',
   style text,
   colors text[] not null default '{}',
+  colors_label text,
   luxury boolean not null default false,
   description text,
   price numeric(12,2) not null default 0 check (price >= 0),
