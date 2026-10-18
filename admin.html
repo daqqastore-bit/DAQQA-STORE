@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018150030">
+<link rel="stylesheet" href="assets/base.css?v=20261018150527">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -165,6 +165,23 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .confirm{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.6)}
 .confirm .box{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:22px;width:min(360px,100%);display:flex;flex-direction:column;gap:14px}
 .confirm .acts{display:flex;gap:8px;justify-content:flex-start}
+/* crop before upload */
+.crop{position:fixed;inset:0;z-index:130;display:flex;flex-direction:column;background:rgba(8,6,4,.92);color:#EDE3D3}
+.crop-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
+.crop-top b{font-size:15px}.crop-top small{color:#A99C88;margin-inline-start:8px}
+.crop-ratios{display:flex;gap:6px;flex-wrap:wrap}
+.crop-ratios button{padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.18);color:#EDE3D3;font-size:12px}
+.crop-ratios button.on{background:#C9A97A;border-color:#C9A97A;color:#1A140E}
+.crop-area{flex:1;position:relative;display:grid;place-items:center;overflow:hidden;padding:10px 18px;touch-action:none}
+.crop-wrap{position:relative;line-height:0;user-select:none}
+.crop-wrap img{max-width:calc(100vw - 36px);max-height:calc(100svh - 170px);display:block;-webkit-user-drag:none}
+.crop-box{position:absolute;box-shadow:0 0 0 9999px rgba(0,0,0,.6);outline:1.5px solid #fff;cursor:move;background-image:linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);background-size:33.333% 33.333%;background-position:-1px -1px}
+.crop-box i{position:absolute;width:18px;height:18px;border:3px solid #fff;touch-action:none}
+.crop-box i[data-h="nw"]{left:-3px;top:-3px;border-width:3px 0 0 3px;cursor:nwse-resize}
+.crop-box i[data-h="ne"]{right:-3px;top:-3px;border-width:3px 3px 0 0;cursor:nesw-resize}
+.crop-box i[data-h="sw"]{left:-3px;bottom:-3px;border-width:0 0 3px 3px;cursor:nesw-resize}
+.crop-box i[data-h="se"]{right:-3px;bottom:-3px;border-width:0 3px 3px 0;cursor:nwse-resize}
+.crop-acts{display:flex;gap:8px;justify-content:center;padding:14px 18px 18px;flex-wrap:wrap}
 .btn-danger{border:1px solid var(--red);color:var(--red)}
 .btn-danger:hover{background:var(--red);color:#fff}
 .mob-tabs{display:none}
@@ -278,7 +295,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261018150030"></script>
+<script src="assets/config.js?v=20261018150527"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -323,7 +340,7 @@ const SCOPES = {
 };
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { kind: false, style: false, colors: false, luxury: false, colors_label: false }; let pKind = 'all';
+const COLS = { kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -620,7 +637,12 @@ function renderEditor() {
       </div>
       <div class="two">
         <div class="field"><label>السعر الأصلي *</label><input class="input en" id="f_price" inputmode="decimal" value="${esc(d.price)}"></div>
-        <div class="field"><label>المخزون</label><input class="input en" id="f_stock" inputmode="numeric" value="${esc(d.stock)}"></div>
+        <div class="field"><label>المخزون <small style="color:var(--muted)">(ليك إنت بس)</small></label><input class="input en" id="f_stock" inputmode="numeric" value="${esc(d.stock)}"></div>
+      </div>
+      <div class="field left-box" ${COLS.show_left ? '' : 'style="opacity:.5;pointer-events:none"'}>
+        <label class="check"><input type="checkbox" id="f_showleft" ${d.show_left ? 'checked' : ''}> <span>اظهر للعميل «فاضل كام» <small>— اختياري</small></span></label>
+        ${d.show_left ? `<input class="input en" id="f_shownleft" inputmode="numeric" value="${esc(d.shown_left ?? '')}" placeholder="العدد اللي يظهر للعميل، مثلاً 3">
+        <small style="color:var(--muted)">هيظهر «فاضل ${esc(d.shown_left || 'N')} بس»، وبيقل لوحده مع كل طلب.</small>` : ''}
       </div>
       <div class="disc-box">
         <label style="font-size:13px;color:var(--muted)">الخصم</label>
@@ -642,6 +664,7 @@ function renderEditor() {
   $('#edClose').onclick = closeEditor;
   $('#f_kind').onchange = () => { syncDraft(); renderEditor(); };
   const normHex = v => { v = String(v || '').trim().replace(/^#?/, '#').toUpperCase(); if (/^#[0-9A-F]{3}$/.test(v)) v = '#' + [...v.slice(1)].map(x => x + x).join(''); return /^#[0-9A-F]{6}$/.test(v) ? v : null; };
+  if ($('#f_showleft')) $('#f_showleft').onchange = () => { syncDraft(); renderEditor(); setTimeout(() => $('#f_shownleft') && $('#f_shownleft').focus(), 30); };
   if ($('#f_copen')) $('#f_copen').onclick = () => { syncDraft(); draft._clrOpen = true; renderEditor(); setTimeout(() => $('#f_clabel') && $('#f_clabel').focus(), 30); };
   if ($('#f_hex')) {
   const setPrev = h => { $('#f_cprev').style.background = h; $('#f_color').value = h.toLowerCase(); };
@@ -678,7 +701,7 @@ function updatePreview() {
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, description: $('#f_desc').value,
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), featured: $('#f_feat').checked, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), show_left: $('#f_showleft') ? $('#f_showleft').checked : !!draft.show_left, shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 async function compress(file, maxSide) {
@@ -688,19 +711,64 @@ async function compress(file, maxSide) {
   c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
   return await new Promise(r => c.toBlob(r, 'image/webp', .86));
 }
+// let the admin pick the part of the photo that shows (free or a fixed ratio); resolves a File/Blob, or null to skip this photo
+function cropBox(file, idx, total) {
+  return new Promise(async res => {
+    const url = URL.createObjectURL(file);
+    const d = document.createElement('div'); d.className = 'crop';
+    const R = [['حر', 0], ['الأصل', -1], ['1:1', 1], ['4:5', 4 / 5], ['3:4', 3 / 4], ['16:9', 16 / 9]];
+    d.innerHTML = `<div class="crop-top"><div><b>قص الصورة</b><small>${total > 1 ? `${idx + 1} من ${total} · ` : ''}اسحب المربع وكبّره من الأركان</small></div>
+      <div class="crop-ratios">${R.map(([t], i) => `<button type="button" data-r="${i}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div></div>
+      <div class="crop-area"><div class="crop-wrap"><img alt="" src="${url}"><div class="crop-box"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div></div>
+      <div class="crop-acts"><button type="button" class="btn btn-primary" data-a="ok">قص وارفع</button><button type="button" class="btn btn-ghost" data-a="full">ارفعها كاملة</button><button type="button" class="btn btn-ghost" data-a="skip">${total > 1 ? 'تخطّى الصورة دي' : 'إلغاء'}</button></div>`;
+    document.body.appendChild(d);
+    const img = d.querySelector('img'), box = d.querySelector('.crop-box');
+    await img.decode().catch(() => {});
+    let W = img.clientWidth, H = img.clientHeight, ratio = 0, b = { x: 0, y: 0, w: W, h: H };
+    const draw = () => Object.assign(box.style, { left: b.x + 'px', top: b.y + 'px', width: b.w + 'px', height: b.h + 'px' });
+    const setRatio = r => { ratio = r;
+      if (r <= 0) { b = { x: 0, y: 0, w: W, h: H }; if (r < 0) ratio = W / H; return draw(); }
+      let w = W, h = w / r; if (h > H) { h = H; w = h * r; } b = { x: (W - w) / 2, y: (H - h) / 2, w, h }; draw(); };
+    setRatio(0);
+    d.querySelector('.crop-ratios').onclick = e => { const t = e.target.closest('[data-r]'); if (!t) return;
+      d.querySelectorAll('.crop-ratios button').forEach(x => x.classList.toggle('on', x === t)); setRatio(R[+t.dataset.r][1]); };
+    addEventListener('resize', onResize); function onResize() { const k = img.clientWidth / W; W = img.clientWidth; H = img.clientHeight; b = { x: b.x * k, y: b.y * k, w: b.w * k, h: b.h * k }; draw(); }
+    let drag = null;
+    box.onpointerdown = e => { e.preventDefault(); box.setPointerCapture(e.pointerId); drag = { h: e.target.dataset.h || 'move', sx: e.clientX, sy: e.clientY, b0: { ...b } }; };
+    box.onpointermove = e => { if (!drag) return; const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy, o = drag.b0, MIN = 40;
+      if (drag.h === 'move') { b.x = Math.max(0, Math.min(W - o.w, o.x + dx)); b.y = Math.max(0, Math.min(H - o.h, o.y + dy)); return draw(); }
+      const L = drag.h.includes('w'), T = drag.h.includes('n');
+      const ax = L ? o.x + o.w : o.x, ay = T ? o.y + o.h : o.y;            // the fixed corner
+      let w = Math.max(MIN, L ? o.w - dx : o.w + dx), h = Math.max(MIN, T ? o.h - dy : o.h + dy);
+      w = Math.min(w, L ? ax : W - ax); h = Math.min(h, T ? ay : H - ay);
+      if (ratio > 0) { if (w / h > ratio) w = h * ratio; else h = w / ratio; }
+      b = { x: L ? ax - w : ax, y: T ? ay - h : ay, w, h }; draw(); };
+    box.onpointerup = box.onpointercancel = () => { drag = null; };
+    d.querySelector('.crop-acts').onclick = async e => { const a = e.target.closest('[data-a]'); if (!a) return;
+      const done = v => { removeEventListener('resize', onResize); d.remove(); URL.revokeObjectURL(url); res(v); };
+      if (a.dataset.a === 'skip') return done(null);
+      if (a.dataset.a === 'full') return done(file);
+      const k = img.naturalWidth / W, c = document.createElement('canvas');
+      c.width = Math.round(b.w * k); c.height = Math.round(b.h * k);
+      c.getContext('2d').drawImage(img, b.x * k, b.y * k, b.w * k, b.h * k, 0, 0, c.width, c.height);
+      c.toBlob(bl => done(bl || file), 'image/png'); };
+  });
+}
 async function uploadFiles(files) {
   files = files.filter(f => f.type.startsWith('image/')); if (!files.length) return;
   syncDraft(); const up = $('#upBtn'); up.disabled = true; up.lastChild.textContent = 'جاري الرفع...';
-  for (const f of files) {
+  let n = 0;
+  for (const [k, f0] of files.entries()) {
+    const f = await cropBox(f0, k, files.length); if (!f) continue;
     try {
       const blob = await compress(f);
       const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`;
       const {error} = await sb.storage.from(RC.bucket).upload(path, blob, {contentType: 'image/webp', cacheControl: '31536000'});
       if (error) throw error;
-      draft.images.push(sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl);
-    } catch (err) { toast('فشل رفع ' + f.name + ': ' + (err.message || err), 'err'); }
+      draft.images.push(sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl); n++;
+    } catch (err) { toast('فشل رفع ' + f0.name + ': ' + (err.message || err), 'err'); }
   }
-  renderEditor(); toast('اترفعت الصور — متنساش تدوس حفظ', 'ok');
+  renderEditor(); if (n) toast('اترفعت الصور — متنساش تدوس حفظ', 'ok');
 }
 async function saveProduct() {
   syncDraft(); const d = draft;
@@ -710,7 +778,7 @@ async function saveProduct() {
   if (sale != null && (isNaN(sale) || sale >= price || sale < 0)) sale = null;
   const row = { name: d.name, brand: d.brand, category: d.category, description: d.description, price, sale_price: sale, images: d.images,
     stock: Math.max(0, parseInt(d.stock) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
-  if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
+  if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { row.show_left = !!d.show_left; const n = parseInt(d.shown_left, 10); row.shown_left = d.show_left && n >= 0 ? n : null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
   const b = $('#saveP'); b.disabled = true; b.textContent = 'جاري الحفظ...';
   const res = d.id ? await sb.from('shop_products').update(row).eq('id', d.id).select().single() : await sb.from('shop_products').insert(row).select().single();
   b.disabled = false; b.textContent = 'حفظ';
