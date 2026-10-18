@@ -19,8 +19,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018155426">
-<link rel="stylesheet" href="assets/store.css?v=20261018155426">
+<link rel="stylesheet" href="assets/base.css?v=20261018162938">
+<link rel="stylesheet" href="assets/store.css?v=20261018162938">
 <style>
 /* DAQQA PRIVÉ — the luxury room: near-black, champagne gold, slow light */
 :root{--lx-bg:var(--L-bg);--lx-bg2:var(--L-bg2);--lx-gold:var(--L-gold);--lx-gold-2:var(--L-gold2);--lx-gold-3:var(--L-gold3);--lx-ink:var(--L-ink);--lx-mute:var(--L-mute);--lx-line:rgb(var(--L-rgb)/.22);
@@ -127,7 +127,7 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 .lx-sec-h{padding-top:90px}
 @media (max-width:640px){.lx-grid{grid-template-columns:1fr 1fr;gap:14px;padding:34px 0 60px}.lc-txt{padding:12px 12px 14px}.lc-txt h3{font-size:17px}.lc-price .gold{font-size:16px}.lc-add{width:36px;height:36px}.lc-fav{width:32px;height:32px;top:8px;left:8px}.lc-tag{top:10px;right:10px;font-size:8px;padding:5px 8px}}
 /* filters */
-.lx-nav{position:sticky;top:76px;z-index:20;display:flex;justify-content:center;gap:6px;padding:14px 16px;background:rgb(var(--L-bgrgb)/.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--lx-line)}
+.lx-nav{position:relative;z-index:20;display:flex;justify-content:center;gap:6px;padding:14px 16px;background:rgb(var(--L-bgrgb)/.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--lx-line)}
 .lx-nav a{display:inline-flex;align-items:baseline;gap:8px;padding:10px 20px;border-radius:999px;color:var(--lx-mute);font-weight:600;transition:all .3s}
 .lx-nav a em{font:italic 400 15px var(--f-display);color:var(--lx-gold)}
 .lx-nav a span{font:600 9px var(--f-ui);letter-spacing:.3em;text-transform:uppercase;opacity:.7}
@@ -143,7 +143,7 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 .lx-sec-h p{font:400 24px 'Amiri',var(--f-ar);color:var(--lx-mute)}
 .lx-sec-h p span{font:600 12px var(--f-ui);color:var(--lx-gold)}
 .lx-sec-h::after{content:"";width:1px;height:60px;margin-top:20px;background:linear-gradient(var(--lx-gold),transparent)}
-@media (max-width:640px){.lx-nav{top:66px;overflow-x:auto;justify-content:flex-start}.lx-nav a{padding:8px 14px;white-space:nowrap}.lx-sec-h{padding-top:70px}}
+@media (max-width:640px){.lx-nav{overflow-x:auto;justify-content:flex-start}.lx-nav a{padding:8px 14px;white-space:nowrap}.lx-sec-h{padding-top:70px}}
 .lx-filters{display:flex;gap:6px}
 .lx-none{display:flex;flex-direction:column;align-items:center;gap:10px;padding:130px 20px}
 .lx-none span{font:600 10px var(--f-ui);letter-spacing:.6em;color:var(--lx-gold)}
@@ -254,8 +254,8 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261018155426"></script>
-<script src="assets/app.js?v=20261018155426"></script>
+<script src="assets/config.js?v=20261018162938"></script>
+<script src="assets/app.js?v=20261018162938"></script>
 <script>
 const { esc, money, finalPrice, discountPct } = RC;
 const ORDER = Object.keys(RC.kinds); // watches first
