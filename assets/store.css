@@ -102,6 +102,30 @@ html,body{overflow-x:clip}
 .ci .rm svg{width:17px;height:17px}
 .ci .rm:hover,.ci .rm:focus-visible{color:#B4533C;border-color:rgb(180 83 60/.45);background:rgb(180 83 60/.08);transform:rotate(-6deg)}
 .ci .rm:active{transform:scale(.92)}
+/* Luxury pieces in the cart: their own glowing Privé block */
+@property --cl-a{syntax:'<angle>';inherits:false;initial-value:0deg}
+.cart-lx{position:relative;margin:4px 0 18px;padding:1.5px;border-radius:20px;background:conic-gradient(from var(--cl-a),#6E5326,#E9CF95 12%,#8C6A35 25%,#3A2C16 50%,#C9A96E 70%,#F4DFAE 78%,#6E5326);animation:clSpin 6s linear infinite,clGlow 3.2s ease-in-out infinite;isolation:isolate}
+.cl-in{position:relative;overflow:hidden;border-radius:19px;padding:14px 14px 12px;background:radial-gradient(120% 90% at 100% 0,#2A2014,#120D08 70%);color:#EDE3D3}
+.cl-in::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgb(244 223 174/.16) 50%,transparent 65%);transform:translateX(-120%);animation:clSheen 4.5s ease-in-out infinite;pointer-events:none}
+.cl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid rgb(201 169 110/.25)}
+.cl-mark{font:500 13px var(--f-display);letter-spacing:.32em;color:#E9CF95}.cl-mark i{font-style:italic;letter-spacing:.06em;font-size:15px}
+.cl-n{font-size:11.5px;color:#BCA780;padding:3px 10px;border:1px solid rgb(201 169 110/.35);border-radius:99px}
+.cart-lx .ci{border-bottom-color:rgb(201 169 110/.18)}.cart-lx .ci:last-of-type{border-bottom:0}
+.cart-lx .ci img{box-shadow:0 0 0 1px rgb(233 207 149/.55),0 8px 22px -8px rgb(233 207 149/.45)}
+.cart-lx .ci h4,.cart-lx .ci h4 a{color:#F3E7CF}
+.cart-lx .price-new,.cart-lx .ci .now{color:#E9CF95}
+.cart-lx .qty{border-color:rgb(201 169 110/.35);color:#EDE3D3}.cart-lx .qty button{color:#EDE3D3}
+.cart-lx .ci .rm{color:#BCA780;border-color:rgb(201 169 110/.3)}
+.cl-total{display:flex;align-items:baseline;justify-content:space-between;margin-top:6px;padding-top:10px;border-top:1px dashed rgb(201 169 110/.35)}
+.cl-total span{font-size:13px;color:#BCA780}
+.cl-total b{font:600 22px var(--f-ui);background:linear-gradient(90deg,#C9A96E,#F4DFAE,#C9A96E);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:clText 3s linear infinite}
+.cl-note{margin:6px 0 0;font-size:11.5px;color:#9C8A6A}
+.cart-reg-h{font-size:12px;color:var(--muted);letter-spacing:.04em;margin:2px 0 -2px}
+@keyframes clSpin{to{--cl-a:360deg}}
+@keyframes clGlow{0%,100%{box-shadow:0 0 0 0 rgb(233 207 149/0),0 10px 30px -12px rgb(201 169 110/.35)}50%{box-shadow:0 0 22px -2px rgb(233 207 149/.35),0 14px 36px -10px rgb(201 169 110/.5)}}
+@keyframes clSheen{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes clText{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.cart-lx,.cl-in::after,.cl-total b{animation:none}}
 .sum{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 .sum b{color:var(--ink);font-family:var(--f-ui)}
 .sum.save b{color:var(--green)}

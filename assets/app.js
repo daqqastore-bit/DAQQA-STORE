@@ -321,9 +321,19 @@
       <div class="sum total"><span>الإجمالي</span><b>${money(t.total)}</b></div>`;
     if (view === 'cart') {
       $('#drTitle').textContent = `السلة (${n})`;
-      $('#drBody').innerHTML = t.ls.map(l => `<div class="ci"><a href="${RC.productUrl(l.p)}"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"></a>
+      // Luxury pieces get their own glowing Privé block with their value, regular items follow
+      const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"></a>
         <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.id}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.id}" data-d="1" aria-label="زيادة">+</button></div></div>
-        <button class="rm" data-rm="${l.id}" aria-label="شيل ${esc(l.p.name)} من السلة" title="شيل من السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`).join('') +
+        <button class="rm" data-rm="${l.id}" aria-label="شيل ${esc(l.p.name)} من السلة" title="شيل من السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
+      const lxs = t.ls.filter(l => RC.isLuxury(l.p)), regs = t.ls.filter(l => !RC.isLuxury(l.p));
+      const lxVal = lxs.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0), lxN = lxs.reduce((s, l) => s + l.qty, 0);
+      $('#drBody').innerHTML = (lxs.length ? `<section class="cart-lx"><div class="cl-in">
+          <div class="cl-head"><span class="cl-mark en">DAQQA <i>Privé</i></span><span class="cl-n">${lxN} ${lxN > 1 ? 'قطع' : 'قطعة'} Luxury</span></div>
+          ${lxs.map(l => ci(l, true)).join('')}
+          <div class="cl-total"><span>قيمة قطع Privé</span><b class="en">${money(lxVal)}</b></div>
+          <p class="cl-note">قطع مختارة من مجموعتنا المحدودة.</p></div></section>` : '')
+        + (lxs.length && regs.length ? '<div class="cart-reg-h">باقي المنتجات</div>' : '')
+        + regs.map(l => ci(l, false)).join('') +
         (t.fso != null && t.sub < t.fso ? `<div style="margin-top:16px"><div class="ship-note">ضيف ${money(t.fso - t.sub)} كمان والشحن يبقى مجاني</div><div class="ship-bar"><i style="width:${Math.min(100, t.sub / t.fso * 100)}%"></i></div></div>` : '');
       $('#drFoot').innerHTML = sum + `<button class="btn btn-amber" id="goCheckout">إتمام الطلب</button>`;
       $('#goCheckout').onclick = () => { view = 'checkout'; renderCart(); };
