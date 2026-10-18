@@ -177,7 +177,12 @@
     addEventListener('keydown', e => { if (e.key === 'Escape') DQ.closeAll(); });
     $('#drBody').addEventListener('click', e => {
       const q = e.target.closest('[data-q]'), rm = e.target.closest('[data-rm]');
-      if (q) { const l = DQ.cart.find(c => c.id === +q.dataset.q), p = DQ.byId(l.id); l.qty = Math.max(1, Math.min(p.stock, 20, l.qty + +q.dataset.d)); saveCart(); renderCart(); }
+      if (q) { const l = DQ.cart.find(c => c.id === +q.dataset.q); if (!l) return; const p = DQ.byId(l.id);
+        const want = l.qty + +q.dataset.d, max = Math.min(p ? p.stock : 20, 20);
+        if (want < 1) DQ.cart = DQ.cart.filter(c => c !== l);           // going below 1 takes it out of the cart
+        else if (want > max) return DQ.toast('مفيش كمية أكتر متاحة من المنتج ده دلوقتي');
+        else l.qty = want;
+        saveCart(); renderCart(); }
       if (rm) { DQ.cart = DQ.cart.filter(c => c.id !== +rm.dataset.rm); saveCart(); renderCart(); }
     });
   }
