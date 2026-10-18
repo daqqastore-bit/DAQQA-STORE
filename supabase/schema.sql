@@ -32,7 +32,7 @@ create table if not exists public.shop_products (
   price numeric(12,2) not null default 0 check (price >= 0),
   sale_price numeric(12,2) check (sale_price is null or sale_price >= 0),
   images text[] not null default '{}',
-  stock int not null default 0 check (stock >= 0),
+  stock int check (stock >= 0),                      -- null = not tracked (always orderable)
   show_left boolean not null default false,          -- show customers a "only N left" line
   shown_left int check (shown_left is null or shown_left >= 0), -- the N shown (set by the admin, goes down with each order)
   featured boolean not null default false,
@@ -43,6 +43,8 @@ create table if not exists public.shop_products (
 );
 alter table public.shop_products add column if not exists show_left boolean not null default false;
 alter table public.shop_products add column if not exists shown_left int check (shown_left is null or shown_left >= 0);
+alter table public.shop_products alter column stock drop not null;
+alter table public.shop_products alter column stock set default null;
 alter table public.shop_products enable row level security;
 drop policy if exists "products: public read active" on public.shop_products;
 create policy "products: public read active" on public.shop_products
@@ -150,11 +152,11 @@ begin
     q := greatest(1, least(20, coalesce((it->>'qty')::int, 1)));
     select * into p from public.shop_products where id = (it->>'id')::bigint and active for update;
     if not found then raise exception 'منتج مش متاح دلوقتي'; end if;
-    if p.stock < q then raise exception 'الكمية المطلوبة من % مش متاحة دلوقتي، قلّل العدد', p.name; end if;
+    if p.stock is not null and p.stock < q then raise exception 'الكمية المطلوبة من % مش متاحة دلوقتي، قلّل العدد', p.name; end if;
     v_unit := case when p.sale_price is not null and p.sale_price < p.price then p.sale_price else p.price end;
     insert into public.shop_order_items (order_id, product_id, name, image, qty, unit_price, original_price, line_total)
     values (v_id, p.id, p.name, p.images[1], q, v_unit, p.price, v_unit * q);
-    update public.shop_products set stock = stock - q,
+    update public.shop_products set stock = case when stock is null then null else stock - q end,
       shown_left = case when shown_left is null then null else greatest(0, shown_left - q) end
     where id = p.id;
     v_sub := v_sub + v_unit * q; v_orig := v_orig + p.price * q;
@@ -171,9 +173,9 @@ grant execute on function public.shop_place_order(jsonb, jsonb) to anon, authent
 create or replace function public.shop_order_stock() returns trigger language plpgsql security definer set search_path = public as $$
 begin
   if new.status = 'cancelled' and old.status <> 'cancelled' then
-    update public.shop_products p set stock = p.stock + i.qty from public.shop_order_items i where i.order_id = new.id and i.product_id = p.id;
+    update public.shop_products p set stock = p.stock + i.qty from public.shop_order_items i where i.order_id = new.id and i.product_id = p.id and p.stock is not null;
   elsif old.status = 'cancelled' and new.status <> 'cancelled' then
-    update public.shop_products p set stock = greatest(0, p.stock - i.qty) from public.shop_order_items i where i.order_id = new.id and i.product_id = p.id;
+    update public.shop_products p set stock = greatest(0, p.stock - i.qty) from public.shop_order_items i where i.order_id = new.id and i.product_id = p.id and p.stock is not null;
   end if;
   return new;
 end $$;

@@ -271,7 +271,8 @@
       sb.from('shop_settings').select('*').eq('id', 1).maybeSingle()
     ]);
     if (p.error) throw p.error;
-    DQ.products = p.data || []; DQ.settings = s.data || {};
+    // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
+    DQ.products = (p.data || []).map(x => x.stock == null ? { ...x, stock: 999 } : x); DQ.settings = s.data || {};
 
     if (DQ.wa()) $('#ftWa').innerHTML = `<a href="https://wa.me/${DQ.wa()}" target="_blank" rel="noopener">${esc(DQ.settings.whatsapp)}</a>`;
     renderCart(); renderSearch(''); syncKinds(); renderFavs();

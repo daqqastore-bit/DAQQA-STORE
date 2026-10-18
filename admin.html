@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018150527">
+<link rel="stylesheet" href="assets/base.css?v=20261018151034">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -165,6 +165,14 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .confirm{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.6)}
 .confirm .box{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:22px;width:min(360px,100%);display:flex;flex-direction:column;gap:14px}
 .confirm .acts{display:flex;gap:8px;justify-content:flex-start}
+/* stock: private vs shown to customers, kept visibly apart */
+.stock-box{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:6px}
+.sb-col{display:flex;flex-direction:column;gap:7px;padding:14px;border-radius:14px;border:1px solid var(--line);position:relative}
+.sb-col label{font-size:13px;font-weight:600}.sb-col small{font-size:11.5px;color:var(--muted);line-height:1.6}
+.sb-tag{align-self:flex-start;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px}
+.sb-me{background:color-mix(in srgb,var(--muted) 7%,transparent);border-style:dashed}.sb-me .sb-tag{background:var(--line);color:var(--ink,inherit)}
+.sb-cust{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:color-mix(in srgb,var(--accent) 7%,transparent)}.sb-cust .sb-tag{background:var(--accent);color:#1A140E}
+@media (max-width:520px){.stock-box{grid-template-columns:1fr;gap:16px}}
 /* crop before upload */
 .crop{position:fixed;inset:0;z-index:130;display:flex;flex-direction:column;background:rgba(8,6,4,.92);color:#EDE3D3}
 .crop-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
@@ -295,7 +303,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261018150527"></script>
+<script src="assets/config.js?v=20261018151034"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -465,7 +473,7 @@ function renderDash() {
   const tp = {}; valid.forEach(o => o.shop_order_items.forEach(i => { const k = i.name; tp[k] = tp[k] || {name:k, units:0, rev:0}; tp[k].units += i.qty; tp[k].rev += +i.line_total; }));
   const top = Object.values(tp).sort((a, b) => b.rev - a.rev).slice(0, 6); const topMax = top[0] ? top[0].rev : 1;
   const byStatus = STATUS_KEYS.map(k => [k, inRange.filter(o => o.status === k).length]);
-  const lowStock = products.filter(p => p.active && p.stock <= 3 && (dashScope === 'all' || RC.isLuxury(p) === (dashScope === 'lux')));
+  const lowStock = products.filter(p => p.active && p.stock != null && p.stock <= 3 && (dashScope === 'all' || RC.isLuxury(p) === (dashScope === 'lux')));
   $('#main').innerHTML = `
     <div class="head"><div><h1>المبيعات</h1><div class="sub">الأرقام بتتحدّث لحظياً مع كل طلب جديد</div></div>
       <div class="seg scope-seg" id="scopeSeg">${[['all','الكل'],['reg','المتجر العادي'],['lux','Luxury']].map(([v,l]) => `<button data-scope="${v}" class="${v===dashScope?'on':''} ${v==='lux'?'en':''}">${l}</button>`).join('')}</div>
@@ -584,7 +592,7 @@ function renderProducts() {
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
         <td class="en"><b>${money(finalPrice(p))}</b>${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
-        <td class="en" style="color:${p.stock === 0 ? 'var(--red)' : p.stock <= 3 ? 'var(--amber)' : 'inherit'}">${p.stock}</td>
+        <td class="en" style="color:${p.stock === 0 ? 'var(--red)' : p.stock != null && p.stock <= 3 ? 'var(--amber)' : 'inherit'}">${p.stock ?? '—'}</td>
         <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td></tr>`; }).join('')}
       </tbody></table>` : `<div class="empty">مفيش منتجات هنا لسه. دوس «+ منتج جديد».</div>`}</div>`;
   $('#newP').onclick = () => openEditor(null, SC.init);
@@ -597,10 +605,13 @@ document.addEventListener('click', async e => {
 });
 
 let draft = null;
+const nextSort = lux => Math.max(0, ...products.filter(x => RC.isLuxury(x) === lux).map(x => +x.sort || 0)) + 1;
 function openEditor(id, init) {
   const p = id ? products.find(x => x.id === id) : null;
-  draft = p ? {...p, images: [...p.images], kind: RC.kindOf(p), colors: RC.colors(p)} : {kind: pKind !== 'all' ? pKind : 'watches', style:'', colors:[], name:'', brand:'DAQQA', category:'men', description:'', price:'', sale_price:null, images:[], stock:1, featured:false, luxury:false, active:true, sort: products.length + 1};
+  draft = p ? {...p, images: [...p.images], kind: RC.kindOf(p), colors: RC.colors(p)} : {kind: pKind !== 'all' ? pKind : 'watches', style:'', colors:[], name:'', brand:'DAQQA', category:'men', description:'', price:'', sale_price:null, images:[], stock:'', shown_left:'', featured:false, luxury:false, active:true};
   if (!p && init) Object.assign(draft, init);
+  // a new product goes last in its own section (regular and Luxury are numbered separately) until the admin types a number
+  if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
   renderEditor();
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
 }
@@ -635,21 +646,23 @@ function renderEditor() {
         <div class="field"><label>الماركة</label><input class="input en" id="f_brand" value="${esc(d.brand)}"></div>
         <div class="field"><label>الفئة</label><select class="input" id="f_cat">${Object.entries(categories).map(([k,v]) => `<option value="${k}" ${k===d.category?'selected':''}>${v}</option>`).join('')}</select></div>
       </div>
-      <div class="two">
-        <div class="field"><label>السعر الأصلي *</label><input class="input en" id="f_price" inputmode="decimal" value="${esc(d.price)}"></div>
-        <div class="field"><label>المخزون <small style="color:var(--muted)">(ليك إنت بس)</small></label><input class="input en" id="f_stock" inputmode="numeric" value="${esc(d.stock)}"></div>
-      </div>
-      <div class="field left-box" ${COLS.show_left ? '' : 'style="opacity:.5;pointer-events:none"'}>
-        <label class="check"><input type="checkbox" id="f_showleft" ${d.show_left ? 'checked' : ''}> <span>اظهر للعميل «فاضل كام» <small>— اختياري</small></span></label>
-        ${d.show_left ? `<input class="input en" id="f_shownleft" inputmode="numeric" value="${esc(d.shown_left ?? '')}" placeholder="العدد اللي يظهر للعميل، مثلاً 3">
-        <small style="color:var(--muted)">هيظهر «فاضل ${esc(d.shown_left || 'N')} بس»، وبيقل لوحده مع كل طلب.</small>` : ''}
-      </div>
+      <div class="field"><label>السعر الأصلي *</label><input class="input en" id="f_price" inputmode="decimal" value="${esc(d.price)}"></div>
       <div class="disc-box">
         <label style="font-size:13px;color:var(--muted)">الخصم</label>
         <div class="presets" id="presets">${[0,10,15,20,25,30,40,50].map(v => `<button type="button" data-pre="${v}" class="${off===v?'on':''}">${v ? v + '%' : 'بدون'}</button>`).join('')}</div>
         <div class="two"><div class="field"><label>السعر بعد الخصم</label><input class="input en" id="f_sale" inputmode="decimal" value="${d.sale_price == null ? '' : esc(d.sale_price)}" placeholder="فاضي = بدون خصم"></div>
           <div class="field"><label>نسبة الخصم %</label><input class="input en" id="f_pct" inputmode="numeric" value="${off || ''}" placeholder="0"></div></div>
         <div class="preview-price" id="pv"></div>
+      </div>
+      <div class="stock-box">
+        <div class="sb-col sb-me"><span class="sb-tag">ليك إنت بس</span>
+          <label for="f_stock">المخزون الحقيقي</label>
+          <input class="input en" id="f_stock" inputmode="numeric" value="${esc(d.stock ?? '')}" placeholder="اختياري">
+          <small>محدش بيشوفه غيرك، وبيقل مع كل طلب. لو سبته فاضي مش هيتحسب.</small></div>
+        <div class="sb-col sb-cust"><span class="sb-tag">بيظهر للعميل</span>
+          <label for="f_shownleft">«فاضل كام» اللي يظهر</label>
+          <input class="input en" id="f_shownleft" inputmode="numeric" value="${esc(d.shown_left ?? '')}" placeholder="اختياري" ${COLS.show_left ? '' : 'disabled'}>
+          <small>لو كتبت 3 هيظهر «فاضل 3 بس» وبيقل مع كل طلب. لو سبته فاضي مش هيظهر حاجة.</small></div>
       </div>
       <div class="field"><label>الوصف والمواصفات</label><textarea class="input" id="f_desc" rows="6" placeholder="سطر وصف عادي…&#10;الماكينة: كوارتز ياباني&#10;قطر الإطار: 42 مم&#10;مقاومة المياه: 30 متر">${esc(d.description)}</textarea><small style="color:var(--muted-2);font-size:12px">أي سطر مكتوب بالشكل «الاسم: القيمة» بيظهر في جدول المواصفات في صفحة المنتج، والباقي بيظهر كوصف.</small></div>
       <div class="two">
@@ -664,7 +677,8 @@ function renderEditor() {
   $('#edClose').onclick = closeEditor;
   $('#f_kind').onchange = () => { syncDraft(); renderEditor(); };
   const normHex = v => { v = String(v || '').trim().replace(/^#?/, '#').toUpperCase(); if (/^#[0-9A-F]{3}$/.test(v)) v = '#' + [...v.slice(1)].map(x => x + x).join(''); return /^#[0-9A-F]{6}$/.test(v) ? v : null; };
-  if ($('#f_showleft')) $('#f_showleft').onchange = () => { syncDraft(); renderEditor(); setTimeout(() => $('#f_shownleft') && $('#f_shownleft').focus(), 30); };
+  $('#f_sort').oninput = () => { draft._autoSort = false; };
+  $('#f_lux').addEventListener('change', () => { if (draft._autoSort) $('#f_sort').value = nextSort($('#f_lux').checked); });
   if ($('#f_copen')) $('#f_copen').onclick = () => { syncDraft(); draft._clrOpen = true; renderEditor(); setTimeout(() => $('#f_clabel') && $('#f_clabel').focus(), 30); };
   if ($('#f_hex')) {
   const setPrev = h => { $('#f_cprev').style.background = h; $('#f_color').value = h.toLowerCase(); };
@@ -701,7 +715,7 @@ function updatePreview() {
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, description: $('#f_desc').value,
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), show_left: $('#f_showleft') ? $('#f_showleft').checked : !!draft.show_left, shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 async function compress(file, maxSide) {
@@ -777,8 +791,8 @@ async function saveProduct() {
   let sale = d.sale_price == null ? null : +d.sale_price;
   if (sale != null && (isNaN(sale) || sale >= price || sale < 0)) sale = null;
   const row = { name: d.name, brand: d.brand, category: d.category, description: d.description, price, sale_price: sale, images: d.images,
-    stock: Math.max(0, parseInt(d.stock) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
-  if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { row.show_left = !!d.show_left; const n = parseInt(d.shown_left, 10); row.shown_left = d.show_left && n >= 0 ? n : null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
+    stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
+  if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
   const b = $('#saveP'); b.disabled = true; b.textContent = 'جاري الحفظ...';
   const res = d.id ? await sb.from('shop_products').update(row).eq('id', d.id).select().single() : await sb.from('shop_products').insert(row).select().single();
   b.disabled = false; b.textContent = 'حفظ';
