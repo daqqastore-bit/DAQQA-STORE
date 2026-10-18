@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018144530">
+<link rel="stylesheet" href="assets/base.css?v=20261018145259">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -71,6 +71,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .badge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
 /* orders */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.ord-prod{height:40px;width:auto;max-width:280px;padding:0 14px;border-radius:999px;font-size:13px}
 .search{display:flex;align-items:center;gap:8px;height:42px;padding:0 14px;border:1px solid var(--line-2);border-radius:999px;color:var(--muted);flex:1 1 240px;max-width:360px}
 .search input{border:0;background:transparent;outline:none;width:100%;color:var(--ink)}
 .search svg{width:16px;height:16px;flex:none}
@@ -277,7 +278,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261018144530"></script>
+<script src="assets/config.js?v=20261018145259"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -304,7 +305,7 @@ const TABS = [['dash','المبيعات'],
 const MOB_TABS = ['dash','orders','products','lux-orders','lux','settings'];
 // an order counts as Luxury when any of its pieces is a Luxury product
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
-let dashScope = 'all', orderKind = 'all', orderGen = 'all';
+let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
 // which sections / genders an order touches (from its products)
 const orderProds = o => (o.shop_order_items || []).map(i => products.find(x => x.id === i.product_id)).filter(Boolean);
 const orderHasKind = (o, k) => orderProds(o).some(p => RC.kindOf(p) === k);
@@ -480,20 +481,25 @@ function renderDash() {
 
 /* ---------- orders ---------- */
 function renderOrders() {
-  const LUXT = tab === 'lux-orders', ORD0 = orders.filter(o => isLuxOrder(o) === LUXT), ORD = ORD0.filter(o => (orderKind === 'all' || orderHasKind(o, orderKind)) && (orderGen === 'all' || orderHasGen(o, orderGen)));
+  const LUXT = tab === 'lux-orders', ORD0 = orders.filter(o => isLuxOrder(o) === LUXT), ORD = ORD0.filter(o => (orderKind === 'all' || orderHasKind(o, orderKind)) && (orderGen === 'all' || orderHasGen(o, orderGen)) && (orderProd === 'all' || (o.shop_order_items || []).some(i => String(i.product_id) === orderProd)));
+  // every product that was ever ordered here, most ordered first (deleted products keep the name saved on the order)
+  const PROD = {}; ORD0.forEach(o => new Set((o.shop_order_items || []).map(i => String(i.product_id))).forEach(id => { const it = o.shop_order_items.find(i => String(i.product_id) === id); PROD[id] = PROD[id] || { name: (products.find(p => String(p.id) === id) || it).name, n: 0 }; PROD[id].n++; }));
+  const prodOpts = Object.entries(PROD).sort((a, b) => b[1].n - a[1].n);
   const q = orderQuery.trim().toLowerCase();
-  const list = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, o.customer_name, o.phone, o.city].join(' ').toLowerCase().includes(q)));
+  const list = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, o.customer_name, o.phone, o.city, ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
   const counts = Object.fromEntries(STATUS_KEYS.map(k => [k, ORD.filter(o => o.status === k).length]));
   $('#main').innerHTML = `
     <div class="head"><div><h1 ${LUXT ? 'class="en lux-h"' : ''}>${LUXT ? 'Luxury Orders' : 'الطلبات'}</h1><div class="sub">${ORD.length} طلب · بيوصلك إشعار وصوت مع كل طلب جديد</div></div></div>
     <div class="toolbar ord-scope"><div class="seg" id="okSeg"><button data-ok="all" class="${orderKind==='all'?'on':''}">كل الأقسام <span class="en">${ORD0.length}</span></button>${Object.entries(RC.kinds).map(([k, v]) => `<button data-ok="${k}" class="${orderKind===k?'on':''}">${v.ar} <span class="en">${ORD0.filter(o => orderHasKind(o, k)).length}</span></button>`).join('')}</div>
+      <select class="input ord-prod" id="opSel" aria-label="فلتر بالمنتج"><option value="all">كل المنتجات</option>${prodOpts.map(([id, v]) => `<option value="${id}" ${orderProd === id ? 'selected' : ''}>${esc(v.name)} (${v.n})</option>`).join('')}</select>
       <div class="seg" id="ogSeg">${[['all','الكل'],['men','رجالي'],['women','حريمي']].map(([g, l]) => `<button data-og="${g}" class="${orderGen===g?'on':''}">${l}${g === 'all' ? '' : ` <span class="en">${ORD0.filter(o => orderHasGen(o, g)).length}</span>`}</button>`).join('')}</div></div>
     <div class="toolbar">
       <div class="seg" id="ordSeg"><button data-of="all" class="${orderFilter==='all'?'on':''}">الكل</button>${STATUS_KEYS.map(k => `<button data-of="${k}" class="${orderFilter===k?'on':''}">${statuses[k]} <span class="en">${counts[k]}</span></button>`).join('')}</div>
-      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="oq" placeholder="بحث بالاسم أو الرقم أو الكود" value="${esc(orderQuery)}"></label>
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="oq" placeholder="بحث بالاسم أو الرقم أو الكود أو المنتج" value="${esc(orderQuery)}"></label>
     </div>
     <div class="orders">${list.length ? list.map(orderHTML).join('') : '<div class="panel empty">مفيش طلبات هنا.</div>'}</div>`;
   $('#okSeg').onclick = e => { const x = e.target.closest('[data-ok]'); if (x) { orderKind = x.dataset.ok; renderOrders(); } };
+  $('#opSel').onchange = e => { orderProd = e.target.value; renderOrders(); };
   $('#ogSeg').onclick = e => { const x = e.target.closest('[data-og]'); if (x) { orderGen = x.dataset.og; renderOrders(); } };
   $('#ordSeg').onclick = e => { const b = e.target.closest('[data-of]'); if (b) { orderFilter = b.dataset.of; renderOrders(); } };
   const oq = $('#oq'); oq.oninput = () => { orderQuery = oq.value; clearTimeout(oq._t); oq._t = setTimeout(() => { renderOrders(); const n = $('#oq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 250); };
