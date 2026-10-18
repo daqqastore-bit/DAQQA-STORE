@@ -100,7 +100,8 @@
       const c = e.target.closest && e.target.closest('[data-pid]');
       if (c === cur) return; stop();
       const p = c && DQ.byId(+c.dataset.pid); if (!p || !p.images || p.images.length < 2) return;
-      cur = c; c.classList.add('flipping'); let i = 0; const img = c.querySelector('.ph img:not(.alt), [data-flip]'), dots = c.querySelectorAll('.ph-dots i');
+      const img = c.querySelector('.ph img:not(.alt), [data-flip]'), dots = c.querySelectorAll('.ph-dots i'); if (!img) return;
+      cur = c; c.classList.add('flipping'); let i = 0;
       p.images.slice(1).forEach(u => { const im = new Image(); im.src = u; });
       // slow page-turn: the photo turns away, the next one turns in
       const P = 'perspective(900px) ', S = ' scale(1.08)';
