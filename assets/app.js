@@ -546,8 +546,37 @@
   DQ.start = async (active, onReady) => {
     if (!window.DQ_LOADER) intro(); chrome(active); mouseFx();
     try { await cap(DQ.load(), 15000); } catch (e) { console.error(e); DQ.loadError = true; }
-    onReady && onReady();
+    DQ._ready = onReady; onReady && onReady();
     await cap(Promise.all([document.fonts ? document.fonts.ready : null, firstImages()]), 3500);
-    window.DQ_reveal();
+    window.DQ_reveal(); live();
   };
+
+  /* ---------- live: what the admin saves (products, prices, covers, settings) and every new site version show up for visitors without a reload ---------- */
+  // never swap things under someone who is ordering or typing
+  const busy = () => (view !== 'cart' && $('#drawer') && $('#drawer').classList.contains('on')) || (document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName));
+  let liveT = 0, lastLive = Date.now();
+  async function refreshData() {
+    if (busy()) { clearTimeout(liveT); liveT = setTimeout(refreshData, 3000); return; }
+    lastLive = Date.now(); const y = scrollY;
+    try { await DQ.load(); } catch (e) { return; }
+    try { DQ._ready && DQ._ready(); } catch (e) { console.error(e); }
+    scrollTo(0, y); DQ.reveal();
+  }
+  const soon = () => { clearTimeout(liveT); liveT = setTimeout(refreshData, 1200); };
+  async function checkBuild() {
+    if (!RC.build) return;
+    try {
+      const v = (await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.json())).v;
+      if (v && v !== RC.build) { const go = () => busy() ? setTimeout(go, 3000) : location.reload(); go(); }
+    } catch (e) {}
+  }
+  function live() {
+    sb.channel('dq-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_products' }, soon)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_settings' }, soon)
+      .subscribe();
+    setInterval(() => { if (!document.hidden) checkBuild(); }, 60000);
+    setInterval(() => { if (!document.hidden && Date.now() - lastLive > 120000) refreshData(); }, 30000);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) return; checkBuild(); if (Date.now() - lastLive > 30000) refreshData(); });
+  }
 })();

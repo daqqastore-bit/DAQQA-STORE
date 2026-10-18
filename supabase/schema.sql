@@ -187,7 +187,7 @@ grant execute on function public.shop_track_order(text, text) to anon, authentic
 
 -- ---------- realtime (admin: new orders · customer: status updates) ----------
 do $$ begin
-  alter publication supabase_realtime add table public.shop_orders;
+  alter publication supabase_realtime add table public.shop_orders, public.shop_products, public.shop_settings;
 exception when duplicate_object then null; end $$;
 
 -- ---------- storage: product & banner images ----------

@@ -59,3 +59,6 @@ RC.googleOn = () => RC._g || (RC._g = fetch(RC.url + '/auth/v1/settings', { head
 
 // new-order email (free, via FormSubmit). The first order sends an activation email to this inbox — click «Activate» once.
 RC.notifyEmail = 'daqqastore@gmail.com';
+
+// site version — set by tools/release.sh; open pages reload when version.json changes
+RC.build = '20261018143726';

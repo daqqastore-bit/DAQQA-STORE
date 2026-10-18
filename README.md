@@ -2,6 +2,7 @@
 
 Watch store — static site on GitHub Pages, backend on Supabase (project iyxgiukausajvxpkwaaw).
 
+- `tools/release.sh` — run before every push: stamps a new version so visitors get it live (open pages reload by themselves).
 - `supabase/schema.sql` — whole database setup (tables, RLS, order functions, realtime, storage). Admin: daqqastore@gmail.com (table `shop_admins`).
 
 - `index.html` — home: live Q-dial hero, best sellers, offer, collection (filters/sort)
