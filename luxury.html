@@ -19,8 +19,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018152325">
-<link rel="stylesheet" href="assets/store.css?v=20261018152325">
+<link rel="stylesheet" href="assets/base.css?v=20261018153918">
+<link rel="stylesheet" href="assets/store.css?v=20261018153918">
 <style>
 /* DAQQA PRIVÉ — the luxury room: near-black, champagne gold, slow light */
 :root{--lx-bg:var(--L-bg);--lx-bg2:var(--L-bg2);--lx-gold:var(--L-gold);--lx-gold-2:var(--L-gold2);--lx-gold-3:var(--L-gold3);--lx-ink:var(--L-ink);--lx-mute:var(--L-mute);--lx-line:rgb(var(--L-rgb)/.22);
@@ -102,6 +102,30 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 .lx-marq span::after{content:"✦";font-style:normal;font-size:12px;color:var(--lx-gold-3)}
 @keyframes marq{to{transform:translateX(-50%)}}
 
+/* Privé product grid */
+.lx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:clamp(22px,3vw,40px);padding:56px 0 90px}
+.lx-card{position:relative;display:flex;flex-direction:column;background:linear-gradient(180deg,rgb(var(--L-rgb)/.05),transparent 60%);border:1px solid var(--lx-line);transition:border-color .5s,transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s}
+.lx-card::before{content:"";position:absolute;inset:8px;border:1px solid rgb(var(--L-rgb)/.0);pointer-events:none;z-index:2;transition:border-color .5s,inset .5s}
+.lx-card:hover{border-color:rgb(var(--L-rgb)/.55);transform:translateY(-6px);box-shadow:0 30px 60px -30px rgb(0 0 0/.7),0 0 40px -18px rgb(var(--L-rgb)/.45)}
+.lx-card:hover::before{border-color:rgb(var(--L-rgb)/.35);inset:12px}
+.lc-pic{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:var(--L-bg2)}
+.lc-pic img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s cubic-bezier(.2,.7,.2,1),opacity .18s,filter .18s}
+.lx-card:hover .lc-pic img{transform:scale(1.06)}
+.lc-pic::after{content:"";position:absolute;inset:auto 0 0;height:40%;background:linear-gradient(transparent,rgb(var(--L-bgrgb)/.55));pointer-events:none}
+.lc-tag{position:absolute;top:14px;right:14px;z-index:3;font:600 9px var(--f-ui);letter-spacing:.3em;padding:6px 10px;background:var(--lx-gold);color:#1A140E}
+.lc-off{position:absolute;bottom:14px;left:14px;z-index:3;font:600 11px var(--f-ui);padding:4px 9px;border-radius:99px;background:rgb(var(--L-bgrgb)/.8);color:var(--lx-gold);border:1px solid rgb(var(--L-rgb)/.4)}
+.lc-out{position:absolute;inset:auto 0 0;z-index:3;padding:8px;text-align:center;font-size:12px;background:rgb(0 0 0/.6);color:#EDE3D3}
+.lc-fav{position:absolute;top:12px;left:12px;z-index:3;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgb(var(--L-bgrgb)/.7);border:1px solid rgb(var(--L-rgb)/.3);color:var(--lx-ink);backdrop-filter:blur(6px);transition:all .3s}
+.lc-fav svg{width:17px;height:17px}.lc-fav:hover,.lc-fav.on{color:var(--lx-gold);border-color:var(--lx-gold)}.lc-fav.on svg{fill:currentColor}
+.lc-txt{display:flex;flex-direction:column;gap:8px;padding:18px 18px 20px}
+.lc-cap{font:600 9px var(--f-ui);letter-spacing:.32em;text-transform:uppercase;color:var(--lx-gold)}
+.lc-txt h3{font:400 23px/1.2 var(--f-display);color:var(--lx-ink);direction:ltr;text-align:right}
+.lc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px;padding-top:12px;border-top:1px solid var(--lx-line)}
+.lc-price{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}.lc-price .gold{font:500 20px var(--f-display)}.lc-price s{font-size:12px;color:var(--lx-mute)}
+.lc-add{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--lx-gold);color:#1A140E;transition:transform .3s,box-shadow .3s}
+.lc-add svg{width:18px;height:18px}.lc-add:hover{transform:scale(1.08);box-shadow:0 0 0 6px rgb(var(--L-rgb)/.15)}
+.lx-sec-h{padding-top:90px}
+@media (max-width:640px){.lx-grid{grid-template-columns:1fr 1fr;gap:14px;padding:34px 0 60px}.lc-txt{padding:12px 12px 14px}.lc-txt h3{font-size:17px}.lc-price .gold{font-size:16px}.lc-add{width:36px;height:36px}.lc-fav{width:32px;height:32px;top:8px;left:8px}.lc-tag{top:10px;right:10px;font-size:8px;padding:5px 8px}}
 /* filters */
 .lx-nav{position:sticky;top:76px;z-index:20;display:flex;justify-content:center;gap:6px;padding:14px 16px;background:rgb(var(--L-bgrgb)/.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--lx-line)}
 .lx-nav a{display:inline-flex;align-items:baseline;gap:8px;padding:10px 20px;border-radius:999px;color:var(--lx-mute);font-weight:600;transition:all .3s}
@@ -230,8 +254,8 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261018152325"></script>
-<script src="assets/app.js?v=20261018152325"></script>
+<script src="assets/config.js?v=20261018153918"></script>
+<script src="assets/app.js?v=20261018153918"></script>
 <script>
 const { esc, money, finalPrice, discountPct } = RC;
 const ORDER = Object.keys(RC.kinds); // watches first
@@ -246,20 +270,20 @@ DQ.start('luxury', () => {
   const kinds = ORDER.filter(k => all.some(p => RC.kindOf(p) === k));
   const gens = [['men', 'رجالي'], ['women', 'حريمي']];
   const lead = p => { const d = RC.splitDesc ? RC.splitDesc(p.description || '') : { text: p.description || '', specs: [] }; return d; };
+  // Luxury pieces as a grid of Privé cards; the full editorial view lives on each product page
   const chapter = (p, i) => {
-    const d = lead(p), off = discountPct(p), url = RC.productUrl(p), n = (p.images || []).length, fav = DQ.favs.has(p.id);
-    const specs = (d.specs || []).slice(0, 4), text = String(d.body || '').split(/\n/)[0];
-    return `<article class="lx-ch ${i % 2 ? 'flip' : ''}" data-pid="${p.id}">
-      <div class="num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</div>
-      <div class="lx-pic op op-curtain"><a class="ph" href="${url}" aria-label="${esc(p.name)}"><img src="${DQ.img(p)}" alt="${esc(p.name)}" loading="${i ? 'lazy' : 'eager'}">${n > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(n, 6))}</span>` : ''}</a>${p.featured ? '<span class="tag en">SIGNATURE</span>' : ''}</div>
-      <div class="lx-txt op op-stagger">
-        <span class="lx-cap kind">N° ${String(i + 1).padStart(2, '0')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <h2 class="en"><a href="${url}">${esc(p.name)}</a></h2>
-        ${text ? `<p class="lead">${esc(text)}</p>` : ''}
-        ${specs.length ? `<div class="lx-specs">${specs.map(([k, v]) => `<div><span>${esc(k)}</span><i></i><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
-        ${RC.colors(p).length ? `<div class="lx-sw">${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
-        <div class="lx-price"><span class="now gold">${money(finalPrice(p))}</span>${off ? `<s>${money(p.price)}</s><span class="off en">-${off}%</span>` : ''}</div>
-        <div class="lx-acts">${p.stock > 0 ? `<button class="lx-btn solid" data-add="${p.id}">أضف للسلة ${DQ.ICON.bag}</button>` : `<span class="lx-out">نفدت الكمية — اسألنا على واتساب</span>`}<a class="lx-btn line" href="${url}">التفاصيل</a><button class="lx-btn line ico ${fav ? 'on' : ''}" data-fav="${p.id}" aria-label="المفضلة" aria-pressed="${fav}">${DQ.ICON.heart}</button></div>
+    const off = discountPct(p), url = RC.productUrl(p), n = (p.images || []).length, fav = DQ.favs.has(p.id);
+    return `<article class="lx-card op op-stagger" data-pid="${p.id}">
+      <a class="lc-pic" href="${url}" aria-label="${esc(p.name)}"><img src="${DQ.img(p)}" alt="${esc(p.name)}" loading="${i < 4 ? 'eager' : 'lazy'}">
+        ${n > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(n, 6))}</span>` : ''}
+        ${p.featured ? '<span class="lc-tag en">SIGNATURE</span>' : ''}${off ? `<span class="lc-off en">-${off}%</span>` : ''}
+        ${p.stock > 0 ? '' : '<span class="lc-out">نفدت الكمية</span>'}</a>
+      <button class="lc-fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-label="المفضلة" aria-pressed="${fav}">${DQ.ICON.heart}</button>
+      <div class="lc-txt">
+        <span class="lc-cap en">N° ${String(i + 1).padStart(2, '0')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
+        <h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
+        <div class="lc-row"><div class="lc-price"><span class="gold">${money(finalPrice(p))}</span>${off ? `<s>${money(p.price)}</s>` : ''}</div>
+          ${p.stock > 0 ? `<button class="lc-add" data-add="${p.id}" aria-label="أضف ${esc(p.name)} للسلة">${DQ.ICON.bag}</button>` : ''}</div>
       </div></article>`;
   };
   document.getElementById('page').innerHTML = `
@@ -279,9 +303,11 @@ DQ.start('luxury', () => {
     <div class="lx-scroll en">SCROLL<i></i></div>
   </section>
   <div class="lx-marq" aria-hidden="true"><div>${('<span>DAQQA Privé</span><span>Luxury</span><span>' + kinds.map(k => RC.kinds[k].en).join('</span><span>') + '</span>').repeat(6)}</div></div>
+  <div class="lx-shop">
   <nav class="lx-nav" aria-label="أقسام Luxury">${kinds.map((k, n) => `<a href="#lx-${k}"><em class="en">${['I', 'II', 'III'][n]}</em>${RC.kinds[k].ar}<span class="en">${RC.kinds[k].en}</span></a>`).join('')}${gens.length ? `<i class="lx-div" aria-hidden="true"></i><div class="lx-filters" role="tablist"><button data-f="all" class="on">الكل</button>${gens.map(([g, l]) => `<button data-f="g:${g}">${l}<span class="en">${g === 'men' ? 'HIM' : 'HER'}</span></button>`).join('')}</div>` : ''}</nav>
 
   <section class="wrap" id="chapters"></section>
+  </div>
   <section class="lx-cta op op-stagger">
     <span class="lx-cap">PRIVATE SERVICE</span>
     <h3 class="gold">Reserved for You.</h3>
@@ -293,7 +319,7 @@ DQ.start('luxury', () => {
     // one section per kind (watches first), each with its own chapter numbers
     document.getElementById('chapters').innerHTML = kinds.map((k, n) => { const items = list.filter(p => RC.kindOf(p) === k); if (!items.length) return '';
       const cv = (COV['lux-' + k] || {}).hero;
-      return `<section class="lx-sec" id="lx-${k}">${cv ? `<div class="lx-cover op op-curtain"><img src="${esc(cv)}" alt="" loading="lazy"></div>` : ''}<header class="lx-sec-h op op-stagger"><span class="lx-cap">N° ${['I', 'II', 'III'][n]} · DAQQA PRIVÉ</span><h2 class="gold en">${RC.kinds[k].en}</h2><p>${RC.kinds[k].ar}</p></header>${items.map(chapter).join('')}</section>`; }).join('') || `<div class="lx-none"><span class="en">COMING SOON</span><b>قريبًا</b></div>`;
+      return `<section class="lx-sec" id="lx-${k}">${cv ? `<div class="lx-cover op op-curtain"><img src="${esc(cv)}" alt="" loading="lazy"></div>` : ''}<header class="lx-sec-h op op-stagger"><span class="lx-cap">N° ${['I', 'II', 'III'][n]} · DAQQA PRIVÉ</span><h2 class="gold en">${RC.kinds[k].en}</h2><p>${RC.kinds[k].ar}</p></header><div class="lx-grid">${items.map(chapter).join('')}</div></section>`; }).join('') || `<div class="lx-none"><span class="en">COMING SOON</span><b>قريبًا</b></div>`;
     DQ.reveal();
   };
   const f = document.querySelector('.lx-filters');
