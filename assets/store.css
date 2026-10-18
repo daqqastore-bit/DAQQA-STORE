@@ -98,7 +98,10 @@ html,body{overflow-x:clip}
 .qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;height:34px;margin-top:6px}
 .qty button{width:32px;height:32px;display:grid;place-items:center;font-size:16px;color:var(--ink)}
 .qty span{min-width:24px;text-align:center;font:600 13px var(--f-ui)}
-.ci .rm{color:var(--muted-2);font-size:12px;text-decoration:underline}
+.ci .rm{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--muted);border:1px solid var(--line);background:transparent;transition:color .25s,border-color .25s,background .25s,transform .25s}
+.ci .rm svg{width:17px;height:17px}
+.ci .rm:hover,.ci .rm:focus-visible{color:#B4533C;border-color:rgb(180 83 60/.45);background:rgb(180 83 60/.08);transform:rotate(-6deg)}
+.ci .rm:active{transform:scale(.92)}
 .sum{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 .sum b{color:var(--ink);font-family:var(--f-ui)}
 .sum.save b{color:var(--green)}
