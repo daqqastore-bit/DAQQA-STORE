@@ -28,8 +28,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018163008">
-<link rel="stylesheet" href="assets/store.css?v=20261018163008">
+<link rel="stylesheet" href="assets/base.css?v=20261018163420">
+<link rel="stylesheet" href="assets/store.css?v=20261018163420">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -202,7 +202,7 @@
 .motto{position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse 70% 90% at 50% 120%,rgb(var(--accent-rgb)/.22),transparent 60%),linear-gradient(180deg,#0c0906,#140e08 60%,#0c0906);color:#F2E9D8;padding:150px 0 130px;text-align:center;border-top:1px solid rgba(201,169,110,.25)}
 .motto .mo-in{display:flex;flex-direction:column;align-items:center;gap:22px;position:relative;z-index:2}
 .mo-cap{font:600 10px var(--f-ui);letter-spacing:.55em;color:#C9A96E;padding-inline-start:.55em}
-.mo-line{font:700 clamp(58px,10vw,150px)/1.15 'Amiri',var(--f-ar);letter-spacing:0;display:flex;gap:.28em;justify-content:center;flex-wrap:wrap;color:#F2E9D8;text-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mo-line{font:700 clamp(44px,8vw,124px)/1.15 'Amiri',var(--f-ar);letter-spacing:0;display:grid;grid-template-columns:repeat(3,auto);justify-content:center;justify-items:center;column-gap:.32em;row-gap:.04em;margin-bottom:.14em;color:#F2E9D8;text-shadow:0 20px 60px rgba(0,0,0,.6)}
 .mo-line span{display:inline-block}
 .mo-line .gold{padding:.12em .1em .32em;margin:-.12em -.1em -.32em;background:linear-gradient(100deg,#8C6A3A 0%,#E9D3A3 28%,#C9A96E 52%,#F6E3B5 76%,#8C6A3A 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:moSheen 7s linear infinite;padding:0 .05em}
 @keyframes moSheen{to{background-position:-220% 0}}
@@ -272,8 +272,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261018163008"></script>
-<script src="assets/app.js?v=20261018163008"></script>
+<script src="assets/config.js?v=20261018163420"></script>
+<script src="assets/app.js?v=20261018163420"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -395,11 +395,12 @@ const state = {}; // per section: { tab, all }
 // the house motto — «دقّت ساعة العمل» — a quiet, luxurious full-width moment before the footer
 function MOTTO() {
   const ticks = Array.from({ length: 61 }, (_, i) => `<i class="${i % 5 ? '' : 'big'}"></i>`).join('');
-  return `<section class="motto" data-glow aria-label="دقّت ساعة العمل">
+  return `<section class="motto" data-glow aria-label="دقّت ساعة العمل. دقّة تصنع الفرق.">
     <div class="mo-bezel" aria-hidden="true"><div class="mo-ticks">${ticks}${ticks}</div><span class="mo-hand"></span></div>
     <div class="wrap mo-in op op-stagger">
       <span class="mo-cap en">DAQQA · THE HOUR HAS STRUCK</span>
-      <h2 class="mo-line"><span>دقّت</span> <span>ساعة</span> <span class="gold">العمل.</span></h2>
+      <h2 class="mo-line"><span>دقّت</span> <span>ساعة</span> <span class="gold">العمل.</span>
+        <span>دقّة</span> <span>تصنع</span> <span class="gold">الفرق.</span></h2>
       <p class="mo-sub">كل دقيقة بقيمتها، وكل قطعة بتتعمل عشان تفضل معاك.</p>
       <div class="mo-sign"><span></span><b class="en">D · Q</b><span></span></div>
     </div></section>`;
