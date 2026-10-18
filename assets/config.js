@@ -2,7 +2,7 @@
 window.RC = {
   brand: 'DAQQA',
   url: 'https://iyxgiukausajvxpkwaaw.supabase.co',
-  key: 'PUBLISHABLE_KEY_PENDING',
+  key: 'sb_publishable_Jw3TfsoDL7efVA5tteo3YQ_ctNJrOBn',
   bucket: 'shop-images',
   currency: 'ج.م',
   categories: { men: 'رجالي', women: 'حريمي', unisex: 'للجنسين' },
