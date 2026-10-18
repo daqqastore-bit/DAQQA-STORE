@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="lux">
+<head>
+<meta charset="utf-8">
+<script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DAQQA PRIVÉ | Luxury — ساعات فاخرة</title>
+<meta name="description" content="DAQQA PRIVÉ — المجموعة الفاخرة من دقّة: ساعات واكسسوارات لاكشري رجالي وحريمي. الدفع عند الاستلام وشحن لكل مصر.">
+<meta name="keywords" content="ساعات فاخرة, luxury watches Egypt, DAQQA PRIVÉ, DAQQA Luxury, ساعات رجالي فاخرة, ساعات حريمي فاخرة">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0A0806">
+<link rel="canonical" href="https://daqqastore-bit.github.io/DAQQA-STORE/luxury.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DAQQA">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:title" content="DAQQA PRIVÉ — المجموعة الفاخرة">
+<meta property="og:image" content="https://daqqastore-bit.github.io/DAQQA-STORE/assets/og.jpg">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/base.css?v=20261018s">
+<link rel="stylesheet" href="assets/store.css?v=20261018s">
+<style>
+/* DAQQA PRIVÉ — the luxury room: near-black, champagne gold, slow light */
+:root{--lx-bg:var(--L-bg);--lx-bg2:var(--L-bg2);--lx-gold:var(--L-gold);--lx-gold-2:var(--L-gold2);--lx-gold-3:var(--L-gold3);--lx-ink:var(--L-ink);--lx-mute:var(--L-mute);--lx-line:rgb(var(--L-rgb)/.22);
+  --bg:var(--L-bg);--nav:var(--L-bg2);--hero:var(--L-bg2);--line:rgb(var(--L-rgb)/.22);--accent:var(--L-gold);--accent-rgb:201 169 110;--bg-rgb:10 8 6;--ink:var(--L-ink);--muted:var(--L-mute)}
+body{background:var(--lx-bg);color:var(--lx-ink)}
+.nav-bar{background:rgb(var(--L-bgrgb)/.82)!important;backdrop-filter:blur(14px);border-bottom-color:var(--lx-line)!important}
+.gold{background:linear-gradient(100deg,var(--lx-gold-3) 0%,var(--lx-gold-2) 28%,var(--lx-gold) 52%,var(--lx-gold-2) 76%,var(--lx-gold-3) 100%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 9s linear infinite}
+@keyframes sheen{to{background-position:-220% 0}}
+.lx-cap{font:600 10px var(--f-ui);letter-spacing:.5em;color:var(--lx-gold);text-transform:uppercase}
+
+/* entrance: a gold dial draws itself, the hand sweeps one full minute, then an iris opens onto the room */
+@property --iris{syntax:"<length-percentage>";inherits:false;initial-value:0%}
+.lx-intro{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 50%,var(--L-bg3),var(--L-deep) 70%);cursor:pointer;
+  -webkit-mask:radial-gradient(circle at 50% 50%,transparent var(--iris),#000 calc(var(--iris) + 1px));mask:radial-gradient(circle at 50% 50%,transparent var(--iris),#000 calc(var(--iris) + 1px))}
+.lx-intro.open{animation:lxIris 1.25s cubic-bezier(.7,0,.2,1) forwards}
+@keyframes lxIris{to{--iris:150%}}
+.lxi-c{display:flex;flex-direction:column;align-items:center;gap:22px;transition:transform 1.2s cubic-bezier(.7,0,.2,1),opacity 1s}
+.lx-intro.open .lxi-c{transform:scale(1.6);opacity:0}
+.lxi-dial{width:min(46vmin,300px);overflow:visible;filter:drop-shadow(0 0 18px rgb(var(--L-hi-rgb)/.25))}
+.lxi-ring{fill:none;stroke:var(--L-gold);stroke-width:.8;stroke-dasharray:541;stroke-dashoffset:541;animation:lxDraw 1.3s cubic-bezier(.6,0,.2,1) .15s forwards;transform:rotate(-90deg);transform-origin:center}
+.lxi-ring2{fill:none;stroke:rgb(var(--L-rgb)/.3);stroke-width:.4;stroke-dasharray:579;stroke-dashoffset:579;animation:lxDraw 1.5s cubic-bezier(.6,0,.2,1) .3s forwards;transform:rotate(90deg);transform-origin:center}
+.lxi-ticks line{stroke:var(--L-gold3);stroke-width:.5;opacity:0;animation:lxTick .3s ease forwards;animation-delay:calc(.35s + var(--i) * 16ms)}
+.lxi-ticks line.b{stroke:var(--L-gold2);stroke-width:1.1}
+.lxi-hand{stroke:var(--L-gold2);stroke-width:.9;stroke-linecap:round;transform-origin:100px 100px;opacity:0;animation:lxHand 1.6s cubic-bezier(.5,0,.2,1) .5s forwards}
+@keyframes lxDraw{to{stroke-dashoffset:0}}
+@keyframes lxTick{to{opacity:1}}
+@keyframes lxHand{0%{opacity:0;transform:rotate(0)}10%{opacity:1}100%{opacity:1;transform:rotate(360deg)}}
+.lxi-word{font:italic 400 clamp(34px,5vw,56px)/1 var(--f-display);letter-spacing:.9em;padding-left:.9em;opacity:0;background:linear-gradient(100deg,var(--L-gold3),var(--L-gold4) 35%,var(--L-gold) 55%,var(--L-gold4) 75%,var(--L-gold3));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:lxWord 1.4s cubic-bezier(.2,.7,.2,1) 1.05s forwards,sheen 6s linear infinite}
+.lxi-word em{font-style:italic}
+@keyframes lxWord{to{opacity:1;letter-spacing:.16em;padding-left:.16em}}
+.lxi-cap{font:600 10px var(--f-ui);letter-spacing:.6em;color:var(--L-mute);opacity:0;animation:lxTick .8s ease 1.7s forwards}
+.lx-intro.quick .lxi-ring,.lx-intro.quick .lxi-ring2{animation-duration:.7s;animation-delay:0s}
+.lx-intro.quick .lxi-ticks line{animation-delay:calc(var(--i) * 6ms)}
+.lx-intro.quick .lxi-hand{animation-duration:.9s;animation-delay:.1s}
+.lx-intro.quick .lxi-word{animation-delay:.35s,0s;animation-duration:.8s,6s}
+.lx-intro.quick .lxi-cap{animation-delay:.7s}
+html.lx-intro-on{overflow:hidden}
+html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
+/* the hero settles in after the iris opens */
+.lx-hero .lx-dial{animation:lxIn 1.6s cubic-bezier(.2,.7,.2,1) both}
+.lx-hero h1,.lx-hero .ar,.lx-hero .meta{animation:lxUp 1.2s cubic-bezier(.2,.7,.2,1) both}
+.lx-hero .ar{animation-delay:.12s}.lx-hero .meta{animation-delay:.24s}
+@keyframes lxIn{from{opacity:0;transform:scale(.86) rotate(-20deg)}}
+@keyframes lxUp{from{opacity:0;transform:translateY(24px);letter-spacing:.3em}}
+
+/* hero */
+.lx-hero{position:relative;min-height:calc(100vh - 77px);display:grid;place-items:center;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse 60% 55% at 50% 48%,var(--L-glow) 0%,var(--L-on) 45%,var(--lx-bg) 75%)}
+.lx-frame{position:absolute;inset:26px;border:1px solid var(--lx-line);pointer-events:none;z-index:2}
+.lx-frame i{position:absolute;width:22px;height:22px;border-color:var(--lx-gold);border-style:solid;border-width:0}
+.lx-frame i:nth-child(1){top:-1px;left:-1px;border-top-width:1px;border-left-width:1px}
+.lx-frame i:nth-child(2){top:-1px;right:-1px;border-top-width:1px;border-right-width:1px}
+.lx-frame i:nth-child(3){bottom:-1px;left:-1px;border-bottom-width:1px;border-left-width:1px}
+.lx-frame i:nth-child(4){bottom:-1px;right:-1px;border-bottom-width:1px;border-right-width:1px}
+.lx-word{position:absolute;inset:0 0 auto 0;height:var(--lxw-h,58%);display:grid;place-items:center;z-index:-1;font:italic 400 clamp(110px,21vw,330px)/1 var(--f-display);letter-spacing:.04em;color:transparent;-webkit-text-stroke:1px rgb(var(--L-rgb)/.28);direction:ltr;user-select:none;pointer-events:none}
+.lx-top{position:absolute;top:60px;left:0;right:0;display:flex;justify-content:center;gap:18px;align-items:center;direction:ltr}
+.lx-top span{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--lx-gold))}
+.lx-top span:last-child{transform:scaleX(-1)}
+.lx-center{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px;padding:120px 20px 150px}
+.lx-dial{position:relative;width:min(46vh,420px);aspect-ratio:1;display:grid;place-items:center}
+.lx-dial svg{position:absolute;inset:0;width:100%;height:100%;animation:turn 120s linear infinite}
+.lx-dial .glow{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgb(var(--L-hi-rgb)/.22),transparent 65%);filter:blur(10px)}
+.lx-dial .pic{position:relative;width:72%;aspect-ratio:1;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px rgb(var(--L-rgb)/.55),0 0 0 10px rgb(var(--L-bgrgb)/.9),0 0 0 11px rgb(var(--L-rgb)/.25),0 60px 120px -30px rgba(0,0,0,.9)}
+.lx-dial .pic img{width:100%;height:100%;object-fit:cover;transform:scale(1.04);transition:transform 2s cubic-bezier(.2,.7,.2,1),opacity .18s,filter .18s}
+.lx-dial:hover .pic img{transform:scale(1.12)}
+@keyframes turn{to{transform:rotate(360deg)}}
+.lx-hero h1{font:400 clamp(46px,6.4vw,96px)/1 var(--f-display);letter-spacing:.14em;direction:ltr}
+.lx-hero h1 em{font-style:italic;letter-spacing:.04em}
+.lx-hero .ar{font:400 clamp(24px,2.6vw,34px) 'Amiri',var(--f-ar);color:var(--lx-ink);opacity:.9}
+.lx-hero .meta{display:flex;gap:28px;font:600 10px var(--f-ui);letter-spacing:.4em;color:var(--lx-mute);direction:ltr;margin-top:6px}
+.lx-hero .meta b{color:var(--lx-gold);font-weight:600}
+.lx-scroll{position:absolute;bottom:52px;left:0;right:0;margin:auto;width:max-content;display:flex;flex-direction:column;align-items:center;gap:10px;font:600 9px var(--f-ui);letter-spacing:.5em;color:var(--lx-mute)}
+.lx-scroll i{width:1px;height:46px;background:linear-gradient(var(--lx-gold),transparent);animation:drip 2.2s ease-in-out infinite;transform-origin:top}
+@keyframes drip{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* marquee */
+.lx-marq{border-block:1px solid var(--lx-line);overflow:hidden;padding:18px 0;background:var(--lx-bg2)}
+.lx-marq div{display:flex;gap:46px;width:max-content;animation:marq 38s linear infinite;font:italic 400 22px var(--f-display);color:var(--lx-gold);direction:ltr;white-space:nowrap}
+.lx-marq span{display:inline-flex;align-items:center;gap:46px}
+.lx-marq span::after{content:"✦";font-style:normal;font-size:12px;color:var(--lx-gold-3)}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* filters */
+.lx-nav{position:sticky;top:76px;z-index:20;display:flex;justify-content:center;gap:6px;padding:14px 16px;background:rgb(var(--L-bgrgb)/.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--lx-line)}
+.lx-nav a{display:inline-flex;align-items:baseline;gap:8px;padding:10px 20px;border-radius:999px;color:var(--lx-mute);font-weight:600;transition:all .3s}
+.lx-nav a em{font:italic 400 15px var(--f-display);color:var(--lx-gold)}
+.lx-nav a span{font:600 9px var(--f-ui);letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+.lx-nav a:hover{color:var(--lx-ink);background:rgb(var(--L-rgb)/.08)}
+.lx-cover{position:relative;margin-top:90px;height:min(62vh,560px);overflow:hidden;border:1px solid var(--lx-line)}
+.lx-cover img{width:100%;height:100%;object-fit:cover;transform:scale(1.15);transition:transform 2.4s cubic-bezier(.2,.7,.2,1)}
+.lx-cover.in img{transform:scale(1)}
+.lx-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgb(var(--L-bgrgb)/.1),rgb(var(--L-bgrgb)/.85))}
+.lx-cover+.lx-sec-h{padding-top:0;margin-top:-120px;position:relative;z-index:2}
+.lx-sec{scroll-margin-top:150px}
+.lx-sec-h{text-align:center;padding:110px 0 10px;display:flex;flex-direction:column;align-items:center;gap:10px;border-bottom:1px solid var(--lx-line)}
+.lx-sec-h h2{font:italic 400 clamp(56px,8vw,120px)/1 var(--f-display)}
+.lx-sec-h p{font:400 24px 'Amiri',var(--f-ar);color:var(--lx-mute)}
+.lx-sec-h p span{font:600 12px var(--f-ui);color:var(--lx-gold)}
+.lx-sec-h::after{content:"";width:1px;height:60px;margin-top:20px;background:linear-gradient(var(--lx-gold),transparent)}
+@media (max-width:640px){.lx-nav{top:66px;overflow-x:auto;justify-content:flex-start}.lx-nav a{padding:8px 14px;white-space:nowrap}.lx-sec-h{padding-top:70px}}
+.lx-filters{display:flex;gap:6px}
+.lx-none{display:flex;flex-direction:column;align-items:center;gap:10px;padding:130px 20px}
+.lx-none span{font:600 10px var(--f-ui);letter-spacing:.6em;color:var(--lx-gold)}
+.lx-none b{font:700 clamp(48px,7vw,90px)/1.1 'Amiri',var(--f-ar);background:linear-gradient(100deg,var(--lx-gold-3),var(--lx-gold-2) 35%,var(--lx-gold) 55%,var(--lx-gold-2) 75%,var(--lx-gold-3));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 9s linear infinite}
+.lx-div{width:1px;height:26px;background:var(--lx-line);margin:0 10px;align-self:center}
+.lx-filters button span{font:600 8px var(--f-ui);letter-spacing:.3em;margin-inline-start:8px;opacity:.7}
+.lx-filters button{height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--lx-line);color:var(--lx-mute);font-size:14px;font-weight:600;transition:all .3s}
+.lx-filters button:hover{color:var(--lx-ink);border-color:var(--lx-gold)}
+.lx-filters button.on{background:linear-gradient(120deg,var(--lx-gold-3),var(--lx-gold));color:var(--L-on);border-color:transparent}
+
+/* chapters */
+.lx-ch{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,110px);align-items:center;padding:110px 0;border-bottom:1px solid var(--lx-line)}
+.lx-ch:last-child{border-bottom:0}
+.lx-ch.flip .lx-pic{order:2}
+.lx-ch .num{position:absolute;top:60px;font:italic 400 clamp(120px,16vw,240px)/1 var(--f-display);color:transparent;-webkit-text-stroke:1px rgb(var(--L-rgb)/.16);pointer-events:none;direction:ltr}
+.lx-ch:not(.flip) .num{left:-1%}.lx-ch.flip .num{right:-1%}
+.lx-pic{position:relative;isolation:isolate}
+.lx-pic::before{content:"";position:absolute;inset:-18px 18px 18px -18px;border:1px solid var(--lx-line);z-index:-1;transition:inset .8s cubic-bezier(.2,.7,.2,1)}
+.lx-ch.flip .lx-pic::before{inset:-18px -18px 18px 18px}
+.lx-pic:hover::before{inset:-26px 26px 26px -26px}
+.lx-ch.flip .lx-pic:hover::before{inset:-26px -26px 26px 26px}
+.lx-pic .ph{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:var(--L-bg2)}
+.lx-pic .ph img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s cubic-bezier(.2,.7,.2,1),opacity .18s,filter .18s}
+.lx-pic .ph img.swap{opacity:.15;filter:blur(3px)}
+.lx-pic:hover .ph img{transform:scale(1.06)}
+.lx-pic .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgb(var(--L-bgrgb)/.55));pointer-events:none}
+.lx-pic .ph-dots{top:auto;bottom:18px}
+.lx-pic:hover .ph-dots,.flipping .ph-dots{opacity:1}
+.lx-pic .tag{position:absolute;top:18px;right:18px;z-index:2;font:600 9px var(--f-ui);letter-spacing:.4em;color:var(--L-on);background:linear-gradient(120deg,var(--lx-gold-2),var(--lx-gold));padding:8px 12px 8px 14px}
+.lx-txt{position:relative;display:flex;flex-direction:column;gap:16px}
+.lx-txt .kind{direction:ltr;text-align:right}
+.lx-txt h2{font:400 clamp(36px,4vw,60px)/1.05 var(--f-display);color:var(--lx-ink);direction:ltr;text-align:right}
+.lx-txt h2 a:hover{color:var(--lx-gold-2)}
+.lx-txt .lead{font:400 21px/1.7 'Amiri',var(--f-ar);color:var(--lx-mute);max-width:460px}
+.lx-specs{display:grid;gap:0;max-width:460px;margin-top:4px}
+.lx-specs div{display:flex;align-items:baseline;gap:10px;padding:11px 0;border-bottom:1px solid var(--lx-line);font-size:14px}
+.lx-specs span{color:var(--lx-mute)}
+.lx-specs i{flex:1;border-bottom:1px dotted rgb(var(--L-rgb)/.3);transform:translateY(-4px)}
+.lx-specs b{font-weight:600;color:var(--lx-ink)}
+.lx-price{display:flex;align-items:baseline;gap:14px;margin-top:8px;font-family:var(--f-ui)}
+.lx-price .now{font:500 34px var(--f-display)}
+.lx-price s{color:var(--lx-mute);font-size:15px}
+.lx-price .off{font:700 11px var(--f-ui);letter-spacing:.1em;color:var(--L-on);background:var(--lx-gold);padding:4px 10px;border-radius:999px}
+.lx-sw{display:flex;gap:10px}
+.lx-sw i{width:18px;height:18px;border-radius:50%;box-shadow:0 0 0 2px var(--lx-bg),0 0 0 3px rgb(var(--L-rgb)/.6)}
+.lx-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.lx-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:54px;padding:0 30px;font-weight:700;font-size:15px;letter-spacing:.02em;transition:all .35s;position:relative;overflow:hidden}
+.lx-btn svg{width:18px;height:18px}
+.lx-btn.solid{background:linear-gradient(120deg,var(--lx-gold-3),var(--lx-gold) 45%,var(--lx-gold-2));color:var(--L-on)}
+.lx-btn.solid:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 20px 40px -18px rgb(var(--L-rgb)/.6)}
+.lx-btn.line{border:1px solid var(--lx-line);color:var(--lx-ink)}
+.lx-btn.line:hover{border-color:var(--lx-gold);color:var(--lx-gold-2)}
+.lx-btn.ico{width:54px;padding:0}
+.lx-btn.ico.on{color:var(--lx-gold)}
+.lx-out{color:var(--lx-mute);font-size:14px}
+
+/* concierge */
+.lx-cta{position:relative;text-align:center;padding:120px 20px;background:radial-gradient(ellipse at 50% 0%,var(--L-glow),var(--lx-bg) 70%);border-top:1px solid var(--lx-line)}
+.lx-cta h3{font:400 clamp(34px,4.6vw,64px)/1.1 var(--f-display);direction:ltr}
+.lx-cta p{font:400 22px 'Amiri',var(--f-ar);color:var(--lx-mute);margin:14px auto 30px;max-width:520px}
+.site-foot{background:var(--lx-bg)!important}
+
+/* cursor ring in gold here */
+.cursor-ring{border-color:var(--lx-gold)!important}
+@media (max-width:900px){
+  .lx-hero{min-height:auto}.lx-frame{inset:12px}.lx-top{top:30px}
+  .lx-center{padding:90px 16px 120px}.lx-dial{width:min(78vw,340px)}
+  .lx-ch,.lx-ch.flip{grid-template-columns:1fr;padding:70px 0;gap:44px}.lx-ch.flip .lx-pic{order:0}
+  .lx-top{letter-spacing:.3em;font-size:8px;white-space:nowrap}.lx-top span{width:28px}
+  .lx-scroll{display:none}.lx-hero .meta{flex-wrap:wrap;justify-content:center;gap:8px 18px}
+  .lx-ch .num{top:20px}.lx-pic{margin:0 18px}
+  .lx-acts .lx-btn.solid{flex:1}
+}
+@media (prefers-reduced-motion:reduce){.gold,.lx-dial svg,.lx-marq div,.lx-scroll i{animation:none}}
+</style>
+<link rel="preconnect" href="https://iyxgiukausajvxpkwaaw.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+</head>
+<body>
+<div class="lx-intro" id="lxIntro" aria-hidden="true">
+  <div class="lxi-c">
+    <svg class="lxi-dial" viewBox="0 0 200 200"><circle class="lxi-ring" cx="100" cy="100" r="86"/><circle class="lxi-ring2" cx="100" cy="100" r="92"/><g class="lxi-ticks"></g><line class="lxi-hand" x1="100" y1="100" x2="100" y2="22"/><circle cx="100" cy="100" r="2.6" fill="var(--L-gold2)"/></svg>
+    <div class="lxi-word en">DAQQA <em>Privé</em></div>
+    <div class="lxi-cap en">THE LUXURY COLLECTION</div>
+  </div>
+</div>
+<script>
+(function () {
+  var el = document.getElementById('lxIntro'), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, quick = false;
+  try { quick = sessionStorage.getItem('dq-lx') === '1'; sessionStorage.setItem('dq-lx', '1'); } catch (e) {}
+  window.DQ_NO_INTRO = true;
+  if (reduce) { el.remove(); return; }
+  var g = el.querySelector('.lxi-ticks'), t = '';
+  for (var i = 0; i < 60; i++) { var a = i * 6 * Math.PI / 180, big = i % 5 === 0, r1 = big ? 72 : 77, r2 = 81; t += '<line style="--i:' + i + '" x1="' + (100 + r1 * Math.sin(a)) + '" y1="' + (100 - r1 * Math.cos(a)) + '" x2="' + (100 + r2 * Math.sin(a)) + '" y2="' + (100 - r2 * Math.cos(a)) + '" class="' + (big ? 'b' : '') + '"/>'; }
+  g.innerHTML = t;
+  if (quick) el.classList.add('quick');
+  document.documentElement.classList.add('lx-intro-on');
+  var done = function () { el.classList.add('open'); document.documentElement.classList.remove('lx-intro-on'); setTimeout(function () { el.remove(); }, 1300); };
+  // open once the entrance has played AND the collection has loaded (capped so a slow line still opens)
+  var T, t0 = Date.now(), min = quick ? 1300 : 2900, opened = false;
+  var go = function () { if (opened) return; opened = true; clearTimeout(T); setTimeout(done, Math.max(0, min - (Date.now() - t0))); };
+  T = setTimeout(go, 14000);
+  (function wait() { if (window.DQ_READY) window.DQ_READY.then(go); else setTimeout(wait, 50); })();
+  el.addEventListener('click', function () { if (!opened) { opened = true; clearTimeout(T); done(); } });
+})();
+</script>
+<div id="hdr"></div>
+<main id="page"><section class="lx-hero"><div class="lx-center"><div class="skeleton" style="width:320px;height:320px;border-radius:50%;opacity:.3"></div></div></section></main>
+<div id="ftr"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="assets/config.js?v=20261018s"></script>
+<script src="assets/app.js?v=20261018s"></script>
+<script>
+const { esc, money, finalPrice, discountPct } = RC;
+const ORDER = Object.keys(RC.kinds); // watches first
+const ticks = () => { let s = ''; for (let i = 0; i < 60; i++) { const a = i * 6 * Math.PI / 180, big = i % 5 === 0, r1 = big ? 41 : 44, r2 = 47.5; s += `<line x1="${50 + r1 * Math.sin(a)}" y1="${50 - r1 * Math.cos(a)}" x2="${50 + r2 * Math.sin(a)}" y2="${50 - r2 * Math.cos(a)}" stroke="${big ? 'var(--L-gold2)' : 'var(--L-gold3)'}" stroke-width="${big ? .6 : .3}"/>`; } return s; };
+let filter = 'all';
+DQ.start('luxury', () => {
+  const all = DQ.pageItems('luxury').sort((a, b) => (ORDER.indexOf(RC.kindOf(a)) - ORDER.indexOf(RC.kindOf(b))) || (b.featured - a.featured) || (finalPrice(b) - finalPrice(a)));
+  // no luxury pieces with photos → the page doesn't exist
+  if (!all.length && !DQ.loadError) return location.replace('./');
+  const COV = DQ.settings.banners || {};
+  const hero = all.find(p => RC.kindOf(p) === 'watches') || all[0];
+  const kinds = ORDER.filter(k => all.some(p => RC.kindOf(p) === k));
+  const gens = [['men', 'رجالي'], ['women', 'حريمي']];
+  const lead = p => { const d = RC.splitDesc ? RC.splitDesc(p.description || '') : { text: p.description || '', specs: [] }; return d; };
+  const chapter = (p, i) => {
+    const d = lead(p), off = discountPct(p), url = RC.productUrl(p), n = (p.images || []).length, fav = DQ.favs.has(p.id);
+    const specs = (d.specs || []).slice(0, 4), text = String(d.body || '').split(/\n/)[0];
+    return `<article class="lx-ch ${i % 2 ? 'flip' : ''}" data-pid="${p.id}">
+      <div class="num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</div>
+      <div class="lx-pic op op-curtain"><a class="ph" href="${url}" aria-label="${esc(p.name)}"><img src="${DQ.img(p)}" alt="${esc(p.name)}" loading="${i ? 'lazy' : 'eager'}">${n > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(n, 6))}</span>` : ''}</a>${p.featured ? '<span class="tag en">SIGNATURE</span>' : ''}</div>
+      <div class="lx-txt op op-stagger">
+        <span class="lx-cap kind">N° ${String(i + 1).padStart(2, '0')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
+        <h2 class="en"><a href="${url}">${esc(p.name)}</a></h2>
+        ${text ? `<p class="lead">${esc(text)}</p>` : ''}
+        ${specs.length ? `<div class="lx-specs">${specs.map(([k, v]) => `<div><span>${esc(k)}</span><i></i><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
+        ${RC.colors(p).length ? `<div class="lx-sw">${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
+        <div class="lx-price"><span class="now gold">${money(finalPrice(p))}</span>${off ? `<s>${money(p.price)}</s><span class="off en">-${off}%</span>` : ''}</div>
+        <div class="lx-acts">${p.stock > 0 ? `<button class="lx-btn solid" data-add="${p.id}">أضف للسلة ${DQ.ICON.bag}</button>` : `<span class="lx-out">نفدت الكمية — اسألنا على واتساب</span>`}<a class="lx-btn line" href="${url}">التفاصيل</a><button class="lx-btn line ico ${fav ? 'on' : ''}" data-fav="${p.id}" aria-label="المفضلة" aria-pressed="${fav}">${DQ.ICON.heart}</button></div>
+      </div></article>`;
+  };
+  document.getElementById('page').innerHTML = `
+  <section class="lx-hero" data-glow>
+    <div class="lx-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="lx-word" aria-hidden="true">Luxury</div>
+    <div class="lx-top lx-cap"><span></span>DAQQA · PRIVÉ COLLECTION<span></span></div>
+    <div class="lx-center">
+      <a class="lx-dial" href="${RC.productUrl(hero)}" data-pid="${hero.id}" aria-label="${esc(hero.name)}">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48.5" fill="none" stroke="var(--L-gold)" stroke-width=".25"/>${ticks()}</svg>
+        <span class="glow"></span><span class="pic ph"><img src="${esc(COV.luxury && COV.luxury.hero || DQ.img(hero))}" alt=""></span>
+      </a>
+      <h1 class="gold">DAQQA <em>Privé</em></h1>
+      <div class="ar">الفخامة في كل دقّة.</div>
+      <div class="meta"><span><b>${all.length}</b> PIECES</span><span>${kinds.map(k => RC.kinds[k].en.toUpperCase()).join(' · ')}</span></div>
+    </div>
+    <div class="lx-scroll en">SCROLL<i></i></div>
+  </section>
+  <div class="lx-marq" aria-hidden="true"><div>${('<span>DAQQA Privé</span><span>Luxury</span><span>' + kinds.map(k => RC.kinds[k].en).join('</span><span>') + '</span>').repeat(6)}</div></div>
+  <nav class="lx-nav" aria-label="أقسام Luxury">${kinds.map((k, n) => `<a href="#lx-${k}"><em class="en">${['I', 'II', 'III'][n]}</em>${RC.kinds[k].ar}<span class="en">${RC.kinds[k].en}</span></a>`).join('')}${gens.length ? `<i class="lx-div" aria-hidden="true"></i><div class="lx-filters" role="tablist"><button data-f="all" class="on">الكل</button>${gens.map(([g, l]) => `<button data-f="g:${g}">${l}<span class="en">${g === 'men' ? 'HIM' : 'HER'}</span></button>`).join('')}</div>` : ''}</nav>
+
+  <section class="wrap" id="chapters"></section>
+  <section class="lx-cta op op-stagger">
+    <span class="lx-cap">PRIVATE SERVICE</span>
+    <h3 class="gold">Reserved for You.</h3>
+    <p>عاوز قطعة معينة أو تشوف صور أكتر قبل ما تطلب؟ كلمنا مباشرة.</p>
+    ${DQ.wa() ? `<a class="lx-btn solid" href="https://wa.me/${DQ.wa()}?text=${encodeURIComponent('أهلاً، مهتم بمجموعة DAQQA Privé')}" target="_blank" rel="noopener">كلمنا على واتساب</a>` : `<a class="lx-btn solid" href="./">تسوّق كل المجموعات</a>`}
+  </section>`;
+  const draw = () => {
+    const list = all.filter(p => filter === 'all' || p.category === filter.slice(2) || p.category === 'unisex');
+    // one section per kind (watches first), each with its own chapter numbers
+    document.getElementById('chapters').innerHTML = kinds.map((k, n) => { const items = list.filter(p => RC.kindOf(p) === k); if (!items.length) return '';
+      const cv = (COV['lux-' + k] || {}).hero;
+      return `<section class="lx-sec" id="lx-${k}">${cv ? `<div class="lx-cover op op-curtain"><img src="${esc(cv)}" alt="" loading="lazy"></div>` : ''}<header class="lx-sec-h op op-stagger"><span class="lx-cap">N° ${['I', 'II', 'III'][n]} · DAQQA PRIVÉ</span><h2 class="gold en">${RC.kinds[k].en}</h2><p>${RC.kinds[k].ar}</p></header>${items.map(chapter).join('')}</section>`; }).join('') || `<div class="lx-none"><span class="en">COMING SOON</span><b>قريبًا</b></div>`;
+    DQ.reveal();
+  };
+  const f = document.querySelector('.lx-filters');
+  if (f) f.onclick = e => { const b = e.target.closest('[data-f]'); if (!b) return; filter = b.dataset.f; f.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); draw(); };
+  draw();
+  DQ.onRefresh = () => {};
+});
+</script>
+</body>
+</html>
