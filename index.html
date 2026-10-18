@@ -28,17 +28,17 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018163914">
-<link rel="stylesheet" href="assets/store.css?v=20261018163914">
+<link rel="stylesheet" href="assets/base.css?v=20261018180408">
+<link rel="stylesheet" href="assets/store.css?v=20261018180408">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
 .landing{position:relative;z-index:5;overflow:clip;height:320vh;margin-bottom:-100vh;pointer-events:none}
 .ld-stick{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;place-items:center;box-sizing:border-box;padding:0 0 calc(var(--navh,0px) + 108px);background:var(--bg);pointer-events:auto}
 .ld-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 46%,rgb(var(--accent-rgb)/.16),transparent 55%),radial-gradient(circle at var(--mx,50%) var(--my,50%),rgb(var(--accent-rgb)/.14),transparent 30%)}
-.ld-slogan{position:absolute;left:calc(max(64px,7vw) + 120px);top:0;bottom:calc(var(--navh,0px) + 108px);z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2px;cursor:default;animation:ldMotto 2s cubic-bezier(.2,.7,.2,1) .9s both}
-.ld-slogan span{position:relative;font:700 clamp(46px,4.4vw,76px)/1.05 'Amiri',var(--f-ar);color:var(--accent);transition:color .5s,text-shadow .5s,filter .5s}
-.ld-slogan span:nth-child(2){padding-inline-start:.5em}.ld-slogan span:nth-child(3){padding-inline-start:1em}
+.ld-slogan{position:absolute;left:calc(max(64px,7vw) + 120px);top:0;bottom:calc(var(--navh,0px) + 108px);z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:0;direction:ltr;cursor:default;animation:ldMotto 2s cubic-bezier(.2,.7,.2,1) .9s both}
+.ld-slogan span{position:relative;display:block;direction:rtl;font:700 clamp(46px,4.4vw,76px)/1.32 'Amiri',var(--f-ar);color:var(--accent);transition:color .5s,text-shadow .5s,filter .5s}
+.ld-slogan span:nth-child(2){padding-left:.6em}.ld-slogan span:nth-child(3){padding-left:1.2em}
 .ld-slogan::before{content:"";position:absolute;inset:10% -40px;border-radius:50%;background:radial-gradient(closest-side,rgb(var(--accent-rgb)/.28),transparent);opacity:0;transition:opacity .5s;z-index:-1}
 .ld-slogan:hover::before{opacity:1}
 .ld-slogan:hover span{color:color-mix(in srgb,var(--accent) 70%,#fff3d6);text-shadow:0 0 24px rgb(var(--accent-rgb)/.7),0 0 6px rgb(var(--accent-rgb)/.5);filter:brightness(1.12)}
@@ -46,10 +46,9 @@
 @keyframes ldMotto{from{opacity:0;filter:blur(10px)}}
 /* the second line mirrors the first on the other side of the logo */
 .ld-slogan.r{left:auto;right:calc(max(64px,7vw) + 120px);align-items:flex-end}
-.ld-slogan.r span:nth-child(2){padding-inline-start:0;padding-inline-end:.5em}.ld-slogan.r span:nth-child(3){padding-inline-start:0;padding-inline-end:1em}
+.ld-slogan.r span:nth-child(2){padding-left:0;padding-right:.6em}.ld-slogan.r span:nth-child(3){padding-left:0;padding-right:1.2em}
 @media (max-width:1100px){.ld-slogan{display:none}}
 /* short screens: the section links under the logo already lead down, so the scroll hint steps aside instead of overlapping them */
-@media (max-height:760px) and (min-width:700px){.ld-stick .ld-scroll{display:none}}
 :root[data-theme="light"] .ld-bg{background:radial-gradient(ellipse at 50% 46%,rgb(var(--accent-rgb)/.08),transparent 55%),radial-gradient(circle at var(--mx,50%) var(--my,50%),rgb(255 255 255/.55),transparent 28%)}
 :root[data-theme="light"] .ld-slogan::before{display:none}
 :root[data-theme="light"] .ld-slogan:hover span{color:#5E3F1C;text-shadow:none;filter:none}
@@ -91,10 +90,21 @@
 @keyframes knock{0%,30%,60%,100%{scale:1}10%,40%,70%{scale:1.07}}
 @keyframes ldFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .ld-fade{will-change:opacity,transform}
-.ld-scroll{position:absolute;bottom:calc(26px + var(--navh,0px));left:0;right:0;margin:0 auto;width:max-content;display:flex;align-items:center;gap:14px;padding:10px 22px 10px 14px;border-radius:999px;background:rgb(var(--accent-rgb)/.1);border:1px solid rgb(var(--accent-rgb)/.35);backdrop-filter:blur(8px);color:var(--muted);white-space:nowrap;z-index:2;animation:ldFade 1.2s 1s both}
-.ld-scroll small{border-inline-start:1px solid rgb(var(--accent-rgb)/.4);padding-inline-start:14px}
-.ld-scroll b{font-size:15px;font-weight:700;color:var(--ink)}
-.ld-scroll small{font:600 10px var(--f-ui);letter-spacing:.5em;padding-left:.5em;color:var(--accent)}
+.ld-rail{position:absolute;top:calc(var(--navh,0px) * 0 + 40px);bottom:calc(var(--navh,0px) + 34px);right:calc(3vw + 46px);z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px 0;width:44px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.28);background:rgb(var(--accent-rgb)/.06);color:var(--muted);cursor:pointer;animation:ldFade 1.2s 1s both;transition:background .3s,border-color .3s}
+.ld-rail:hover{background:rgb(var(--accent-rgb)/.14);border-color:rgb(var(--accent-rgb)/.6)}
+.ld-rail b{writing-mode:vertical-rl;font:700 14px var(--f-ar);color:var(--ink);letter-spacing:.04em}
+.ld-rail small{writing-mode:vertical-rl;font:600 9px var(--f-ui);letter-spacing:.5em;color:var(--accent)}
+/* the long track: a gold drop keeps falling down it, saying "keep going" */
+.ld-rail .tr{position:relative;flex:1;width:1px;min-height:40px;background:linear-gradient(rgb(var(--accent-rgb)/.08),rgb(var(--accent-rgb)/.45),rgb(var(--accent-rgb)/.08));overflow:hidden}
+.ld-rail .tr i{position:absolute;left:-2px;top:0;width:5px;height:22%;border-radius:4px;background:linear-gradient(transparent,var(--accent));box-shadow:0 0 10px rgb(var(--accent-rgb)/.7);transform:translateY(-100%);animation:railDrop 2.4s cubic-bezier(.6,0,.3,1) infinite}
+.ld-rail .tr i:nth-child(2){animation-delay:1.2s;opacity:.55}
+@keyframes railDrop{to{transform:translateY(560%)}}
+.ld-rail .chev{display:flex;flex-direction:column;align-items:center;margin-top:-4px}
+.ld-rail .chev i{width:9px;height:9px;margin-top:-4px;border:solid var(--accent);border-width:0 1.5px 1.5px 0;transform:rotate(45deg);opacity:.2;animation:chevB 1.6s ease-in-out infinite}
+.ld-rail .chev i:nth-child(2){animation-delay:.2s}.ld-rail .chev i:nth-child(3){animation-delay:.4s}
+@keyframes chevB{40%{opacity:1}80%,100%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.ld-rail .tr i,.ld-rail .chev i{animation:none;opacity:.6}}
+@media (max-height:620px){.ld-rail b{display:none}}
 .mouse{width:20px;height:32px;border:1.5px solid var(--accent);border-radius:16px;position:relative}
 .mouse i{position:absolute;left:50%;top:6px;width:3px;height:6px;margin-left:-1.5px;border-radius:2px;background:var(--accent);animation:wheel 1.6s ease-in-out infinite}
 @keyframes wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:0}}
@@ -271,14 +281,14 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <section class="landing" id="landing" aria-label="DAQQA"><div class="ld-stick"><div class="ld-bg"></div><div class="ld-grid"></div><div class="ld-slogan ld-fade" lang="ar"><span>دقت</span><span>ساعة</span><span>العمل</span></div><div class="ld-slogan r ld-fade" lang="ar"><span>دقّة</span><span>تصنع</span><span>الفرق</span></div>
   <span class="ld-side l en ld-fade">PRECISION IN EVERY TICK</span><span class="ld-side r en ld-fade">EST. 2026 · CAIRO</span>
   <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><h1 class="ld-word en" id="ldWord" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></h1><div class="ld-sep ld-fade" aria-hidden="true"><span></span><i></i><span></span></div><div class="ld-ar ld-fade" lang="ar">دقّة</div><div class="ld-beats ld-fade"><small class="en">3 DAQQAT <em>·</em> <span lang="ar">٣ دقّات</span></small><nav aria-label="الأقسام"><a href="#watches" data-kind="watches"><i class="en">01</i>ساعات</a><a href="#glasses" data-kind="glasses"><i class="en">02</i>نضارات</a><a href="#accessories" data-kind="accessories"><i class="en">03</i>اكسسوارات</a></nav></div></div>
-  <div class="ld-scroll ld-fade"><span class="mouse"><i></i></span><b>اسكرول لتحت</b><small class="en">SCROLL</small></div>
+  <button type="button" class="ld-rail ld-fade" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b>اسكرول لتحت</b><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="chev" aria-hidden="true"><i></i><i></i><i></i></span></button>
   </div><div class="ld-ring" id="ldRing"></div></section>
 <main id="sections"><div class="none"><div class="m skeleton" style="border-radius:50%"></div>جاري التحميل…</div></main>
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261018163914"></script>
-<script src="assets/app.js?v=20261018163914"></script>
+<script src="assets/config.js?v=20261018180408"></script>
+<script src="assets/app.js?v=20261018180408"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -363,6 +373,7 @@ const state = {}; // per section: { tab, all }
   }
   addEventListener('scroll', onScroll, { passive: true }); onScroll(); addEventListener('resize', () => { geo = null; onScroll(); }); const _s = document.getElementById('sections'); if (_s && window.ResizeObserver) new ResizeObserver(onScroll).observe(_s); requestAnimationFrame(frame);
   // links to a section (#glasses, #watches-shop …): the store sits under the intro, so scroll past it to the section
+  document.getElementById('ldRail').onclick = () => { const first = document.querySelector('#sections > section.kind[id]:not([hidden])'); if (!(first && DQ_goto(first.id))) scrollBy({ top: innerHeight, behavior: 'smooth' }); };
   window.DQ_goto = (id, smooth = true) => {
     const t = document.getElementById(id), secs = document.getElementById('sections');
     if (!t || !document.body.contains(L) || !secs.contains(t)) return false;
