@@ -470,7 +470,7 @@
           <button class="acc-link" data-mode="login">← رجوع لتسجيل الدخول</button>`;
       } else {
         const up = accMode === 'signup';
-        box.innerHTML = `<p class="acc-lead">${up ? 'اعمل حساب وكل طلباتك هتتحفظ فيه.' : 'ادخل وشوف طلباتك، والطلبات الجاية تتحفظ في حسابك.'}</p>${note}
+        box.innerHTML = `<p class="acc-lead">سجّل دخولك لتستمتع بتجربة تسوّق راقية، وتتابع طلباتك، وتحفظ منتجاتك المفضلة في مكان واحد.</p>${up ? '<p class="acc-free">حساب مجاني بالكامل · بإيميلك أو بحساب Google في ثواني</p>' : ''}${note}
           <div class="g-only" hidden><button class="btn acc-google" id="gBtn" type="button">${ICON.google}<span>${up ? 'سجّل بحساب Google' : 'ادخل بحساب Google'}</span></button>
           <div class="acc-or"><span>أو بالإيميل</span></div></div>
           <form class="acc-form" id="accForm" autocomplete="on">

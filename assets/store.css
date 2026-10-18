@@ -290,6 +290,8 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .acc-dot.on{transform:scale(1)}
 .acc{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 .acc-lead{color:var(--muted);line-height:1.8;margin:0}
+.acc-free{display:flex;align-items:center;justify-content:center;gap:10px;margin:-4px 0 0;color:var(--accent,#C9A97A);font-size:13px;letter-spacing:.2px}
+.acc-free::before,.acc-free::after{content:'';flex:1;max-width:40px;height:1px;background:currentColor;opacity:.45}
 .acc-google{background:#fff;color:#1f1f1f;border:1px solid var(--line);gap:12px}
 .acc-google:hover{background:#f3f3f3}
 .acc-google svg{width:20px;height:20px}
