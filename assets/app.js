@@ -89,16 +89,22 @@
     if (!matchMedia('(hover: hover)').matches) return;
     let cur = null, timer = null;
     const stop = () => { if (!cur) return; clearInterval(timer); const c = cur; cur = null; c.classList.remove('flipping'); const img = c.querySelector('.ph img:not(.alt)'), p = DQ.byId(+c.dataset.pid);
-      if (img && p) img.src = DQ.img(p, 0); c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
+      if (img && p) { img.style.transition = img.style.transform = ''; img.src = DQ.img(p, 0); } c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
     document.addEventListener('pointerover', e => {
       const c = e.target.closest && e.target.closest('[data-pid]');
       if (c === cur) return; stop();
       const p = c && DQ.byId(+c.dataset.pid); if (!p || !p.images || p.images.length < 2) return;
       cur = c; c.classList.add('flipping'); let i = 0; const img = c.querySelector('.ph img:not(.alt), [data-flip]'), dots = c.querySelectorAll('.ph-dots i');
       p.images.slice(1).forEach(u => { const im = new Image(); im.src = u; });
-      const step = () => { i = (i + 1) % p.images.length; img.classList.add('swap'); setTimeout(() => { img.src = DQ.img(p, i); img.classList.remove('swap'); }, 180); dots.forEach((d, j) => d.classList.toggle('on', j === i % dots.length)); };
+      // slow page-turn: the photo turns away, the next one turns in
+      const P = 'perspective(900px) ', S = ' scale(1.08)';
+      const step = () => { if (cur !== c) return; i = (i + 1) % p.images.length; const k = i;
+        img.style.transition = 'transform .55s cubic-bezier(.55,0,.8,.3)'; img.style.transform = P + 'rotateY(90deg)' + S;
+        setTimeout(() => { if (cur !== c) return; img.src = DQ.img(p, k); img.style.transition = 'none'; img.style.transform = P + 'rotateY(-90deg)' + S; void img.offsetWidth;
+          img.style.transition = 'transform .65s cubic-bezier(.2,.7,.25,1)'; img.style.transform = P + 'rotateY(0deg)' + S; }, 560);
+        dots.forEach((d, j) => d.classList.toggle('on', j === k % dots.length)); };
       dots.forEach((d, j) => d.classList.toggle('on', j === 0));
-      setTimeout(() => cur === c && step(), 350); timer = setInterval(step, 1100);
+      setTimeout(step, 700); timer = setInterval(step, 2600);
     });
   }
 
