@@ -48,7 +48,13 @@
   }
   const queueCheck = () => { if (!checkQueued) { checkQueued = true; requestAnimationFrame(check); } };
   addEventListener('scroll', queueCheck, { passive: true }); addEventListener('resize', queueCheck);
-  DQ.reveal = () => { document.querySelectorAll('.reveal:not(.in), .op:not(.in)').forEach(el => { if (!pending.includes(el)) pending.push(el); }); queueCheck(); };
+  // endless decorative animations (gold sheen, glows, tickers) only run while they are on screen
+  const loopIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('anim-off', !e.isIntersecting)), { rootMargin: '80px' }) : null;
+  let loopScan = 0;
+  const scanLoops = () => { if (!loopIO) return; clearTimeout(loopScan); loopScan = setTimeout(() => {
+    document.querySelectorAll('.gold,.mo-line .gold,.mo-ticks,.lx-marq div,.lux-row,.lux-row span,.lx-dial,.lx-dial *,.lx-scroll i,.cart-lx,.cl-in,.cl-total b,.trk-dot,.lxp-price .now').forEach(el => { if (!el._loopObs) { el._loopObs = 1; loopIO.observe(el); } });
+  }, 400); };
+  DQ.reveal = () => { scanLoops(); document.querySelectorAll('.reveal:not(.in), .op:not(.in)').forEach(el => { if (!pending.includes(el)) pending.push(el); }); queueCheck(); };
   // gentle parallax for section backgrounds (data-parallax) — one rAF per frame, skipped for reduced motion
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     let ticking = false;
@@ -73,7 +79,7 @@
     const off = discountPct(p), url = RC.productUrl(p), cols = RC.colors(p), fav = DQ.favs && DQ.favs.has(p.id);
     const nImg = (p.images || []).length;
     return `<article class="card reveal" data-pid="${p.id}" style="transition-delay:${Math.min(i, 8) * 50}ms">
-      <a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'">${p.images && p.images[1] ? `<img class="alt" loading="lazy" src="${DQ.img(p, 1)}" alt="">` : ''}
+      <a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'">
         ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off">-${off}%</span>` : ''}${p.stock <= 0 ? `<div class="out">نفدت الكمية</div>` : ''}</a>
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
@@ -256,7 +262,12 @@
     document.addEventListener('pointerdown', () => ring.classList.add('press')); document.addEventListener('pointerup', () => ring.classList.remove('press'));
     // big screens zoom the page (html{zoom}); mouse coords are screen px, so convert to CSS px or the ring drifts away from the pointer
     let Z = 1; const zoomNow = () => { Z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1; }; zoomNow(); addEventListener('resize', zoomNow);
-    (function loop() { rx += (x - rx) * .18; ry += (y - ry) * .18; ring.style.transform = `translate(${rx / Z}px, ${ry / Z}px)`; dot.style.transform = `translate(${x / Z}px, ${y / Z}px)`; requestAnimationFrame(loop); })();
+    // the ring eases after the pointer and the loop sleeps once it has caught up (no work while the mouse is still)
+    let looping = false;
+    const loop = () => { rx += (x - rx) * .18; ry += (y - ry) * .18; ring.style.transform = `translate(${rx / Z}px, ${ry / Z}px)`; dot.style.transform = `translate(${x / Z}px, ${y / Z}px)`;
+      if (Math.abs(x - rx) + Math.abs(y - ry) > .3) requestAnimationFrame(loop); else looping = false; };
+    DQ._wakeCursor = () => { if (!looping) { looping = true; requestAnimationFrame(loop); } };
+    addEventListener('pointermove', DQ._wakeCursor, { passive: true });
   }
   function openSheet(id) { DQ.closeAll(); $(id).classList.add('on'); document.body.style.overflow = 'hidden'; }
   function renderSearch(q) {
@@ -469,7 +480,7 @@
       if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status);
     }
   }
-  setInterval(pollMine, 20000); document.addEventListener('visibilitychange', pollMine); setTimeout(pollMine, 4000);
+  setInterval(pollMine, 90000); document.addEventListener('visibilitychange', pollMine); setTimeout(pollMine, 4000);
   const userName = u => (u && (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name))) || (u && u.email ? u.email.split('@')[0] : '');
   async function setUser(u) {
     const changed = ((DQ.user && DQ.user.id) || null) !== ((u && u.id) || null);
@@ -619,8 +630,8 @@
       .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_products' }, soon)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_settings' }, soon)
       .subscribe();
-    setInterval(() => { if (!document.hidden) checkBuild(); }, 60000);
-    setInterval(() => { if (!document.hidden && Date.now() - lastLive > 120000) refreshData(); }, 30000);
+    setInterval(() => { if (!document.hidden) checkBuild(); }, 120000);
+    setInterval(() => { if (!document.hidden && Date.now() - lastLive > 600000) refreshData(); }, 120000);
     document.addEventListener('visibilitychange', () => { if (document.hidden) return; checkBuild(); if (Date.now() - lastLive > 30000) refreshData(); });
   }
 })();

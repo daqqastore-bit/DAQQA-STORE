@@ -28,8 +28,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261018153918">
-<link rel="stylesheet" href="assets/store.css?v=20261018153918">
+<link rel="stylesheet" href="assets/base.css?v=20261018155426">
+<link rel="stylesheet" href="assets/store.css?v=20261018155426">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -272,8 +272,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261018153918"></script>
-<script src="assets/app.js?v=20261018153918"></script>
+<script src="assets/config.js?v=20261018155426"></script>
+<script src="assets/app.js?v=20261018155426"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -322,15 +322,22 @@ const state = {}; // per section: { tab, all }
     stage.style.pointerEvents = v > .85 ? 'none' : '';
     ring.style.width = ring.style.height = (R * 2) + 'vmax'; ring.style.opacity = R > 0 && R < 110 && p < 1 ? 1 : 0;
   }
-  function frame() {
+  const H = { s: hand('dq-s'), m: hand('dq-m'), h: hand('dq-h') }; let lastT = 0;
+  function frame(now) {
+    // at rest the hands only need ~25 updates a second; while scrolling every frame counts
+    if (p === pv && now - lastT < 40 && !(p >= 1 && pv >= 1)) return requestAnimationFrame(frame);
+    lastT = now;
     const d = new Date(), t = cairo(d), sec = t.s + d.getMilliseconds() / 1000, min = t.m + sec / 60, hr = (t.h % 12) + min / 60;
     if (t.s !== lastS) { lastS = t.s; const h12 = t.h % 12 || 12; clk.textContent = `${String(h12).padStart(2, '0')}:${String(t.m).padStart(2, '0')}:${String(t.s).padStart(2, '0')}`; ap.textContent = t.h < 12 ? 'AM' : 'PM'; }
     if (!reduce && Math.abs(p - pv) > .0003) { pv += (p - pv) * .16; if (Math.abs(p - pv) < .0003) pv = p; render(pv); }
-    hand('dq-s').style.transform = `rotate(${sec * 6 + pv * 1080}deg)`;
-    hand('dq-m').style.transform = `rotate(${min * 6 + pv * 540}deg)`;
-    hand('dq-h').style.transform = `rotate(${hr * 30 + pv * 90}deg)`;
+    H.s.style.transform = `rotate(${sec * 6 + pv * 1080}deg)`;
+    H.m.style.transform = `rotate(${min * 6 + pv * 540}deg)`;
+    H.h.style.transform = `rotate(${hr * 30 + pv * 90}deg)`;
+    // once the intro has fully opened onto the store nothing of it is visible: let the loop sleep until scrolled back
+    if (p >= 1 && pv >= 1) { asleep = true; return; }
     requestAnimationFrame(frame);
   }
+  let asleep = false;
   // scroll only handles layout: progress + holding the store under the header
   function onScroll() {
     // size the stage from the real window height (the page is zoomed on big screens, so vh would overflow)
@@ -345,6 +352,7 @@ const state = {}; // per section: { tab, all }
       if (fix) secs.style.top = navH + 'px';
       L.style.marginBottom = (-(stage.offsetHeight - navH) + (fix ? secs.offsetHeight : 0)) + 'px';
     }
+    if (asleep && p < 1) { asleep = false; requestAnimationFrame(frame); }
     // once the store is released the intro must already be fully open
     if (p >= 1 && pv < 1) { pv = 1; render(1); }
   }

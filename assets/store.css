@@ -104,7 +104,7 @@ html,body{overflow-x:clip}
 .ci .rm:active{transform:scale(.92)}
 /* Luxury pieces in the cart: their own glowing Privé block */
 @property --cl-a{syntax:'<angle>';inherits:false;initial-value:0deg}
-.cart-lx{position:relative;margin:4px 0 18px;padding:1.5px;border-radius:20px;background:conic-gradient(from var(--cl-a),#6E5326,#E9CF95 12%,#8C6A35 25%,#3A2C16 50%,#C9A96E 70%,#F4DFAE 78%,#6E5326);animation:clSpin 6s linear infinite,clGlow 3.2s ease-in-out infinite;isolation:isolate}
+.cart-lx{position:relative;will-change:transform;contain:paint;margin:4px 0 18px;padding:1.5px;border-radius:20px;background:conic-gradient(from var(--cl-a),#6E5326,#E9CF95 12%,#8C6A35 25%,#3A2C16 50%,#C9A96E 70%,#F4DFAE 78%,#6E5326);animation:clSpin 6s linear infinite,clGlow 3.2s ease-in-out infinite;isolation:isolate}
 .cl-in{position:relative;overflow:hidden;border-radius:19px;padding:14px 14px 12px;background:radial-gradient(120% 90% at 100% 0,#2A2014,#120D08 70%);color:#EDE3D3}
 .cl-in::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgb(244 223 174/.16) 50%,transparent 65%);transform:translateX(-120%);animation:clSheen 4.5s ease-in-out infinite;pointer-events:none}
 .cl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:8px;border-bottom:1px solid rgb(201 169 110/.25)}
@@ -126,6 +126,8 @@ html,body{overflow-x:clip}
 @keyframes clSheen{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
 @keyframes clText{to{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){.cart-lx,.cl-in::after,.cl-total b{animation:none}}
+.drawer:not(.on) .cart-lx,.drawer:not(.on) .cart-lx *,.drawer:not(.on) .cart-lx *::after{animation-play-state:paused!important}
+.anim-off,.anim-off::before,.anim-off::after{animation-play-state:paused!important}
 .sum{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 .sum b{color:var(--ink);font-family:var(--f-ui)}
 .sum.save b{color:var(--green)}
@@ -436,7 +438,7 @@ textarea.input.addr{min-height:120px;line-height:1.7}
 /* ---------- LUXURY button: its own glowing gold piece in the header ---------- */
 .lux-btn{position:relative;flex:none;display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 20px 0 18px;border-radius:999px;isolation:isolate;overflow:hidden;
   background:linear-gradient(120deg,#120c06,#2a1c0e 45%,#120c06);color:#F2E3C2;border:1px solid transparent;
-  box-shadow:0 0 0 1px rgba(201,169,110,.55) inset,0 0 18px rgba(201,169,110,.35),0 8px 26px -10px rgba(201,169,110,.55);animation:luxGlow 3.2s ease-in-out infinite,luxPulse 2.4s ease-in-out infinite;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  box-shadow:0 0 0 1px rgba(201,169,110,.55) inset,0 0 18px rgba(201,169,110,.35),0 8px 26px -10px rgba(201,169,110,.55);animation:luxPulse 2.4s ease-in-out infinite;transition:transform .35s cubic-bezier(.2,.8,.2,1);will-change:transform;contain:paint}
 .lux-btn span{font:600 11px var(--f-ui);letter-spacing:.42em;padding-left:.42em;background:linear-gradient(100deg,#9c7642,#f6e3b5 35%,#c9a96e 55%,#f6e3b5 75%,#9c7642);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:luxSheen 4s linear infinite}
 .lux-btn i{width:7px;height:7px;transform:rotate(45deg);background:linear-gradient(135deg,#f6e3b5,#a77d43);box-shadow:0 0 10px #e9c98a}
 .lux-btn::before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:conic-gradient(from var(--la,0deg),transparent 0 60%,#f6e3b5 75%,transparent 90%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:luxSpin 3.5s linear infinite;z-index:-1}
@@ -447,10 +449,10 @@ textarea.input.addr{min-height:120px;line-height:1.7}
 @property --la{syntax:"<angle>";inherits:false;initial-value:0deg}
 @keyframes luxSpin{to{--la:360deg}}
 @keyframes luxSheen{to{background-position:-220% 0}}
-@keyframes luxSweep{0%,55%{left:-60%}100%{left:130%}}
+@keyframes luxSweep{0%,55%{transform:translateX(0) skewX(-20deg)}100%{transform:translateX(475%) skewX(-20deg)}}
 @keyframes luxPulse{0%,100%{scale:1}14%{scale:1.05}28%{scale:1}42%{scale:1.03}60%{scale:1}}
 @keyframes luxGlow{50%{box-shadow:0 0 0 1px rgba(233,201,138,.8) inset,0 0 30px rgba(233,201,138,.5),0 8px 30px -8px rgba(201,169,110,.7)}}
-.lux-row{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 18px;padding:18px;border-radius:18px;overflow:hidden;background:linear-gradient(120deg,#120c06,#2a1c0e 50%,#120c06);box-shadow:0 0 0 1px rgba(201,169,110,.55) inset,0 0 24px rgba(201,169,110,.3);animation:luxGlow 3.2s ease-in-out infinite}
+.lux-row{position:relative;contain:paint;display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0 18px;padding:18px;border-radius:18px;overflow:hidden;background:linear-gradient(120deg,#120c06,#2a1c0e 50%,#120c06);box-shadow:0 0 0 1px rgba(201,169,110,.55) inset,0 0 24px rgba(201,169,110,.3);animation:luxGlow 3.2s ease-in-out infinite}
 .lux-row span{font:600 18px var(--f-ui);letter-spacing:.5em;padding-left:.5em;background:linear-gradient(100deg,#9c7642,#f6e3b5 35%,#c9a96e 55%,#f6e3b5 75%,#9c7642);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:luxSheen 4s linear infinite}
 .lux-row small{font:600 9px var(--f-ui);letter-spacing:.4em;color:#a39479}
 .lux-row::after{content:"";position:absolute;top:0;bottom:0;width:30%;left:-40%;background:linear-gradient(100deg,transparent,rgba(255,240,205,.25),transparent);transform:skewX(-20deg);animation:luxSweep 3.8s ease-in-out infinite}
