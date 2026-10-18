@@ -61,4 +61,4 @@ RC.googleOn = () => RC._g || (RC._g = fetch(RC.url + '/auth/v1/settings', { head
 RC.notifyEmail = 'daqqastore@gmail.com';
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261018180408';
+RC.build = '20261018181134';
