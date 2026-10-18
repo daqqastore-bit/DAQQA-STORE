@@ -370,6 +370,14 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .dd.open .dd-btn{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
 .dd.open .dd-btn svg{transform:rotate(180deg)}
 .dd.err .dd-btn{border-color:var(--red)}
+.field.bad .input,.field.bad .dd-btn{border-color:#D0604A;box-shadow:0 0 0 3px rgb(208 96 74/.14);background:rgb(208 96 74/.05)}
+.field.bad>label{color:#D0604A}
+.f-err{display:flex;align-items:center;gap:6px;font-size:12.5px;line-height:1.5;color:#D0604A;margin-top:2px;animation:fErr .25s ease}
+.f-err::before{content:"";flex:none;width:15px;height:15px;border-radius:50%;background:#D0604A;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-2h2v2Zm0-4h-2V7h2v6Z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 15h-2v-2h2v2Zm0-4h-2V7h2v6Z'/%3E%3C/svg%3E") center/contain no-repeat}
+@keyframes fErr{from{opacity:0;transform:translateY(-3px)}}
+.field.shake{animation:fShake .4s ease}
+@keyframes fShake{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.field.shake,.f-err{animation:none}}
 .dd-val{font-weight:600;color:var(--ink)}
 .dd-val.ph{font-weight:400;color:var(--muted-2)}
 .dd-pop{position:absolute;inset-inline:0;top:calc(100% + 8px);z-index:30;padding:8px;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:0 30px 60px -20px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1),visibility .2s}

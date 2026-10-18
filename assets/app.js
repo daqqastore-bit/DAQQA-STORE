@@ -331,7 +331,7 @@
       $('#drTitle').textContent = 'بيانات الطلب';
       let saved = {}; try { saved = JSON.parse(localStorage.getItem('dq-cust') || localStorage.getItem('rc-cust') || '{}') } catch (e) {}
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
-      $('#drBody').innerHTML = (DQ.user ? `<div class="acc-note ok">الطلب هيتحفظ في حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`) + `<form class="form-grid" id="coForm" autocomplete="on">
+      $('#drBody').innerHTML = (DQ.user ? `<div class="acc-note ok">الطلب هيتحفظ في حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`) + `<form class="form-grid" id="coForm" autocomplete="on" novalidate>
         <div class="field"><label for="f-name">الاسم *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name"></div>
         <div class="field"><label for="f-phone">رقم الموبايل *</label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right"></div>
         <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
@@ -347,19 +347,41 @@
       // keep what the customer typed (survives any re-render or reload)
       const keep = () => { try { localStorage.setItem('dq-cust', JSON.stringify(Object.fromEntries(new FormData($('#coForm'))))) } catch (e) {} };
       $('#coForm').addEventListener('input', keep);
+      $('#coForm').addEventListener('input', e => { const id = e.target.id; if (NEED[id] && e.target.closest('.field.bad')) fieldErr(id, NEED[id](e.target.value.trim())); });
       const dd = $('#cityDD'), btn = dd.querySelector('.dd-btn'), q = dd.querySelector('.dd-search');
       const open = v => { dd.classList.toggle('open', v); btn.setAttribute('aria-expanded', v); if (v) { q.value = ''; dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = false); setTimeout(() => q.focus(), 30); const on = dd.querySelector('.dd-list .on'); on && on.scrollIntoView({ block: 'center' }); } };
       btn.onclick = () => open(!dd.classList.contains('open'));
       q.oninput = () => { const t = q.value.trim(); dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = t && !b.dataset.v.includes(t)); };
       q.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = dd.querySelector('.dd-list button:not([hidden])'); f && f.click(); } if (e.key === 'Escape') { e.stopPropagation(); open(false); btn.focus(); } };
-      dd.querySelector('.dd-list').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; $('#f-city').value = b.dataset.v; const v = dd.querySelector('.dd-val'); v.textContent = b.dataset.v; v.classList.remove('ph'); dd.classList.remove('err');
+      dd.querySelector('.dd-list').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; $('#f-city').value = b.dataset.v; const v = dd.querySelector('.dd-val'); v.textContent = b.dataset.v; v.classList.remove('ph'); dd.classList.remove('err'); fieldErr('f-city', '');
         dd.querySelectorAll('.dd-list button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); open(false); keep(); };
       document.addEventListener('pointerdown', e => { if (!dd.contains(e.target)) open(false); });
     }
   }
+  // required fields light up red with a short line saying why we need them
+  const NEED = {
+    'f-name': v => v ? '' : 'اكتب اسمك عشان نعرف الطلب باسم مين',
+    'f-phone': v => !v ? 'رقم الموبايل مهم عشان نكلمك ونأكد الطلب' : /^\+?[0-9 ]{10,15}$/.test(v) ? '' : 'الرقم مش مظبوط، اكتبه كامل (11 رقم)',
+    'f-city': v => v ? '' : 'اختار المحافظة عشان نوصلك ونحسب الشحن صح',
+    'f-addr': v => v.length >= 6 ? '' : 'العنوان بالتفصيل مهم عشان الطلب يوصلك من غير لف'
+  };
+  function fieldErr(id, msg) {
+    const el = $('#' + id), box = (id === 'f-city' ? $('#cityDD') : el).closest('.field');
+    box.classList.toggle('bad', !!msg); let m = box.querySelector('.f-err');
+    if (msg) { if (!m) { m = document.createElement('span'); m.className = 'f-err'; m.setAttribute('role', 'alert'); box.appendChild(m); } m.textContent = msg; }
+    else if (m) m.remove();
+  }
+  function checkForm() {
+    let first = null;
+    for (const [id, test] of Object.entries(NEED)) { const msg = test($('#' + id).value.trim()); fieldErr(id, msg); if (msg && !first) first = id; }
+    if (!first) return true;
+    const box = (first === 'f-city' ? $('#cityDD') : $('#' + first)).closest('.field');
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' }); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+    if (first === 'f-city') setTimeout(() => $('#cityDD .dd-btn').click(), 350); else $('#' + first).focus({ preventScroll: true });
+    return false;
+  }
   async function placeOrder() {
-    const f = $('#coForm'); if (!f.reportValidity()) return;
-    if (!$('#f-city').value) { $('#cityDD').classList.add('err'); $('#cityDD .dd-btn').click(); return DQ.toast('اختار المحافظة', 'err'); }
+    const f = $('#coForm'); if (!checkForm()) return;
     const d = Object.fromEntries(new FormData(f));
     try { localStorage.setItem('dq-cust', JSON.stringify({ name: d.name, phone: d.phone, city: d.city, address: d.address })) } catch (e) {} /* notes are not kept for the next order */
     const btn = $('#place'); btn.disabled = true; btn.textContent = 'جاري الإرسال...';
