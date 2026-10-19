@@ -149,6 +149,7 @@
       <div class="sheet" id="searchSheet" role="dialog" aria-label="بحث"><div class="wrap sheet-head"><b style="font-size:18px">بحث</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
         <div class="wrap sheet-body"><input class="input search-input" id="searchInput" placeholder="دوّر على ساعة، نضارة أو اكسسوار…" autocomplete="off"><div class="search-res" id="searchRes"></div></div></div>`;
     $('#ftr').innerHTML = `<footer class="site-foot"><div class="wrap">
+      <a class="ft-all" id="ftAll" href="social.html" hidden><span class="ft-all-ic" id="ftAllIc" aria-hidden="true"></span><span class="ft-all-t"><b>كل حساباتنا على السوشيال</b><small>تابعنا وكلّمنا من أي مكان يريحك</small></span><span class="ft-all-go" aria-hidden="true">←</span></a>
       <div class="foot-grid">
         <div class="foot-brand"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
           <p>DAQQA STORE — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام والشحن لكل مصر.</p></div>
@@ -157,7 +158,7 @@
         <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul></div>
       </div>
       <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div>
-      <a class="ft-all" id="ftAll" href="social.html" hidden><span>كل حساباتنا على السوشيال</span><span class="ft-all-ic" id="ftAllIc" aria-hidden="true"></span><span aria-hidden="true">←</span></a></div></footer>
+</div></footer>
       <div class="overlay" id="overlay"></div>
       <aside class="drawer" id="drawer" aria-label="Shopping Cart"><div class="dr-head"><h3 id="drTitle">Shopping Cart</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
       <section class="co-page" id="coPage" role="dialog" aria-modal="true" aria-label="إتمام الطلب" hidden><div class="co-veil"></div>
@@ -403,19 +404,20 @@
             <h1>بيانات التوصيل</h1><p class="co-lead">خطوة أخيرة ويكون طلبك عندنا. الدفع كاش لما الطلب يوصلك.</p>
             ${DQ.user ? `<div class="acc-note ok">الطلب من حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`}
             <form class="form-grid co-fields" id="coForm" autocomplete="on" novalidate>
-            <div class="co-two"><div class="field"><label for="f-name">الاسم *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name"></div>
-            <div class="field"><label for="f-phone">رقم الموبايل *</label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right"></div></div>
-            <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
-              <button type="button" class="input dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLbl"><span class="dd-val ${saved.city ? '' : 'ph'}">${esc(saved.city || 'اختار المحافظة')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-              <input type="hidden" name="city" id="f-city" value="${esc(saved.city || '')}">
-              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}${zones().length || Number(DQ.settings.shipping_fee) ? `<small class="dd-ship">${DQ.shipFor(c) ? 'شحن ' + money(DQ.shipFor(c)) : 'شحن مجاني'}</small>` : ''}</button>`).join('')}</div></div></div></div>
-            <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="3" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
-            <div class="field"><label>موقعك على الخريطة <small class="co-opt">اختياري</small></label>
+            <div class="field"><label for="f-name">الاسم بالكامل *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name" dir="auto" placeholder="مثال: أحمد محمد"></div>
+            <div class="field"><label for="f-phone">رقم الموبايل * <small class="co-opt">هنكلمك عليه نأكد الطلب</small></label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="01XXXXXXXXX"></div>
+            <div class="field"><label>حدّد موقعك بالـ GPS <small class="co-opt">اختياري · بيكتبلك العنوان لوحده</small></label>
               <div class="loc ${loc ? 'on' : ''}" id="locBox"><button type="button" class="loc-btn" id="locBtn"><span class="loc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
                 <span class="loc-t"><b>${loc ? 'اتحدد موقعك ✓' : 'حدّد موقعك على الخريطة'}</b><small>${loc ? (coAddr ? esc(coAddr) : 'المندوب هيوصلك على اللوكيشن ده بالظبط') : 'بالـ GPS أو حرّك الدبوس لأي مكان — بيوصلنا لينك المكان'}</small></span></button>
                 ${loc ? `<span class="loc-acts"><button type="button" id="locEdit">تعديل</button><a href="${esc(loc)}" target="_blank" rel="noopener">عرض</a><button type="button" id="locDel">حذف</button></span>` : ''}</div>
               <input type="hidden" name="location" id="f-loc" value="${esc(loc)}"></div>
-            <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
+            <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
+              <button type="button" class="input dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLbl"><span class="dd-val ${saved.city ? '' : 'ph'}">${esc(saved.city || 'اختار المحافظة')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <input type="hidden" name="city" id="f-city" value="${esc(saved.city || '')}">
+              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}${zones().length || Number(DQ.settings.shipping_fee) ? `<small class="dd-ship">${DQ.shipFor(c) ? 'شحن ' + money(DQ.shipFor(c)) : 'شحن مجاني'}</small>` : ''}</button>`).join('')}</div></div></div></div>
+            <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="3" dir="auto" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
+
+            <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" dir="auto" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
           </div>
           <aside class="co-side"><div class="co-card">
             <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit" aria-label="تعديل الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>تعديل</button></div>
