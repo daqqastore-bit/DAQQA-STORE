@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019134954">
+<link rel="stylesheet" href="assets/base.css?v=20261019135212">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -437,7 +437,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019134954"></script>
+<script src="assets/config.js?v=20261019135212"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1018,12 +1018,13 @@ function renderCovers() {
 }
 const GOV = ['القاهرة','الجيزة','القليوبية','الإسكندرية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
 let zonesDraft = null;   // shipping price groups being edited: [{price, cities: []}]
+const zTag = z => { const n = z.cities.length === GOV.length ? 'كل المحافظات' : z.cities.length + ' محافظة'; return +z.price ? n : 'شحن مجاني · ' + n; };
 function zonesHTML() {
   const taken = c => zonesDraft.findIndex(z => z.cities.includes(c));
   return zonesDraft.map((z, i) => `<div class="zone" data-zone="${i}">
       <div class="zone-h"><div class="field"><label>سعر الشحن</label><div class="zone-price"><input class="input en" inputmode="decimal" data-zprice="${i}" value="${esc(z.price ?? '')}" placeholder="0"><span>ج.م</span></div></div>
-        <span class="zone-tag ${+z.price ? '' : 'free'}">${+z.price ? z.cities.length + ' محافظة' : 'شحن مجاني · ' + z.cities.length + ' محافظة'}</span>
-        <button type="button" class="btn btn-sm btn-ghost" data-zall="${i}">الكل</button><button type="button" class="btn btn-sm btn-danger" data-zdel="${i}">حذف</button></div>
+        <span class="zone-tag ${+z.price ? '' : 'free'}">${zTag(z)}</span>
+        <button type="button" class="btn btn-sm btn-ghost" data-zall="${i}">${z.cities.length === GOV.length ? 'إلغاء الكل' : 'كل المحافظات'}</button><button type="button" class="btn btn-sm btn-danger" data-zdel="${i}">حذف</button></div>
       <div class="gov-chips">${GOV.map(c => { const t = taken(c); return `<button type="button" class="gchip ${t === i ? 'on' : t >= 0 ? 'other' : ''}" data-zc="${i}" data-c="${c}" title="${t >= 0 && t !== i ? 'متحددة في سعر تاني — اضغط تنقلها هنا' : ''}">${c}</button>`; }).join('')}</div></div>`).join('')
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
@@ -1063,14 +1064,18 @@ function renderSettings() {
     toast(off ? 'الطلب من الموقع اتقفل، الطلبات هتوصلك واتساب' : 'الطلب من الموقع اشتغل ✓', 'ok'); };
   const drawZones = () => { $('#zones').innerHTML = zonesHTML(); };
   $('#zoneAdd').onclick = () => { zonesDraft.push({ price: '', cities: [] }); drawZones(); const ins = $('#zones').querySelectorAll('[data-zprice]'); ins[ins.length - 1].focus(); };
-  $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = +z.price ? z.cities.length + ' محافظة' : 'شحن مجاني · ' + z.cities.length + ' محافظة'; };
+  $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = zTag(z); };
   $('#zones').onclick = async e => {
     const ch = e.target.closest('[data-zc]'), del = e.target.closest('[data-zdel]'), all = e.target.closest('[data-zall]');
     if (ch) { const i = +ch.dataset.zc, c = ch.dataset.c, z = zonesDraft[i];
       if (z.cities.includes(c)) z.cities = z.cities.filter(x => x !== c);
       else { zonesDraft.forEach(o => o.cities = o.cities.filter(x => x !== c)); z.cities.push(c); }   // a governorate belongs to one price only
       drawZones(); }
-    if (all) { const i = +all.dataset.zall, free = GOV.filter(c => !zonesDraft.some(z => z.cities.includes(c))); zonesDraft[i].cities.push(...free); drawZones(); }
+    // "all governorates" takes every one (moving them from other prices); pressed again it clears them
+    if (all) { const i = +all.dataset.zall, z = zonesDraft[i];
+      if (z.cities.length === GOV.length) z.cities = [];
+      else { zonesDraft.forEach(o => o.cities = []); z.cities = GOV.slice(); }
+      drawZones(); }
     if (del) { const i = +del.dataset.zdel; if (zonesDraft[i].cities.length && !(await confirmBox('تحذف السعر ده؟ محافظاته هترجع لسعر باقي المحافظات.', 'حذف'))) return; zonesDraft.splice(i, 1); drawZones(); }
   };
   $('#shipForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
