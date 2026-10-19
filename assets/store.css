@@ -17,8 +17,11 @@ html,body{overflow-x:clip}
 .ft-ic svg{width:17px;height:17px;flex:none;transition:color .2s}
 .ft-ic small{display:none}
 .ft-ic:hover svg{color:var(--sc)}
-.ft-all{display:inline-flex;gap:6px;margin-top:16px;font-size:13px;color:var(--accent);font-weight:600}
-.ft-all:hover{text-decoration:underline;text-underline-offset:4px}
+.ft-all{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 28px;padding:16px 20px;border:1px solid var(--line);border-radius:16px;font-size:14.5px;color:var(--accent);font-weight:600;transition:background .25s,border-color .25s,color .25s}
+.ft-all[hidden]{display:none}
+.ft-all-ic{display:inline-flex;gap:6px;color:var(--muted)}.ft-all-ic svg{width:16px;height:16px}
+.ft-all:hover{background:color-mix(in srgb,var(--accent) 10%,transparent);border-color:var(--accent)}
+.ft-all:hover .ft-all-ic{color:var(--accent)}
 .announce{background:var(--nav);color:var(--accent);text-align:center;font-size:13px;font-weight:600;padding:9px 16px;border-bottom:1px solid var(--line);letter-spacing:.01em}
 .announce:empty{display:none}
 

@@ -154,9 +154,10 @@
           <p>DAQQA STORE — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام والشحن لكل مصر.</p></div>
         <div><h4 class="en">SHOP</h4><ul>${Object.entries(RC.kinds).map(([k, v]) => `<li data-kind="${k}"><a href="./#${k}">${v.ar}</a></li>`).join('')}</ul></div>
         <div><h4 class="en">HELP</h4><ul><li>الدفع عند الاستلام</li><li>شحن 2–5 أيام</li><li>استبدال خلال 14 يوم</li><li>ضمان على الماكينة</li></ul></div>
-        <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul><a class="ft-all" href="social.html">كل حساباتنا على السوشيال <span aria-hidden="true">←</span></a></div>
+        <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul></div>
       </div>
-      <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div></div></footer>
+      <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div>
+      <a class="ft-all" id="ftAll" href="social.html" hidden><span>كل حساباتنا على السوشيال</span><span class="ft-all-ic" id="ftAllIc" aria-hidden="true"></span><span aria-hidden="true">←</span></a></div></footer>
       <div class="overlay" id="overlay"></div>
       <aside class="drawer" id="drawer" aria-label="Shopping Cart"><div class="dr-head"><h3 id="drTitle">Shopping Cart</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
       <section class="co-page" id="coPage" role="dialog" aria-modal="true" aria-label="إتمام الطلب" hidden><div class="co-veil"></div>
@@ -316,6 +317,7 @@
       top.hidden = !quick.length && !ann;
       top.innerHTML = `<div class="wrap tb-in"><span class="tb-ann">${esc(ann)}</span>${quick.length ? `<span class="tb-soc">${quick.map(x => socLink(x, 'tb-ic')).join('')}</span>` : ''}</div>`; }
     const ft = $('#ftContact'); if (ft) { ft.hidden = !list.length; $('#ftSoc').innerHTML = list.map(x => `<li>${socLink(x, 'ft-ic')}</li>`).join(''); }
+    const all = $('#ftAll'); if (all) { all.hidden = !list.length; const seen = new Set(); $('#ftAllIc').innerHTML = list.filter(x => !seen.has(x.type) && seen.add(x.type)).slice(0, 6).map(x => RC.SOCIAL[x.type].icon).join(''); }
   }
 
   /* ---------- cart ---------- */
