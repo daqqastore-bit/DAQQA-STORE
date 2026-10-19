@@ -733,12 +733,12 @@
           </form>
           ${up ? '' : '<button class="acc-link" data-mode="forgot">نسيت الباسورد؟</button>'}
           <div class="acc-switch">${up ? 'عندك حساب؟ <button class="acc-link" data-mode="login">سجّل دخول</button>' : 'أول مرة؟ <button class="acc-link" data-mode="signup">اعمل حساب</button>'}</div>
-          ${mine().length ? '<h4 class="acc-h">طلباتك من الجهاز ده</h4><div id="devOrders"><div class="acc-empty">جاري التحميل…</div></div>' : ''}
-          <div class="acc-trk"><h4 class="acc-h">تابع طلبك من غير تسجيل</h4><p>اكتب رقم الطلب ورقم الموبايل اللي طلبت بيه، وهتشوف حالته وتقدر تلغيه لو لسه ماتشحنش.</p>
-            <form class="trk-form" id="trkForm" novalidate><input class="input en" id="t-code" placeholder="DQ-XXXXXX" dir="ltr" autocomplete="off" aria-label="رقم الطلب" required><input class="input en" id="t-phone" placeholder="01XXXXXXXXX" inputmode="tel" dir="ltr" autocomplete="tel" aria-label="رقم الموبايل" required><button class="btn btn-amber" type="submit">تابع الطلب</button></form></div>`;
-        if (mine().length) trackLocal().then(l => { const d = $('#devOrders'); if (d) { d.innerHTML = l.length ? l.map(orderCard).join('') : '<div class="acc-empty">مافيش طلبات حالياً.</div>'; l.filter(o => o.status === 'cancelled').forEach(o => hideLater(o.code, o.cancelled_at)); } });
+          ${!up && mine().length ? '<h4 class="acc-h">طلباتك من الجهاز ده</h4><div id="devOrders"><div class="acc-empty">جاري التحميل…</div></div>' : ''}
+          ${up ? '' : `<div class="acc-trk"><h4 class="acc-h">تابع طلبك من غير تسجيل</h4><p>اكتب رقم الطلب ورقم الموبايل اللي طلبت بيه، وهتشوف حالته وتقدر تلغيه لو لسه ماتشحنش.</p>
+            <form class="trk-form" id="trkForm" novalidate><input class="input en" id="t-code" placeholder="DQ-XXXXXX" dir="ltr" autocomplete="off" aria-label="رقم الطلب" required><input class="input en" id="t-phone" placeholder="01XXXXXXXXX" inputmode="tel" dir="ltr" autocomplete="tel" aria-label="رقم الموبايل" required><button class="btn btn-amber" type="submit">تابع الطلب</button></form></div>`}`;
+        if (!up && mine().length) trackLocal().then(l => { const d = $('#devOrders'); if (d) { d.innerHTML = l.length ? l.map(orderCard).join('') : '<div class="acc-empty">مافيش طلبات حالياً.</div>'; l.filter(o => o.status === 'cancelled').forEach(o => hideLater(o.code, o.cancelled_at)); } });
         // track any order by code + phone (another device, cleared browser…) and keep it on this device
-        $('#trkForm').onsubmit = async e => {
+        if ($('#trkForm')) $('#trkForm').onsubmit = async e => {
           e.preventDefault(); const code = $('#t-code').value.trim().toUpperCase(), phone = $('#t-phone').value.trim(), btn = e.target.querySelector('button');
           if (!code || phone.replace(/\D/g, '').length < 10) return DQ.toast('اكتب رقم الطلب ورقم الموبايل كامل', 'err');
           btn.disabled = true; btn.textContent = 'بندوّر…'; let r = null;
