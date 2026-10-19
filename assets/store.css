@@ -418,6 +418,8 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .dd-list button{height:40px;padding:0 12px;border-radius:10px;text-align:right;font-size:14px;color:var(--ink);transition:background .15s,color .15s}
 .dd-list button:hover{background:rgb(var(--accent-rgb)/.12)}
 .dd-list button.on{background:var(--accent);color:var(--bg);font-weight:700}
+.dd-list button{display:flex;align-items:center;justify-content:space-between;gap:10px}.dd-ship{font-size:11.5px;font-weight:500;opacity:.7}
+.ship-tbd{font-size:12.5px;font-weight:600;color:var(--muted)}.sum small{font-size:11.5px;color:var(--muted);font-weight:400}
 .dd-list button[hidden]{display:none}
 textarea.input.addr{min-height:120px;line-height:1.7}
 

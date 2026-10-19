@@ -63,6 +63,7 @@ create table if not exists public.shop_settings (
   banners jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
 );
+alter table public.shop_settings add column if not exists shipping_zones jsonb not null default '[]'::jsonb;  -- [{price, cities: [...]}]
 insert into public.shop_settings (id) values (1) on conflict do nothing;
 alter table public.shop_settings enable row level security;
 drop policy if exists "settings: public read" on public.shop_settings;
@@ -167,7 +168,10 @@ begin
   end loop;
 
   select * into s from public.shop_settings where id = 1;
-  v_ship := case when s.free_shipping_over is not null and v_sub >= s.free_shipping_over then 0 else coalesce(s.shipping_fee, 0) end;
+  -- shipping by governorate: the first price group that lists the city, otherwise the default fee
+  v_ship := coalesce((select (z->>'price')::numeric from jsonb_array_elements(coalesce(s.shipping_zones, '[]'::jsonb)) z
+                      where z->'cities' ? coalesce(customer->>'city', '') limit 1), s.shipping_fee, 0);
+  if s.free_shipping_over is not null and v_sub >= s.free_shipping_over then v_ship := 0; end if;
   update public.shop_orders set subtotal = v_sub, savings = v_orig - v_sub, shipping = v_ship, total = v_sub + v_ship where id = v_id;
   return jsonb_build_object('id', v_id, 'code', v_code, 'total', v_sub + v_ship);
 end $$;

@@ -315,14 +315,24 @@
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
     if (!silent) DQ.toast('اتضافت لعربة التسوق ✓', 'ok');
   };
-  function totals() {
+  // shipping by governorate: price groups set in the dashboard, anything not listed pays the default fee
+  const zones = () => (Array.isArray(DQ.settings.shipping_zones) ? DQ.settings.shipping_zones : []).filter(z => z && Array.isArray(z.cities) && z.cities.length);
+  DQ.shipFor = city => { const z = zones().find(z => z.cities.includes(city)); return z ? Number(z.price) || 0 : Number(DQ.settings.shipping_fee || 0); };
+  const savedCity = () => { try { return JSON.parse(localStorage.getItem('dq-cust') || '{}').city || '' } catch (e) { return '' } };
+  function totals(city = savedCity()) {
     const ls = lines();
     const sub = ls.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0);
     const orig = ls.reduce((s, l) => s + Number(l.p.price) * l.qty, 0);
     const fso = DQ.settings.free_shipping_over != null ? Number(DQ.settings.free_shipping_over) : null;
-    const ship = !ls.length ? 0 : (fso != null && sub >= fso ? 0 : Number(DQ.settings.shipping_fee || 0));
-    return { ls, sub, save: orig - sub, ship, total: sub + ship, fso };
+    // null = not known yet (no governorate chosen, or no shipping prices set at all)
+    const ship = !ls.length ? 0 : fso != null && sub >= fso ? 0 : (!zones().length && !Number(DQ.settings.shipping_fee)) || (zones().length && !city) ? null : DQ.shipFor(city);
+    return { ls, sub, save: orig - sub, ship, total: sub + (ship || 0), fso, city };
   }
+  const shipTxt = t => t.ship == null ? '<small class="ship-tbd">حسب المحافظة</small>' : t.ship ? money(t.ship) : 'مجاني';
+  const sumsHTML = t => `${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
+      <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
+      <div class="sum"><span>الشحن${t.city && t.ship != null ? ` <small>(${esc(t.city)})</small>` : ''}</span><b>${shipTxt(t)}</b></div>
+      <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
   function renderCart() {
     if (DQ.products.length) DQ.cart = DQ.cart.filter(c => DQ.products.some(p => p.id === c.id && p.stock > 0));
     const n = DQ.cart.reduce((s, c) => s + c.qty, 0);
@@ -333,10 +343,7 @@
       $('#drBody').innerHTML = `<div class="empty" style="padding:80px 10px"><div style="width:72px;height:74px;margin:0 auto 16px;opacity:.5">${RC.logo()}</div>عربة التسوق فاضية.</div>`;
       $('#drFoot').innerHTML = `<a class="btn btn-primary" href="./" data-close>تسوّق دلوقتي</a>`; return;
     }
-    const sum = `${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
-      <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
-      <div class="sum"><span>الشحن</span><b>${t.ship ? money(t.ship) : 'مجاني'}</b></div>
-      <div class="sum total"><span>الإجمالي</span><b>${money(t.total)}</b></div>`;
+    const sum = sumsHTML(t);
     if (view === 'cart') {
       $('#drTitle').textContent = `عربة التسوق (${n})`;
       // Luxury pieces get their own glowing Privé block with their value, regular items follow
@@ -380,7 +387,7 @@
             <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
               <button type="button" class="input dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLbl"><span class="dd-val ${saved.city ? '' : 'ph'}">${esc(saved.city || 'اختار المحافظة')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
               <input type="hidden" name="city" id="f-city" value="${esc(saved.city || '')}">
-              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}</button>`).join('')}</div></div></div></div>
+              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}${zones().length || Number(DQ.settings.shipping_fee) ? `<small class="dd-ship">${DQ.shipFor(c) ? 'شحن ' + money(DQ.shipFor(c)) : 'شحن مجاني'}</small>` : ''}</button>`).join('')}</div></div></div></div>
             <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="3" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
             <div class="field"><label>موقعك على الخريطة <small class="co-opt">اختياري</small></label>
               <div class="loc ${loc ? 'on' : ''}" id="locBox"><button type="button" class="loc-btn" id="locBtn"><span class="loc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
@@ -392,10 +399,7 @@
           <aside class="co-side"><div class="co-card">
             <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit">تعديل عربة التسوق</button></div>
             <div class="co-items">${items}</div>
-            <div class="co-sums">${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
-              <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
-              <div class="sum"><span>الشحن</span><b>${t.ship ? money(t.ship) : 'مجاني'}</b></div>
-              <div class="sum total"><span>الإجمالي</span><b>${money(t.total)}</b></div></div>
+            <div class="co-sums" id="coSums">${sumsHTML(t)}</div>
             <button class="btn btn-amber co-place" id="place">تأكيد الطلب · ${money(t.total)}</button>
             <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن لكل مصر</span><span>استبدال خلال 14 يوم</span></p>
           </div></aside>
@@ -415,7 +419,9 @@
       q.oninput = () => { const t = q.value.trim(); dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = t && !b.dataset.v.includes(t)); };
       q.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = dd.querySelector('.dd-list button:not([hidden])'); f && f.click(); } if (e.key === 'Escape') { e.stopPropagation(); open(false); btn.focus(); } };
       dd.querySelector('.dd-list').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; $('#f-city').value = b.dataset.v; const v = dd.querySelector('.dd-val'); v.textContent = b.dataset.v; v.classList.remove('ph'); dd.classList.remove('err'); fieldErr('f-city', '');
-        dd.querySelectorAll('.dd-list button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); open(false); keep(); };
+        dd.querySelectorAll('.dd-list button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); open(false); keep();
+        // the shipping price follows the governorate
+        const nt = totals(b.dataset.v); $('#coSums').innerHTML = sumsHTML(nt); $('#place').textContent = 'تأكيد الطلب · ' + money(nt.total); };
       $('#coPage').onpointerdown = e => { if (!dd.contains(e.target)) open(false); };
     }
   }

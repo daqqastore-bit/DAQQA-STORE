@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019125039">
+<link rel="stylesheet" href="assets/base.css?v=20261019125606">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -203,6 +203,12 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .cat-pop button.new{color:var(--amber)}.cat-pop button.new b{color:var(--ink)}
 .rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
 .exp-form{display:grid;grid-template-columns:150px 1fr 130px 1.4fr auto;gap:10px;align-items:end;margin-bottom:16px}
+.sheet-btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--red) 55%,transparent);color:var(--red);font:700 13px var(--f-ui);background:color-mix(in srgb,var(--red) 8%,transparent);margin-inline-start:auto;order:99;transition:background .2s,color .2s}
+.sheet-btn:hover,.sheet-btn.on{background:var(--red);color:#fff}
+.sheet-btn i{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.5}.sheet-btn i.ok{background:#4caf50;opacity:1;box-shadow:0 0 0 3px rgba(76,175,80,.25)}
+.sheet-page{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}.sheet-how ol{margin:10px 0 0;padding-inline-start:18px;display:grid;gap:8px;font-size:13.5px;color:var(--muted);line-height:1.7}
+@media(max-width:900px){.sheet-page{grid-template-columns:1fr}}
+.set-grid.one{grid-template-columns:1fr;max-width:900px}
 .sheet-chip{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--muted)}
 .sheet-chip i{width:8px;height:8px;border-radius:50%;background:var(--muted-2)}.sheet-chip.ok i{background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 20%,transparent)}
 @media (max-width:900px){.exp-form{grid-template-columns:1fr 1fr}.flow-row{grid-template-columns:110px 1fr 80px}}
@@ -231,6 +237,22 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .ed-body{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
 .ed-foot{border-top:1px solid var(--line);padding:14px 20px;display:flex;gap:10px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.set-card{display:flex;flex-direction:column;gap:14px}
+.set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.set-h h2{margin:0;font-size:17px}.set-h small{font-size:12.5px;color:var(--muted)}.set-h small.ok{color:var(--green)}
+.set-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--amber);flex:none}.set-ic svg{width:20px;height:20px}
+.set-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.zones-h{display:grid;gap:2px;margin-top:4px}.zones-h b{font-size:14.5px}.zones-h small{font-size:12.5px;color:var(--muted)}
+#zones{display:grid;gap:12px}
+.zone{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px;background:var(--bg)}
+.zone-h{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.zone-h .field{width:170px}
+.zone-price{position:relative}.zone-price .input{padding-inline-end:46px;text-align:right}.zone-price span{position:absolute;inset-inline-end:14px;top:50%;translate:0 -50%;font-size:12.5px;color:var(--muted)}
+.zone-tag{margin-inline-end:auto;align-self:center;font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted)}.zone-tag.free{color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent)}
+.gov-chips{display:flex;flex-wrap:wrap;gap:6px}
+.gchip{padding:7px 12px;border-radius:99px;border:1px solid var(--line-2);font-size:13px;color:var(--ink);background:transparent;transition:background .15s,border-color .15s,color .15s}
+.gchip:hover{border-color:var(--amber)}.gchip.on{background:var(--amber);border-color:var(--amber);color:#fff;font-weight:600}.gchip.other{opacity:.38;text-decoration:line-through}
+@media(max-width:900px){.set-grid{grid-template-columns:1fr}}
 .imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .imgs .it{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--surface-2)}
 .imgs .it.main{border-color:var(--amber)}
@@ -394,6 +416,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
     <nav class="tabs" id="tabs"></nav>
     <div class="foot">
       <a href="./" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>فتح المتجر</a>
+      <button id="pwBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>تغيير الباسورد</button>
       <button id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/></svg>خروج</button>
     </div>
   </aside>
@@ -408,7 +431,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019125039"></script>
+<script src="assets/config.js?v=20261019125606"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -521,6 +544,21 @@ $('#gLogin').onclick = async () => {
   if (error) toast('الدخول بجوجل مش متفعل لسه', 'err');
 };
 RC.googleOn().then(on => { $('#gLogin').hidden = !on; document.querySelector('.g-or').hidden = !on; });
+// change password: a popup from the sidebar
+$('#pwBtn').onclick = () => {
+  const m = document.createElement('div'); m.className = 'fin-m';
+  m.innerHTML = `<form class="fin-box" novalidate style="width:min(420px,100%)"><h3>تغيير الباسورد</h3><p class="fsub">8 حروف على الأقل. هتفضل داخل بعد التغيير.</p>
+    <div class="field"><label>الباسورد الجديد</label><input class="input en" type="password" name="pw" minlength="8" required autocomplete="new-password" dir="ltr"></div>
+    <div class="field"><label>تأكيد الباسورد</label><input class="input en" type="password" name="pw2" minlength="8" required autocomplete="new-password" dir="ltr"></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">تغيير</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m); setTimeout(() => m.querySelector('[name=pw]').focus(), 60);
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  m.querySelector('form').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
+    if (f.pw.length < 8) return toast('الباسورد لازم 8 حروف على الأقل', 'err');
+    if (f.pw !== f.pw2) return toast('الباسوردين مش زي بعض', 'err');
+    const btn = e.target.querySelector('[type=submit]'); btn.disabled = true;
+    const {error} = await sb.auth.updateUser({password: f.pw}); btn.disabled = false; if (error) return toast(error.message, 'err'); m.remove(); toast('اتغير الباسورد ✓', 'ok'); };
+};
 $('#logoutBtn').onclick = async () => { $('#appView').classList.add('hidden'); await sb.auth.signOut(); if (channel) sb.removeChannel(channel); showLogin(); };
 
 /* ---------- data ---------- */
@@ -969,32 +1007,55 @@ function renderCovers() {
     if (del) { const [k, slot] = del.dataset.bdel.split(':'); if (await confirmBox('تشيل الصورة دي؟', 'شيل')) saveBanner(k, slot, null); }
   };
 }
+const GOV = ['القاهرة','الجيزة','القليوبية','الإسكندرية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
+let zonesDraft = null;   // shipping price groups being edited: [{price, cities: []}]
+function zonesHTML() {
+  const taken = c => zonesDraft.findIndex(z => z.cities.includes(c));
+  return zonesDraft.map((z, i) => `<div class="zone" data-zone="${i}">
+      <div class="zone-h"><div class="field"><label>سعر الشحن</label><div class="zone-price"><input class="input en" inputmode="decimal" data-zprice="${i}" value="${esc(z.price ?? '')}" placeholder="0"><span>ج.م</span></div></div>
+        <span class="zone-tag ${+z.price ? '' : 'free'}">${+z.price ? z.cities.length + ' محافظة' : 'شحن مجاني · ' + z.cities.length + ' محافظة'}</span>
+        <button type="button" class="btn btn-sm btn-ghost" data-zall="${i}">الكل</button><button type="button" class="btn btn-sm btn-danger" data-zdel="${i}">حذف</button></div>
+      <div class="gov-chips">${GOV.map(c => { const t = taken(c); return `<button type="button" class="gchip ${t === i ? 'on' : t >= 0 ? 'other' : ''}" data-zc="${i}" data-c="${c}" title="${t >= 0 && t !== i ? 'متحددة في سعر تاني — اضغط تنقلها هنا' : ''}">${c}</button>`; }).join('')}</div></div>`).join('')
+    || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
+}
 function renderSettings() {
   const s = settings;
+  zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   $('#main').innerHTML = `
-    <div class="head"><div><h1>الإعدادات</h1><div class="sub">بيانات المتجر والشحن والباسورد</div></div></div>
-    <div class="row2">
-      <form class="panel" id="setForm" style="display:flex;flex-direction:column;gap:12px">
-        <h2>المتجر</h2>
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">بيانات المتجر، أسعار الشحن، والشيت</div></div></div>
+    <div class="set-grid one">
+      <form class="panel set-card" id="setForm">
+        <div class="set-h"><span class="set-ic">${ICONS.settings || ''}</span><div><h2>المتجر</h2><small>الواتساب وشريط الإعلان</small></div></div>
         <div class="field"><label>رقم الواتساب (بكود الدولة، مثال 2010xxxxxxxx)</label><input class="input en" name="whatsapp" value="${esc(s.whatsapp || '')}" dir="ltr" style="text-align:right"></div>
-        <div class="two"><div class="field"><label>مصاريف الشحن</label><input class="input en" name="shipping_fee" inputmode="decimal" value="${esc(s.shipping_fee ?? 0)}"></div>
-          <div class="field"><label>شحن مجاني فوق (فاضي = لا)</label><input class="input en" name="free_shipping_over" inputmode="decimal" value="${esc(s.free_shipping_over ?? '')}"></div></div>
-        <div class="field"><label>شريط الإعلان أعلى الموقع</label><input class="input" name="announcement" value="${esc(s.announcement || '')}"></div>
+        <div class="field"><label>شريط الإعلان أعلى الموقع</label><input class="input" name="announcement" value="${esc(s.announcement || '')}" placeholder="مثال: شحن مجاني للقاهرة والجيزة"></div>
         <button class="btn btn-primary" type="submit">حفظ</button>
       </form>
-      <form class="panel" id="pwForm" style="display:flex;flex-direction:column;gap:12px">
-        <h2>تغيير الباسورد</h2>
-        <div class="field"><label>الباسورد الجديد (8 حروف على الأقل)</label><input class="input en" type="password" name="pw" minlength="8" required autocomplete="new-password" dir="ltr"></div>
-        <div class="field"><label>تأكيد الباسورد</label><input class="input en" type="password" name="pw2" minlength="8" required autocomplete="new-password" dir="ltr"></div>
-        <button class="btn btn-ghost" type="submit">تغيير</button>
-      </form>
     </div>
-    <form class="panel" id="sheetForm" style="display:flex;flex-direction:column;gap:12px;max-width:760px">
-      <h2>Google Sheet للحسابات <small>${sheetOn() ? 'متصل ✓' : 'مش متصل'}</small></h2>
-      <div class="field"><label>لينك الـ Web App (من Apps Script ← Deploy)</label><input class="input en" name="sheet_url" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(adminSet.sheet_url || '')}"></div>
-      <div class="field"><label>الكود السري (لازم يكون نفس اللي في كود الشيت)</label><input class="input en" name="sheet_secret" dir="ltr" value="${esc(adminSet.sheet_secret || '')}"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sheetSync" title="بيبعت كل الطلبات والمصاريف تاني ويصلّح أي صف ناقص — للطوارئ بس">إرسال كل حاجة للشيت تاني</button></div>
+    <form class="panel set-card" id="shipForm">
+      <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span><div><h2>أسعار الشحن</h2><small>العميل بيشوف سعر الشحن أول ما يختار محافظته</small></div></div>
+      <div class="two"><div class="field"><label>سعر الشحن لباقي المحافظات</label><input class="input en" name="shipping_fee" inputmode="decimal" value="${esc(s.shipping_fee ?? 0)}"></div>
+        <div class="field"><label>شحن مجاني لأي طلب فوق (فاضي = لا)</label><input class="input en" name="free_shipping_over" inputmode="decimal" value="${esc(s.free_shipping_over ?? '')}"></div></div>
+      <div class="zones-h"><b>أسعار حسب المحافظة</b><small>اكتب السعر واختار محافظاته. اكتب 0 عشان يبقى الشحن مجاني.</small></div>
+      <div id="zones">${zonesHTML()}</div>
+      <div class="set-acts"><button type="button" class="btn btn-ghost" id="zoneAdd">+ إضافة سعر شحن</button><button class="btn btn-primary" type="submit">حفظ أسعار الشحن</button></div>
     </form>`;
+  const drawZones = () => { $('#zones').innerHTML = zonesHTML(); };
+  $('#zoneAdd').onclick = () => { zonesDraft.push({ price: '', cities: [] }); drawZones(); const ins = $('#zones').querySelectorAll('[data-zprice]'); ins[ins.length - 1].focus(); };
+  $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = +z.price ? z.cities.length + ' محافظة' : 'شحن مجاني · ' + z.cities.length + ' محافظة'; };
+  $('#zones').onclick = async e => {
+    const ch = e.target.closest('[data-zc]'), del = e.target.closest('[data-zdel]'), all = e.target.closest('[data-zall]');
+    if (ch) { const i = +ch.dataset.zc, c = ch.dataset.c, z = zonesDraft[i];
+      if (z.cities.includes(c)) z.cities = z.cities.filter(x => x !== c);
+      else { zonesDraft.forEach(o => o.cities = o.cities.filter(x => x !== c)); z.cities.push(c); }   // a governorate belongs to one price only
+      drawZones(); }
+    if (all) { const i = +all.dataset.zall, free = GOV.filter(c => !zonesDraft.some(z => z.cities.includes(c))); zonesDraft[i].cities.push(...free); drawZones(); }
+    if (del) { const i = +del.dataset.zdel; if (zonesDraft[i].cities.length && !(await confirmBox('تحذف السعر ده؟ محافظاته هترجع لسعر باقي المحافظات.', 'حذف'))) return; zonesDraft.splice(i, 1); drawZones(); }
+  };
+  $('#shipForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
+    const zs = zonesDraft.filter(z => z.cities.length).map(z => ({ price: Math.max(0, +String(z.price).replace(/[^\d.]/g, '') || 0), cities: GOV.filter(c => z.cities.includes(c)) }));
+    const row = { shipping_fee: +f.shipping_fee || 0, free_shipping_over: f.free_shipping_over === '' ? null : +f.free_shipping_over, shipping_zones: zs, updated_at: new Date().toISOString() };
+    const {error} = await sb.from('shop_settings').update(row).eq('id', 1); if (error) return toast(/shipping_zones/.test(error.message) ? 'أسعار المحافظات محتاجة تحديث في Supabase' : error.message, 'err');
+    Object.assign(settings, row); zonesDraft = JSON.parse(JSON.stringify(zs)); drawZones(); toast('اتحفظت أسعار الشحن ✓', 'ok'); };
   $('#main').onclick = async e => {
     const up = e.target.closest('[data-bup]'), del = e.target.closest('[data-bdel]');
     if (up) { const [k, slot] = up.dataset.bup.split(':'); const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
@@ -1006,17 +1067,8 @@ function renderSettings() {
     if (del) { const [k, slot] = del.dataset.bdel.split(':'); if (await confirmBox('تشيل الصورة دي؟', 'شيل')) saveBanner(k, slot, null); }
   };
   $('#setForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-    const row = { whatsapp: f.whatsapp.trim(), shipping_fee: +f.shipping_fee || 0, free_shipping_over: f.free_shipping_over === '' ? null : +f.free_shipping_over, announcement: f.announcement.trim(), updated_at: new Date().toISOString() };
+    const row = { whatsapp: f.whatsapp.trim(), announcement: f.announcement.trim(), updated_at: new Date().toISOString() };
     const {error} = await sb.from('shop_settings').update(row).eq('id', 1); if (error) return toast(error.message, 'err'); Object.assign(settings, row); toast('اتحفظ ✓', 'ok'); };
-  $('#sheetForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-    const row = { id: 1, sheet_url: f.sheet_url.trim() || null, sheet_secret: f.sheet_secret.trim() || null };
-    if (row.sheet_url && !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(row.sheet_url)) return toast('اللينك لازم يبقى بالشكل ده: https://script.google.com/macros/s/…/exec', 'err');
-    const {error} = await sb.from('shop_admin_settings').upsert(row); if (error) return toast(error.message, 'err');
-    Object.assign(adminSet, row); toast('اتحفظ ✓', 'ok'); renderSettings(); if (sheetOn()) sheetSyncAll(); };
-  $('#sheetSync').onclick = sheetSyncAll;
-  $('#pwForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-    if (f.pw !== f.pw2) return toast('الباسوردين مش زي بعض', 'err');
-    const {error} = await sb.auth.updateUser({password: f.pw}); if (error) return toast(error.message, 'err'); e.target.reset(); toast('اتغير الباسورد ✓', 'ok'); };
 }
 
 /* ---------- accounts: what each order really earned, expenses, returns · mirrored to a Google Sheet ---------- */
@@ -1164,9 +1216,9 @@ function renderAccounts() {
   const expSum = expIn.reduce((s, x) => s + +x.amount, 0);
   const net = sales - cogs - shipMe - retLoss - expSum, margin = sales ? net / sales * 100 : 0;
   const head = `<div class="head"><div><h1>الحسابات</h1><div class="sub">كل جنيه داخل وخارج — والنتيجة صافي ربح حقيقي</div></div>
-      <span class="sheet-chip ${sheetOn() ? 'ok' : ''}"><i></i>${sheetOn() ? 'Google Sheet متصل' : 'Google Sheet مش متصل'}</span>
       <div class="seg" id="accScopeSeg">${[['all','الكل'],['reg','المتجر العادي'],['lux','Luxury']].map(([v,l]) => `<button data-as="${v}" class="${v===accScope?'on':''} ${v==='lux'?'en':''}">${l}</button>`).join('')}</div>
-      <div class="seg" id="accRangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div></div>
+      <div class="seg" id="accRangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div>
+      <button type="button" class="sheet-btn ${accTab === 'sheet' ? 'on' : ''}" id="sheetTab"><i class="${sheetOn() ? 'ok' : ''}"></i>Google Sheet</button></div>
     ${FIN_OK ? '' : '<div class="warn-box">جداول الحسابات مش متفعلة في Supabase.</div>'}
     <div class="acc-tabs" id="accTabs">${[['sum','الملخص وصافي الربح'],['orders','ربح كل أوردر'],['exp','المصاريف'],['ret','المرتجعات']].map(([k,l]) => `<button data-at="${k}" class="${k===accTab?'on':''}">${l}</button>`).join('')}</div>`;
   let body = '';
@@ -1189,6 +1241,14 @@ function renderAccounts() {
         <div class="flow-row sum"><span>= صافي الربح</span><div class="tr"><i style="width:${net > 0 ? Math.max(2, net / mx * 100) : 0}%"></i></div><span style="${net < 0 ? 'color:var(--red)' : ''}">${signMoney(net)}</span></div></div></div>
       <div class="panel"><h2>المصاريف حسب النوع</h2>${byCat.length ? byCat.map(([c, v]) => `<div class="bar-row"><div><span>${c}</span><span class="en">${money(v)}</span></div><div class="track"><i style="width:${Math.max(4, v / cmx * 100)}%"></i></div></div>`).join('') : '<div class="empty" style="padding:30px 10px">مفيش مصاريف متسجلة في الفترة دي.</div>'}</div>
     </div>`;
+  } else if (accTab === 'sheet') {
+    body = `<div class="sheet-page"><form class="panel set-card" id="sheetForm">
+        <div class="set-h"><span class="set-ic">${ICONS.accounts || ''}</span><div><h2>Google Sheet للحسابات</h2><small class="${sheetOn() ? 'ok' : ''}">${sheetOn() ? 'متصل ✓' : 'مش متصل'}</small></div></div>
+        <div class="field"><label>لينك الـ Web App (من Apps Script ← Deploy)</label><input class="input en" name="sheet_url" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(adminSet.sheet_url || '')}"></div>
+        <div class="field"><label>الكود السري (لازم يكون نفس اللي في كود الشيت)</label><input class="input en" name="sheet_secret" dir="ltr" value="${esc(adminSet.sheet_secret || '')}"></div>
+        <div class="set-acts"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sheetSync" title="بيبعت كل الطلبات والمصاريف تاني ويصلّح أي صف ناقص — للطوارئ بس">إرسال كل حاجة للشيت تاني</button></div>
+      </form>
+      <div class="panel sheet-how"><h2>الشيت بيشتغل إزاي</h2><ol><li>كل طلب جديد، وتغيير حالة، وتكاليف، ومرتجع، ومصروف بيتبعت للشيت لوحده على طول.</li><li>الشيت بينسّق نفسه وبيعمل صفحة «الملخص» بعد كل تعديل.</li><li>«إرسال كل حاجة للشيت تاني» للطوارئ بس، لو حد عدّل في الشيت بإيده وبوّظه.</li></ol></div></div>`;
   } else if (accTab === 'orders') {
     const list = (accMissing ? missing : [...sold, ...rets]).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     body = `<div class="toolbar"><div class="seg" id="missSeg"><button data-miss="0" class="${!accMissing ? 'on' : ''}">كل الطلبات <span class="en">${sold.length + rets.length}</span></button><button data-miss="1" class="${accMissing ? 'on' : ''}">من غير تكاليف <span class="en">${missing.length}</span></button></div></div>
@@ -1211,6 +1271,15 @@ function renderAccounts() {
       ${rets.map(o => { const f = fins[o.id]; return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
   }
   $('#main').innerHTML = head + body;
+  $('#sheetTab').onclick = () => { accTab = accTab === 'sheet' ? 'sum' : 'sheet'; renderAccounts(); };
+  if ($('#sheetForm')) {
+  $('#sheetForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
+    const row = { id: 1, sheet_url: f.sheet_url.trim() || null, sheet_secret: f.sheet_secret.trim() || null };
+    if (row.sheet_url && !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(row.sheet_url)) return toast('اللينك لازم يبقى بالشكل ده: https://script.google.com/macros/s/…/exec', 'err');
+    const {error} = await sb.from('shop_admin_settings').upsert(row); if (error) return toast(error.message, 'err');
+    Object.assign(adminSet, row); toast('اتحفظ ✓', 'ok'); renderAccounts(); if (sheetOn()) sheetSyncAll(); };
+  $('#sheetSync').onclick = sheetSyncAll;
+  }
   $('#accTabs').onclick = e => { const b = e.target.closest('[data-at]'); if (b) { accTab = b.dataset.at; renderAccounts(); } };
   $('#accScopeSeg').onclick = e => { const b = e.target.closest('[data-as]'); if (b) { accScope = b.dataset.as; renderAccounts(); } };
   $('#accRangeSeg').onclick = e => { const b = e.target.closest('[data-range]'); if (b) { range = +b.dataset.range; renderAccounts(); } };
