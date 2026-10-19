@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019134013">
+<link rel="stylesheet" href="assets/base.css?v=20261019134308">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -243,6 +243,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @media (prefers-reduced-motion:reduce){#main.pg-in>*{animation:none}}
 .set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .set-card{display:flex;flex-direction:column;gap:14px}
+.web-ord{margin-bottom:16px}.web-ord .set-h{align-items:center}.web-ord .set-h>div{flex:1}.wo-warn{color:var(--red,#B04834);font-size:12.5px}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .set-h h2{margin:0;font-size:17px}.set-h small{font-size:12.5px;color:var(--muted)}.set-h small.ok{color:var(--green)}
 .set-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--amber);flex:none}.set-ic svg{width:20px;height:20px}
@@ -435,7 +436,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019134013"></script>
+<script src="assets/config.js?v=20261019134308"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1030,6 +1031,11 @@ function renderSettings() {
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   $('#main').innerHTML = `
     <div class="head"><div><h1>الإعدادات</h1><div class="sub">بيانات المتجر، أسعار الشحن، والشيت</div></div></div>
+    <div class="panel set-card web-ord">
+      <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span><div><h2>الطلب من الموقع</h2><small id="woTxt">${s.web_orders_off ? 'مقفول: العميل بيملا بياناته والطلب بيتبعتلك رسالة على واتساب' : 'شغال: الطلبات بتتسجل هنا في اللوحة'}</small></div>
+        <button type="button" class="switch ${s.web_orders_off ? '' : 'on'}" id="woSw" aria-label="الطلب من الموقع"></button></div>
+      ${!s.whatsapp ? '<small class="wo-warn">لازم تكتب رقم الواتساب تحت عشان قفل الطلب من الموقع يشتغل</small>' : ''}
+    </div>
     <div class="set-grid one">
       <form class="panel set-card" id="setForm">
         <div class="set-h"><span class="set-ic">${ICONS.settings || ''}</span><div><h2>المتجر</h2><small>الواتساب وشريط الإعلان</small></div></div>
@@ -1046,6 +1052,14 @@ function renderSettings() {
       <div id="zones">${zonesHTML()}</div>
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="zoneAdd">+ إضافة سعر شحن</button><button class="btn btn-primary" type="submit">حفظ أسعار الشحن</button></div>
     </form>`;
+  $('#woSw').onclick = async () => {
+    const off = !settings.web_orders_off;
+    if (off && !(await confirmBox('تقفل الطلب من الموقع؟ العميل هيملا بياناته والطلب هيتبعتلك رسالة على واتساب بدل ما يتسجل في اللوحة.', 'اقفل'))) return;
+    const {error} = await sb.from('shop_settings').update({ web_orders_off: off, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/web_orders_off/.test(error.message) ? 'الخاصية دي محتاجة تحديث في Supabase' : error.message, 'err');
+    settings.web_orders_off = off; $('#woSw').classList.toggle('on', !off);
+    $('#woTxt').textContent = off ? 'مقفول: العميل بيملا بياناته والطلب بيتبعتلك رسالة على واتساب' : 'شغال: الطلبات بتتسجل هنا في اللوحة';
+    toast(off ? 'الطلب من الموقع اتقفل، الطلبات هتوصلك واتساب' : 'الطلب من الموقع اشتغل ✓', 'ok'); };
   const drawZones = () => { $('#zones').innerHTML = zonesHTML(); };
   $('#zoneAdd').onclick = () => { zonesDraft.push({ price: '', cities: [] }); drawZones(); const ins = $('#zones').querySelectorAll('[data-zprice]'); ins[ins.length - 1].focus(); };
   $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = +z.price ? z.cities.length + ' محافظة' : 'شحن مجاني · ' + z.cities.length + ' محافظة'; };

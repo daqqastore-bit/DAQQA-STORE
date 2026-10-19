@@ -328,6 +328,9 @@
     const ship = !ls.length ? 0 : fso != null && sub >= fso ? 0 : (!zones().length && !Number(DQ.settings.shipping_fee)) || (zones().length && !city) ? null : DQ.shipFor(city);
     return { ls, sub, save: orig - sub, ship, total: sub + (ship || 0), fso, city };
   }
+  // the admin can switch website orders off: checkout then hands the whole order to WhatsApp
+  const viaWA = () => !!(DQ.settings.web_orders_off && DQ.wa());
+  const placeLbl = total => viaWA() ? `${WA_ICON}اطلب على واتساب · ${money(total)}` : 'تأكيد الطلب · ' + money(total);
   const shipTxt = t => t.ship == null ? '<small class="ship-tbd">حسب المحافظة</small>' : t.ship ? money(t.ship) : 'مجاني';
   const sumsHTML = t => `${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
       <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
@@ -400,7 +403,7 @@
             <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit" aria-label="تعديل الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>تعديل</button></div>
             <div class="co-items">${items}</div>
             <div class="co-sums" id="coSums">${sumsHTML(t)}</div>
-            <button class="btn btn-amber co-place" id="place">تأكيد الطلب · ${money(t.total)}</button>
+            <button class="btn ${viaWA() ? 'wa-btn' : 'btn-amber'} co-place" id="place">${placeLbl(t.total)}</button>
             <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن لكل مصر</span><span>استبدال خلال 14 يوم</span></p>
           </div></aside>
         </div>`;
@@ -421,7 +424,7 @@
       dd.querySelector('.dd-list').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; $('#f-city').value = b.dataset.v; const v = dd.querySelector('.dd-val'); v.textContent = b.dataset.v; v.classList.remove('ph'); dd.classList.remove('err'); fieldErr('f-city', '');
         dd.querySelectorAll('.dd-list button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); open(false); keep();
         // the shipping price follows the governorate
-        const nt = totals(b.dataset.v); $('#coSums').innerHTML = sumsHTML(nt); $('#place').textContent = 'تأكيد الطلب · ' + money(nt.total); };
+        const nt = totals(b.dataset.v); $('#coSums').innerHTML = sumsHTML(nt); $('#place').innerHTML = placeLbl(nt.total); };
       $('#coPage').onpointerdown = e => { if (!dd.contains(e.target)) open(false); };
     }
   }
@@ -429,7 +432,7 @@
     if (coState !== 'form' || !$('#coSums')) return;
     if (!lines().length) return DQ.closeCheckout(true);
     const t = totals(($('#f-city') || {}).value || savedCity());
-    $('#coSums').innerHTML = sumsHTML(t); if (!$('#place').disabled) $('#place').textContent = 'تأكيد الطلب · ' + money(t.total);
+    $('#coSums').innerHTML = sumsHTML(t); if (!$('#place').disabled) { $('#place').innerHTML = placeLbl(t.total); $('#place').className = `btn ${viaWA() ? 'wa-btn' : 'btn-amber'} co-place`; }
     const showShip = zones().length || Number(DQ.settings.shipping_fee);
     document.querySelectorAll('#cityDD .dd-list [data-v]').forEach(b => { let sm = b.querySelector('.dd-ship');
       if (!showShip) { sm && sm.remove(); return; } if (!sm) { sm = document.createElement('small'); sm.className = 'dd-ship'; b.appendChild(sm); }
@@ -530,6 +533,7 @@
     const d = Object.fromEntries(new FormData(f));
     try { localStorage.setItem('dq-cust', JSON.stringify({ name: d.name, phone: d.phone, city: d.city, address: d.address })) } catch (e) {} /* notes are not kept for the next order */
     if (!LOC_RX.test(d.location || '')) delete d.location;
+    if (viaWA()) return orderOnWA(d);
     const btn = $('#place'), label = btn.textContent; btn.disabled = true; btn.classList.add('sending'); btn.setAttribute('aria-label', 'جاري إرسال الطلب');
     // a loaded cart rolls across the button while the order is on its way
     btn.innerHTML = `<span class="cart-run" aria-hidden="true"><i class="cr-lines"></i><svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><g class="cr-load"><rect x="13" y="5" width="9" height="9" rx="1.5" fill="currentColor" stroke="none"/><rect x="23.5" y="1.5" width="10" height="12.5" rx="1.5" fill="currentColor" stroke="none" opacity=".7"/></g><path d="M46 6h-6l-5 20H11L7 12h31"/><circle class="cr-w" cx="15" cy="33" r="3.2"/><circle class="cr-w" cx="31" cy="33" r="3.2"/></svg></span>`;
@@ -554,6 +558,26 @@
     $('#cdCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(data.code).then(() => DQ.toast('اتنسخ رقم الطلب ✓', 'ok')).catch(() => {}); };
     $('#coPage').scrollTop = 0;
     DQ.load().then(() => DQ.onRefresh && DQ.onRefresh());
+  }
+  // website orders switched off → the filled form becomes a ready WhatsApp message to the shop
+  function orderOnWA(d) {
+    const t = totals(d.city), ls = t.ls;
+    const msg = ['أهلاً DAQQA 👋 عايز أطلب:', '',
+      ...ls.map(l => `• ${l.p.name} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`), '',
+      `المنتجات: ${money(t.sub)}`, `الشحن: ${t.ship == null ? 'حسب المحافظة' : t.ship ? money(t.ship) : 'مجاني'}`, `الإجمالي: ${money(t.total)} (كاش عند الاستلام)`, '',
+      `الاسم: ${d.name}`, `الموبايل: ${d.phone}`, `المحافظة: ${d.city}`, `العنوان: ${d.address}`,
+      d.location ? `اللوكيشن: ${d.location}` : '', d.notes ? `ملاحظات: ${d.notes}` : ''].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n').trim();
+    const url = `https://wa.me/${DQ.wa()}?text=${encodeURIComponent(msg)}`;
+    const w = window.open(url, '_blank', 'noopener'); if (!w) location.href = url;
+    DQ.cart = []; saveCart(); coState = 'done'; coLoc = ''; coAddr = '';
+    $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
+    $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
+      <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
+        <h1>كمّل طلبك على واتساب</h1><p class="co-lead">جهّزنالك رسالة فيها طلبك وبياناتك كلها، ابعتها وهنأكد معاك على طول.</p>
+        <p class="cd-total">الإجمالي <b class="en">${money(t.total)}</b> · كاش عند الاستلام</p>
+        <div class="cd-acts"><a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="${esc(url)}">${WA_ICON}افتح واتساب وابعت الطلب</a><button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
+    $('#cdMore').onclick = () => DQ.closeCheckout();
+    $('#coPage').scrollTop = 0;
   }
   // email the shop owner every new order with all details + a link that opens it in the dashboard
   function notifyOrder(data, d, ls) {
