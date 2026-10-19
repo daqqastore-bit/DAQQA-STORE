@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019134833">
+<link rel="stylesheet" href="assets/base.css?v=20261019134954">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -437,7 +437,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019134833"></script>
+<script src="assets/config.js?v=20261019134954"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1039,16 +1039,16 @@ function renderSettings() {
     </div>
     <div class="set-grid one">
       <form class="panel set-card" id="setForm">
-        <div class="set-h"><span class="set-ic">${ICONS.settings || ''}</span><div><h2>المتجر</h2><small>الواتساب وشريط الإعلان</small></div></div>
+        <div class="set-h"><span class="set-ic">${ICONS.settings || ''}</span><div><h2>المتجر</h2><small>الواتساب، شريط الإعلان، والشحن المجاني</small></div></div>
         <div class="field"><label>رقم الواتساب (بكود الدولة، مثال 2010xxxxxxxx)</label><input class="input en" name="whatsapp" value="${esc(s.whatsapp || '')}" dir="ltr" style="text-align:right"></div>
-        <div class="field"><label>شريط الإعلان أعلى الموقع</label><input class="input" name="announcement" value="${esc(s.announcement || '')}" placeholder="مثال: شحن مجاني للقاهرة والجيزة"></div>
+        <div class="two"><div class="field"><label>شريط الإعلان أعلى الموقع</label><input class="input" name="announcement" value="${esc(s.announcement || '')}" placeholder="مثال: شحن مجاني لأي طلب فوق 2000 ج.م"></div>
+          <div class="field"><label>شحن مجاني للطلبات الكبيرة</label><input class="input en" name="free_shipping_over" inputmode="decimal" placeholder="مثال: 2000" value="${esc(s.free_shipping_over ?? '')}"><small class="hint">أي طلب منتجاته بالمبلغ ده أو أكتر شحنه مجاني لكل المحافظات. سيبها فاضية لو مش عاوز العرض ده.</small></div></div>
         <button class="btn btn-primary" type="submit">حفظ</button>
       </form>
     </div>
     <form class="panel set-card" id="shipForm">
       <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span><div><h2>أسعار الشحن</h2><small>العميل بيشوف سعر الشحن أول ما يختار محافظته</small></div></div>
-      <div class="two"><div class="field"><label>سعر الشحن لباقي المحافظات</label><input class="input en" name="shipping_fee" inputmode="decimal" value="${esc(s.shipping_fee ?? 0)}"></div>
-        <div class="field"><label>شحن مجاني للطلبات الكبيرة</label><input class="input en" name="free_shipping_over" inputmode="decimal" placeholder="مثال: 2000" value="${esc(s.free_shipping_over ?? '')}"><small class="hint">أي طلب منتجاته بالمبلغ ده أو أكتر شحنه مجاني لكل المحافظات. سيبها فاضية لو مش عاوز العرض ده.</small></div></div>
+      <div class="field"><label>سعر الشحن لباقي المحافظات</label><input class="input en" name="shipping_fee" inputmode="decimal" value="${esc(s.shipping_fee ?? 0)}"></div>
       <div class="zones-h"><b>أسعار حسب المحافظة</b><small>اكتب السعر واختار محافظاته. اكتب 0 عشان يبقى الشحن مجاني.</small></div>
       <div id="zones">${zonesHTML()}</div>
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="zoneAdd">+ إضافة سعر شحن</button><button class="btn btn-primary" type="submit">حفظ أسعار الشحن</button></div>
@@ -1075,7 +1075,7 @@ function renderSettings() {
   };
   $('#shipForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
     const zs = zonesDraft.filter(z => z.cities.length).map(z => ({ price: Math.max(0, +String(z.price).replace(/[^\d.]/g, '') || 0), cities: GOV.filter(c => z.cities.includes(c)) }));
-    const row = { shipping_fee: +f.shipping_fee || 0, free_shipping_over: f.free_shipping_over === '' ? null : +f.free_shipping_over, shipping_zones: zs, updated_at: new Date().toISOString() };
+    const row = { shipping_fee: +f.shipping_fee || 0, shipping_zones: zs, updated_at: new Date().toISOString() };
     const {error} = await sb.from('shop_settings').update(row).eq('id', 1); if (error) return toast(/shipping_zones/.test(error.message) ? 'أسعار المحافظات محتاجة تحديث في Supabase' : error.message, 'err');
     Object.assign(settings, row); zonesDraft = JSON.parse(JSON.stringify(zs)); drawZones(); toast('اتحفظت أسعار الشحن ✓', 'ok'); };
   $('#main').onclick = async e => {
@@ -1089,7 +1089,8 @@ function renderSettings() {
     if (del) { const [k, slot] = del.dataset.bdel.split(':'); if (await confirmBox('تشيل الصورة دي؟', 'شيل')) saveBanner(k, slot, null); }
   };
   $('#setForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-    const row = { whatsapp: f.whatsapp.trim(), announcement: f.announcement.trim(), updated_at: new Date().toISOString() };
+    const fso = String(f.free_shipping_over || '').replace(/[^\d.]/g, '');
+    const row = { whatsapp: f.whatsapp.trim(), announcement: f.announcement.trim(), free_shipping_over: fso === '' ? null : +fso, updated_at: new Date().toISOString() };
     const {error} = await sb.from('shop_settings').update(row).eq('id', 1); if (error) return toast(error.message, 'err'); Object.assign(settings, row); toast('اتحفظ ✓', 'ok'); };
 }
 
