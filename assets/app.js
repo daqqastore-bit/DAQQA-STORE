@@ -450,7 +450,7 @@
     const prev = (coLoc.match(/q=(-?[\d.]+),(-?[\d.]+)/) || []).slice(1).map(Number);
     const map = L.map($('#mapEl'), { zoomControl: false, attributionControl: true }).setView(prev.length ? prev : [30.0444, 31.2357], prev.length ? 17 : 11);
     L.control.zoom({ position: 'bottomleft' }).addTo(map);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', attribution: '© OpenStreetMap © CARTO' }).addTo(map);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
     const pin = m.querySelector('.map-pin'), hint = $('#mapHint');
     const show = () => { const c = map.getCenter(); hint.textContent = `${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}`; };
     map.on('movestart', () => pin.classList.add('up')); map.on('moveend', () => { pin.classList.remove('up'); show(); });
