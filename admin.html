@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019120643">
+<link rel="stylesheet" href="assets/base.css?v=20261019121147">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -136,7 +136,16 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .fin-box h3 .en{font-size:13px;color:var(--amber);font-weight:600;letter-spacing:.04em}
 .fin-box .fsub{font-size:13px;color:var(--muted);line-height:1.7;margin-top:-8px}
 .fin-items{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:14px}
-.fin-it{display:grid;grid-template-columns:40px 1fr 120px;gap:10px;align-items:center}
+.fin-h{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:0 2px 2px}
+.fin-pc{display:grid;gap:4px}.fin-pc span{font-size:11px;color:var(--muted)}
+.o-fin{margin-top:14px;border-radius:14px;padding:14px;background:var(--surface-2);display:grid;gap:6px;font-size:13px;color:var(--muted)}
+.o-fin h4{margin:0 0 2px;font-size:14px;color:var(--ink)}
+.o-fin>div{display:flex;justify-content:space-between;gap:10px}
+.o-fin b{font-family:var(--f-ui);color:var(--ink)}.o-fin b i{font-style:normal;font-weight:400;color:var(--muted-2);font-size:11.5px}
+.o-fin .net{border-top:1px solid var(--line);padding-top:8px;margin-top:2px;font-size:14.5px;color:var(--ink);font-weight:700}
+.o-fin .net b{font-size:16px;color:var(--green)}.o-fin b.neg,.o-fin .net b.neg{color:var(--red)}
+.o-fin small{font-size:12.5px}.o-fin.warn small{color:var(--amber)}.o-fin .btn{justify-self:start;margin-top:4px}
+.fin-it{display:grid;grid-template-columns:40px 1fr 140px;gap:10px;align-items:center}
 .fin-it img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:var(--surface-2)}
 .fin-it b{font:600 13px var(--f-ui);display:block}.fin-it small{font-size:11.5px;color:var(--muted)}
 .fin-it .input{height:40px;font-family:var(--f-ui)}
@@ -379,7 +388,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019120643"></script>
+<script src="assets/config.js?v=20261019121147"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -449,6 +458,8 @@ async function boot() {
   else go(h0 || 'dash');
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   listen(); askNotify();
+  // orders that came in while the panel was closed reach the sheet as soon as it opens
+  sheetSend({ action: 'replace', orders: orders.map(orderRow), expenses: expenses.map(expRow) });
 }
 function authPanel(id) { ['#loginForm','#forgotForm','#resetForm'].forEach(f => $(f).classList.toggle('hidden', f !== id)); }
 function showLogin() { $('#appView').classList.add('hidden'); $('#loginView').classList.remove('hidden'); authPanel('#loginForm'); setTimeout(() => $('#em').focus(), 50); }
@@ -502,6 +513,7 @@ function listen() {
   channel = sb.channel('rc-orders').on('postgres_changes', {event:'INSERT', schema:'public', table:'shop_orders'}, async payload => {
     freshIds.add(payload.new.id); beep(); toast(`طلب جديد ${payload.new.code}`, 'ok'); desktopNotify(payload.new);
     await Promise.all([loadOrders(), loadProducts()]); renderTabs(); go(tab, true);
+    const no = orders.find(x => x.id === payload.new.id); if (no) sheetOrder(no);
   }).subscribe();
 }
 // desktop notification (when the dashboard is open, even in another tab)
@@ -627,11 +639,11 @@ function orderHTML(o) {
     <div class="o-body">
       <div class="o-items">${o.shop_order_items.map(i => `<div class="o-item"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><span class="n">${esc(i.name)}</span><span class="q">${i.qty} × ${money(i.unit_price)}${+i.original_price > +i.unit_price ? ` <s style="color:var(--muted-2)">${money(i.original_price)}</s>` : ''}</span></div>`).join('')}
         <div class="o-sum"><div><span>المنتجات</span><b>${money(o.subtotal)}</b></div>${+o.savings ? `<div><span>خصم</span><b style="color:var(--green)">− ${money(o.savings)}</b></div>` : ''}<div><span>الشحن</span><b>${+o.shipping ? money(o.shipping) : 'مجاني'}</b></div><div style="color:var(--ink);font-weight:700"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>
+        ${finPanel(o)}
       </div>
       <div class="o-side">
         <div class="addr"><b style="color:var(--ink)">${esc(o.city)}</b><br>${esc(o.address)}${o.notes ? `<br><span style="color:var(--amber)">ملاحظة: ${esc(o.notes)}</span>` : ''}${o.location ? `<br><a class="loc-link" href="${esc(o.location)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>فتح اللوكيشن على الخريطة</a>` : ''}</div>
         <div class="field"><label>الحالة</label>${stPicker(o)}</div>
-        ${finChip(o)}
         <div class="field"><label>ملاحظة داخلية</label><textarea class="input" rows="2" data-note="${o.id}" placeholder="مش بتظهر للعميل">${esc(o.admin_note || '')}</textarea></div>
         <div class="acts">
           <a class="btn btn-sm btn-amber" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${msg}">واتساب</a>
@@ -648,6 +660,7 @@ document.addEventListener('click', async e => {
   const del = e.target.closest('[data-del-order]');
   if (del) { const id = +del.dataset.delOrder; if (!(await confirmBox('تحذف الطلب ده نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالته لـ "ملغي" الأول)', 'حذف'))) return;
     const {error} = await sb.from('shop_orders').delete().eq('id', id); if (error) return toast(error.message, 'err');
+    const gone = orders.find(o => o.id === id); if (gone) sheetSend({ action: 'delete', sheet: 'orders', id: gone.code });
     orders = orders.filter(o => o.id !== id); toast('اتحذف'); renderTabs(); renderOrders(); }
 });
 document.addEventListener('change', async e => {
@@ -983,6 +996,19 @@ function stPicker(o) {
   return `<div class="stp" data-stp="${o.id}"><button type="button" class="stp-btn st-${o.status}" aria-haspopup="listbox"><i></i><span>${statuses[o.status] || o.status}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
     <div class="stp-pop" role="listbox">${STATUS_KEYS.map(k => `<button type="button" role="option" data-st="${k}" class="st-${k} ${k === o.status ? 'on' : ''}"><i></i>${statuses[k]}${CHECK}</button>`).join('')}</div></div>`;
 }
+// the order's money in full, shown under its totals
+function finPanel(o) {
+  const f = fins[o.id];
+  if (o.status === 'returned') return `<div class="o-fin"><h4>الحسابات</h4>${f ? `<div><span>خسارة المرتجع</span><b class="neg">− ${money(f.return_loss)}</b></div>` : ''}<div class="net"><span>صافي الربح</span><b class="${f && +f.return_loss ? 'neg' : ''}">${signMoney(orderNet(o))}</b></div><small>المنتجات رجعت للمخزون.</small></div>`;
+  if (!COUNTED.includes(o.status)) return o.status === 'new' ? `<div class="o-fin muted"><h4>الحسابات</h4><small>بتتسجّل لما تخلي الحالة «تم الاستلام».</small></div>` : '';
+  if (!f) return `<div class="o-fin warn"><h4>الحسابات</h4><small>لسه مسجّلتش التكاليف، فصافي الربح مش محسوب.</small><button class="btn btn-sm btn-amber" data-fin="${o.id}">سجّل التكاليف</button></div>`;
+  const n = orderNet(o), me = f.ship_payer === 'me';
+  return `<div class="o-fin"><h4>الحسابات</h4>
+    <div><span>سعر البيع</span><b>${money(f.sale)}</b></div>
+    <div><span>تكلفة المنتجات</span><b>− ${money(f.cost)}</b></div>
+    <div><span>تكلفة الشحن · ${me ? 'على حسابك' : 'على المشتري'}</span><b>${me ? '− ' : ''}${money(f.ship_cost)}${me ? '' : ' <i>(مش بتتخصم)</i>'}</b></div>
+    <div class="net"><span>صافي الربح</span><b class="${n < 0 ? 'neg' : ''}">${signMoney(n)}</b></div></div>`;
+}
 function finChip(o) {
   const f = fins[o.id];
   if (o.status === 'returned') return f && +f.return_loss ? `<span class="fin-chip">خسارة المرتجع <b class="neg en">${money(f.return_loss)}</b></span>` : '';
@@ -1024,12 +1050,12 @@ function finBox(o) {
   m.innerHTML = `<form class="fin-box" novalidate>
     <h3>تكاليف الطلب <span class="en">${esc(o.code)}</span></h3>
     <p class="fsub">سجّل الأرقام دي مرة واحدة وصافي الربح بيتحسب لوحده في صفحة الحسابات والشيت. تكلفة كل منتج بتتحفظ للطلبات الجاية.</p>
-    <div class="fin-items">${items.map(i => `<div class="fin-it"><img src="${esc(i.image || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.qty} × ${money(i.unit_price)}</small></div><input class="input" inputmode="decimal" placeholder="تكلفة القطعة" data-pc="${i.product_id ?? ''}" data-q="${i.qty}" value="${f.cost != null && items.length === 1 ? +f.cost / i.qty : (pcosts[i.product_id] ?? '')}" aria-label="تكلفة القطعة"></div>`).join('')}</div>
+    <div class="fin-items">${items.map(i => `<div class="fin-it"><img src="${esc(i.image || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.qty} × ${money(i.unit_price)}</small></div><label class="fin-pc"><span>تكلفة القطعة (اشتريتها بكام)</span><input class="input" inputmode="decimal" placeholder="مثلاً 1800" data-pc="${i.product_id ?? ''}" data-q="${i.qty}" value="${f.cost != null && items.length === 1 ? +f.cost / i.qty : (pcosts[i.product_id] ?? '')}" aria-label="تكلفة القطعة"></label></div>`).join('')}</div>
     <div class="two"><div class="field"><label>سعر البيع (المنتجات)</label><input class="input" name="sale" inputmode="decimal" value="${f.sale != null ? +f.sale : +o.subtotal}"></div>
       <div class="field"><label>تكلفة الشحن (لشركة الشحن)</label><input class="input" name="ship" inputmode="decimal" value="${shipDef}"></div></div>
     <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button></div></div>
     <div class="fin-calc" id="finCalc"></div>
-    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>بعدين</button></div></form>`;
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
   document.body.appendChild(m);
   const form = m.querySelector('form'), num = v => Math.max(0, +String(v).replace(/[^\d.]/g, '') || 0);
   const vals = () => { const cost = [...m.querySelectorAll('[data-pc]')].reduce((s, x) => s + num(x.value) * +x.dataset.q, 0); return { sale: num(form.sale.value), cost, ship: num(form.ship.value) }; };
@@ -1055,7 +1081,7 @@ function returnBox(o) {
     <p class="fsub">المنتجات رجعت للمخزون تلقائياً (المخزون بتاعك واللي بيظهر للعميل). سجّل لو المرتجع كلّفك حاجة عشان تتخصم من صافي الربح.</p>
     <div class="fin-items">${(o.shop_order_items || []).map(i => `<div class="fin-it" style="grid-template-columns:40px 1fr"><img src="${esc(i.image || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>رجع للمخزون: ${i.qty}</small></div></div>`).join('')}</div>
     <div class="field"><label>خسارة المرتجع (شحن رايح وجاي، تغليف…)</label><input class="input" name="loss" inputmode="decimal" value="${f.return_loss != null ? +f.return_loss : (f.ship_cost != null ? +f.ship_cost * 2 : (+settings.shipping_fee || 0) * 2)}"></div>
-    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>بعدين</button></div></form>`;
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
   document.body.appendChild(m);
   const form = m.querySelector('form');
   m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
