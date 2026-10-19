@@ -547,11 +547,11 @@
   /* ---------- account: Google or email + password; orders are saved to the account ---------- */
   DQ.user = null; DQ.isAdmin = false;
   let accMode = 'login', accMsg = '';
-  const STATUS = { new: 'تم الطلب', confirmed: 'جاري التجهيز', shipped: 'في الطريق', delivered: 'تم التسليم', cancelled: 'اتلغى', returned: 'مرتجع' };
+  const STATUS = { new: 'تم الطلب', confirmed: 'جاري التجهيز', shipped: 'في الطريق', delivered: 'تم التسليم', cancelled: 'تم إلغاء الطلب', returned: 'مرتجع' };
   /* ---------- order tracking: 4 steps, live ---------- */
   const STEPS = [['new', 'تم الطلب', 'وصلنا طلبك، هنكلمك قريب للتأكيد.', 'bag'], ['confirmed', 'جاري التجهيز', 'استلمنا طلبك وبنجهزه دلوقتي.', 'gift'], ['shipped', 'في الطريق', 'طلبك خرج مع المندوب وفي الطريق ليك.', 'truck'], ['delivered', 'تم التسليم', 'تم استلام الطلب — نتمنى تكون مبسوط بالخدمة', 'heart']];
   DQ.tracker = (st) => {
-    if (st === 'cancelled') return `<div class="trk off"><p class="trk-msg">الطلب ده اتلغى. لو ده غلط كلمنا على واتساب.</p></div>`;
+    if (st === 'cancelled') return `<div class="trk off"><p class="trk-msg">تم إلغاء الطلب. لو ده غلط كلمنا على واتساب.</p></div>`;
     if (st === 'returned') return `<div class="trk off"><p class="trk-msg">الطلب ده اترجع. لو عندك أي سؤال كلمنا على واتساب.</p></div>`;
     const i = Math.max(0, STEPS.findIndex(x => x[0] === st));
     return `<div class="trk ${i === 3 ? 'done-all' : ''}" style="--p:${i / 3}"><div class="trk-line"><i></i></div><ol>${STEPS.map(([k, l, m, ic], j) => `<li class="${j < i ? 'done' : j === i ? 'cur' : ''}"><span class="trk-dot">${ICON[ic] || ''}</span><b>${l}</b></li>`).join('')}</ol><p class="trk-msg">${STEPS[i][2]}</p></div>`;
@@ -590,12 +590,21 @@
     const local = mine().find(x => x.code === code);
     const { data, error } = await sb.rpc('shop_cancel_order', { p_code: code, p_phone: local ? local.phone : null });
     if (error) { b.disabled = false; b.textContent = 'إلغاء الطلب'; return DQ.toast(/شحن|واتساب|موجود/.test(error.message) ? error.message : 'معرفناش نلغي الطلب، جرّب تاني', 'err'); }
-    applyStatus(code, (data && data.status) || 'cancelled');
+    const at = (data && data.cancelled_at) || new Date().toISOString(), l = mine(), lo = l.find(x => x.code === code);
+    if (lo) { lo.cancelled_at = at; saveMine(l); }
+    applyStatus(code, (data && data.status) || 'cancelled'); hideLater(code, at);
   });
+  // a cancelled order stays on the customer's page for 5 minutes, then it's gone
+  const HIDE_MS = 5 * 60 * 1000;
+  const shown = o => o.status !== 'cancelled' || (o.cancelled_at && Date.now() - new Date(o.cancelled_at).getTime() < HIDE_MS);
+  function hideLater(code, at) {
+    const left = HIDE_MS - (Date.now() - new Date(at || 0).getTime());
+    setTimeout(() => document.querySelectorAll(`.acc-order[data-trk="${CSS.escape(code)}"]`).forEach(el => { el.classList.add('gone'); setTimeout(() => el.remove(), 400); }), Math.max(0, left));
+  }
   async function trackLocal(codesToSkip = []) {
     const list = mine().filter(o => !codesToSkip.includes(o.code)), out = [];
-    for (const o of list) { let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {} if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, items: o.items || [] }); }
-    return out;
+    for (const o of list) { let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {} if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, cancelled_at: o.cancelled_at, items: o.items || [] }); }
+    return out.filter(shown);
   }
   // a status changed → update every tracker on the page + tell the customer
   function applyStatus(code, st) {
@@ -669,7 +678,7 @@
           ${up ? '' : '<button class="acc-link" data-mode="forgot">نسيت الباسورد؟</button>'}
           <div class="acc-switch">${up ? 'عندك حساب؟ <button class="acc-link" data-mode="login">سجّل دخول</button>' : 'أول مرة؟ <button class="acc-link" data-mode="signup">اعمل حساب</button>'}</div>
           ${mine().length ? '<h4 class="acc-h">طلباتك من الجهاز ده</h4><div id="devOrders"><div class="acc-empty">جاري التحميل…</div></div>' : ''}`;
-        if (mine().length) trackLocal().then(l => { const d = $('#devOrders'); if (d) d.innerHTML = l.map(orderCard).join(''); });
+        if (mine().length) trackLocal().then(l => { const d = $('#devOrders'); if (d) { d.innerHTML = l.length ? l.map(orderCard).join('') : '<div class="acc-empty">مافيش طلبات حالياً.</div>'; l.filter(o => o.status === 'cancelled').forEach(o => hideLater(o.code, o.cancelled_at)); } });
         $('#gBtn').onclick = DQ.signInGoogle;
         RC.googleOn().then(on => { const g = box.querySelector('.g-only'); if (g) g.hidden = !on; });
       }
@@ -704,12 +713,13 @@
       <h4 class="acc-h">طلباتي</h4><div id="accOrders"><div class="acc-empty">جاري التحميل…</div></div>
       <button class="btn btn-ghost acc-out" id="accOut">تسجيل خروج</button>`;
     $('#accOut').onclick = async () => { await sb.auth.signOut(); DQ.toast('اتسجل الخروج'); };
-    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,shop_order_items(name,qty,image)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
+    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,shop_order_items(name,qty,image)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
     const el = $('#accOrders'); if (!el) return;
-    const acc = error ? [] : data, extra = await trackLocal(acc.map(o => o.code));
+    const acc = error ? [] : data.filter(shown), extra = await trackLocal(acc.map(o => o.code));
     const all = [...acc, ...extra].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     if (!$('#accOrders')) return;
     el.innerHTML = all.length ? all.map(orderCard).join('') : '<div class="acc-empty">لسه مافيش طلبات. أي طلب تعمله هيظهر هنا وتتابعه خطوة بخطوة.</div>';
+    all.filter(o => o.status === 'cancelled').forEach(o => hideLater(o.code, o.cancelled_at));
   }
   DQ.openAccount = (mode) => { if (mode) accMode = mode; accMsg = ''; openSheet('#accSheet'); renderAccount(); };
   sb.auth.onAuthStateChange((ev, session) => {

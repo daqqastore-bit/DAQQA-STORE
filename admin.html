@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019124723">
+<link rel="stylesheet" href="assets/base.css?v=20261019125039">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -98,6 +98,9 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-top .code{font:600 12px var(--f-ui);direction:ltr;text-align:right}
 .o-top .date{font-size:11px;color:var(--muted-2)}
 .o-top .who b{display:block}
+.warn-chip{display:inline-block;margin-inline-start:8px;font:600 11px var(--f-ui);font-style:normal;color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);padding:2px 8px;border-radius:99px;vertical-align:middle}
+.cx-box{border-radius:12px;padding:10px 12px;background:var(--surface-2);display:grid;gap:3px;font-size:12.5px;color:var(--muted)}
+.cx-box b{color:var(--ink);font-size:13px}.cx-box.warn{background:color-mix(in srgb,var(--red) 10%,transparent);border:1px solid color-mix(in srgb,var(--red) 30%,transparent)}.cx-box.warn b{color:var(--red)}
 .o-top .who span{font:12px var(--f-ui);color:var(--muted);direction:ltr;display:inline-block}
 .o-top .total{font:700 14px var(--f-ui)}
 .o-top .chev{transition:transform .25s;color:var(--muted)}
@@ -405,7 +408,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019124723"></script>
+<script src="assets/config.js?v=20261019125039"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -531,12 +534,12 @@ function listen() {
   channel = sb.channel('rc-orders').on('postgres_changes', {event:'INSERT', schema:'public', table:'shop_orders'}, async payload => {
     freshIds.add(payload.new.id); beep(); toast(`طلب جديد ${payload.new.code}`, 'ok'); desktopNotify(payload.new);
     await Promise.all([loadOrders(), loadProducts()]); renderTabs(); go(tab, true);
-    const no = orders.find(x => x.id === payload.new.id); if (no) sheetOrder(no);
+    const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ ${no.customer_name} لغى ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} قبل كدا (آخرها ${RC.when(pc[0].cancelled_at)})`, 'err'), 1600); }
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_orders'}, payload => {
     // a customer cancelled their order from the store
     const o = orders.find(x => x.id === payload.new.id); if (!o || o.status === payload.new.status) return;
-    o.status = payload.new.status;
-    if (o.status === 'cancelled') { beep(); toast(`العميل لغى الطلب ${o.code}`, 'err'); loadProducts(); sheetOrder(o); }
+    Object.assign(o, payload.new);
+    if (o.status === 'cancelled') { beep(); toast(`${o.cancelled_by === 'customer' ? 'العميل ' + o.customer_name + ' لغى' : 'اتلغى'} الطلب ${o.code}`, 'err'); loadProducts(); sheetOrder(o); }
     renderTabs(); refreshOrderUI(o);
   }).subscribe();
 }
@@ -651,13 +654,24 @@ function renderOrders() {
   const oq = $('#oq'); oq.oninput = () => { orderQuery = oq.value; clearTimeout(oq._t); oq._t = setTimeout(() => { renderOrders(); const n = $('#oq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 250); };
   freshIds.clear();
 }
+// customer cancellations: shown on the cancelled order and warned about on the same customer's next orders
+const digits = v => String(v || '').replace(/\D/g, '');
+function pastCancels(o) {
+  return orders.filter(x => x.id !== o.id && x.status === 'cancelled' && x.cancelled_by === 'customer' && x.cancelled_at && new Date(x.cancelled_at) < new Date(o.created_at)
+    && ((o.user_id && x.user_id === o.user_id) || digits(x.phone) === digits(o.phone)));
+}
+function cancelInfo(o) {
+  const own = o.status === 'cancelled' && o.cancelled_by === 'customer' ? `<div class="cx-box"><b>تم الإلغاء من العميل ${esc(o.customer_name)}</b><span>${o.cancelled_at ? fmtDate(o.cancelled_at) : ''}</span></div>` : '';
+  const past = pastCancels(o);
+  return own + (past.length ? `<div class="cx-box warn"><b>⚠ العميل ده لغى ${past.length === 1 ? 'طلب' : past.length + ' طلبات'} قبل كدا</b>${past.map(x => `<span><span class="en">${esc(x.code)}</span> · اتلغى ${fmtDate(x.cancelled_at)}</span>`).join('')}</div>` : '');
+}
 function orderHTML(o) {
   const wa = o.phone.replace(/\D/g, '').replace(/^0/, '20');
   const msg = encodeURIComponent(`أهلاً ${o.customer_name}\nمعاك DAQQA بخصوص طلبك ${o.code} بإجمالي ${money(o.total)}.\nممكن نأكد العنوان: ${o.city} - ${o.address}؟`);
   return `<div class="order ${openOrders.has(o.id)?'open':''} ${freshIds.has(o.id)?'fresh':''}" data-oid="${o.id}">
     <div class="o-top" data-toggle>
       <div><div class="code">${esc(o.code)}</div><div class="date">${fmtDate(o.created_at)}</div></div>
-      <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span></div>
+      <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span>${pastCancels(o).length ? `<em class="warn-chip" title="العميل ده لغى طلبات قبل كدا">⚠ لغى قبل كدا (${pastCancels(o).length})</em>` : ''}</div>
       <div class="city" style="color:var(--muted)">${esc(o.city)}</div>
       <div class="total en">${money(o.total)}</div>
       <div><span class="badge st-${o.status}">${statuses[o.status]}</span></div>
@@ -669,6 +683,7 @@ function orderHTML(o) {
         ${finPanel(o)}
       </div>
       <div class="o-side">
+        ${cancelInfo(o)}
         <div class="addr"><b style="color:var(--ink)">${esc(o.city)}</b><br>${esc(o.address)}${o.notes ? `<br><span style="color:var(--amber)">ملاحظة: ${esc(o.notes)}</span>` : ''}${o.location ? `<br><a class="loc-link" href="${esc(o.location)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>فتح اللوكيشن على الخريطة</a>` : ''}</div>
         <div class="field"><label>الحالة</label>${stPicker(o)}</div>
         <div class="field"><label>ملاحظة داخلية</label><textarea class="input" rows="2" data-note="${o.id}" placeholder="مش بتظهر للعميل">${esc(o.admin_note || '')}</textarea></div>
@@ -1051,9 +1066,10 @@ function refreshOrderUI(o) {
 async function setStatus(id, st) {
   const o = orders.find(x => x.id === id); if (!o || o.status === st) return;
   const prev = o.status;
-  const { error } = await sb.from('shop_orders').update({ status: st }).eq('id', id);
+  const patch = st === 'cancelled' ? { status: st, cancelled_at: new Date().toISOString(), cancelled_by: 'admin' } : { status: st };
+  const { error } = await sb.from('shop_orders').update(patch).eq('id', id);
   if (error) return toast(st === 'returned' && /check|constraint/i.test(error.message) ? 'حالة «مرتجع» محتاجة السطر اللي اتبعتلك يتشغّل في Supabase الأول' : error.message, 'err');
-  o.status = st; toast('الحالة: ' + statuses[st], 'ok');
+  Object.assign(o, patch); toast('الحالة: ' + statuses[st], 'ok');
   loadProducts(); renderTabs(); refreshOrderUI(o); sheetOrder(o);
   if (st === 'confirmed' && prev === 'new') finBox(o);
   else if (st === 'returned') returnBox(o);

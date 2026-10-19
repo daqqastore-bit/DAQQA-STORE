@@ -342,6 +342,7 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .ao-top,.ao-bot{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 .ao-top code{font-size:13px;color:var(--ink)}
 .ao-bot b{color:var(--ink);font-size:15px}
+.acc-order.gone{opacity:0;transform:scale(.97);transition:opacity .4s,transform .4s}
 .ao-acts{display:grid;gap:8px;margin-top:12px}.ao-acts:empty{display:none}
 .ao-cancel{width:100%;height:40px;border-radius:12px;border:1px solid rgb(176 72 52/.45);color:#B04834;font-size:13.5px;font-weight:600;background:transparent;transition:background .2s,color .2s}
 .ao-cancel:hover{background:#B04834;color:#fff;border-color:#B04834}
