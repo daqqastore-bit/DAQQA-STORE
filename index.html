@@ -28,13 +28,13 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019170143">
-<link rel="stylesheet" href="assets/store.css?v=20261019170143">
+<link rel="stylesheet" href="assets/base.css?v=20261019170600">
+<link rel="stylesheet" href="assets/store.css?v=20261019170600">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
 .landing{position:relative;z-index:5;overflow:clip;height:320vh;margin-bottom:-100vh;pointer-events:none}
-.ld-stick{position:sticky;top:var(--navh,0px);height:calc(100vh - var(--navh,0px));overflow:hidden;display:grid;place-items:center;box-sizing:border-box;padding:0 0 calc(108px + var(--ldover,0px));background:var(--bg);pointer-events:auto}
+.ld-stick{position:sticky;top:var(--navh,0px);height:calc(100vh - var(--navh,0px));overflow:hidden;display:grid;place-items:center;box-sizing:border-box;padding:0 0 28px;background:var(--bg);pointer-events:auto}
 .ld-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 46%,rgb(var(--accent-rgb)/.16),transparent 55%),radial-gradient(circle at var(--mx,50%) var(--my,50%),rgb(var(--accent-rgb)/.14),transparent 30%)}
 .ld-slogan{position:absolute;left:calc(max(64px,7vw) + 120px);top:0;bottom:108px;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:0;direction:ltr;cursor:default;animation:ldMotto 2s cubic-bezier(.2,.7,.2,1) .9s both}
 .ld-slogan span{position:relative;display:block;direction:rtl;font:700 clamp(46px,4.4vw,76px)/1.32 'Amiri',var(--f-ar);color:var(--accent);transition:color .5s,text-shadow .5s,filter .5s}
@@ -69,9 +69,10 @@
 @keyframes ldDrop{from{opacity:0;transform:translateY(-60px) rotateX(70deg)}to{opacity:1;transform:none}}
 .ld-sub{font:600 13px var(--f-ui);letter-spacing:.9em;color:var(--accent);padding-left:.9em;animation:ldFade 1.2s .5s both}
 .ld-sep{display:flex;align-items:center;gap:12px;margin:min(20px,2vh) 0 min(16px,1.4vh);animation:ldFade 1.2s .55s both}
-.ld-sep span{width:72px;height:1px;background:linear-gradient(90deg,transparent,rgb(var(--accent-rgb)/.7))}
-.ld-sep span:last-child{transform:scaleX(-1)}
-.ld-sep i{width:7px;height:7px;transform:rotate(45deg);border:1px solid var(--accent)}
+.ld-sep>span{width:72px;height:1px;background:linear-gradient(90deg,transparent,rgb(var(--accent-rgb)/.7))}
+.ld-sep>span:last-child{transform:scaleX(-1)}
+.ld-sep .ld-rail{position:relative;inset:auto;margin:0}
+@media (min-width:601px){.ld-sep{margin:min(22px,2.4vh) 0 min(14px,1.4vh)}.ld-sep>span{width:min(90px,6vw)}}
 .ld-ar{font:700 clamp(30px,min(3.4vw,5.2vh),48px)/1.35 'Amiri',var(--f-ar);color:var(--accent);margin-top:8px;animation:ldFade 1.2s .6s both}
 .ld-beats{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;animation:ldFade 1.2s .7s both;position:relative;z-index:3}
 .ld-beats small{font:600 10px var(--f-ui);letter-spacing:.45em;color:var(--muted);padding-inline-start:.45em}
@@ -91,7 +92,7 @@
 @keyframes ldFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .ld-fade{will-change:opacity,transform}
 /* scroll cue: a clear pill centered at the bottom — mouse, "اسكرول لتحت", bouncing arrow */
-.ld-rail{position:absolute;left:0;right:0;bottom:calc(30px + var(--ldover,0px));margin:0 auto;width:max-content;z-index:3;display:flex;align-items:center;gap:14px;padding:12px 26px 12px 22px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.45);background:rgb(var(--accent-rgb)/.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink);cursor:pointer;animation:ldFade 1.2s 1s both,railPulse 2.6s 2.2s ease-in-out infinite;transition:background .3s,border-color .3s}
+.ld-rail{position:absolute;left:0;right:0;bottom:30px;margin:0 auto;width:max-content;z-index:3;display:flex;align-items:center;gap:14px;padding:12px 26px 12px 22px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.45);background:rgb(var(--accent-rgb)/.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink);cursor:pointer;animation:ldFade 1.2s 1s both,railPulse 2.6s 2.2s ease-in-out infinite;transition:background .3s,border-color .3s}
 .ld-rail:hover{background:rgb(var(--accent-rgb)/.2);border-color:var(--accent)}
 .ld-rail b{font:700 19px var(--f-ar);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
 .ld-rail small{font:600 10px var(--f-ui);letter-spacing:.42em;color:var(--accent)}
@@ -102,8 +103,8 @@
 @keyframes railPulse{0%,100%{box-shadow:0 0 0 0 rgb(var(--accent-rgb)/0)}50%{box-shadow:0 0 0 7px rgb(var(--accent-rgb)/.1),0 12px 34px -12px rgb(var(--accent-rgb)/.55)}}
 @keyframes railDrop{to{transform:translateY(560%)}}
 @media (prefers-reduced-motion:reduce){.ld-rail,.ld-rail .arw{animation:none;opacity:.8}}
-@media (max-width:600px){.ld-rail{bottom:calc(22px + var(--ldover,0px));padding:10px 18px;gap:10px}.ld-rail b{font-size:16px}.ld-rail small{display:none}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
-@media (min-width:601px) and (max-height:760px){.ld-rail{bottom:calc(12px + var(--ldover,0px));padding:7px 20px 7px 16px}.ld-rail b{font-size:17px}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
+@media (max-width:600px){.ld-rail{bottom:22px;padding:10px 18px;gap:10px}.ld-rail b{font-size:16px}.ld-rail small{display:none}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
+@media (min-width:601px) and (max-height:760px){.ld-rail{padding:7px 20px 7px 16px}.ld-rail b{font-size:17px}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
 @media (max-height:560px){.ld-rail small{display:none}}
 .mouse{width:20px;height:32px;border:1.5px solid var(--accent);border-radius:16px;position:relative}
 .mouse i{position:absolute;left:50%;top:6px;width:3px;height:6px;margin-left:-1.5px;border-radius:2px;background:var(--accent);animation:wheel 1.6s ease-in-out infinite}
@@ -280,15 +281,14 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="hdr"></div>
 <section class="landing" id="landing" aria-label="DAQQA"><div class="ld-stick"><div class="ld-bg"></div><div class="ld-grid"></div><div class="ld-slogan ld-fade" lang="ar"><span>دقت</span><span>ساعة</span><span>العمل</span></div><div class="ld-slogan r ld-fade" lang="ar"><span>دقّة</span><span>تصنع</span><span>الفرق</span></div>
   <span class="ld-side l en ld-fade">PRECISION IN EVERY TICK</span><span class="ld-side r en ld-fade">EST. 2026 · CAIRO</span>
-  <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><h1 class="ld-word en" id="ldWord" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></h1><div class="ld-sep ld-fade" aria-hidden="true"><span></span><i></i><span></span></div><div class="ld-ar ld-fade" lang="ar">دقّة</div><div class="ld-beats ld-fade"><small class="en">3 DAQQAT <em>·</em> <span lang="ar">٣ دقّات</span></small><nav aria-label="الأقسام"><a href="#watches" data-kind="watches"><i class="en">01</i>ساعات</a><a href="#glasses" data-kind="glasses"><i class="en">02</i>نضارات</a><a href="#accessories" data-kind="accessories"><i class="en">03</i>اكسسوارات</a></nav></div></div>
-  <button type="button" class="ld-rail ld-fade" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b>اسكرول لتحت</b><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17"/><path d="m5 13 7 7 7-7"/></svg></span></button>
+  <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><h1 class="ld-word en" id="ldWord" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></h1><div class="ld-sep ld-fade"><span aria-hidden="true"></span><button type="button" class="ld-rail" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b>اسكرول لتحت</b><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17"/><path d="m5 13 7 7 7-7"/></svg></span></button><span aria-hidden="true"></span></div><div class="ld-ar ld-fade" lang="ar">دقّة</div><div class="ld-beats ld-fade"><small class="en">3 DAQQAT <em>·</em> <span lang="ar">٣ دقّات</span></small><nav aria-label="الأقسام"><a href="#watches" data-kind="watches"><i class="en">01</i>ساعات</a><a href="#glasses" data-kind="glasses"><i class="en">02</i>نضارات</a><a href="#accessories" data-kind="accessories"><i class="en">03</i>اكسسوارات</a></nav></div></div>
   </div><div class="ld-ring" id="ldRing"></div></section>
 <main id="sections"><div class="none"><div class="m skeleton" style="border-radius:50%"></div>جاري التحميل…</div></main>
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261019170143"></script>
-<script src="assets/app.js?v=20261019170143"></script>
+<script src="assets/config.js?v=20261019170600"></script>
+<script src="assets/app.js?v=20261019170600"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -364,8 +364,6 @@ const state = {}; // per section: { tab, all }
     p = clamp(-r.top / span);
     const fix = p < 1;
     L.style.setProperty('--navh', navH + 'px');
-    // keep the scroll cue on screen while the top bar still pushes the stage down
-    L.style.setProperty('--ldover', Math.max(0, (stage.getBoundingClientRect().bottom - innerHeight) / Z) + 'px');
     if (secs) {
       if (fix !== held) { held = fix; Object.assign(secs.style, fix ? { position: 'fixed', left: '0', right: '0', zIndex: '1' } : { position: '', top: '', left: '', right: '', zIndex: '' }); }
       if (fix) secs.style.top = navH + 'px';
