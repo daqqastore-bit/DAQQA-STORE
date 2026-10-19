@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019125606">
+<link rel="stylesheet" href="assets/base.css?v=20261019130758">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -237,6 +237,10 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .ed-body{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
 .ed-foot{border-top:1px solid var(--line);padding:14px 20px;display:flex;gap:10px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#main.pg-in>*{animation:pgIn .38s cubic-bezier(.2,.8,.2,1) both}
+#main.pg-in>*:nth-child(2){animation-delay:.04s}#main.pg-in>*:nth-child(3){animation-delay:.08s}#main.pg-in>*:nth-child(n+4){animation-delay:.12s}
+@keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#main.pg-in>*{animation:none}}
 .set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .set-card{display:flex;flex-direction:column;gap:14px}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -431,7 +435,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019125606"></script>
+<script src="assets/config.js?v=20261019130758"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -600,10 +604,12 @@ function renderTabs() {
 }
 document.addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (t) go(t.dataset.tab); });
 function go(t, keepScroll) {
-  tab = t; history.replaceState(null, '', '#' + t); renderTabs();
+  const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
   ({accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, settings: renderSettings}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
+  // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
+  if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
 }
 
 /* ---------- dashboard ---------- */
