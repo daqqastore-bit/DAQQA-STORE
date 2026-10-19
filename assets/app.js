@@ -516,7 +516,7 @@
     const base = location.origin + location.pathname.replace(/[^/]*$/, '');
     const items = ls.map(l => `• ${l.p.name} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`).join('\n');
     const body = { _subject: `طلب جديد ${data.code} — ${money(data.total)} — DAQQA`, _template: 'table', _captcha: 'false',
-      'رقم الطلب': data.code, 'الإجمالي': money(data.total), 'المنتجات': items,
+      'رقم الطلب': data.code, 'وقت الطلب': RC.when(new Date()), 'الإجمالي': money(data.total), 'المنتجات': items,
       'اسم العميل': d.name, 'التليفون': d.phone, 'واتساب العميل': 'https://wa.me/' + String(d.phone || '').replace(/\D/g, '').replace(/^0/, '20'),
       'المحافظة': d.city || '', 'العنوان': d.address || '', 'اللوكيشن': d.location || '—', 'ملاحظات': d.notes || '—',
       'افتح الطلب في الداشبورد': base + 'admin.html#orders/' + encodeURIComponent(data.code) };
@@ -562,17 +562,31 @@
   const orderCard = o => `<div class="acc-order" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
       ${DQ.tracker(o.status)}
       <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
-      <div class="ao-bot"><span>${new Date(o.created_at || o.at).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short', year: 'numeric' })}</span><b class="en">${money(o.total)}</b></div></div>`;
+      <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
+      ${cancelBtn(o.code, o.status)}</div>`;
+  // cancelling is allowed only before the order ships
+  const CANCELABLE = ['new', 'confirmed'];
+  function cancelBtn(code, st) { return CANCELABLE.includes(st) ? `<button type="button" class="ao-cancel" data-cancel="${esc(code)}">إلغاء الطلب</button>` : ''; }
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-cancel]'); if (!b) return;
+    if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'متأكد؟ اضغط تاني للإلغاء'; clearTimeout(b._t); b._t = setTimeout(() => { b.classList.remove('sure'); b.textContent = 'إلغاء الطلب'; }, 4000); return; }
+    clearTimeout(b._t); b.disabled = true; b.textContent = 'جاري الإلغاء…';
+    const code = b.dataset.cancel, local = mine().find(x => x.code === code);
+    const { data, error } = await sb.rpc('shop_cancel_order', { p_code: code, p_phone: local ? local.phone : null });
+    if (error) { b.disabled = false; b.classList.remove('sure'); b.textContent = 'إلغاء الطلب'; return DQ.toast(/شحن|واتساب|موجود/.test(error.message) ? error.message : 'معرفناش نلغي الطلب، جرّب تاني', 'err'); }
+    applyStatus(code, (data && data.status) || 'cancelled');
+  });
   async function trackLocal(codesToSkip = []) {
     const list = mine().filter(o => !codesToSkip.includes(o.code)), out = [];
-    for (const o of list) { const r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }).catch(() => ({})); if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, items: o.items || [] }); }
+    for (const o of list) { let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {} if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, items: o.items || [] }); }
     return out;
   }
   // a status changed → update every tracker on the page + tell the customer
   function applyStatus(code, st) {
     const l = mine(), o = l.find(x => x.code === code); const was = o ? o.status : null;
     if (o) { o.status = st; saveMine(l); }
-    document.querySelectorAll(`[data-trk="${CSS.escape(code)}"]`).forEach(el => { const t = el.querySelector('.trk'), b = el.querySelector('.ao-st'); if (t) t.outerHTML = DQ.tracker(st); if (b) { b.textContent = STATUS[st] || st; b.className = 'ao-st st-' + st; } });
+    document.querySelectorAll(`[data-trk="${CSS.escape(code)}"]`).forEach(el => { const t = el.querySelector('.trk'), b = el.querySelector('.ao-st'); if (t) t.outerHTML = DQ.tracker(st); if (b) { b.textContent = STATUS[st] || st; b.className = 'ao-st st-' + st; }
+      const c = el.querySelector('.ao-cancel'); if (c && !CANCELABLE.includes(st)) c.remove(); });
     if (was !== st) DQ.toast(st === 'delivered' ? `تم تسليم طلبك ${code} — نتمنى تكون مبسوط بالخدمة` : `طلبك ${code}: ${STATUS[st] || st}`, 'ok');
   }
   // live for signed-in customers (realtime) + light polling for orders on this device
@@ -584,7 +598,7 @@
   async function pollMine() {
     if (document.hidden) return;
     for (const o of mine().filter(x => !['delivered', 'cancelled'].includes(x.status))) {
-      const r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }).catch(() => null);
+      let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {}
       if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status);
     }
   }

@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019121257">
+<link rel="stylesheet" href="assets/base.css?v=20261019122157">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -72,6 +72,13 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .status-dots{display:flex;flex-wrap:wrap;gap:10px}
 .sd{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:10px}
 .sd i{width:10px;height:10px;border-radius:50%}
+.sd{background:transparent;color:var(--ink);cursor:pointer;transition:border-color .2s,background .2s}.sd:hover{border-color:var(--c)}
+.sd svg{width:14px;height:14px;color:var(--muted);transition:transform .25s}.sd.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}.sd.on svg{transform:rotate(180deg)}
+.sd-list{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:6px;display:grid;gap:2px;max-height:340px;overflow:auto;animation:sdIn .25s ease}
+@keyframes sdIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.sd-row{display:grid;grid-template-columns:110px 1fr auto auto;gap:14px;align-items:center;padding:10px 12px;border-radius:10px;text-align:right;color:var(--ink);font-size:13.5px}
+.sd-row:hover{background:var(--surface-2)}.sd-row .c{font-weight:700;font-size:12.5px}.sd-row .d{color:var(--muted);font-size:12px}.sd-row b{font-family:var(--f-ui)}
+@media(max-width:700px){.sd-row{grid-template-columns:1fr auto}.sd-row .d{grid-column:1}.sd-row .w{display:none}}
 /* status colors */
 .st-new{--c:#e0b47a}.st-confirmed{--c:var(--blue)}.st-shipped{--c:#c9a0f0}.st-delivered{--c:var(--green)}.st-cancelled{--c:var(--red)}.st-returned{--c:#d9925a}
 :root[data-theme="light"] .st-new{--c:#a9702d}:root[data-theme="light"] .st-shipped{--c:#7b4cb8}
@@ -191,6 +198,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .cat-pop button{min-height:38px;display:flex;align-items:center;gap:6px;padding:0 12px;border-radius:9px;font-size:14px;color:var(--ink);text-align:right}
 .cat-pop button:hover{background:var(--surface-2)}.cat-pop button.on{background:var(--surface-2);font-weight:700}
 .cat-pop button.new{color:var(--amber)}.cat-pop button.new b{color:var(--ink)}
+.rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
 .exp-form{display:grid;grid-template-columns:150px 1fr 130px 1.4fr auto;gap:10px;align-items:end;margin-bottom:16px}
 .sheet-chip{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--muted)}
 .sheet-chip i{width:8px;height:8px;border-radius:50%;background:var(--muted-2)}.sheet-chip.ok i{background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 20%,transparent)}
@@ -397,7 +405,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019121257"></script>
+<script src="assets/config.js?v=20261019122157"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -441,6 +449,7 @@ const SCOPES = {
   'lux-men':   { title: 'Luxury رجالي', sub: 'قطع Luxury رجالي وللجنسين', test: p => RC.isLuxury(p) && (p.category === 'men' || p.category === 'unisex'), init: { category: 'men', luxury: true } },
   'lux-women': { title: 'Luxury حريمي', sub: 'قطع Luxury حريمي وللجنسين', test: p => RC.isLuxury(p) && (p.category === 'women' || p.category === 'unisex'), init: { category: 'women', luxury: true } }
 };
+let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
 const COLS = { kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
@@ -449,8 +458,8 @@ const COLS = { kind: false, style: false, colors: false, luxury: false, colors_l
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
 function confirmBox(msg, okText='تأكيد') { return new Promise(res => { const d = document.createElement('div'); d.className = 'confirm'; d.innerHTML = `<div class="box"><b>${esc(msg)}</b><div class="acts"><button class="btn btn-danger btn-sm" data-ok>${esc(okText)}</button><button class="btn btn-ghost btn-sm" data-no>إلغاء</button></div></div>`; document.body.appendChild(d); d.onclick = e => { if (e.target.closest('[data-ok]')) { d.remove(); res(true) } else if (e.target.closest('[data-no]') || e.target === d) { d.remove(); res(false) } }; }); }
 // dates in English, day/month/year — 19/10/2026 · 2:27 PM
-const dmy = d => { const x = new Date(d); return `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}/${x.getFullYear()}`; };
-const fmtDate = d => `<span class="en" dir="ltr">${dmy(d)} · ${new Date(d).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}</span>`;
+const dmy = RC.dmy;
+const fmtDate = d => `<span class="en" dir="ltr">${RC.when(d)}</span>`;
 $('#themeBtn').onclick = () => { const h = document.documentElement; h.dataset.theme = h.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('rc-theme', h.dataset.theme) } catch(e) {} ; if (tab === 'dash') renderDash(); };
 
 /* ---------- auth ---------- */
@@ -523,6 +532,12 @@ function listen() {
     freshIds.add(payload.new.id); beep(); toast(`طلب جديد ${payload.new.code}`, 'ok'); desktopNotify(payload.new);
     await Promise.all([loadOrders(), loadProducts()]); renderTabs(); go(tab, true);
     const no = orders.find(x => x.id === payload.new.id); if (no) sheetOrder(no);
+  }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_orders'}, payload => {
+    // a customer cancelled their order from the store
+    const o = orders.find(x => x.id === payload.new.id); if (!o || o.status === payload.new.status) return;
+    o.status = payload.new.status;
+    if (o.status === 'cancelled') { beep(); toast(`العميل لغى الطلب ${o.code}`, 'err'); loadProducts(); sheetOrder(o); }
+    renderTabs(); refreshOrderUI(o);
   }).subscribe();
 }
 // desktop notification (when the dashboard is open, even in another tab)
@@ -592,9 +607,12 @@ function renderDash() {
       <div class="panel"><h2>الأكثر مبيعاً</h2>${top.length ? top.map(t => `<div class="bar-row"><div><span class="en" style="font-weight:600">${esc(t.name)}</span><span style="color:var(--muted)">${t.units} قطعة · <span class="en">${money(t.rev)}</span></span></div><div class="track"><i style="width:${Math.max(4, t.rev/topMax*100)}%"></i></div></div>`).join('') : '<div class="empty">لسه مفيش مبيعات في الفترة دي.</div>'}</div>
     </div>
     <div class="row2">
-      <div class="panel"><h2>حالة الطلبات</h2><div class="status-dots">${byStatus.map(([k, n]) => `<div class="sd st-${k}"><i style="background:var(--c)"></i>${statuses[k]} <b class="en">${n}</b></div>`).join('')}</div></div>
+      <div class="panel"><h2>حالة الطلبات</h2><div class="status-dots">${byStatus.map(([k, n]) => `<button type="button" class="sd st-${k} ${dashSt === k ? 'on' : ''}" data-sd="${k}" aria-expanded="${dashSt === k}"><i style="background:var(--c)"></i>${statuses[k]} <b class="en">${n}</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>`).join('')}</div>
+        ${dashSt ? (() => { const l = inRange.filter(o => o.status === dashSt); return `<div class="sd-list">${l.length ? l.map(o => `<button type="button" class="sd-row" data-sdo="${o.id}"><span class="c en">${esc(o.code)}</span><span class="w">${esc(o.customer_name)}</span><span class="d">${fmtDate(o.created_at)}</span><b class="en">${money(o.total)}</b></button>`).join('') : `<div class="empty" style="padding:14px">مفيش طلبات «${statuses[dashSt]}» في الفترة دي.</div>`}</div>`; })() : ''}</div>
       <div class="panel"><h2>مخزون قليل</h2>${lowStock.length ? lowStock.map(p => `<div class="bar-row"><div><span class="en">${esc(p.name)}</span><span style="color:${p.stock ? 'var(--amber)' : 'var(--red)'}">${p.stock ? 'فاضل ' + p.stock : 'خلص'}</span></div></div>`).join('') : '<div style="color:var(--muted)">كل المنتجات متوفرة.</div>'}</div>
     </div>`;
+  $('#main').querySelectorAll('[data-sd]').forEach(b => b.onclick = () => { dashSt = dashSt === b.dataset.sd ? '' : b.dataset.sd; go('dash', true); });
+  $('#main').querySelectorAll('[data-sdo]').forEach(b => b.onclick = () => { const o = orders.find(x => x.id === +b.dataset.sdo); if (!o) return; orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(isLuxOrder(o) ? 'lux-orders' : 'orders'); });
   $('#scopeSeg').onclick = e => { const b = e.target.closest('[data-scope]'); if (b) { dashScope = b.dataset.scope; go('dash', true); } };
   $('#rangeSeg').onclick = e => { const b = e.target.closest('[data-range]'); if (b) { range = +b.dataset.range; go('dash', true); } };
   const cs = getComputedStyle(document.documentElement);
@@ -960,7 +978,7 @@ function renderSettings() {
       <h2>Google Sheet للحسابات <small>${sheetOn() ? 'متصل ✓' : 'مش متصل'}</small></h2>
       <div class="field"><label>لينك الـ Web App (من Apps Script ← Deploy)</label><input class="input en" name="sheet_url" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(adminSet.sheet_url || '')}"></div>
       <div class="field"><label>الكود السري (لازم يكون نفس اللي في كود الشيت)</label><input class="input en" name="sheet_secret" dir="ltr" value="${esc(adminSet.sheet_secret || '')}"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sheetSync">مزامنة كل حاجة دلوقتي</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sheetSync" title="بيمسح الشيت ويكتب كل حاجة من الأول — للطوارئ بس لو الشيت اتبوّظ">إعادة كتابة الشيت من الأول</button></div>
     </form>`;
   $('#main').onclick = async e => {
     const up = e.target.closest('[data-bup]'), del = e.target.closest('[data-bdel]');
@@ -1106,7 +1124,7 @@ function sheetSend(body) {
   if (!sheetOn()) return Promise.resolve(false);
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
-const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: o.created_at.slice(0, 10), customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
+const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
   sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, net: orderNet(o), location: o.location || '' }; };
 const expRow = x => ({ id: x.id, date: x.spent_on, category: x.category, amount: +x.amount, note: x.note || '' });
 const sheetOrder = o => sheetSend({ action: 'upsert', sheet: 'orders', row: orderRow(o) });
@@ -1159,7 +1177,7 @@ function renderAccounts() {
     const list = (accMissing ? missing : [...sold, ...rets]).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     body = `<div class="toolbar"><div class="seg" id="missSeg"><button data-miss="0" class="${!accMissing ? 'on' : ''}">كل الطلبات <span class="en">${sold.length + rets.length}</span></button><button data-miss="1" class="${accMissing ? 'on' : ''}">من غير تكاليف <span class="en">${missing.length}</span></button></div></div>
     <div class="panel scroll-x" style="padding:6px 14px">${list.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>الحالة</th><th>البيع</th><th>تكلفة المنتجات</th><th>الشحن</th><th>صافي الربح</th><th></th></tr></thead><tbody>
-      ${list.map(o => { const f = fins[o.id], n = orderNet(o); return `<tr><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td><span class="badge st-${o.status}">${statuses[o.status]}</span></td>
+      ${list.map(o => { const f = fins[o.id], n = orderNet(o); return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td><span class="badge st-${o.status}">${statuses[o.status]}</span></td>
         <td class="n">${f ? money(f.sale) : '—'}</td><td class="n">${f ? money(f.cost) : '—'}</td><td class="n">${f ? `${money(f.ship_cost)} <small style="color:var(--muted)">${f.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small>` : '—'}</td>
         <td class="n">${o.status === 'returned' ? `<span class="neg">${signMoney(n)}</span>` : f ? `<span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span>` : '<span class="miss">مش متسجل</span>'}</td>
         <td><button class="btn btn-sm ${f ? 'btn-ghost' : 'btn-amber'}" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل التكاليف'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش طلبات متأكدة في الفترة دي.</div>'}</div>`;
@@ -1174,13 +1192,12 @@ function renderAccounts() {
     <div class="panel scroll-x" style="padding:6px 14px">${expIn.length || accScope !== 'all' ? (accScope !== 'all' ? '<div class="empty">المصاريف بتظهر في «الكل».</div>' : `<table class="atable" style="min-width:560px"><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody>${expIn.map(x => `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.spent_on + 'T00:00')}</span></td><td>${esc(x.category)}</td><td class="n neg">${money(x.amount)}</td><td style="color:var(--muted)">${esc(x.note || '')}</td><td><button class="btn btn-sm btn-ghost" data-xdel="${x.id}">حذف</button></td></tr>`).join('')}</tbody></table>`) : '<div class="empty">مفيش مصاريف في الفترة دي.</div>'}</div>`;
   } else {
     body = `<div class="panel scroll-x" style="padding:6px 14px">${rets.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>المنتجات (رجعت للمخزون)</th><th>قيمة الطلب</th><th>خسارة المرتجع</th><th></th></tr></thead><tbody>
-      ${rets.map(o => { const f = fins[o.id]; return `<tr><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
+      ${rets.map(o => { const f = fins[o.id]; return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
   }
-  $('#main').innerHTML = head + body + `<div style="display:flex;justify-content:flex-start;margin-top:16px"><button class="btn btn-sm btn-ghost" id="syncSheet">مزامنة كل الطلبات والمصاريف مع الشيت</button></div>`;
+  $('#main').innerHTML = head + body;
   $('#accTabs').onclick = e => { const b = e.target.closest('[data-at]'); if (b) { accTab = b.dataset.at; renderAccounts(); } };
   $('#accScopeSeg').onclick = e => { const b = e.target.closest('[data-as]'); if (b) { accScope = b.dataset.as; renderAccounts(); } };
   $('#accRangeSeg').onclick = e => { const b = e.target.closest('[data-range]'); if (b) { range = +b.dataset.range; renderAccounts(); } };
-  $('#syncSheet').onclick = sheetSyncAll;
   if ($('#goMissing')) $('#goMissing').onclick = () => { accTab = 'orders'; accMissing = true; renderAccounts(); };
   if ($('#missSeg')) $('#missSeg').onclick = e => { const b = e.target.closest('[data-miss]'); if (b) { accMissing = b.dataset.miss === '1'; renderAccounts(); } };
   if ($('#expCat')) {

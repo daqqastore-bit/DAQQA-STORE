@@ -58,7 +58,10 @@ RC.pages = {
 RC.googleOn = () => RC._g || (RC._g = fetch(RC.url + '/auth/v1/settings', { headers: { apikey: RC.key } }).then(r => r.json()).then(j => !!(j.external && j.external.google)).catch(() => false));
 
 // new-order email (free, via FormSubmit). The first order sends an activation email to this inbox — click «Activate» once.
+// dates everywhere: 19/10/2026 · 2:27 PM (English digits, day first)
+RC.dmy = (d) => { const x = new Date(d); return `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}/${x.getFullYear()}`; };
+RC.when = (d) => RC.dmy(d) + ' · ' + new Date(d).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 RC.notifyEmail = 'daqqastore@gmail.com';
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261019121257';
+RC.build = '20261019122157';
