@@ -28,13 +28,13 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019165036">
-<link rel="stylesheet" href="assets/store.css?v=20261019165036">
+<link rel="stylesheet" href="assets/base.css?v=20261019170143">
+<link rel="stylesheet" href="assets/store.css?v=20261019170143">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
 .landing{position:relative;z-index:5;overflow:clip;height:320vh;margin-bottom:-100vh;pointer-events:none}
-.ld-stick{position:sticky;top:var(--navh,0px);height:calc(100vh - var(--navh,0px));overflow:hidden;display:grid;place-items:center;box-sizing:border-box;padding:0 0 108px;background:var(--bg);pointer-events:auto}
+.ld-stick{position:sticky;top:var(--navh,0px);height:calc(100vh - var(--navh,0px));overflow:hidden;display:grid;place-items:center;box-sizing:border-box;padding:0 0 calc(108px + var(--ldover,0px));background:var(--bg);pointer-events:auto}
 .ld-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 46%,rgb(var(--accent-rgb)/.16),transparent 55%),radial-gradient(circle at var(--mx,50%) var(--my,50%),rgb(var(--accent-rgb)/.14),transparent 30%)}
 .ld-slogan{position:absolute;left:calc(max(64px,7vw) + 120px);top:0;bottom:108px;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:0;direction:ltr;cursor:default;animation:ldMotto 2s cubic-bezier(.2,.7,.2,1) .9s both}
 .ld-slogan span{position:relative;display:block;direction:rtl;font:700 clamp(46px,4.4vw,76px)/1.32 'Amiri',var(--f-ar);color:var(--accent);transition:color .5s,text-shadow .5s,filter .5s}
@@ -91,7 +91,7 @@
 @keyframes ldFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .ld-fade{will-change:opacity,transform}
 /* scroll cue: a clear pill centered at the bottom — mouse, "اسكرول لتحت", bouncing arrow */
-.ld-rail{position:absolute;left:0;right:0;bottom:30px;margin:0 auto;width:max-content;z-index:3;display:flex;align-items:center;gap:14px;padding:12px 26px 12px 22px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.45);background:rgb(var(--accent-rgb)/.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink);cursor:pointer;animation:ldFade 1.2s 1s both,railPulse 2.6s 2.2s ease-in-out infinite;transition:background .3s,border-color .3s}
+.ld-rail{position:absolute;left:0;right:0;bottom:calc(30px + var(--ldover,0px));margin:0 auto;width:max-content;z-index:3;display:flex;align-items:center;gap:14px;padding:12px 26px 12px 22px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.45);background:rgb(var(--accent-rgb)/.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink);cursor:pointer;animation:ldFade 1.2s 1s both,railPulse 2.6s 2.2s ease-in-out infinite;transition:background .3s,border-color .3s}
 .ld-rail:hover{background:rgb(var(--accent-rgb)/.2);border-color:var(--accent)}
 .ld-rail b{font:700 19px var(--f-ar);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
 .ld-rail small{font:600 10px var(--f-ui);letter-spacing:.42em;color:var(--accent)}
@@ -102,7 +102,8 @@
 @keyframes railPulse{0%,100%{box-shadow:0 0 0 0 rgb(var(--accent-rgb)/0)}50%{box-shadow:0 0 0 7px rgb(var(--accent-rgb)/.1),0 12px 34px -12px rgb(var(--accent-rgb)/.55)}}
 @keyframes railDrop{to{transform:translateY(560%)}}
 @media (prefers-reduced-motion:reduce){.ld-rail,.ld-rail .arw{animation:none;opacity:.8}}
-@media (max-width:600px){.ld-rail{bottom:22px;padding:10px 18px;gap:10px}.ld-rail b{font-size:16px}.ld-rail small{display:none}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
+@media (max-width:600px){.ld-rail{bottom:calc(22px + var(--ldover,0px));padding:10px 18px;gap:10px}.ld-rail b{font-size:16px}.ld-rail small{display:none}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
+@media (min-width:601px) and (max-height:760px){.ld-rail{bottom:calc(12px + var(--ldover,0px));padding:7px 20px 7px 16px}.ld-rail b{font-size:17px}.ld-rail .arw{width:32px;height:32px}.ld-rail .arw svg{width:20px;height:20px}}
 @media (max-height:560px){.ld-rail small{display:none}}
 .mouse{width:20px;height:32px;border:1.5px solid var(--accent);border-radius:16px;position:relative}
 .mouse i{position:absolute;left:50%;top:6px;width:3px;height:6px;margin-left:-1.5px;border-radius:2px;background:var(--accent);animation:wheel 1.6s ease-in-out infinite}
@@ -286,8 +287,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261019165036"></script>
-<script src="assets/app.js?v=20261019165036"></script>
+<script src="assets/config.js?v=20261019170143"></script>
+<script src="assets/app.js?v=20261019170143"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -363,6 +364,8 @@ const state = {}; // per section: { tab, all }
     p = clamp(-r.top / span);
     const fix = p < 1;
     L.style.setProperty('--navh', navH + 'px');
+    // keep the scroll cue on screen while the top bar still pushes the stage down
+    L.style.setProperty('--ldover', Math.max(0, (stage.getBoundingClientRect().bottom - innerHeight) / Z) + 'px');
     if (secs) {
       if (fix !== held) { held = fix; Object.assign(secs.style, fix ? { position: 'fixed', left: '0', right: '0', zIndex: '1' } : { position: '', top: '', left: '', right: '', zIndex: '' }); }
       if (fix) secs.style.top = navH + 'px';
