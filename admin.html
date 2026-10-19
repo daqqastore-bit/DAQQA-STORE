@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019161016">
+<link rel="stylesheet" href="assets/base.css?v=20261019161150">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -279,6 +279,8 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .gov-chips{display:flex;flex-wrap:wrap;gap:6px}
 .gchip{padding:7px 12px;border-radius:99px;border:1px solid var(--line-2);font-size:13px;color:var(--ink);background:transparent;transition:background .15s,border-color .15s,color .15s}
 .gchip:hover{border-color:var(--amber)}.gchip.on{background:var(--amber);border-color:var(--amber);color:#fff;font-weight:600}.gchip.other{opacity:.38;text-decoration:line-through}
+.gchip.av.on{background:#2f9e5b;border-color:#2f9e5b;color:#fff;font-weight:600}
+.gov-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px}
 @media(max-width:900px){.set-grid{grid-template-columns:1fr}}
 .imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .imgs .it{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--surface-2)}
@@ -458,7 +460,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019161016"></script>
+<script src="assets/config.js?v=20261019161150"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1043,15 +1045,20 @@ function renderCovers() {
   };
 }
 const GOV = ['القاهرة','الجيزة','القليوبية','الإسكندرية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
+// governorates the shop ships to; nothing saved yet = all of them
+const AV = () => { const a = settings.ship_govs; return Array.isArray(a) && a.length ? GOV.filter(c => a.includes(c)) : GOV.slice(); };
+let govDraft = [];
+const govHTML = () => `<div class="gov-chips">${GOV.map(c => `<button type="button" class="gchip av ${govDraft.includes(c) ? 'on' : ''}" data-gv="${c}">${c}</button>`).join('')}</div>`;
+const govCount = () => govDraft.length === GOV.length ? 'كل المحافظات متاحة' : govDraft.length + ' محافظة متاحة';
 let zonesDraft = null;   // shipping price groups being edited: [{price, cities: []}]
-const zTag = z => { const n = z.cities.length === GOV.length ? 'كل المحافظات' : z.cities.length + ' محافظة'; return +z.price ? n : 'شحن مجاني · ' + n; };
+const zTag = z => { const n = z.cities.length === AV().length ? 'كل المحافظات' : z.cities.length + ' محافظة'; return +z.price ? n : 'شحن مجاني · ' + n; };
 function zonesHTML() {
   const taken = c => zonesDraft.findIndex(z => z.cities.includes(c));
   return zonesDraft.map((z, i) => `<div class="zone" data-zone="${i}">
       <div class="zone-h"><div class="field"><label>سعر الشحن</label><div class="zone-price"><input class="input en" inputmode="decimal" data-zprice="${i}" value="${esc(z.price ?? '')}" placeholder="0"><span>ج.م</span></div></div>
         <span class="zone-tag ${+z.price ? '' : 'free'}">${zTag(z)}</span>
-        <button type="button" class="btn btn-sm btn-ghost" data-zall="${i}">${z.cities.length === GOV.length ? 'إلغاء الكل' : 'كل المحافظات'}</button><button type="button" class="btn btn-sm btn-danger" data-zdel="${i}">حذف</button></div>
-      <div class="gov-chips">${GOV.map(c => { const t = taken(c); return `<button type="button" class="gchip ${t === i ? 'on' : t >= 0 ? 'other' : ''}" data-zc="${i}" data-c="${c}" title="${t >= 0 && t !== i ? 'متحددة في سعر تاني — اضغط تنقلها هنا' : ''}">${c}</button>`; }).join('')}</div></div>`).join('')
+        <button type="button" class="btn btn-sm btn-ghost" data-zall="${i}">${z.cities.length === AV().length ? 'إلغاء الكل' : 'كل المحافظات'}</button><button type="button" class="btn btn-sm btn-danger" data-zdel="${i}">حذف</button></div>
+      <div class="gov-chips">${AV().map(c => { const t = taken(c); return `<button type="button" class="gchip ${t === i ? 'on' : t >= 0 ? 'other' : ''}" data-zc="${i}" data-c="${c}" title="${t >= 0 && t !== i ? 'متحددة في سعر تاني — اضغط تنقلها هنا' : ''}">${c}</button>`; }).join('')}</div></div>`).join('')
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = 'general', socDraft = [];
@@ -1108,6 +1115,7 @@ function renderSettings() {
   const s = settings;
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
+  govDraft = AV();
   $('#main').innerHTML = `
     <div class="head"><div><h1>الإعدادات</h1><div class="sub">بيانات المتجر، أسعار الشحن، والشيت</div></div></div>
     ${setTabs()}
@@ -1124,6 +1132,12 @@ function renderSettings() {
           <div class="field"><label>شحن مجاني للطلبات الكبيرة</label><input class="input en" name="free_shipping_over" inputmode="decimal" placeholder="مثال: 2000" value="${esc(s.free_shipping_over ?? '')}"><small class="hint">أي طلب منتجاته بالمبلغ ده أو أكتر شحنه مجاني لكل المحافظات. سيبها فاضية لو مش عاوز العرض ده.</small></div></div>
         <button class="btn btn-primary" type="submit">حفظ</button>
       </form>
+    </div>
+    <div class="panel set-card" id="govCard">
+      <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><div><h2>المحافظات</h2><small>اختار المحافظات اللي بتشحن لها. العميل هيشوف المتاح بس وهو بيطلب.</small></div></div>
+      <div class="gov-top"><span class="zone-tag" id="govCount">${govCount()}</span><button type="button" class="btn btn-sm btn-ghost" id="govAll">${govDraft.length === GOV.length ? 'إلغاء الكل' : 'كل المحافظات'}</button></div>
+      <div id="govChips">${govHTML()}</div>
+      <div class="set-acts"><button type="button" class="btn btn-primary" id="govSave">حفظ المحافظات</button></div>
     </div>
     <form class="panel set-card" id="shipForm">
       <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span><div><h2>أسعار الشحن</h2><small>العميل بيشوف سعر الشحن أول ما يختار محافظته</small></div></div>
@@ -1142,6 +1156,16 @@ function renderSettings() {
     toast(off ? 'الطلب من الموقع اتقفل، الطلبات هتوصلك واتساب' : 'الطلب من الموقع اشتغل ✓', 'ok'); };
   bindSetTabs();
   const drawZones = () => { $('#zones').innerHTML = zonesHTML(); };
+  const drawGov = () => { $('#govChips').innerHTML = govHTML(); $('#govCount').textContent = govCount(); $('#govAll').textContent = govDraft.length === GOV.length ? 'إلغاء الكل' : 'كل المحافظات'; };
+  $('#govChips').onclick = e => { const b = e.target.closest('[data-gv]'); if (!b) return; const c = b.dataset.gv;
+    govDraft = govDraft.includes(c) ? govDraft.filter(x => x !== c) : GOV.filter(x => x === c || govDraft.includes(x)); drawGov(); };
+  $('#govAll').onclick = () => { govDraft = govDraft.length === GOV.length ? [] : GOV.slice(); drawGov(); };
+  $('#govSave').onclick = async () => {
+    if (!govDraft.length) return toast('اختار محافظة واحدة على الأقل', 'err');
+    const list = GOV.filter(c => govDraft.includes(c));
+    const {error} = await sb.from('shop_settings').update({ ship_govs: list, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/ship_govs/.test(error.message) ? 'المحافظات محتاجة تحديث في Supabase' : error.message, 'err');
+    settings.ship_govs = list; drawZones(); toast('اتحفظت المحافظات ✓', 'ok'); };
   $('#zoneAdd').onclick = () => { zonesDraft.push({ price: '', cities: [] }); drawZones(); const ins = $('#zones').querySelectorAll('[data-zprice]'); ins[ins.length - 1].focus(); };
   $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = zTag(z); };
   $('#zones').onclick = async e => {
@@ -1152,13 +1176,13 @@ function renderSettings() {
       drawZones(); }
     // "all governorates" takes every one (moving them from other prices); pressed again it clears them
     if (all) { const i = +all.dataset.zall, z = zonesDraft[i];
-      if (z.cities.length === GOV.length) z.cities = [];
-      else { zonesDraft.forEach(o => o.cities = []); z.cities = GOV.slice(); }
+      if (z.cities.length === AV().length) z.cities = [];
+      else { zonesDraft.forEach(o => o.cities = []); z.cities = AV(); }
       drawZones(); }
     if (del) { const i = +del.dataset.zdel; if (zonesDraft[i].cities.length && !(await confirmBox('تحذف السعر ده؟ محافظاته هترجع لسعر باقي المحافظات.', 'حذف'))) return; zonesDraft.splice(i, 1); drawZones(); }
   };
   $('#shipForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
-    const zs = zonesDraft.filter(z => z.cities.length).map(z => ({ price: Math.max(0, +String(z.price).replace(/[^\d.]/g, '') || 0), cities: GOV.filter(c => z.cities.includes(c)) }));
+    const zs = zonesDraft.filter(z => z.cities.length).map(z => ({ price: Math.max(0, +String(z.price).replace(/[^\d.]/g, '') || 0), cities: AV().filter(c => z.cities.includes(c)) })).filter(z => z.cities.length);
     const row = { shipping_fee: +f.shipping_fee || 0, shipping_zones: zs, updated_at: new Date().toISOString() };
     const {error} = await sb.from('shop_settings').update(row).eq('id', 1); if (error) return toast(/shipping_zones/.test(error.message) ? 'أسعار المحافظات محتاجة تحديث في Supabase' : error.message, 'err');
     Object.assign(settings, row); zonesDraft = JSON.parse(JSON.stringify(zs)); drawZones(); toast('اتحفظت أسعار الشحن ✓', 'ok'); };

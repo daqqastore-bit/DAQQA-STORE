@@ -65,6 +65,7 @@ create table if not exists public.shop_settings (
 );
 alter table public.shop_settings add column if not exists shipping_zones jsonb not null default '[]'::jsonb;  -- [{price, cities: [...]}]
 alter table public.shop_settings add column if not exists web_orders_off boolean not null default false;
+alter table public.shop_settings add column if not exists ship_govs jsonb;   -- governorates the shop ships to (null = all)
 alter table public.shop_settings add column if not exists socials jsonb not null default '[]'::jsonb;  -- [{type: instagram|tiktok|whatsapp|phone|…, value}]  -- true = checkout sends the order on WhatsApp instead
 insert into public.shop_settings (id) values (1) on conflict do nothing;
 alter table public.shop_settings enable row level security;

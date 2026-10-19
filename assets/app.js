@@ -337,7 +337,9 @@
   // shipping by governorate: price groups set in the dashboard, anything not listed pays the default fee
   const zones = () => (Array.isArray(DQ.settings.shipping_zones) ? DQ.settings.shipping_zones : []).filter(z => z && Array.isArray(z.cities) && z.cities.length);
   DQ.shipFor = city => { const z = zones().find(z => z.cities.includes(city)); return z ? Number(z.price) || 0 : Number(DQ.settings.shipping_fee || 0); };
-  const savedCity = () => { try { return JSON.parse(localStorage.getItem('dq-cust') || '{}').city || '' } catch (e) { return '' } };
+  // governorates the shop delivers to (chosen in the dashboard); none chosen = all of Egypt
+  const govs = () => { const a = DQ.settings.ship_govs; return Array.isArray(a) && a.length ? GOV.filter(c => a.includes(c)) : GOV; };
+  const savedCity = () => { try { const c = JSON.parse(localStorage.getItem('dq-cust') || '{}').city || ''; return govs().includes(c) ? c : '' } catch (e) { return '' } };
   function totals(city = savedCity()) {
     const ls = lines();
     const sub = ls.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0);
@@ -394,6 +396,7 @@
     if (!t.ls.length) { DQ.closeCheckout(true); return; }
     {
       let saved = {}; try { saved = JSON.parse(localStorage.getItem('dq-cust') || localStorage.getItem('rc-cust') || '{}') } catch (e) {}
+      if (saved.city && !govs().includes(saved.city)) saved.city = '';
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
       const loc = coLoc || '';
       const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
@@ -414,7 +417,7 @@
             <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
               <button type="button" class="input dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLbl"><span class="dd-val ${saved.city ? '' : 'ph'}">${esc(saved.city || 'اختار المحافظة')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
               <input type="hidden" name="city" id="f-city" value="${esc(saved.city || '')}">
-              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}${zones().length || Number(DQ.settings.shipping_fee) ? `<small class="dd-ship">${DQ.shipFor(c) ? 'شحن ' + money(DQ.shipFor(c)) : 'شحن مجاني'}</small>` : ''}</button>`).join('')}</div></div></div></div>
+              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${govs().map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}${zones().length || Number(DQ.settings.shipping_fee) ? `<small class="dd-ship">${DQ.shipFor(c) ? 'شحن ' + money(DQ.shipFor(c)) : 'شحن مجاني'}</small>` : ''}</button>`).join('')}</div></div></div></div>
             <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="3" dir="auto" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
 
             <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" dir="auto" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
@@ -440,7 +443,7 @@
       const open = v => { dd.classList.toggle('open', v); btn.setAttribute('aria-expanded', v); if (v) { q.value = ''; dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = false); setTimeout(() => q.focus(), 30); const on = dd.querySelector('.dd-list .on'); on && on.scrollIntoView({ block: 'center' }); } };
       btn.onclick = () => open(!dd.classList.contains('open'));
       q.oninput = () => { const t = q.value.trim(); dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = t && !b.dataset.v.includes(t)); };
-      q.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = dd.querySelector('.dd-list button:not([hidden])'); f && f.click(); } if (e.key === 'Escape') { e.stopPropagation(); open(false); btn.focus(); } };
+      q.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = dd.querySelector('.dd-list button:not([hidden]):not(.na)'); f && f.click(); } if (e.key === 'Escape') { e.stopPropagation(); open(false); btn.focus(); } };
       dd.querySelector('.dd-list').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; $('#f-city').value = b.dataset.v; const v = dd.querySelector('.dd-val'); v.textContent = b.dataset.v; v.classList.remove('ph'); dd.classList.remove('err'); fieldErr('f-city', '');
         dd.querySelectorAll('.dd-list button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); open(false); keep();
         // the shipping price follows the governorate
@@ -453,7 +456,8 @@
     if (!lines().length) return DQ.closeCheckout(true);
     const t = totals(($('#f-city') || {}).value || savedCity());
     $('#coSums').innerHTML = sumsHTML(t); if (!$('#place').disabled) { $('#place').innerHTML = placeLbl(t.total); $('#place').className = `btn ${viaWA() ? 'wa-btn' : 'btn-amber'} co-place`; }
-    const showShip = zones().length || Number(DQ.settings.shipping_fee);
+    const showShip = zones().length || Number(DQ.settings.shipping_fee), ok = govs();
+    document.querySelectorAll('#cityDD .dd-list [data-v]').forEach(b => b.classList.toggle('na', !ok.includes(b.dataset.v)));
     document.querySelectorAll('#cityDD .dd-list [data-v]').forEach(b => { let sm = b.querySelector('.dd-ship');
       if (!showShip) { sm && sm.remove(); return; } if (!sm) { sm = document.createElement('small'); sm.className = 'dd-ship'; b.appendChild(sm); }
       const v = DQ.shipFor(b.dataset.v); sm.textContent = v ? 'شحن ' + money(v) : 'شحن مجاني'; });
@@ -530,7 +534,7 @@
   const NEED = {
     'f-name': v => v ? '' : 'اكتب اسمك عشان نعرف الطلب باسم مين',
     'f-phone': v => !v ? 'رقم الموبايل مهم عشان نكلمك ونأكد الطلب' : /^\+?[0-9 ]{10,15}$/.test(v) ? '' : 'الرقم مش مظبوط، اكتبه كامل (11 رقم)',
-    'f-city': v => v ? '' : 'اختار المحافظة عشان نوصلك ونحسب الشحن صح',
+    'f-city': v => !v ? 'اختار المحافظة عشان نوصلك ونحسب الشحن صح' : govs().includes(v) ? '' : 'الشحن مش متاح للمحافظة دي حاليًا',
     'f-addr': v => v.length >= 6 ? '' : 'العنوان بالتفصيل مهم عشان الطلب يوصلك من غير لف'
   };
   function fieldErr(id, msg) {
