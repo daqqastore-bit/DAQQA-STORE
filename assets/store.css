@@ -26,7 +26,7 @@ html,body{overflow-x:clip}
 .menu-btn{display:none}
 
 /* mobile menu + search sheet */
-.sheet{position:fixed;inset:0;z-index:95;background:color-mix(in srgb,var(--bg) 96%,transparent);backdrop-filter:blur(10px);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .3s}
+.sheet{position:fixed;inset:0;z-index:95;background:var(--bg);display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .3s}
 .sheet.on{opacity:1;pointer-events:auto}
 .sheet-head{display:flex;justify-content:space-between;align-items:center;height:76px;border-bottom:1px solid var(--line)}
 .sheet-body{flex:1;overflow:auto;padding:24px 0 40px}
