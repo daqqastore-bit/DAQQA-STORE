@@ -513,9 +513,13 @@
     const d = Object.fromEntries(new FormData(f));
     try { localStorage.setItem('dq-cust', JSON.stringify({ name: d.name, phone: d.phone, city: d.city, address: d.address })) } catch (e) {} /* notes are not kept for the next order */
     if (!LOC_RX.test(d.location || '')) delete d.location;
-    const btn = $('#place'); btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+    const btn = $('#place'), label = btn.textContent; btn.disabled = true; btn.classList.add('sending'); btn.setAttribute('aria-label', 'جاري إرسال الطلب');
+    // a loaded cart rolls across the button while the order is on its way
+    btn.innerHTML = `<span class="cart-run" aria-hidden="true"><i class="cr-lines"></i><svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><g class="cr-load"><rect x="13" y="5" width="9" height="9" rx="1.5" fill="currentColor" stroke="none"/><rect x="23.5" y="1.5" width="10" height="12.5" rx="1.5" fill="currentColor" stroke="none" opacity=".7"/></g><path d="M46 6h-6l-5 20H11L7 12h31"/><circle class="cr-w" cx="15" cy="33" r="3.2"/><circle class="cr-w" cx="31" cy="33" r="3.2"/></svg></span>`;
+    const t0 = Date.now();
     const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => ({ id: c.id, qty: c.qty })) });
-    if (error) { btn.disabled = false; btn.textContent = 'تأكيد الطلب'; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); DQ.load(); return; }
+    await new Promise(r => setTimeout(r, Math.max(0, 1400 - (Date.now() - t0)))); /* let the cart finish at least one trip */
+    if (error) { btn.disabled = false; btn.classList.remove('sending'); btn.removeAttribute('aria-label'); btn.textContent = label; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); DQ.load(); return; }
     const ls = lines(); DQ.cart = []; saveCart(); coState = 'done'; coLoc = ''; coAddr = '';
     notifyOrder(data, d, ls);
     DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name, qty: l.qty, image: (l.p.images || [])[0] || '' })) });
