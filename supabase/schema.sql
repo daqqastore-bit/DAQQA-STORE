@@ -218,7 +218,7 @@ drop policy if exists "shop-images: admin delete" on storage.objects;
 create policy "shop-images: admin delete" on storage.objects for delete to authenticated
   using (bucket_id = 'shop-images' and public.shop_is_admin());
 -- customers can cancel their own order while it is still "new" or "confirmed" (not after it ships)
-create or replace function public.shop_cancel_order(p_code text, p_phone text default null)
+create or replace function public.shop_cancel_order(p_code text, p_phone text default null, p_reason text default null)
 returns jsonb language plpgsql security definer set search_path = public as $$
 declare o public.shop_orders; t timestamptz := now();
 begin
@@ -231,8 +231,9 @@ begin
   if o.status not in ('new', 'confirmed') then raise exception 'الطلب خرج للشحن ومينفعش يتلغي دلوقتي، كلمنا على واتساب'; end if;
   -- the stock trigger gives the pieces back; the note tells the admin who cancelled and when
   update public.shop_orders set status = 'cancelled', cancelled_at = t, cancelled_by = 'customer',
-    admin_note = concat_ws(E'\n', nullif(admin_note, ''), 'تم الإلغاء من العميل ' || o.customer_name || ' · ' || to_char(t at time zone 'Africa/Cairo', 'DD/MM/YYYY · HH12:MI AM'))
+    admin_note = concat_ws(E'\n', nullif(admin_note, ''), 'تم الإلغاء من العميل ' || o.customer_name || ' · ' || to_char(t at time zone 'Africa/Cairo', 'DD/MM/YYYY · HH12:MI AM')
+      || coalesce(E'\nسبب الإلغاء: ' || nullif(left(trim(p_reason), 300), ''), ''))
   where id = o.id;
   return jsonb_build_object('code', o.code, 'status', 'cancelled', 'cancelled_at', t);
 end $$;
-grant execute on function public.shop_cancel_order(text, text) to anon, authenticated;
+grant execute on function public.shop_cancel_order(text, text, text) to anon, authenticated;

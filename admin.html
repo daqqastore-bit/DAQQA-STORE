@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019132602">
+<link rel="stylesheet" href="assets/base.css?v=20261019132738">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -435,7 +435,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019132602"></script>
+<script src="assets/config.js?v=20261019132738"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -704,10 +704,11 @@ function pastCancels(o) {
   return orders.filter(x => x.id !== o.id && x.status === 'cancelled' && x.cancelled_by === 'customer' && x.cancelled_at && new Date(x.cancelled_at) < new Date(o.created_at)
     && ((o.user_id && x.user_id === o.user_id) || digits(x.phone) === digits(o.phone)));
 }
+const cancelWhy = o => ((o.admin_note || '').match(/سبب الإلغاء: (.+)/) || [])[1] || '';
 function cancelInfo(o) {
-  const own = o.status === 'cancelled' && o.cancelled_by === 'customer' ? `<div class="cx-box"><b>تم الإلغاء من العميل ${esc(o.customer_name)}</b><span>${o.cancelled_at ? fmtDate(o.cancelled_at) : ''}</span></div>` : '';
+  const own = o.status === 'cancelled' && o.cancelled_by === 'customer' ? `<div class="cx-box"><b>تم الإلغاء من العميل ${esc(o.customer_name)}</b><span>${o.cancelled_at ? fmtDate(o.cancelled_at) : ''}</span>${cancelWhy(o) ? `<span>السبب: ${esc(cancelWhy(o))}</span>` : ''}</div>` : '';
   const past = pastCancels(o);
-  return own + (past.length ? `<div class="cx-box warn"><b>⚠ العميل ده لغى ${past.length === 1 ? 'طلب' : past.length + ' طلبات'} قبل كدا</b>${past.map(x => `<span><span class="en">${esc(x.code)}</span> · اتلغى ${fmtDate(x.cancelled_at)}</span>`).join('')}</div>` : '');
+  return own + (past.length ? `<div class="cx-box warn"><b>⚠ العميل ده لغى ${past.length === 1 ? 'طلب' : past.length + ' طلبات'} قبل كدا</b>${past.map(x => `<span><span class="en">${esc(x.code)}</span> · اتلغى ${fmtDate(x.cancelled_at)}${cancelWhy(x) ? ` · ${esc(cancelWhy(x))}` : ''}</span>`).join('')}</div>` : '');
 }
 function orderHTML(o) {
   const wa = o.phone.replace(/\D/g, '').replace(/^0/, '20');

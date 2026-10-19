@@ -613,14 +613,24 @@
   // green WhatsApp button with the order number already written in the message
   function waAsk(code) { return DQ.wa() ? `<a class="btn wa-btn ao-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${code}`)}">${WA_ICON}استفسر على واتساب</a>` : ''; }
   // confirm popup: resolves true on the main button, false on back / outside / Esc
-  DQ.ask = (title, html, ok, back) => new Promise(res => {
+  // with reasons: the customer must pick or write a reason first, and it resolves with that text
+  const REASONS = ['طلبته بالغلط', 'غيّرت رأيي', 'لقيته بسعر أقل', 'التوصيل هيتأخر عليّا', 'عاوز أغيّر في الطلب'];
+  DQ.ask = (title, html, ok, back, reasons) => new Promise(res => {
     const m = document.createElement('div'); m.className = 'ask-m'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
-    m.innerHTML = `<div class="ask-card"><span class="ask-ic" aria-hidden="true">!</span><h3>${title}</h3><p>${html}</p><div class="ask-acts"><button type="button" class="btn ask-ok">${ok}</button><button type="button" class="btn btn-ghost ask-back">${back}</button></div></div>`;
+    m.innerHTML = `<div class="ask-card"><span class="ask-ic" aria-hidden="true">!</span><h3>${title}</h3><p>${html}</p>
+      ${reasons ? `<div class="ask-why"><b>سبب الإلغاء</b><div class="ask-chips">${reasons.map(r => `<button type="button" data-r="${esc(r)}">${esc(r)}</button>`).join('')}</div><textarea class="input" rows="2" maxlength="300" placeholder="اكتب السبب أو تفاصيل أكتر…" aria-label="سبب الإلغاء"></textarea></div>` : ''}
+      <div class="ask-acts"><button type="button" class="btn ask-ok"${reasons ? ' disabled' : ''}>${ok}</button><button type="button" class="btn btn-ghost ask-back">${back}</button></div></div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
-    const done = v => { removeEventListener('keydown', key); m.classList.remove('on'); setTimeout(() => m.remove(), 250); res(v); };
+    const okB = m.querySelector('.ask-ok'), ta = m.querySelector('.ask-why textarea'); let chip = '';
+    const why = () => [chip, ta ? ta.value.trim() : ''].filter(Boolean).join(' — ');
+    const sync = () => { if (reasons) okB.disabled = !why(); };
+    if (ta) ta.oninput = sync;
+    const done = v => { removeEventListener('keydown', key, true); m.classList.remove('on'); setTimeout(() => m.remove(), 250); res(v); };
     const key = e => { if (e.key === 'Escape') { e.stopPropagation(); done(false); } };
     addEventListener('keydown', key, true);
-    m.onclick = e => { if (e.target === m || e.target.closest('.ask-back')) done(false); else if (e.target.closest('.ask-ok')) done(true); };
+    m.onclick = e => { const c = e.target.closest('[data-r]');
+      if (c) { chip = chip === c.dataset.r ? '' : c.dataset.r; m.querySelectorAll('[data-r]').forEach(x => x.classList.toggle('on', x.dataset.r === chip)); return sync(); }
+      if (e.target === m || e.target.closest('.ask-back')) done(false); else if (e.target.closest('.ask-ok') && !okB.disabled) done(reasons ? why() : true); };
     setTimeout(() => m.querySelector('.ask-back').focus(), 50);
   });
   // cancelling is allowed only before the order ships
@@ -630,10 +640,11 @@
     const b = e.target.closest('[data-cancel]'); if (!b) return;
     if (b.disabled) return;
     const code = b.dataset.cancel;
-    if (!(await DQ.ask('تلغي الطلب؟', `الطلب <b class="en">${esc(code)}</b> هيتلغي ومش هنقدر نرجّعه. لو عاوز تغيّر حاجة فيه كلمنا على واتساب بدل الإلغاء.`, 'تأكيد الإلغاء', 'رجوع'))) return;
+    const reason = await DQ.ask('تلغي الطلب؟', `الطلب <b class="en">${esc(code)}</b> هيتلغي ومش هنقدر نرجّعه. لو عاوز تغيّر حاجة فيه كلمنا على واتساب بدل الإلغاء.`, 'تأكيد الإلغاء', 'رجوع', REASONS);
+    if (!reason) return;
     b.disabled = true; b.textContent = 'جاري الإلغاء…';
     const local = mine().find(x => x.code === code);
-    const { data, error } = await sb.rpc('shop_cancel_order', { p_code: code, p_phone: local ? local.phone : null });
+    const { data, error } = await sb.rpc('shop_cancel_order', { p_code: code, p_phone: local ? local.phone : null, p_reason: reason });
     if (error) { b.disabled = false; b.textContent = 'إلغاء الطلب'; return DQ.toast(/شحن|واتساب|موجود/.test(error.message) ? error.message : 'معرفناش نلغي الطلب، جرّب تاني', 'err'); }
     const at = (data && data.cancelled_at) || new Date().toISOString(), l = mine(), lo = l.find(x => x.code === code);
     if (lo) { lo.cancelled_at = at; saveMine(l); }

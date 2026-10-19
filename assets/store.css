@@ -716,4 +716,12 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .ask-card h3{margin:0 0 8px;font-size:19px}
 .ask-card p{margin:0 0 20px;font-size:14px;line-height:1.8;color:var(--muted)}
 .ask-acts{display:grid;gap:8px}
+.ask-why{text-align:right;margin:-6px 0 18px;display:grid;gap:10px}
+.ask-why>b{font-size:13.5px}
+.ask-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ask-chips button{font:500 12.5px var(--f-ar);padding:7px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);transition:background .2s,color .2s,border-color .2s}
+.ask-chips button:hover{border-color:#B04834;color:var(--ink)}
+.ask-chips button.on{background:rgb(176 72 52/.12);border-color:#B04834;color:#B04834}
+.ask-why textarea{min-height:64px;font-size:14px;resize:vertical}
+.ask-ok:disabled{opacity:.45;cursor:not-allowed}
 .ask-ok{background:#B04834;color:#fff;border-color:#B04834}.ask-ok:hover{background:#963b29}
