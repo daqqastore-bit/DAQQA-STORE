@@ -28,8 +28,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019154354">
-<link rel="stylesheet" href="assets/store.css?v=20261019154354">
+<link rel="stylesheet" href="assets/base.css?v=20261019155213">
+<link rel="stylesheet" href="assets/store.css?v=20261019155213">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -90,21 +90,21 @@
 @keyframes knock{0%,30%,60%,100%{scale:1}10%,40%,70%{scale:1.07}}
 @keyframes ldFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .ld-fade{will-change:opacity,transform}
-.ld-rail{position:absolute;top:40px;bottom:34px;right:calc(3vw + 46px);z-index:3;display:flex;flex-direction:column;align-items:center;gap:14px;padding:16px 0;width:44px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.28);background:rgb(var(--accent-rgb)/.06);color:var(--muted);cursor:pointer;animation:ldFade 1.2s 1s both;transition:background .3s,border-color .3s}
-.ld-rail:hover{background:rgb(var(--accent-rgb)/.14);border-color:rgb(var(--accent-rgb)/.6)}
-.ld-rail b{writing-mode:vertical-rl;font:700 14px var(--f-ar);color:var(--ink);letter-spacing:.04em}
-.ld-rail small{writing-mode:vertical-rl;font:600 9px var(--f-ui);letter-spacing:.5em;color:var(--accent)}
-/* the long track: a gold drop keeps falling down it, saying "keep going" */
-.ld-rail .tr{position:relative;flex:1;width:1px;min-height:40px;background:linear-gradient(rgb(var(--accent-rgb)/.08),rgb(var(--accent-rgb)/.45),rgb(var(--accent-rgb)/.08));overflow:hidden}
-.ld-rail .tr i{position:absolute;left:-2px;top:0;width:5px;height:22%;border-radius:4px;background:linear-gradient(transparent,var(--accent));box-shadow:0 0 10px rgb(var(--accent-rgb)/.7);transform:translateY(-100%);animation:railDrop 2.4s cubic-bezier(.6,0,.3,1) infinite}
-.ld-rail .tr i:nth-child(2){animation-delay:1.2s;opacity:.55}
-@keyframes railDrop{to{transform:translateY(560%)}}
-.ld-rail .chev{display:flex;flex-direction:column;align-items:center;margin-top:-4px}
-.ld-rail .chev i{width:9px;height:9px;margin-top:-4px;border:solid var(--accent);border-width:0 1.5px 1.5px 0;transform:rotate(45deg);opacity:.2;animation:chevB 1.6s ease-in-out infinite}
+/* scroll cue: a clear pill centered at the bottom — mouse, "اسكرول لتحت", falling chevrons */
+.ld-rail{position:absolute;left:0;right:0;bottom:30px;margin:0 auto;width:max-content;z-index:3;display:flex;align-items:center;gap:14px;padding:12px 26px 12px 22px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.45);background:rgb(var(--accent-rgb)/.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink);cursor:pointer;animation:ldFade 1.2s 1s both,railPulse 2.6s 2.2s ease-in-out infinite;transition:background .3s,border-color .3s}
+.ld-rail:hover{background:rgb(var(--accent-rgb)/.2);border-color:var(--accent)}
+.ld-rail b{font:700 19px var(--f-ar);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
+.ld-rail small{font:600 10px var(--f-ui);letter-spacing:.42em;color:var(--accent)}
+.ld-rail .tr{display:none}
+.ld-rail .chev{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.ld-rail .chev i{width:10px;height:10px;margin-top:-4px;border:solid var(--accent);border-width:0 2px 2px 0;transform:rotate(45deg);opacity:.2;animation:chevB 1.6s ease-in-out infinite}
 .ld-rail .chev i:nth-child(2){animation-delay:.2s}.ld-rail .chev i:nth-child(3){animation-delay:.4s}
+@keyframes railPulse{0%,100%{box-shadow:0 0 0 0 rgb(var(--accent-rgb)/0)}50%{box-shadow:0 0 0 7px rgb(var(--accent-rgb)/.1),0 12px 34px -12px rgb(var(--accent-rgb)/.55)}}
+@keyframes railDrop{to{transform:translateY(560%)}}
 @keyframes chevB{40%{opacity:1}80%,100%{opacity:.2}}
-@media (prefers-reduced-motion:reduce){.ld-rail .tr i,.ld-rail .chev i{animation:none;opacity:.6}}
-@media (max-height:620px){.ld-rail b{display:none}}
+@media (prefers-reduced-motion:reduce){.ld-rail,.ld-rail .chev i{animation:none;opacity:.8}}
+@media (max-width:600px){.ld-rail{bottom:22px;padding:10px 18px;gap:10px}.ld-rail b{font-size:16px}.ld-rail small{display:none}}
+@media (max-height:560px){.ld-rail small{display:none}}
 .mouse{width:20px;height:32px;border:1.5px solid var(--accent);border-radius:16px;position:relative}
 .mouse i{position:absolute;left:50%;top:6px;width:3px;height:6px;margin-left:-1.5px;border-radius:2px;background:var(--accent);animation:wheel 1.6s ease-in-out infinite}
 @keyframes wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(14px);opacity:0}100%{transform:translateY(0);opacity:0}}
@@ -287,8 +287,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261019154354"></script>
-<script src="assets/app.js?v=20261019154354"></script>
+<script src="assets/config.js?v=20261019155213"></script>
+<script src="assets/app.js?v=20261019155213"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);

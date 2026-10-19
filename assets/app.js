@@ -858,7 +858,7 @@
     window.DQ_reveal = () => {};
     DQ.reveal(); readyRes();
   };
-  if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {}));
   DQ.start = async (active, onReady) => {
     if (!window.DQ_LOADER) intro(); chrome(active); mouseFx();
     try { await cap(DQ.load(), 15000); } catch (e) { console.error(e); DQ.loadError = true; }
