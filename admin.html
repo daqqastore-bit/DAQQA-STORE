@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019121147">
+<link rel="stylesheet" href="assets/base.css?v=20261019121257">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -182,6 +182,15 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .atable td.n{font-family:var(--f-ui);white-space:nowrap}
 .atable .pos{color:var(--green);font-weight:700}.atable .neg{color:var(--red);font-weight:700}
 .atable .miss{color:var(--amber);font-size:12.5px}
+.cat{position:relative}.cat .input{padding-inline-end:40px}
+.cat-tg{position:absolute;inset-inline-end:6px;top:50%;translate:0 -50%;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}
+.cat-tg svg{width:16px;height:16px;transition:transform .25s}.cat.open .cat-tg svg{transform:rotate(180deg)}
+.cat.open .input{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}
+.cat-pop{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;max-height:260px;overflow:auto;padding:6px;border:1px solid var(--line);border-radius:14px;background:var(--bg-2);box-shadow:0 18px 40px -14px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:2px;opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;transition:opacity .2s,transform .2s}
+.cat.open .cat-pop:not(:empty){opacity:1;transform:none;pointer-events:auto}
+.cat-pop button{min-height:38px;display:flex;align-items:center;gap:6px;padding:0 12px;border-radius:9px;font-size:14px;color:var(--ink);text-align:right}
+.cat-pop button:hover{background:var(--surface-2)}.cat-pop button.on{background:var(--surface-2);font-weight:700}
+.cat-pop button.new{color:var(--amber)}.cat-pop button.new b{color:var(--ink)}
 .exp-form{display:grid;grid-template-columns:150px 1fr 130px 1.4fr auto;gap:10px;align-items:end;margin-bottom:16px}
 .sheet-chip{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--muted)}
 .sheet-chip i{width:8px;height:8px;border-radius:50%;background:var(--muted-2)}.sheet-chip.ok i{background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 20%,transparent)}
@@ -388,7 +397,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019121147"></script>
+<script src="assets/config.js?v=20261019121257"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1130,7 +1139,7 @@ function renderAccounts() {
   if (accTab === 'sum') {
     const flow = [['مبيعات المنتجات', sales, ''], ['− تكلفة البضاعة', cogs, 'minus'], ['− الشحن على حسابك', shipMe, 'minus'], ['− خسارة المرتجعات', retLoss, 'minus'], ['− المصاريف', expSum, 'minus']];
     const mx = Math.max(1, sales, ...flow.map(x => x[1]));
-    const byCat = EXP_CATS.map(c => [c, expIn.filter(x => x.category === c).reduce((s, x) => s + +x.amount, 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+    const byCat = [...new Set([...EXP_CATS, ...expIn.map(x => x.category)])].map(c => [c, expIn.filter(x => x.category === c).reduce((s, x) => s + +x.amount, 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
     const cmx = byCat[0] ? byCat[0][1] : 1;
     body = `${missing.length ? `<div class="warn-box"><span><b>${missing.length} طلب</b> متأكد من غير تكاليف، فصافي الربح لسه ناقص.</span><button class="btn btn-sm btn-amber" id="goMissing">سجّل التكاليف</button></div>` : ''}
     <div class="kpis">
@@ -1157,7 +1166,8 @@ function renderAccounts() {
   } else if (accTab === 'exp') {
     const today = new Date().toISOString().slice(0, 10);
     body = `<form class="panel exp-form" id="expForm"><div class="field"><label>التاريخ</label><input class="input en" type="date" name="spent_on" value="${today}" required></div>
-      <div class="field"><label>البند</label><select class="input" name="category">${EXP_CATS.map(c => `<option>${c}</option>`).join('')}</select></div>
+      <div class="field"><label>البند</label><div class="cat" id="expCat"><input class="input" name="category" required autocomplete="off" placeholder="اكتب أو اختار" value="">
+        <button type="button" class="cat-tg" aria-label="عرض البنود"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="cat-pop" role="listbox"></div></div></div>
       <div class="field"><label>المبلغ</label><input class="input en" name="amount" inputmode="decimal" required placeholder="0"></div>
       <div class="field"><label>ملاحظة</label><input class="input" name="note" placeholder="اختياري"></div>
       <button class="btn btn-amber" type="submit">+ إضافة</button></form>
@@ -1173,6 +1183,20 @@ function renderAccounts() {
   $('#syncSheet').onclick = sheetSyncAll;
   if ($('#goMissing')) $('#goMissing').onclick = () => { accTab = 'orders'; accMissing = true; renderAccounts(); };
   if ($('#missSeg')) $('#missSeg').onclick = e => { const b = e.target.closest('[data-miss]'); if (b) { accMissing = b.dataset.miss === '1'; renderAccounts(); } };
+  if ($('#expCat')) {
+    // category: type anything, or pick from the usual list plus the ones used before
+    const box = $('#expCat'), inp = box.querySelector('input'), pop = box.querySelector('.cat-pop');
+    const all = [...new Set([...EXP_CATS, ...expenses.map(x => x.category).filter(Boolean)])];
+    const fill = () => { const q = inp.value.trim(), list = all.filter(c => !q || c.includes(q));
+      pop.innerHTML = list.map(c => `<button type="button" data-cat="${esc(c)}" class="${c === q ? 'on' : ''}">${esc(c)}</button>`).join('') + (q && !all.includes(q) ? `<button type="button" data-cat="${esc(q)}" class="new">+ بند جديد: <b>${esc(q)}</b></button>` : ''); };
+    const open = v => { if (v) fill(); box.classList.toggle('open', v); };
+    inp.onfocus = () => open(true); inp.oninput = () => open(true);
+    box.querySelector('.cat-tg').onclick = () => { open(!box.classList.contains('open')); inp.focus(); };
+    pop.onmousedown = e => e.preventDefault();
+    pop.onclick = e => { const b = e.target.closest('[data-cat]'); if (b) { inp.value = b.dataset.cat; open(false); $('#expForm [name=amount]').focus(); } };
+    inp.onblur = () => setTimeout(() => open(false), 120);
+    inp.onkeydown = e => { if (e.key === 'Escape') open(false); };
+  }
   if ($('#expForm')) $('#expForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const amount = +String(f.amount).replace(/[^\d.]/g, '');
     if (!amount) return toast('اكتب المبلغ', 'err');
     const { data, error } = await sb.from('shop_expenses').insert({ spent_on: f.spent_on, category: f.category, amount, note: f.note.trim() || null }).select().single(); if (error) return toast(error.message, 'err');
