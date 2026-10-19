@@ -397,7 +397,7 @@
             <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
           </div>
           <aside class="co-side"><div class="co-card">
-            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit">تعديل الـ Shopping Cart</button></div>
+            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit" aria-label="تعديل الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>تعديل</button></div>
             <div class="co-items">${items}</div>
             <div class="co-sums" id="coSums">${sumsHTML(t)}</div>
             <button class="btn btn-amber co-place" id="place">تأكيد الطلب · ${money(t.total)}</button>
