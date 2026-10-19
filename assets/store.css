@@ -2,6 +2,23 @@ html,body{overflow-x:clip}
 /* DAQQA Watches — storefront shared styles (header, footer, cards, cart) */
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
 #hdr{display:contents}
+.topbar{background:var(--nav);border-bottom:1px solid var(--line);font-size:12.5px}
+.topbar[hidden]{display:none}
+.tb-in{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:36px}
+.tb-ann{color:var(--accent);font-weight:600;flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-ann:empty{display:none}
+.tb-soc{display:flex;gap:4px;margin-inline-start:auto}
+.tb-ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--muted);transition:color .2s,background .2s,transform .2s}
+.tb-ic svg{width:15px;height:15px}.tb-ic span,.tb-ic small{display:none}
+@media (max-width:600px){.tb-in{flex-wrap:wrap;justify-content:center;gap:2px 10px;padding:4px 0}.tb-ann{flex-basis:100%;white-space:normal;line-height:1.6}.tb-soc{margin:0}}
+.tb-ic:hover{color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);transform:translateY(-1px)}
+.ft-soc{gap:8px!important}
+.ft-ic{display:inline-flex;align-items:center;gap:10px;color:var(--muted)}
+.ft-ic svg{width:17px;height:17px;flex:none;transition:color .2s}
+.ft-ic small{display:none}
+.ft-ic:hover svg{color:var(--sc)}
+.ft-all{display:inline-flex;gap:6px;margin-top:16px;font-size:13px;color:var(--accent);font-weight:600}
+.ft-all:hover{text-decoration:underline;text-underline-offset:4px}
 .announce{background:var(--nav);color:var(--accent);text-align:center;font-size:13px;font-weight:600;padding:9px 16px;border-bottom:1px solid var(--line);letter-spacing:.01em}
 .announce:empty{display:none}
 

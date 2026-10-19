@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019135212">
+<link rel="stylesheet" href="assets/base.css?v=20261019141508">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -243,6 +243,21 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @media (prefers-reduced-motion:reduce){#main.pg-in>*{animation:none}}
 .set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .field .hint{display:block;margin-top:6px;font-size:12px;line-height:1.7;color:var(--muted)}
+.soc-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.soc-row .field{flex:1;margin:0}.soc-row label small{color:var(--muted);font-weight:400;margin-inline-start:4px}
+.soc-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);margin-bottom:2px}
+.soc-ic svg{width:22px;height:22px}
+.soc-del{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center;margin-bottom:2px}
+.soc-del:hover{color:var(--red);border-color:var(--red)}.soc-del svg{width:18px;height:18px}
+.soc-row .f-err{display:block;color:var(--red);font-size:12px;margin-top:5px}.soc-row .field.bad .input{border-color:var(--red)}
+.soc-pick{border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px;animation:pgIn .3s ease}
+.soc-pick[hidden]{display:none}
+.soc-pick b{font-size:13.5px}
+.soc-types{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.soc-types button{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid var(--line);border-radius:12px;font-size:13px;color:var(--ink);transition:border-color .2s,background .2s}
+.soc-types button span{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);flex:none}
+.soc-types button svg{width:16px;height:16px}
+.soc-types button:hover{border-color:var(--sc);background:color-mix(in srgb,var(--sc) 7%,transparent)}
 .set-card{display:flex;flex-direction:column;gap:14px}
 .web-ord{margin-bottom:14px}.web-ord .set-h{align-items:center}.web-ord .set-h>div{flex:1}.wo-warn{color:var(--red,#B04834);font-size:12.5px}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -437,7 +452,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019135212"></script>
+<script src="assets/config.js?v=20261019141508"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1028,11 +1043,54 @@ function zonesHTML() {
       <div class="gov-chips">${GOV.map(c => { const t = taken(c); return `<button type="button" class="gchip ${t === i ? 'on' : t >= 0 ? 'other' : ''}" data-zc="${i}" data-c="${c}" title="${t >= 0 && t !== i ? 'متحددة في سعر تاني — اضغط تنقلها هنا' : ''}">${c}</button>`; }).join('')}</div></div>`).join('')
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
+let setTab = 'general', socDraft = [];
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button></div>`;
+function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; renderSettings(); }; }
+/* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
+const socRow = (x, i) => { const t = RC.SOCIAL[x.type]; return `<div class="soc-row" data-si="${i}"><span class="soc-ic" style="--sc:${t.color}">${t.icon}</span>
+    <div class="field"><label>${esc(t.name)}${t.kind === 'phone' ? ' <small>رقم</small>' : t.kind === 'email' ? ' <small>إيميل</small>' : ' <small>لينك أو اسم الحساب</small>'}</label>
+      <input class="input en" data-sv="${i}" value="${esc(x.value || '')}" placeholder="${esc(t.ph)}" dir="ltr" ${t.kind === 'phone' ? 'inputmode="tel"' : t.kind === 'email' ? 'inputmode="email"' : 'inputmode="url"'} required></div>
+    <button type="button" class="soc-del" data-sdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`; };
+const socErr = x => { const t = RC.SOCIAL[x.type], v = String(x.value || '').trim();
+  if (!v) return t.kind === 'phone' ? 'اكتب الرقم' : t.kind === 'email' ? 'اكتب الإيميل' : 'اكتب اللينك أو اسم الحساب';
+  if (t.kind === 'phone' && RC.digits(v).length < 8) return 'الرقم مش مظبوط';
+  if (!RC.socialHref(x)) return t.kind === 'email' ? 'الإيميل مش مظبوط' : 'اللينك مش مظبوط';
+  return ''; };
+function renderSocial() {
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">حساباتك على السوشيال وأرقام التواصل</div></div><a class="btn btn-ghost btn-sm" href="social.html" target="_blank" rel="noopener">شوف صفحة السوشيال</a></div>
+    ${setTabs()}
+    <form class="panel set-card" id="socForm" novalidate>
+      <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span><div><h2>سوشيال</h2><small>بتظهر فوق الموقع وتحت في الفوتر وفي صفحة السوشيال. اللي مالوش لينك مش بيظهر.</small></div></div>
+      <div id="socList">${socDraft.length ? socDraft.map(socRow).join('') : '<div class="empty" style="padding:14px">مفيش حسابات لسه. اضغط «إضافة» واختار نوع الحساب.</div>'}</div>
+      <div class="soc-pick" id="socPick" hidden><b>اختار نوع الحساب</b><div class="soc-types">${Object.entries(RC.SOCIAL).map(([k, t]) => `<button type="button" data-sadd="${k}" style="--sc:${t.color}"><span>${t.icon}</span>${esc(t.name)}</button>`).join('')}</div></div>
+      <div class="set-acts"><button type="button" class="btn btn-ghost" id="socAdd">+ إضافة</button><button class="btn btn-primary" type="submit">حفظ</button></div>
+    </form>`;
+  bindSetTabs();
+  const draw = () => { $('#socList').innerHTML = socDraft.length ? socDraft.map(socRow).join('') : '<div class="empty" style="padding:14px">مفيش حسابات لسه. اضغط «إضافة» واختار نوع الحساب.</div>'; };
+  $('#socAdd').onclick = () => { const pk = $('#socPick'); pk.hidden = !pk.hidden; if (!pk.hidden) pk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+  $('#socForm').oninput = e => { const i = e.target.dataset.sv; if (i == null) return; socDraft[+i].value = e.target.value; const f = e.target.closest('.field'); if (f.classList.contains('bad') && !socErr(socDraft[+i])) { f.classList.remove('bad'); const m = f.querySelector('.f-err'); m && m.remove(); } };
+  $('#socForm').onclick = e => {
+    const a = e.target.closest('[data-sadd]'), d = e.target.closest('[data-sdel]');
+    if (a) { socDraft.push({ type: a.dataset.sadd, value: '' }); $('#socPick').hidden = true; draw(); const ins = $('#socList').querySelectorAll('[data-sv]'); ins[ins.length - 1].focus(); }
+    if (d) { socDraft.splice(+d.dataset.sdel, 1); draw(); }
+  };
+  $('#socForm').onsubmit = async e => { e.preventDefault(); let bad = null;
+    socDraft.forEach((x, i) => { const msg = socErr(x), inp = $(`[data-sv="${i}"]`), f = inp.closest('.field'); f.classList.toggle('bad', !!msg); let m = f.querySelector('.f-err');
+      if (msg) { if (!m) { m = document.createElement('small'); m.className = 'f-err'; f.appendChild(m); } m.textContent = msg; bad = bad || inp; } else if (m) m.remove(); });
+    if (bad) { bad.focus(); return toast('في خانة ناقصة أو مش مظبوطة', 'err'); }
+    const list = socDraft.map(x => ({ type: x.type, value: String(x.value).trim() }));
+    const {error} = await sb.from('shop_settings').update({ socials: list, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/socials/.test(error.message) ? 'السوشيال محتاج تحديث في Supabase' : error.message, 'err');
+    settings.socials = list; toast('اتحفظت الحسابات ✓', 'ok'); };
+}
 function renderSettings() {
   const s = settings;
+  if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   $('#main').innerHTML = `
     <div class="head"><div><h1>الإعدادات</h1><div class="sub">بيانات المتجر، أسعار الشحن، والشيت</div></div></div>
+    ${setTabs()}
     <div class="panel set-card web-ord">
       <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span><div><h2>الطلب من الموقع</h2><small id="woTxt">${s.web_orders_off ? 'مقفول: العميل بيملا بياناته والطلب بيتبعتلك رسالة على واتساب' : 'شغال: الطلبات بتتسجل هنا في اللوحة'}</small></div>
         <button type="button" class="switch ${s.web_orders_off ? '' : 'on'}" id="woSw" aria-label="الطلب من الموقع"></button></div>
@@ -1062,6 +1120,7 @@ function renderSettings() {
     settings.web_orders_off = off; $('#woSw').classList.toggle('on', !off);
     $('#woTxt').textContent = off ? 'مقفول: العميل بيملا بياناته والطلب بيتبعتلك رسالة على واتساب' : 'شغال: الطلبات بتتسجل هنا في اللوحة';
     toast(off ? 'الطلب من الموقع اتقفل، الطلبات هتوصلك واتساب' : 'الطلب من الموقع اشتغل ✓', 'ok'); };
+  bindSetTabs();
   const drawZones = () => { $('#zones').innerHTML = zonesHTML(); };
   $('#zoneAdd').onclick = () => { zonesDraft.push({ price: '', cities: [] }); drawZones(); const ins = $('#zones').querySelectorAll('[data-zprice]'); ins[ins.length - 1].focus(); };
   $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = zTag(z); };

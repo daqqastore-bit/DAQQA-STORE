@@ -88,7 +88,8 @@
         ${cols.length ? `<div class="sw">${cols.map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
       </div></article>`;
   };
-  DQ.wa = () => (DQ.settings.whatsapp || '').replace(/\D/g, '');
+  // the order WhatsApp: the number in store settings, else the WhatsApp account added under Social
+  DQ.wa = () => { const d = RC.digits(DQ.settings.whatsapp); if (d) return d; const w = RC.socials(DQ.settings).find(s => s.type === 'whatsapp'); return w ? RC.digits(w.value).replace(/^0/, '20') : ''; };
 
   /* ---------- hover: a product with several photos flips through them ---------- */
   function imageFlip() {
@@ -128,6 +129,7 @@
   function chrome(active) {
     const nav = [['./', 'الرئيسية', 'home'], ['./#watches', 'الساعات', 'watches'], ['./#glasses', 'النضارات', 'glasses'], ['./#accessories', 'الاكسسوارات', 'accessories']];
     $('#hdr').innerHTML = `
+      <div class="topbar" id="topbar" hidden></div>
       <header class="nav-bar"><div class="wrap nav">
         <a href="./" class="brand" aria-label="DAQQA — الرئيسية"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
         <nav class="links" aria-label="القائمة">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" class="${k === active ? 'on' : ''}">${l}</a>`).join('')}${pagesMenu(active)}</nav>
@@ -149,10 +151,10 @@
     $('#ftr').innerHTML = `<footer class="site-foot"><div class="wrap">
       <div class="foot-grid">
         <div class="foot-brand"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
-          <p>دقّة — ساعات ونضارات واكسسوارات مختارة بعناية، بأسعار واضحة وعروض حقيقية. الدفع عند الاستلام والشحن لكل مصر.</p></div>
+          <p>DAQQA STORE — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام والشحن لكل مصر.</p></div>
         <div><h4 class="en">SHOP</h4><ul>${Object.entries(RC.kinds).map(([k, v]) => `<li data-kind="${k}"><a href="./#${k}">${v.ar}</a></li>`).join('')}</ul></div>
         <div><h4 class="en">HELP</h4><ul><li>الدفع عند الاستلام</li><li>شحن 2–5 أيام</li><li>استبدال خلال 14 يوم</li><li>ضمان على الماكينة</li></ul></div>
-        <div><h4 class="en">CONTACT</h4><ul id="ftContact"><li>واتساب: <span class="en" id="ftWa">—</span></li><li><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://www.tiktok.com/" target="_blank" rel="noopener">TikTok</a></li></ul></div>
+        <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul><a class="ft-all" href="social.html">كل حساباتنا على السوشيال <span aria-hidden="true">←</span></a></div>
       </div>
       <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div></div></footer>
       <div class="overlay" id="overlay"></div>
@@ -298,9 +300,20 @@
     // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
     DQ.products = (p.data || []).map(x => x.stock == null ? { ...x, stock: 999 } : x); DQ.settings = s.data || {};
 
-    if (DQ.wa()) $('#ftWa').innerHTML = `<a href="https://wa.me/${DQ.wa()}" target="_blank" rel="noopener">${esc(DQ.settings.whatsapp)}</a>`;
+    renderSocial();
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };
+
+  /* ---------- social accounts: top bar (with the announcement) + footer; accounts without a link are skipped ---------- */
+  const socLink = (x, cls) => { const t = RC.SOCIAL[x.type], href = RC.socialHref(x), ext = /^https?:/.test(href);
+    return `<a class="${cls}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''} aria-label="${esc(t.name)}" title="${esc(t.name)}" style="--sc:${t.color}">${t.icon}<span>${esc(t.name)}</span><small class="en" dir="ltr">${esc(RC.socialLabel(x))}</small></a>`; };
+  DQ.socLink = socLink;
+  function renderSocial() {
+    const list = RC.socials(DQ.settings), ann = (DQ.settings.announcement || '').trim(), top = $('#topbar');
+    if (top) { top.hidden = !list.length && !ann;
+      top.innerHTML = `<div class="wrap tb-in"><span class="tb-ann">${esc(ann)}</span>${list.length ? `<span class="tb-soc">${list.slice(0, 6).map(x => socLink(x, 'tb-ic')).join('')}</span>` : ''}</div>`; }
+    const ft = $('#ftContact'); if (ft) { ft.hidden = !list.length; $('#ftSoc').innerHTML = list.map(x => `<li>${socLink(x, 'ft-ic')}</li>`).join(''); }
+  }
 
   /* ---------- cart ---------- */
   let view = 'cart';

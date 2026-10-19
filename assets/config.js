@@ -63,5 +63,46 @@ RC.dmy = (d) => { const x = new Date(d); return `${String(x.getDate()).padStart(
 RC.when = (d) => RC.dmy(d) + ' · ' + new Date(d).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 RC.notifyEmail = 'daqqastore@gmail.com';
 
+// social accounts (admin → Settings → سوشيال). kind decides what the admin types: a number, an email, or a link/username.
+const SI = (d, fill) => `<svg viewBox="0 0 24 24" ${fill ? 'fill="currentColor"' : 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'} aria-hidden="true">${d}</svg>`;
+RC.SOCIAL = {
+  whatsapp:  { name: 'واتساب', en: 'WhatsApp', kind: 'phone', color: '#25D366', icon: SI('<path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.2-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/>', 1), ph: '01012345678' },
+  phone:     { name: 'رقم الاتصال', en: 'Call', kind: 'phone', color: '#C9A97A', icon: SI('<path d="M21 16.5v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 1.1 3.8 2 2 0 0 1 3.1 1.6h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L7 9.5a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2z"/>'), ph: '01012345678' },
+  instagram: { name: 'Instagram', en: 'Instagram', kind: 'link', color: '#E1306C', base: 'https://instagram.com/', icon: SI('<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/>'), ph: 'instagram.com/daqqa أو daqqa' },
+  tiktok:    { name: 'TikTok', en: 'TikTok', kind: 'link', color: 'currentColor', base: 'https://www.tiktok.com/@', icon: SI('<path d="M15.5 2c.4 2.6 2.1 4.3 4.7 4.5V10c-1.8 0-3.3-.5-4.7-1.4v6.6A6 6 0 1 1 9.6 9.3v3.6a2.5 2.5 0 1 0 2.4 2.4V2z"/>', 1), ph: 'tiktok.com/@daqqa أو daqqa' },
+  facebook:  { name: 'Facebook', en: 'Facebook', kind: 'link', color: '#1877F2', base: 'https://facebook.com/', icon: SI('<path d="M14 8.5h3V4.6h-3.1C10.6 4.6 9.7 6.8 9.7 9v2H7v3.9h2.7V22h3.9v-7.1h2.9l.5-3.9h-3.4V9.3c0-.5.3-.8.9-.8z"/>', 1), ph: 'facebook.com/daqqa' },
+  telegram:  { name: 'Telegram', en: 'Telegram', kind: 'link', color: '#229ED9', base: 'https://t.me/', icon: SI('<path d="M21.5 3.5 2.8 10.7c-.9.4-.9 1.6.1 1.9l4.6 1.4 1.8 5.6c.3.8 1.3 1 1.9.4l2.6-2.4 4.7 3.5c.7.5 1.6.1 1.8-.7L22.9 4.9c.2-1-.6-1.8-1.4-1.4zM9.8 14.6l-.4 3.6-1.3-4.3 9.6-6.1z"/>', 1), ph: 't.me/daqqa أو daqqa' },
+  x:         { name: 'X', en: 'X', kind: 'link', color: 'currentColor', base: 'https://x.com/', icon: SI('<path d="M17.8 3h3.2l-7 8 8.2 10h-6.4l-5-6.2L5 21H1.8l7.5-8.6L1.5 3H8l4.5 5.7zm-1.1 16.2h1.8L7.4 4.7H5.5z"/>', 1), ph: 'x.com/daqqa أو daqqa' },
+  youtube:   { name: 'YouTube', en: 'YouTube', kind: 'link', color: '#FF0000', base: 'https://youtube.com/@', icon: SI('<path d="M22 8.2a3 3 0 0 0-2.1-2.1C18 5.6 12 5.6 12 5.6s-6 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12 31 31 0 0 0 2 15.8a3 3 0 0 0 2.1 2.1c1.9.5 7.9.5 7.9.5s6 0 7.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .4-3.8 31 31 0 0 0-.4-3.8zM10 15.1V8.9l5.2 3.1z"/>', 1), ph: 'youtube.com/@daqqa' },
+  snapchat:  { name: 'Snapchat', en: 'Snapchat', kind: 'link', color: '#F7D600', base: 'https://snapchat.com/add/', icon: SI('<path d="M12 2.5c3.2 0 5.3 2.4 5.3 5.5v2.4l1.7-.6.6 1.4-2.3 1.2c.7 1.8 2 3 3.7 3.4-.3.9-1.4 1.2-2.7 1.3l-.4 1.4c-1.1 0-2-.4-3.1.3-.9.6-1.8 1.1-2.8 1.1s-1.9-.5-2.8-1.1c-1.1-.7-2-.3-3.1-.3l-.4-1.4c-1.3-.1-2.4-.4-2.7-1.3 1.7-.4 3-1.6 3.7-3.4l-2.3-1.2.6-1.4 1.7.6V8c0-3.1 2.1-5.5 5.3-5.5z"/>'), ph: 'daqqa' },
+  threads:   { name: 'Threads', en: 'Threads', kind: 'link', color: 'currentColor', base: 'https://www.threads.net/@', icon: SI('<path d="M16.5 11.2c-.6-3-2.6-4.2-4.7-4.2-2.4 0-4 1.4-4.4 3.3M16.5 11.2c-1-.3-2.1-.4-3.3-.3-2.4.2-3.8 1.4-3.6 3 .2 1.5 1.8 2.2 3.4 2.1 2.3-.2 3.6-1.9 3.5-4.8zm0 0c2.4 1 3.4 2.6 2.8 4.6-.8 2.8-3.5 4.7-7.3 4.7C7 20.5 4 17.4 4 12s3-8.5 8-8.5c3.6 0 6.2 1.6 7.4 4.6"/>'), ph: 'threads.net/@daqqa' },
+  linkedin:  { name: 'LinkedIn', en: 'LinkedIn', kind: 'link', color: '#0A66C2', base: 'https://linkedin.com/in/', icon: SI('<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10.5V17M8 7.5v.01M12 17v-6.5M12 13.5c0-1.7 1-3 2.5-3s2.5 1 2.5 3V17"/>'), ph: 'linkedin.com/company/daqqa' },
+  pinterest: { name: 'Pinterest', en: 'Pinterest', kind: 'link', color: '#E60023', base: 'https://pinterest.com/', icon: SI('<path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.5 1.8-2.5.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.5-.2 1 .5 1.9 1.6 1.9 1.9 0 3.3-2 3.3-4.9 0-2.6-1.8-4.4-4.5-4.4-3 0-4.8 2.3-4.8 4.6 0 .9.4 1.9.8 2.5.1.1.1.2.1.3l-.3 1.2c0 .2-.2.3-.4.2-1.4-.7-2.2-2.7-2.2-4.3 0-3.5 2.5-6.7 7.3-6.7 3.8 0 6.8 2.7 6.8 6.4 0 3.8-2.4 6.9-5.8 6.9-1.1 0-2.2-.6-2.5-1.3l-.7 2.6c-.2 1-.9 2.2-1.4 2.9A10 10 0 1 0 12 2z"/>', 1), ph: 'pinterest.com/daqqa' },
+  email:     { name: 'الإيميل', en: 'Email', kind: 'email', color: '#C9A97A', icon: SI('<rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6 9 7 9-7"/>'), ph: 'hello@daqqa.com' },
+  website:   { name: 'الموقع', en: 'Website', kind: 'link', color: '#C9A97A', icon: SI('<circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.8 3.8 6 3.8 9.5s-1.2 6.7-3.8 9.5c-2.6-2.8-3.8-6-3.8-9.5s1.2-6.7 3.8-9.5z"/>'), ph: 'https://…' }
+};
+RC.digits = v => String(v || '').replace(/\D/g, '');
+// href for one saved account; '' when it isn't usable (then it is simply not shown)
+RC.socialHref = (s) => {
+  const t = RC.SOCIAL[s && s.type], v = String((s && s.value) || '').trim(); if (!t || !v) return '';
+  if (t.kind === 'phone') { const d = RC.digits(v); if (d.length < 8) return ''; return s.type === 'whatsapp' ? 'https://wa.me/' + d.replace(/^0/, '20') : 'tel:' + (d.startsWith('20') ? '+' + d : d); }
+  if (t.kind === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'mailto:' + v : '';
+  if (/^https?:\/\//i.test(v)) return v;
+  // a full address (has a slash, or it's the website) vs a bare username like daqqa.eg or @daqqa
+  if (!t.base || /\//.test(v)) return /\./.test(v) ? 'https://' + v.replace(/^\/+/, '') : '';
+  return t.base + v.replace(/^@/, '');
+};
+// short text under each account: the number, the @handle, or the domain
+RC.socialLabel = (s) => {
+  const t = RC.SOCIAL[s.type], v = String(s.value || '').trim(); if (!t) return '';
+  if (t.kind !== 'link') return v;
+  const h = v.replace(/^https?:\/\//i, '').replace(/^www\./, '').replace(/\/+$/, '').split(/[?#]/)[0];
+  if (s.type === 'website') return h;
+  const last = h.includes('/') ? h.split('/').filter(Boolean).pop() : h;
+  if (/\.php$|=/.test(last)) return t.name;
+  return '@' + last.replace(/^@/, '');
+};
+RC.socials = (settings) => (Array.isArray(settings && settings.socials) ? settings.socials : []).filter(s => RC.socialHref(s));
+
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261019135212';
+RC.build = '20261019141508';
