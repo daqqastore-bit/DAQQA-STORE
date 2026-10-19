@@ -438,12 +438,19 @@
   // GPS → a Google Maps link that reaches the shop with the order
   let coLoc = '', coAddr = '';
   // pin → readable Arabic address (OpenStreetMap, free, no key)
+  const getJSON = (u, ms = 7000) => { const c = new AbortController(), t = setTimeout(() => c.abort(), ms); return fetch(u, { signal: c.signal }).then(r => { clearTimeout(t); if (!r.ok) throw 0; return r.json(); }); };
+  const joinU = parts => { const seen = new Set(); return parts.map(x => (x || '').trim()).filter(x => x && !seen.has(x) && seen.add(x)).join('، '); };
   async function addrOf(lat, lng) {
-    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=18&addressdetails=1&accept-language=ar&lat=${lat}&lon=${lng}`).then(r => r.json());
-    const a = r.address || {}, seen = new Set();
-    const road = a.road || a.pedestrian || a.street || '';
-    return [road && (a.house_number ? road + ' ' + a.house_number : road), a.neighbourhood, a.quarter, a.suburb, a.city_district, a.city || a.town || a.village, a.state]
-      .filter(x => x && !seen.has(x) && seen.add(x)).join('، ') || r.display_name || '';
+    try {
+      const r = await getJSON(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=18&addressdetails=1&accept-language=ar&lat=${lat}&lon=${lng}`);
+      const a = r.address || {}, road = a.road || a.pedestrian || a.street || '';
+      const out = joinU([road && (a.house_number ? road + ' ' + a.house_number : road), a.neighbourhood, a.quarter, a.suburb, a.city_district, a.city || a.town || a.village, a.state]) || r.display_name || '';
+      if (out) return out;
+    } catch (e) {}
+    // backup service (also free, no key) when the first one is busy or blocked on the customer's network
+    const b = await getJSON(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
+    const adm = ((b.localityInfo || {}).administrative || []).slice().sort((x, y) => (y.order || 0) - (x.order || 0)).map(x => x.name).filter(n => n && n !== b.principalSubdivision && n !== b.city && !/مصر|Egypt/.test(n));
+    return joinU([b.locality, ...adm.slice(0, 3), b.city, b.principalSubdivision]);
   }
   // the address goes into the "detailed address" box: fills it when empty, otherwise added on a new line (and swapped on a new pick); stays editable
   function putAddr(addr) {

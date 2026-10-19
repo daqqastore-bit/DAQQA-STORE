@@ -677,7 +677,7 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
   .co-brand b{display:none}
   .co-back span{display:none}.co-back{padding:0 10px}
 }
-@media (max-width:520px){.co-two{grid-template-columns:1fr}}
+@media (max-width:520px){.co-two{grid-template-columns:1fr}.loc{flex-wrap:wrap}.loc-btn{min-width:100%}.loc-acts{width:100%;padding:0 4px 4px}.loc-acts a,.loc-acts button{flex:1;justify-content:center}}
 @media (prefers-reduced-motion:reduce){.co-shell,.co-veil{transition:none}.co-main>*,.co-it{animation:none!important;opacity:1;transform:none}}
 /* map pin picker */
 .map-m{position:fixed;inset:0;z-index:130;display:grid;place-items:center;padding:16px;background:rgba(8,6,4,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
