@@ -660,3 +660,30 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 }
 @media (max-width:520px){.co-two{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.co-shell,.co-veil{transition:none}.co-main>*,.co-it{animation:none!important;opacity:1;transform:none}}
+/* map pin picker */
+.map-m{position:fixed;inset:0;z-index:130;display:grid;place-items:center;padding:16px;background:rgba(8,6,4,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
+.map-m.on{opacity:1}
+.map-card{width:min(720px,100%);height:min(640px,calc(100dvh - 32px));display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);transform:translateY(18px) scale(.98);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.map-m.on .map-card{transform:none}
+.map-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px 10px}
+.map-head b{display:block;font-size:17px}.map-head small{font-size:12.5px;color:var(--muted)}
+.map-search{display:flex;gap:8px;padding:0 16px 12px}
+.map-search .input{flex:1;height:44px;border-radius:12px}
+.map-search button{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);color:var(--muted)}
+.map-search button svg{width:18px;height:18px}
+.map-box{position:relative;flex:1;min-height:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+#mapEl{position:absolute;inset:0;background:var(--surface-2)}
+.map-pin{position:absolute;left:50%;top:50%;width:40px;height:52px;margin:-52px 0 0 -20px;z-index:500;pointer-events:none;transition:transform .2s ease}
+.map-pin svg{width:100%;height:100%;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+.map-pin path{fill:var(--accent);stroke:#1A140E;stroke-width:1.5}.map-pin circle{fill:#1A140E}
+.map-pin i{position:absolute;left:50%;bottom:-4px;width:12px;height:5px;margin-left:-6px;border-radius:50%;background:rgba(0,0,0,.35);transition:transform .2s,opacity .2s}
+.map-pin.up{transform:translateY(-12px)}.map-pin.up i{transform:translateY(12px) scale(.7);opacity:.5}
+.map-me{position:absolute;right:12px;bottom:12px;z-index:500;display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 14px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-size:13px;font-weight:600;box-shadow:0 6px 18px -8px rgba(0,0,0,.5)}
+.map-me svg{width:16px;height:16px;color:var(--accent)}
+.map-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px max(14px,env(safe-area-inset-bottom))}
+.map-hint{font:12.5px var(--f-ui);color:var(--muted);direction:ltr}
+.map-foot .btn{min-width:170px}
+.map-box .leaflet-control-attribution{font-size:9px}
+@media (max-width:600px){.map-m{padding:0}.map-card{height:100dvh;border-radius:0;border:0}.map-foot .btn{flex:1}}
+/* re-renders while filling the form (map pin, sign-in) don't replay the entrance */
+.co-page.shown .co-main>*,.co-page.shown .co-it{animation:none!important;opacity:1;transform:none}

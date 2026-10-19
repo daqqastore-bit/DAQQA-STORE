@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019115520">
+<link rel="stylesheet" href="assets/base.css?v=20261019120643">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -379,7 +379,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019115520"></script>
+<script src="assets/config.js?v=20261019120643"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -430,7 +430,9 @@ const COLS = { kind: false, style: false, colors: false, luxury: false, colors_l
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
 function confirmBox(msg, okText='تأكيد') { return new Promise(res => { const d = document.createElement('div'); d.className = 'confirm'; d.innerHTML = `<div class="box"><b>${esc(msg)}</b><div class="acts"><button class="btn btn-danger btn-sm" data-ok>${esc(okText)}</button><button class="btn btn-ghost btn-sm" data-no>إلغاء</button></div></div>`; document.body.appendChild(d); d.onclick = e => { if (e.target.closest('[data-ok]')) { d.remove(); res(true) } else if (e.target.closest('[data-no]') || e.target === d) { d.remove(); res(false) } }; }); }
-const fmtDate = d => new Date(d).toLocaleString('ar-EG', {day:'numeric', month:'short', hour:'numeric', minute:'2-digit'});
+// dates in English, day/month/year — 19/10/2026 · 2:27 PM
+const dmy = d => { const x = new Date(d); return `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}/${x.getFullYear()}`; };
+const fmtDate = d => `<span class="en" dir="ltr">${dmy(d)} · ${new Date(d).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}</span>`;
 $('#themeBtn').onclick = () => { const h = document.documentElement; h.dataset.theme = h.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('rc-theme', h.dataset.theme) } catch(e) {} ; if (tab === 'dash') renderDash(); };
 
 /* ---------- auth ---------- */
@@ -445,6 +447,7 @@ async function boot() {
   const [h0, code] = decodeURIComponent(location.hash.slice(1)).split('/');
   if (code) { const o = orders.find(x => x.code === code); orderQuery = code; orderFilter = 'all'; if (o) openOrders.add(o.id); go(o && isLuxOrder(o) ? 'lux-orders' : 'orders'); }
   else go(h0 || 'dash');
+  try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   listen(); askNotify();
 }
 function authPanel(id) { ['#loginForm','#forgotForm','#resetForm'].forEach(f => $(f).classList.toggle('hidden', f !== id)); }
@@ -1132,7 +1135,7 @@ function renderAccounts() {
       <div class="field"><label>المبلغ</label><input class="input en" name="amount" inputmode="decimal" required placeholder="0"></div>
       <div class="field"><label>ملاحظة</label><input class="input" name="note" placeholder="اختياري"></div>
       <button class="btn btn-amber" type="submit">+ إضافة</button></form>
-    <div class="panel scroll-x" style="padding:6px 14px">${expIn.length || accScope !== 'all' ? (accScope !== 'all' ? '<div class="empty">المصاريف بتظهر في «الكل».</div>' : `<table class="atable" style="min-width:560px"><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody>${expIn.map(x => `<tr><td class="n">${esc(x.spent_on)}</td><td>${esc(x.category)}</td><td class="n neg">${money(x.amount)}</td><td style="color:var(--muted)">${esc(x.note || '')}</td><td><button class="btn btn-sm btn-ghost" data-xdel="${x.id}">حذف</button></td></tr>`).join('')}</tbody></table>`) : '<div class="empty">مفيش مصاريف في الفترة دي.</div>'}</div>`;
+    <div class="panel scroll-x" style="padding:6px 14px">${expIn.length || accScope !== 'all' ? (accScope !== 'all' ? '<div class="empty">المصاريف بتظهر في «الكل».</div>' : `<table class="atable" style="min-width:560px"><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody>${expIn.map(x => `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.spent_on + 'T00:00')}</span></td><td>${esc(x.category)}</td><td class="n neg">${money(x.amount)}</td><td style="color:var(--muted)">${esc(x.note || '')}</td><td><button class="btn btn-sm btn-ghost" data-xdel="${x.id}">حذف</button></td></tr>`).join('')}</tbody></table>`) : '<div class="empty">مفيش مصاريف في الفترة دي.</div>'}</div>`;
   } else {
     body = `<div class="panel scroll-x" style="padding:6px 14px">${rets.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>المنتجات (رجعت للمخزون)</th><th>قيمة الطلب</th><th>خسارة المرتجع</th><th></th></tr></thead><tbody>
       ${rets.map(o => { const f = fins[o.id]; return `<tr><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
@@ -1152,6 +1155,24 @@ function renderAccounts() {
     const { error } = await sb.from('shop_expenses').delete().eq('id', id); if (error) return toast(error.message, 'err');
     expenses = expenses.filter(x => x.id !== id); sheetSend({ action: 'delete', sheet: 'expenses', id }); toast('اتحذف'); renderAccounts(); });
 }
+
+/* ---------- auto-update: a new release reloads the panel by itself (same tab, same scroll) ---------- */
+let dirty = false;
+document.addEventListener('input', e => { if (e.target.closest('#main, .fin-m')) dirty = true; }, true);
+const _go = go; go = (t, k) => { dirty = false; _go(t, k); };
+const adminBusy = () => dirty || !!document.querySelector('.fin-m, .confirm, .crop') || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+async function checkBuild() {
+  if (!RC.build || $('#appView').classList.contains('hidden')) return;
+  try {
+    const v = (await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.json())).v;
+    if (!v || v === RC.build) return;
+    const reload = () => { if (adminBusy()) return setTimeout(reload, 4000); try { sessionStorage.setItem('dq-admin-y', scrollY); } catch (e) {} location.reload(); };
+    reload();
+  } catch (e) {}
+}
+setInterval(() => { if (!document.hidden) checkBuild(); }, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkBuild(); });
+addEventListener('focus', checkBuild);
 
 boot();
 </script>

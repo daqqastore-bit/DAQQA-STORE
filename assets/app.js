@@ -84,7 +84,7 @@
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="أضف ${esc(p.name)} للسلة">${ICON.plus}</button>` : ''}</div>
+        <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="أضف ${esc(p.name)} لعربة التسوق">${ICON.plus}</button>` : ''}</div>
         ${cols.length ? `<div class="sw">${cols.map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
       </div></article>`;
   };
@@ -137,7 +137,7 @@
           <button class="icon-btn" id="searchBtn" aria-label="بحث">${ICON.search}</button>
           <button class="icon-btn" id="favBtn" aria-label="المفضلة">${ICON.heart}<span class="cart-count" id="favCount">0</span></button>
           <button class="icon-btn" id="accBtn" aria-label="حسابي">${ICON.user}<span class="acc-dot" id="accDot"></span></button>
-          <button class="icon-btn" id="cartBtn" aria-label="السلة">${ICON.bag}<span class="cart-count" id="cartCount">0</span></button>
+          <button class="icon-btn" id="cartBtn" aria-label="عربة التسوق">${ICON.bag}<span class="cart-count" id="cartCount">0</span></button>
           <button class="icon-btn menu-btn" id="menuBtn" aria-label="القائمة">${ICON.menu}</button>
         </div></div></header>
       <div class="sheet" id="menuSheet" role="dialog" aria-label="القائمة"><div class="wrap sheet-head"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
@@ -156,9 +156,9 @@
       </div>
       <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div></div></footer>
       <div class="overlay" id="overlay"></div>
-      <aside class="drawer" id="drawer" aria-label="السلة"><div class="dr-head"><h3 id="drTitle">السلة</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
+      <aside class="drawer" id="drawer" aria-label="عربة التسوق"><div class="dr-head"><h3 id="drTitle">عربة التسوق</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
       <section class="co-page" id="coPage" role="dialog" aria-modal="true" aria-label="إتمام الطلب" hidden><div class="co-veil"></div>
-        <div class="co-shell"><header class="co-top"><button type="button" class="co-back" id="coBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span>رجوع للسلة</span></button>
+        <div class="co-shell"><header class="co-top"><button type="button" class="co-back" id="coBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span>رجوع لعربة التسوق</span></button>
           <a href="./" class="co-brand" aria-label="DAQQA"><span class="m">${RC.logo()}</span><b class="en">DAQQA</b></a>
           <button type="button" class="icon-btn" id="coClose" aria-label="إغلاق">${ICON.close}</button></header>
           <div class="co-main" id="coMain"></div></div></section>
@@ -313,7 +313,7 @@
     if (line) line.qty = next; else DQ.cart.push({ id, qty: next });
     saveCart(); renderCart();
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
-    if (!silent) DQ.toast('اتضافت للسلة ✓', 'ok');
+    if (!silent) DQ.toast('اتضافت لعربة التسوق ✓', 'ok');
   };
   function totals() {
     const ls = lines();
@@ -329,20 +329,20 @@
     $('#cartCount').textContent = n; $('#cartCount').classList.toggle('show', n > 0);
     const t = totals();
     if (!t.ls.length) {
-      $('#drTitle').textContent = 'السلة';
-      $('#drBody').innerHTML = `<div class="empty" style="padding:80px 10px"><div style="width:72px;height:74px;margin:0 auto 16px;opacity:.5">${RC.logo()}</div>السلة فاضية.</div>`;
+      $('#drTitle').textContent = 'عربة التسوق';
+      $('#drBody').innerHTML = `<div class="empty" style="padding:80px 10px"><div style="width:72px;height:74px;margin:0 auto 16px;opacity:.5">${RC.logo()}</div>عربة التسوق فاضية.</div>`;
       $('#drFoot').innerHTML = `<a class="btn btn-primary" href="./" data-close>تسوّق دلوقتي</a>`; return;
     }
-    const sum = `${t.save > 0 ? `<div class="sum save"><span>وفّرت</span><b>− ${money(t.save)}</b></div>` : ''}
+    const sum = `${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
       <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
       <div class="sum"><span>الشحن</span><b>${t.ship ? money(t.ship) : 'مجاني'}</b></div>
       <div class="sum total"><span>الإجمالي</span><b>${money(t.total)}</b></div>`;
     if (view === 'cart') {
-      $('#drTitle').textContent = `السلة (${n})`;
+      $('#drTitle').textContent = `عربة التسوق (${n})`;
       // Luxury pieces get their own glowing Privé block with their value, regular items follow
       const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"></a>
         <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.id}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.id}" data-d="1" aria-label="زيادة">+</button></div></div>
-        <button class="rm" data-rm="${l.id}" aria-label="شيل ${esc(l.p.name)} من السلة" title="شيل من السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
+        <button class="rm" data-rm="${l.id}" aria-label="حذف ${esc(l.p.name)} من عربة التسوق" title="حذف من عربة التسوق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
       const lxs = t.ls.filter(l => RC.isLuxury(l.p)), regs = t.ls.filter(l => !RC.isLuxury(l.p));
       const lxVal = lxs.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0), lxN = lxs.reduce((s, l) => s + l.qty, 0);
       $('#drBody').innerHTML = (lxs.length ? `<section class="cart-lx"><div class="cl-in">
@@ -369,11 +369,11 @@
       const loc = coLoc || '';
       const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
       $('#coMain').innerHTML = `
-        <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>السلة</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
+        <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>عربة التسوق</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
         <div class="co-grid">
           <div class="co-form">
             <h1>بيانات التوصيل</h1><p class="co-lead">خطوة أخيرة ويكون طلبك عندنا. الدفع كاش لما الطلب يوصلك.</p>
-            ${DQ.user ? `<div class="acc-note ok">الطلب هيتحفظ في حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`}
+            ${DQ.user ? `<div class="acc-note ok">الطلب من حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`}
             <form class="form-grid co-fields" id="coForm" autocomplete="on" novalidate>
             <div class="co-two"><div class="field"><label for="f-name">الاسم *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name"></div>
             <div class="field"><label for="f-phone">رقم الموبايل *</label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right"></div></div>
@@ -384,15 +384,15 @@
             <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="3" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
             <div class="field"><label>موقعك على الخريطة <small class="co-opt">اختياري</small></label>
               <div class="loc ${loc ? 'on' : ''}" id="locBox"><button type="button" class="loc-btn" id="locBtn"><span class="loc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
-                <span class="loc-t"><b>${loc ? 'اتحدد موقعك ✓' : 'حدّد موقعي بالـ GPS'}</b><small>${loc ? 'المندوب هيوصلك على اللوكيشن ده بالظبط' : 'بيوصلنا لينك المكان على الخريطة عشان المندوب يوصلك أسرع'}</small></span></button>
-                ${loc ? `<span class="loc-acts"><a href="${esc(loc)}" target="_blank" rel="noopener">عرض</a><button type="button" id="locDel">شيل</button></span>` : ''}</div>
+                <span class="loc-t"><b>${loc ? 'اتحدد موقعك ✓' : 'حدّد موقعك على الخريطة'}</b><small>${loc ? 'المندوب هيوصلك على اللوكيشن ده بالظبط' : 'بالـ GPS أو حرّك الدبوس لأي مكان — بيوصلنا لينك المكان'}</small></span></button>
+                ${loc ? `<span class="loc-acts"><button type="button" id="locEdit">تعديل</button><a href="${esc(loc)}" target="_blank" rel="noopener">عرض</a><button type="button" id="locDel">حذف</button></span>` : ''}</div>
               <input type="hidden" name="location" id="f-loc" value="${esc(loc)}"></div>
             <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
           </div>
           <aside class="co-side"><div class="co-card">
-            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit">تعديل السلة</button></div>
+            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit">تعديل عربة التسوق</button></div>
             <div class="co-items">${items}</div>
-            <div class="co-sums">${t.save > 0 ? `<div class="sum save"><span>وفّرت</span><b>− ${money(t.save)}</b></div>` : ''}
+            <div class="co-sums">${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
               <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
               <div class="sum"><span>الشحن</span><b>${t.ship ? money(t.ship) : 'مجاني'}</b></div>
               <div class="sum total"><span>الإجمالي</span><b>${money(t.total)}</b></div></div>
@@ -407,7 +407,7 @@
       const keep = () => { try { const d = Object.fromEntries(new FormData($('#coForm'))); delete d.location; localStorage.setItem('dq-cust', JSON.stringify(d)) } catch (e) {} };
       $('#coForm').addEventListener('input', keep);
       $('#coForm').addEventListener('input', e => { const id = e.target.id; if (NEED[id] && e.target.closest('.field.bad')) fieldErr(id, NEED[id](e.target.value.trim())); });
-      $('#locBtn').onclick = locate;
+      $('#locBtn').onclick = openMap; if ($('#locEdit')) $('#locEdit').onclick = openMap;
       if ($('#locDel')) $('#locDel').onclick = () => { coLoc = ''; keepAndRender(); };
       const dd = $('#cityDD'), btn = dd.querySelector('.dd-btn'), q = dd.querySelector('.dd-search');
       const open = v => { dd.classList.toggle('open', v); btn.setAttribute('aria-expanded', v); if (v) { q.value = ''; dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = false); setTimeout(() => q.focus(), 30); const on = dd.querySelector('.dd-list .on'); on && on.scrollIntoView({ block: 'center' }); } };
@@ -421,16 +421,47 @@
   }
   // GPS → a Google Maps link that reaches the shop with the order
   let coLoc = '';
-  const keepAndRender = () => { const f = $('#coForm'); if (f) { try { const d = Object.fromEntries(new FormData(f)); delete d.location; localStorage.setItem('dq-cust', JSON.stringify(d)) } catch (e) {} } renderCheckout(); };
-  function locate() {
-    if (!navigator.geolocation) return DQ.toast('المتصفح ده مش بيدعم تحديد الموقع، كمّل من غيره عادي', 'err');
-    const b = $('#locBtn'); b.classList.add('wait'); b.querySelector('b').textContent = 'بنحدد موقعك…';
-    navigator.geolocation.getCurrentPosition(p => {
-      coLoc = `https://www.google.com/maps?q=${p.coords.latitude.toFixed(6)},${p.coords.longitude.toFixed(6)}`; keepAndRender(); DQ.toast('اتحدد موقعك ✓', 'ok');
-    }, err => { b.classList.remove('wait'); b.querySelector('b').textContent = 'حدّد موقعي بالـ GPS';
-      DQ.toast(err.code === 1 ? 'اسمح للموقع يوصل للوكيشن من إعدادات المتصفح، أو كمّل من غيره عادي' : 'معرفناش نحدد موقعك دلوقتي، كمّل من غيره عادي', 'err'); },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+  const keepAndRender = () => { $('#coPage').classList.add('shown'); const f = $('#coForm'); if (f) { try { const d = Object.fromEntries(new FormData(f)); delete d.location; localStorage.setItem('dq-cust', JSON.stringify(d)) } catch (e) {} } renderCheckout(); };
+  // map picker: starts on the customer's GPS position, the pin stays in the middle and they move the map under it
+  let leafletP = null;
+  const loadLeaflet = () => leafletP || (leafletP = new Promise((res, rej) => {
+    const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css'; document.head.appendChild(css);
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js'; s.onload = () => res(window.L); s.onerror = () => { leafletP = null; rej(); }; document.head.appendChild(s);
+  }));
+  DQ.mapOpen = false;
+  async function openMap() {
+    const m = document.createElement('div'); m.className = 'map-m'; DQ.mapOpen = true;
+    m.innerHTML = `<div class="map-card"><div class="map-head"><div><b>حدّد مكان التوصيل</b><small>حرّك الخريطة لحد ما الدبوس يقف على بيتك بالظبط</small></div><button type="button" class="icon-btn" data-mclose aria-label="إغلاق">${ICON.close}</button></div>
+      <form class="map-search" id="mapSearch"><input class="input" placeholder="دوّر على منطقة أو شارع…" aria-label="بحث على الخريطة"><button type="submit" aria-label="بحث"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button></form>
+      <div class="map-box"><div id="mapEl"></div><div class="map-pin" aria-hidden="true"><svg viewBox="0 0 40 52"><path d="M20 51S4 33.6 4 19.5a16 16 0 0 1 32 0C36 33.6 20 51 20 51z"/><circle cx="20" cy="19.5" r="6"/></svg><i></i></div>
+        <button type="button" class="map-me" id="mapMe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>موقعي الحالي</button></div>
+      <div class="map-foot"><span class="map-hint" id="mapHint">بنجيب موقعك…</span><button type="button" class="btn btn-amber" id="mapOk">تأكيد الموقع</button></div></div>`;
+    document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
+    const close = () => { DQ.mapOpen = false; m.classList.remove('on'); setTimeout(() => m.remove(), 300); };
+    m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-mclose]')) close(); });
+    m._close = close;
+    let L; try { L = await loadLeaflet(); } catch (e) { close(); return DQ.toast('الخريطة مش راضية تفتح دلوقتي، كمّل من غيرها عادي', 'err'); }
+    const prev = (coLoc.match(/q=(-?[\d.]+),(-?[\d.]+)/) || []).slice(1).map(Number);
+    const map = L.map($('#mapEl'), { zoomControl: false, attributionControl: true }).setView(prev.length ? prev : [30.0444, 31.2357], prev.length ? 17 : 11);
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', attribution: '© OpenStreetMap © CARTO' }).addTo(map);
+    const pin = m.querySelector('.map-pin'), hint = $('#mapHint');
+    const show = () => { const c = map.getCenter(); hint.textContent = `${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}`; };
+    map.on('movestart', () => pin.classList.add('up')); map.on('moveend', () => { pin.classList.remove('up'); show(); });
+    const gps = (quiet) => { if (!navigator.geolocation) { hint.textContent = 'حرّك الخريطة واختار مكانك'; return; }
+      hint.textContent = 'بنجيب موقعك…';
+      navigator.geolocation.getCurrentPosition(p => map.flyTo([p.coords.latitude, p.coords.longitude], 17, { duration: 1.2 }),
+        err => { show(); if (!quiet) DQ.toast(err.code === 1 ? 'اسمح للموقع يوصل للوكيشن من إعدادات المتصفح، أو حرّك الخريطة بإيدك' : 'معرفناش نحدد موقعك، حرّك الخريطة بإيدك', 'err'); else hint.textContent = 'حرّك الخريطة واختار مكانك'; },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }); };
+    $('#mapMe').onclick = () => gps(false);
+    $('#mapSearch').onsubmit = async e => { e.preventDefault(); const q = e.target.querySelector('input').value.trim(); if (!q) return;
+      try { const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=eg&accept-language=ar&q=${encodeURIComponent(q)}`).then(r => r.json());
+        if (r[0]) map.flyTo([+r[0].lat, +r[0].lon], 16, { duration: 1 }); else DQ.toast('ملقيناش المكان ده، جرّب اسم تاني أو حرّك الخريطة', 'err'); } catch (err) { DQ.toast('البحث مش متاح دلوقتي، حرّك الخريطة بإيدك', 'err'); } };
+    $('#mapOk').onclick = () => { const c = map.getCenter(); coLoc = `https://www.google.com/maps?q=${c.lat.toFixed(6)},${c.lng.toFixed(6)}`; close(); keepAndRender(); DQ.toast('اتحدد موقعك ✓', 'ok'); };
+    setTimeout(() => map.invalidateSize(), 320);
+    if (prev.length) show(); else gps(true);
   }
+
   // required fields light up red with a short line saying why we need them
   const NEED = {
     'f-name': v => v ? '' : 'اكتب اسمك عشان نعرف الطلب باسم مين',
@@ -464,9 +495,9 @@
     const ls = lines(); DQ.cart = []; saveCart(); coState = 'done'; coLoc = '';
     notifyOrder(data, d, ls);
     DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name, qty: l.qty, image: (l.p.images || [])[0] || '' })) });
-    $('#cartCount').classList.remove('show');
+    $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
     const ask = encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${data.code}`);
-    $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>السلة</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
+    $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>عربة التسوق</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
       <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
         <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
@@ -495,7 +526,7 @@
   DQ.openCheckout = () => {
     if (!lines().length) return DQ.openCart();
     const pg = $('#coPage'); ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
-    coState = 'form'; renderCheckout(); pg.hidden = false; pg.scrollTop = 0; document.body.style.overflow = 'hidden';
+    coState = 'form'; pg.classList.remove('shown'); renderCheckout(); pg.hidden = false; pg.scrollTop = 0; document.body.style.overflow = 'hidden';
     requestAnimationFrame(() => requestAnimationFrame(() => pg.classList.add('on')));
   };
   // back = return to the cart drawer
@@ -507,6 +538,7 @@
     if (back && !wasDone) setTimeout(() => DQ.openCart(), 120);
   };
   DQ.closeAll = () => {
+    const mm = document.querySelector('.map-m'); if (mm && mm._close) return mm._close();
     ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
     if (coState) DQ.closeCheckout(); else document.body.style.overflow = '';
   };
