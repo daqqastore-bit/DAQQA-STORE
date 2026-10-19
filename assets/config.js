@@ -105,4 +105,4 @@ RC.socialLabel = (s) => {
 RC.socials = (settings) => (Array.isArray(settings && settings.socials) ? settings.socials : []).filter(s => RC.socialHref(s));
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261019155213';
+RC.build = '20261019161016';
