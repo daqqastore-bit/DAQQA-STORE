@@ -564,16 +564,29 @@
       <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
       ${cancelBtn(o.code, o.status)}</div>`;
+  // confirm popup: resolves true on the main button, false on back / outside / Esc
+  DQ.ask = (title, html, ok, back) => new Promise(res => {
+    const m = document.createElement('div'); m.className = 'ask-m'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+    m.innerHTML = `<div class="ask-card"><span class="ask-ic" aria-hidden="true">!</span><h3>${title}</h3><p>${html}</p><div class="ask-acts"><button type="button" class="btn ask-ok">${ok}</button><button type="button" class="btn btn-ghost ask-back">${back}</button></div></div>`;
+    document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
+    const done = v => { removeEventListener('keydown', key); m.classList.remove('on'); setTimeout(() => m.remove(), 250); res(v); };
+    const key = e => { if (e.key === 'Escape') { e.stopPropagation(); done(false); } };
+    addEventListener('keydown', key, true);
+    m.onclick = e => { if (e.target === m || e.target.closest('.ask-back')) done(false); else if (e.target.closest('.ask-ok')) done(true); };
+    setTimeout(() => m.querySelector('.ask-back').focus(), 50);
+  });
   // cancelling is allowed only before the order ships
   const CANCELABLE = ['new', 'confirmed'];
   function cancelBtn(code, st) { return CANCELABLE.includes(st) ? `<button type="button" class="ao-cancel" data-cancel="${esc(code)}">إلغاء الطلب</button>` : ''; }
   document.addEventListener('click', async e => {
     const b = e.target.closest('[data-cancel]'); if (!b) return;
-    if (!b.classList.contains('sure')) { b.classList.add('sure'); b.textContent = 'متأكد؟ اضغط تاني للإلغاء'; clearTimeout(b._t); b._t = setTimeout(() => { b.classList.remove('sure'); b.textContent = 'إلغاء الطلب'; }, 4000); return; }
-    clearTimeout(b._t); b.disabled = true; b.textContent = 'جاري الإلغاء…';
-    const code = b.dataset.cancel, local = mine().find(x => x.code === code);
+    if (b.disabled) return;
+    const code = b.dataset.cancel;
+    if (!(await DQ.ask('تلغي الطلب؟', `الطلب <b class="en">${esc(code)}</b> هيتلغي ومش هنقدر نرجّعه. لو عاوز تغيّر حاجة فيه كلمنا على واتساب بدل الإلغاء.`, 'تأكيد الإلغاء', 'رجوع'))) return;
+    b.disabled = true; b.textContent = 'جاري الإلغاء…';
+    const local = mine().find(x => x.code === code);
     const { data, error } = await sb.rpc('shop_cancel_order', { p_code: code, p_phone: local ? local.phone : null });
-    if (error) { b.disabled = false; b.classList.remove('sure'); b.textContent = 'إلغاء الطلب'; return DQ.toast(/شحن|واتساب|موجود/.test(error.message) ? error.message : 'معرفناش نلغي الطلب، جرّب تاني', 'err'); }
+    if (error) { b.disabled = false; b.textContent = 'إلغاء الطلب'; return DQ.toast(/شحن|واتساب|موجود/.test(error.message) ? error.message : 'معرفناش نلغي الطلب، جرّب تاني', 'err'); }
     applyStatus(code, (data && data.status) || 'cancelled');
   });
   async function trackLocal(codesToSkip = []) {

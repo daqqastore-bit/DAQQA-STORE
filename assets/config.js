@@ -64,4 +64,4 @@ RC.when = (d) => RC.dmy(d) + ' · ' + new Date(d).toLocaleTimeString('en-US', { 
 RC.notifyEmail = 'daqqastore@gmail.com';
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261019122157';
+RC.build = '20261019122710';

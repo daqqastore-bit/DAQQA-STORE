@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019122157">
+<link rel="stylesheet" href="assets/base.css?v=20261019122710">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -405,7 +405,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019122157"></script>
+<script src="assets/config.js?v=20261019122710"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -476,8 +476,8 @@ async function boot() {
   else go(h0 || 'dash');
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   listen(); askNotify();
-  // orders that came in while the panel was closed reach the sheet as soon as it opens
-  sheetSend({ action: 'replace', orders: orders.map(orderRow), expenses: expenses.map(expRow) });
+  // orders that came in while the panel was closed reach the sheet when it opens (merged, older rows stay; at most every 20 min)
+  try { if (Date.now() - (+localStorage.getItem('dq-sheet-merge') || 0) > 12e5) { localStorage.setItem('dq-sheet-merge', Date.now()); sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow) }); } } catch (e) {}
 }
 function authPanel(id) { ['#loginForm','#forgotForm','#resetForm'].forEach(f => $(f).classList.toggle('hidden', f !== id)); }
 function showLogin() { $('#appView').classList.add('hidden'); $('#loginView').classList.remove('hidden'); authPanel('#loginForm'); setTimeout(() => $('#em').focus(), 50); }
@@ -978,7 +978,7 @@ function renderSettings() {
       <h2>Google Sheet للحسابات <small>${sheetOn() ? 'متصل ✓' : 'مش متصل'}</small></h2>
       <div class="field"><label>لينك الـ Web App (من Apps Script ← Deploy)</label><input class="input en" name="sheet_url" dir="ltr" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(adminSet.sheet_url || '')}"></div>
       <div class="field"><label>الكود السري (لازم يكون نفس اللي في كود الشيت)</label><input class="input en" name="sheet_secret" dir="ltr" value="${esc(adminSet.sheet_secret || '')}"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sheetSync" title="بيمسح الشيت ويكتب كل حاجة من الأول — للطوارئ بس لو الشيت اتبوّظ">إعادة كتابة الشيت من الأول</button></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-primary" type="submit">حفظ</button><button class="btn btn-ghost" type="button" id="sheetSync" title="بيبعت كل الطلبات والمصاريف تاني ويصلّح أي صف ناقص — للطوارئ بس">إرسال كل حاجة للشيت تاني</button></div>
     </form>`;
   $('#main').onclick = async e => {
     const up = e.target.closest('[data-bup]'), del = e.target.closest('[data-bdel]');
@@ -1124,13 +1124,13 @@ function sheetSend(body) {
   if (!sheetOn()) return Promise.resolve(false);
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
-const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
+const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
   sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, net: orderNet(o), location: o.location || '' }; };
 const expRow = x => ({ id: x.id, date: x.spent_on, category: x.category, amount: +x.amount, note: x.note || '' });
 const sheetOrder = o => sheetSend({ action: 'upsert', sheet: 'orders', row: orderRow(o) });
 async function sheetSyncAll() {
   if (!sheetOn()) return toast('اربط الشيت الأول من الإعدادات', 'err');
-  const ok = await sheetSend({ action: 'replace', orders: orders.map(orderRow), expenses: expenses.map(expRow) });
+  const ok = await sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow) });
   toast(ok ? `اتبعت ${orders.length} طلب و${expenses.length} مصروف للشيت ✓` : 'معرفناش نوصل للشيت، اتأكد من اللينك', ok ? 'ok' : 'err');
 }
 

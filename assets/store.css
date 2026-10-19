@@ -343,7 +343,7 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .ao-top code{font-size:13px;color:var(--ink)}
 .ao-bot b{color:var(--ink);font-size:15px}
 .ao-cancel{margin-top:12px;width:100%;height:40px;border-radius:12px;border:1px solid rgb(176 72 52/.45);color:#B04834;font-size:13.5px;font-weight:600;background:transparent;transition:background .2s,color .2s}
-.ao-cancel:hover,.ao-cancel.sure{background:#B04834;color:#fff;border-color:#B04834}
+.ao-cancel:hover{background:#B04834;color:#fff;border-color:#B04834}
 .ao-cancel:disabled{opacity:.6}
 .ao-st{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid currentColor}
 .ao-st.st-new{color:#c9964f}.ao-st.st-confirmed{color:#5b8de0}.ao-st.st-shipped{color:#a77bd6}.ao-st.st-delivered{color:#3fa66b}.ao-st.st-cancelled{color:#d05a5a}
@@ -690,3 +690,14 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 @media (max-width:600px){.map-m{padding:0}.map-card{height:100dvh;border-radius:0;border:0}.map-foot .btn{flex:1}}
 /* re-renders while filling the form (map pin, sign-in) don't replay the entrance */
 .co-page.shown .co-main>*,.co-page.shown .co-it{animation:none!important;opacity:1;transform:none}
+
+/* confirm popup */
+.ask-m{position:fixed;inset:0;z-index:140;display:grid;place-items:center;padding:16px;background:rgba(8,6,4,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}
+.ask-m.on{opacity:1}
+.ask-card{width:min(400px,100%);background:var(--bg);border:1px solid var(--line);border-radius:22px;padding:26px 22px 20px;text-align:center;box-shadow:var(--shadow);transform:translateY(14px) scale(.97);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.ask-m.on .ask-card{transform:none}
+.ask-ic{width:52px;height:52px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;font:700 24px var(--f-ui,inherit);color:#B04834;background:rgb(176 72 52/.12)}
+.ask-card h3{margin:0 0 8px;font-size:19px}
+.ask-card p{margin:0 0 20px;font-size:14px;line-height:1.8;color:var(--muted)}
+.ask-acts{display:grid;gap:8px}
+.ask-ok{background:#B04834;color:#fff;border-color:#B04834}.ask-ok:hover{background:#963b29}
