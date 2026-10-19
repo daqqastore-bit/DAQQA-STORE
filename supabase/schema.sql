@@ -85,8 +85,9 @@ create table if not exists public.shop_orders (
   savings numeric(12,2) not null default 0,
   shipping numeric(12,2) not null default 0,
   total numeric(12,2) not null default 0,
-  status text not null default 'new' check (status in ('new','confirmed','shipped','delivered','cancelled')),
+  status text not null default 'new' check (status in ('new','confirmed','shipped','delivered','cancelled','returned')),
   admin_note text,
+  location text,
   created_at timestamptz not null default now()
 );
 create index if not exists shop_orders_user_idx on public.shop_orders(user_id);
@@ -143,9 +144,10 @@ begin
     exit when not exists (select 1 from public.shop_orders where code = v_code);
   end loop;
 
-  insert into public.shop_orders (code, user_id, customer_name, phone, city, address, notes)
+  insert into public.shop_orders (code, user_id, customer_name, phone, city, address, notes, location)
   values (v_code, auth.uid(), left(trim(customer->>'name'), 120), left(trim(customer->>'phone'), 30),
-          left(customer->>'city', 60), left(customer->>'address', 400), left(customer->>'notes', 1000))
+          left(customer->>'city', 60), left(customer->>'address', 400), left(customer->>'notes', 1000),
+          case when customer->>'location' ~ '^https://(www\.)?google\.com/maps' then left(customer->>'location', 200) end)
   returning id into v_id;
 
   for it in select * from jsonb_array_elements(items) loop

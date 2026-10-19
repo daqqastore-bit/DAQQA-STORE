@@ -6,7 +6,7 @@ window.RC = {
   bucket: 'shop-images',
   currency: 'ج.م',
   categories: { men: 'رجالي', women: 'حريمي', unisex: 'للجنسين' },
-  statuses: { new: 'جديد', confirmed: 'تم الاستلام', shipped: 'في التوصيل', delivered: 'تم التسليم', cancelled: 'ملغي' }
+  statuses: { new: 'جديد', confirmed: 'تم الاستلام', shipped: 'في التوصيل', delivered: 'تم التسليم', cancelled: 'ملغي', returned: 'مرتجع' }
 };
 RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' ' + RC.currency;
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
@@ -61,4 +61,4 @@ RC.googleOn = () => RC._g || (RC._g = fetch(RC.url + '/auth/v1/settings', { head
 RC.notifyEmail = 'daqqastore@gmail.com';
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261019111728';
+RC.build = '20261019115520';

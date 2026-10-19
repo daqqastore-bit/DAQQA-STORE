@@ -157,9 +157,16 @@
       <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div></div></footer>
       <div class="overlay" id="overlay"></div>
       <aside class="drawer" id="drawer" aria-label="السلة"><div class="dr-head"><h3 id="drTitle">السلة</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
+      <section class="co-page" id="coPage" role="dialog" aria-modal="true" aria-label="إتمام الطلب" hidden><div class="co-veil"></div>
+        <div class="co-shell"><header class="co-top"><button type="button" class="co-back" id="coBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span>رجوع للسلة</span></button>
+          <a href="./" class="co-brand" aria-label="DAQQA"><span class="m">${RC.logo()}</span><b class="en">DAQQA</b></a>
+          <button type="button" class="icon-btn" id="coClose" aria-label="إغلاق">${ICON.close}</button></header>
+          <div class="co-main" id="coMain"></div></div></section>
       <div class="toast-wrap" id="toasts"></div>`;
 
     $('#cartBtn').onclick = () => DQ.openCart('cart');
+    $('#coBack').onclick = () => DQ.closeCheckout(coState === 'form');
+    $('#coClose').onclick = () => DQ.closeCheckout();
     $('#accBtn').onclick = () => DQ.openAccount();
     $('#menuBtn').onclick = () => openSheet('#menuSheet');
     $('#themeBtn').onclick = toggleTheme;
@@ -320,7 +327,6 @@
     if (DQ.products.length) DQ.cart = DQ.cart.filter(c => DQ.products.some(p => p.id === c.id && p.stock > 0));
     const n = DQ.cart.reduce((s, c) => s + c.qty, 0);
     $('#cartCount').textContent = n; $('#cartCount').classList.toggle('show', n > 0);
-    if (view === 'done') return;
     const t = totals();
     if (!t.ls.length) {
       $('#drTitle').textContent = 'السلة';
@@ -348,28 +354,61 @@
         + regs.map(l => ci(l, false)).join('') +
         (t.fso != null && t.sub < t.fso ? `<div style="margin-top:16px"><div class="ship-note">ضيف ${money(t.fso - t.sub)} كمان والشحن يبقى مجاني</div><div class="ship-bar"><i style="width:${Math.min(100, t.sub / t.fso * 100)}%"></i></div></div>` : '');
       $('#drFoot').innerHTML = sum + `<button class="btn btn-amber" id="goCheckout">إتمام الطلب</button>`;
-      $('#goCheckout').onclick = () => { view = 'checkout'; renderCart(); };
-    } else if (view === 'checkout') {
-      $('#drTitle').textContent = 'بيانات الطلب';
+      $('#goCheckout').onclick = () => DQ.openCheckout();
+    }
+  }
+  /* ---------- checkout: a full page that opens over the store once the customer is ready to order ---------- */
+  let coState = null;   // null | 'form' | 'done'
+  const LOC_RX = /^https:\/\/(www\.)?google\.com\/maps/;
+  function renderCheckout() {
+    const t = totals();
+    if (!t.ls.length) { DQ.closeCheckout(true); return; }
+    {
       let saved = {}; try { saved = JSON.parse(localStorage.getItem('dq-cust') || localStorage.getItem('rc-cust') || '{}') } catch (e) {}
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
-      $('#drBody').innerHTML = (DQ.user ? `<div class="acc-note ok">الطلب هيتحفظ في حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`) + `<form class="form-grid" id="coForm" autocomplete="on" novalidate>
-        <div class="field"><label for="f-name">الاسم *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name"></div>
-        <div class="field"><label for="f-phone">رقم الموبايل *</label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right"></div>
-        <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
-          <button type="button" class="input dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLbl"><span class="dd-val ${saved.city ? '' : 'ph'}">${esc(saved.city || 'اختار المحافظة')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-          <input type="hidden" name="city" id="f-city" value="${esc(saved.city || '')}">
-          <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}</button>`).join('')}</div></div></div></div>
-        <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="4" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
-        <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>`;
-      $('#drFoot').innerHTML = sum + `<span class="ship-note">الدفع كاش عند الاستلام.</span><div style="display:flex;gap:8px"><button class="btn btn-ghost" id="back">رجوع</button><button class="btn btn-amber" id="place" style="flex:1">تأكيد الطلب · ${money(t.total)}</button></div>`;
-      $('#back').onclick = () => { view = 'cart'; renderCart(); };
+      const loc = coLoc || '';
+      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
+      $('#coMain').innerHTML = `
+        <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>السلة</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
+        <div class="co-grid">
+          <div class="co-form">
+            <h1>بيانات التوصيل</h1><p class="co-lead">خطوة أخيرة ويكون طلبك عندنا. الدفع كاش لما الطلب يوصلك.</p>
+            ${DQ.user ? `<div class="acc-note ok">الطلب هيتحفظ في حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`}
+            <form class="form-grid co-fields" id="coForm" autocomplete="on" novalidate>
+            <div class="co-two"><div class="field"><label for="f-name">الاسم *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name"></div>
+            <div class="field"><label for="f-phone">رقم الموبايل *</label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right"></div></div>
+            <div class="field"><label id="cityLbl">المحافظة *</label><div class="dd" id="cityDD">
+              <button type="button" class="input dd-btn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="cityLbl"><span class="dd-val ${saved.city ? '' : 'ph'}">${esc(saved.city || 'اختار المحافظة')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+              <input type="hidden" name="city" id="f-city" value="${esc(saved.city || '')}">
+              <div class="dd-pop"><input class="input dd-search" placeholder="دوّر على محافظتك…" aria-label="بحث"><div class="dd-list" role="listbox">${GOV.map(c => `<button type="button" role="option" data-v="${c}" class="${c === saved.city ? 'on' : ''}" aria-selected="${c === saved.city}">${c}</button>`).join('')}</div></div></div></div>
+            <div class="field"><label for="f-addr">العنوان بالتفصيل *</label><textarea id="f-addr" class="input addr" name="address" required rows="3" placeholder="المنطقة، الشارع، رقم العمارة، الدور والشقة، علامة مميزة">${esc(saved.address || '')}</textarea></div>
+            <div class="field"><label>موقعك على الخريطة <small class="co-opt">اختياري</small></label>
+              <div class="loc ${loc ? 'on' : ''}" id="locBox"><button type="button" class="loc-btn" id="locBtn"><span class="loc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+                <span class="loc-t"><b>${loc ? 'اتحدد موقعك ✓' : 'حدّد موقعي بالـ GPS'}</b><small>${loc ? 'المندوب هيوصلك على اللوكيشن ده بالظبط' : 'بيوصلنا لينك المكان على الخريطة عشان المندوب يوصلك أسرع'}</small></span></button>
+                ${loc ? `<span class="loc-acts"><a href="${esc(loc)}" target="_blank" rel="noopener">عرض</a><button type="button" id="locDel">شيل</button></span>` : ''}</div>
+              <input type="hidden" name="location" id="f-loc" value="${esc(loc)}"></div>
+            <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
+          </div>
+          <aside class="co-side"><div class="co-card">
+            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit">تعديل السلة</button></div>
+            <div class="co-items">${items}</div>
+            <div class="co-sums">${t.save > 0 ? `<div class="sum save"><span>وفّرت</span><b>− ${money(t.save)}</b></div>` : ''}
+              <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
+              <div class="sum"><span>الشحن</span><b>${t.ship ? money(t.ship) : 'مجاني'}</b></div>
+              <div class="sum total"><span>الإجمالي</span><b>${money(t.total)}</b></div></div>
+            <button class="btn btn-amber co-place" id="place">تأكيد الطلب · ${money(t.total)}</button>
+            <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن لكل مصر</span><span>استبدال خلال 14 يوم</span></p>
+          </div></aside>
+        </div>`;
+      $('#coEdit').onclick = () => DQ.closeCheckout(true);
       if ($('#coLogin')) $('#coLogin').onclick = () => DQ.openAccount('login');
       $('#place').onclick = placeOrder;
-      // keep what the customer typed (survives any re-render or reload)
-      const keep = () => { try { localStorage.setItem('dq-cust', JSON.stringify(Object.fromEntries(new FormData($('#coForm'))))) } catch (e) {} };
+      // keep what the customer typed (survives any re-render or reload) — the map pin stays for this visit only
+      const keep = () => { try { const d = Object.fromEntries(new FormData($('#coForm'))); delete d.location; localStorage.setItem('dq-cust', JSON.stringify(d)) } catch (e) {} };
       $('#coForm').addEventListener('input', keep);
       $('#coForm').addEventListener('input', e => { const id = e.target.id; if (NEED[id] && e.target.closest('.field.bad')) fieldErr(id, NEED[id](e.target.value.trim())); });
+      $('#locBtn').onclick = locate;
+      if ($('#locDel')) $('#locDel').onclick = () => { coLoc = ''; keepAndRender(); };
       const dd = $('#cityDD'), btn = dd.querySelector('.dd-btn'), q = dd.querySelector('.dd-search');
       const open = v => { dd.classList.toggle('open', v); btn.setAttribute('aria-expanded', v); if (v) { q.value = ''; dd.querySelectorAll('.dd-list button').forEach(b => b.hidden = false); setTimeout(() => q.focus(), 30); const on = dd.querySelector('.dd-list .on'); on && on.scrollIntoView({ block: 'center' }); } };
       btn.onclick = () => open(!dd.classList.contains('open'));
@@ -377,8 +416,20 @@
       q.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); const f = dd.querySelector('.dd-list button:not([hidden])'); f && f.click(); } if (e.key === 'Escape') { e.stopPropagation(); open(false); btn.focus(); } };
       dd.querySelector('.dd-list').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; $('#f-city').value = b.dataset.v; const v = dd.querySelector('.dd-val'); v.textContent = b.dataset.v; v.classList.remove('ph'); dd.classList.remove('err'); fieldErr('f-city', '');
         dd.querySelectorAll('.dd-list button').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-selected', x === b); }); open(false); keep(); };
-      document.addEventListener('pointerdown', e => { if (!dd.contains(e.target)) open(false); });
+      $('#coPage').onpointerdown = e => { if (!dd.contains(e.target)) open(false); };
     }
+  }
+  // GPS → a Google Maps link that reaches the shop with the order
+  let coLoc = '';
+  const keepAndRender = () => { const f = $('#coForm'); if (f) { try { const d = Object.fromEntries(new FormData(f)); delete d.location; localStorage.setItem('dq-cust', JSON.stringify(d)) } catch (e) {} } renderCheckout(); };
+  function locate() {
+    if (!navigator.geolocation) return DQ.toast('المتصفح ده مش بيدعم تحديد الموقع، كمّل من غيره عادي', 'err');
+    const b = $('#locBtn'); b.classList.add('wait'); b.querySelector('b').textContent = 'بنحدد موقعك…';
+    navigator.geolocation.getCurrentPosition(p => {
+      coLoc = `https://www.google.com/maps?q=${p.coords.latitude.toFixed(6)},${p.coords.longitude.toFixed(6)}`; keepAndRender(); DQ.toast('اتحدد موقعك ✓', 'ok');
+    }, err => { b.classList.remove('wait'); b.querySelector('b').textContent = 'حدّد موقعي بالـ GPS';
+      DQ.toast(err.code === 1 ? 'اسمح للموقع يوصل للوكيشن من إعدادات المتصفح، أو كمّل من غيره عادي' : 'معرفناش نحدد موقعك دلوقتي، كمّل من غيره عادي', 'err'); },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
   }
   // required fields light up red with a short line saying why we need them
   const NEED = {
@@ -406,16 +457,26 @@
     const f = $('#coForm'); if (!checkForm()) return;
     const d = Object.fromEntries(new FormData(f));
     try { localStorage.setItem('dq-cust', JSON.stringify({ name: d.name, phone: d.phone, city: d.city, address: d.address })) } catch (e) {} /* notes are not kept for the next order */
+    if (!LOC_RX.test(d.location || '')) delete d.location;
     const btn = $('#place'); btn.disabled = true; btn.textContent = 'جاري الإرسال...';
     const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => ({ id: c.id, qty: c.qty })) });
     if (error) { btn.disabled = false; btn.textContent = 'تأكيد الطلب'; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); DQ.load(); return; }
-    const ls = lines(); DQ.cart = []; saveCart(); view = 'done';
+    const ls = lines(); DQ.cart = []; saveCart(); coState = 'done'; coLoc = '';
     notifyOrder(data, d, ls);
     DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name, qty: l.qty, image: (l.p.images || [])[0] || '' })) });
-    $('#cartCount').classList.remove('show'); $('#drTitle').textContent = 'تم الطلب';
-    const msg = encodeURIComponent(`طلب جديد ${data.code} — DAQQA\n${ls.map(l => `${l.p.name} × ${l.qty}`).join('\n')}\nالإجمالي: ${money(data.total)}\nالاسم: ${d.name}`);
-    $('#drBody').innerHTML = `<div class="success"><div class="m">${RC.logo()}</div><h3>طلبك وصل!</h3><p style="color:var(--muted)">هنكلمك قريب لتأكيد الطلب. رقم الطلب:</p><code class="en">${esc(data.code)}</code><p style="color:var(--muted)">الإجمالي: <b class="en" style="color:var(--ink)">${money(data.total)}</b></p><div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}</div><p style="color:var(--muted);font-size:13px">هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.</p>${DQ.user ? '<p style="color:var(--muted);font-size:14px">اتحفظ في حسابك، تقدر تتابعه من «حسابي».</p>' : ''}</div>`;
-    $('#drFoot').innerHTML = (DQ.wa() ? `<a class="btn btn-amber" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${msg}">أكّد على واتساب</a>` : '') + `<button class="btn btn-ghost" data-close>كمّل تسوّق</button>`;
+    $('#cartCount').classList.remove('show');
+    const ask = encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${data.code}`);
+    $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>السلة</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
+      <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
+        <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
+        <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
+        <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام</p>
+        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}</div>
+        <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
+        <div class="cd-acts">${DQ.wa() ? `<a class="btn btn-amber cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.2-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
+    $('#cdMore').onclick = () => DQ.closeCheckout();
+    $('#cdCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(data.code).then(() => DQ.toast('اتنسخ رقم الطلب ✓', 'ok')).catch(() => {}); };
+    $('#coPage').scrollTop = 0;
     DQ.load().then(() => DQ.onRefresh && DQ.onRefresh());
   }
   // email the shop owner every new order with all details + a link that opens it in the dashboard
@@ -426,25 +487,39 @@
     const body = { _subject: `طلب جديد ${data.code} — ${money(data.total)} — DAQQA`, _template: 'table', _captcha: 'false',
       'رقم الطلب': data.code, 'الإجمالي': money(data.total), 'المنتجات': items,
       'اسم العميل': d.name, 'التليفون': d.phone, 'واتساب العميل': 'https://wa.me/' + String(d.phone || '').replace(/\D/g, '').replace(/^0/, '20'),
-      'المحافظة': d.city || '', 'العنوان': d.address || '', 'ملاحظات': d.notes || '—',
+      'المحافظة': d.city || '', 'العنوان': d.address || '', 'اللوكيشن': d.location || '—', 'ملاحظات': d.notes || '—',
       'افتح الطلب في الداشبورد': base + 'admin.html#orders/' + encodeURIComponent(data.code) };
     try { fetch('https://formsubmit.co/ajax/' + RC.notifyEmail, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body), keepalive: true }).catch(() => {}); } catch (e) {}
   }
-  DQ.openCart = (v = 'cart') => { DQ.closeAll(); view = v; renderCart(); $('#drawer').classList.add('on'); $('#overlay').classList.add('on'); document.body.style.overflow = 'hidden'; };
+  DQ.openCart = (v = 'cart') => { if (v === 'checkout') return DQ.openCheckout(); DQ.closeAll(); view = 'cart'; renderCart(); $('#drawer').classList.add('on'); $('#overlay').classList.add('on'); document.body.style.overflow = 'hidden'; };
+  DQ.openCheckout = () => {
+    if (!lines().length) return DQ.openCart();
+    const pg = $('#coPage'); ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
+    coState = 'form'; renderCheckout(); pg.hidden = false; pg.scrollTop = 0; document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => requestAnimationFrame(() => pg.classList.add('on')));
+  };
+  // back = return to the cart drawer
+  DQ.closeCheckout = (back) => {
+    const pg = $('#coPage'); if (!pg || pg.hidden) return;
+    const wasDone = coState === 'done'; coState = null; pg.classList.remove('on'); pg.classList.add('off');
+    setTimeout(() => { pg.hidden = true; pg.classList.remove('off'); $('#coMain').innerHTML = ''; }, 420);
+    document.body.style.overflow = '';
+    if (back && !wasDone) setTimeout(() => DQ.openCart(), 120);
+  };
   DQ.closeAll = () => {
     ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
-    document.body.style.overflow = '';
-    if (view === 'done') { view = 'cart'; setTimeout(renderCart, 400); }
+    if (coState) DQ.closeCheckout(); else document.body.style.overflow = '';
   };
 
   /* ---------- account: Google or email + password; orders are saved to the account ---------- */
   DQ.user = null; DQ.isAdmin = false;
   let accMode = 'login', accMsg = '';
-  const STATUS = { new: 'تم الطلب', confirmed: 'جاري التجهيز', shipped: 'في الطريق', delivered: 'تم التسليم', cancelled: 'اتلغى' };
+  const STATUS = { new: 'تم الطلب', confirmed: 'جاري التجهيز', shipped: 'في الطريق', delivered: 'تم التسليم', cancelled: 'اتلغى', returned: 'مرتجع' };
   /* ---------- order tracking: 4 steps, live ---------- */
   const STEPS = [['new', 'تم الطلب', 'وصلنا طلبك، هنكلمك قريب للتأكيد.', 'bag'], ['confirmed', 'جاري التجهيز', 'استلمنا طلبك وبنجهزه دلوقتي.', 'gift'], ['shipped', 'في الطريق', 'طلبك خرج مع المندوب وفي الطريق ليك.', 'truck'], ['delivered', 'تم التسليم', 'تم استلام الطلب — نتمنى تكون مبسوط بالخدمة', 'heart']];
   DQ.tracker = (st) => {
     if (st === 'cancelled') return `<div class="trk off"><p class="trk-msg">الطلب ده اتلغى. لو ده غلط كلمنا على واتساب.</p></div>`;
+    if (st === 'returned') return `<div class="trk off"><p class="trk-msg">الطلب ده اترجع. لو عندك أي سؤال كلمنا على واتساب.</p></div>`;
     const i = Math.max(0, STEPS.findIndex(x => x[0] === st));
     return `<div class="trk ${i === 3 ? 'done-all' : ''}" style="--p:${i / 3}"><div class="trk-line"><i></i></div><ol>${STEPS.map(([k, l, m, ic], j) => `<li class="${j < i ? 'done' : j === i ? 'cur' : ''}"><span class="trk-dot">${ICON[ic] || ''}</span><b>${l}</b></li>`).join('')}</ol><p class="trk-msg">${STEPS[i][2]}</p></div>`;
   };
@@ -489,7 +564,7 @@
     const dot = $('#accDot'); if (dot) dot.classList.toggle('on', !!u);
     if (u) { try { const r = await sb.rpc('shop_is_admin'); DQ.isAdmin = !!r.data; } catch (e) {} }
     if ($('#accSheet') && $('#accSheet').classList.contains('on')) renderAccount();
-    if (changed && view === 'checkout' && $('#drawer') && $('#drawer').classList.contains('on')) renderCart();
+    if (changed && coState === 'form') keepAndRender();
   }
   const back = () => location.origin + location.pathname + location.search;
   DQ.signInGoogle = async () => {
@@ -609,7 +684,7 @@
 
   /* ---------- live: what the admin saves (products, prices, covers, settings) and every new site version show up for visitors without a reload ---------- */
   // never swap things under someone who is ordering or typing
-  const busy = () => (view !== 'cart' && $('#drawer') && $('#drawer').classList.contains('on')) || (document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName));
+  const busy = () => !!coState || (document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName));
   let liveT = 0, lastLive = Date.now();
   async function refreshData() {
     if (busy()) { clearTimeout(liveT); liveT = setTimeout(refreshData, 3000); return; }
