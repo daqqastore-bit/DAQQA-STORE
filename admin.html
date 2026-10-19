@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261019141508">
+<link rel="stylesheet" href="assets/base.css?v=20261019142830">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -258,6 +258,12 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .soc-types button span{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);flex:none}
 .soc-types button svg{width:16px;height:16px}
 .soc-types button:hover{border-color:var(--sc);background:color-mix(in srgb,var(--sc) 7%,transparent)}
+.soc-types button{position:relative}
+.soc-chk{position:absolute;top:-6px;inset-inline-start:-6px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font:700 11px/1 var(--f-ui);font-style:normal;background:var(--amber);color:#fff;transform:scale(0);transition:transform .2s cubic-bezier(.3,1.6,.5,1)}
+.soc-types button[aria-pressed="true"]{border-color:var(--sc);background:color-mix(in srgb,var(--sc) 10%,transparent);font-weight:600}
+.soc-types button[aria-pressed="true"] .soc-chk{transform:scale(1)}
+.soc-pick b small{font-weight:400;color:var(--muted);font-size:12px}
+.soc-pick-acts{display:flex;gap:8px}
 .set-card{display:flex;flex-direction:column;gap:14px}
 .web-ord{margin-bottom:14px}.web-ord .set-h{align-items:center}.web-ord .set-h>div{flex:1}.wo-warn{color:var(--red,#B04834);font-size:12.5px}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -452,7 +458,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261019141508"></script>
+<script src="assets/config.js?v=20261019142830"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1063,16 +1069,25 @@ function renderSocial() {
     <form class="panel set-card" id="socForm" novalidate>
       <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg></span><div><h2>سوشيال</h2><small>بتظهر فوق الموقع وتحت في الفوتر وفي صفحة السوشيال. اللي مالوش لينك مش بيظهر.</small></div></div>
       <div id="socList">${socDraft.length ? socDraft.map(socRow).join('') : '<div class="empty" style="padding:14px">مفيش حسابات لسه. اضغط «إضافة» واختار نوع الحساب.</div>'}</div>
-      <div class="soc-pick" id="socPick" hidden><b>اختار نوع الحساب</b><div class="soc-types">${Object.entries(RC.SOCIAL).map(([k, t]) => `<button type="button" data-sadd="${k}" style="--sc:${t.color}"><span>${t.icon}</span>${esc(t.name)}</button>`).join('')}</div></div>
+      <div class="soc-pick" id="socPick" hidden><b>اختار نوع أو أكتر <small>(تقدر تضيف أكتر من رقم وأكتر من واتساب)</small></b><div class="soc-types">${Object.entries(RC.SOCIAL).map(([k, t]) => `<button type="button" data-sadd="${k}" aria-pressed="false" style="--sc:${t.color}"><span>${t.icon}</span>${esc(t.name)}<i class="soc-chk" aria-hidden="true">✓</i></button>`).join('')}</div>
+        <div class="soc-pick-acts"><button type="button" class="btn btn-primary btn-sm" id="socPickOk" disabled>أضف المختار</button><button type="button" class="btn btn-ghost btn-sm" id="socPickNo">إلغاء</button></div></div>
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="socAdd">+ إضافة</button><button class="btn btn-primary" type="submit">حفظ</button></div>
     </form>`;
   bindSetTabs();
   const draw = () => { $('#socList').innerHTML = socDraft.length ? socDraft.map(socRow).join('') : '<div class="empty" style="padding:14px">مفيش حسابات لسه. اضغط «إضافة» واختار نوع الحساب.</div>'; };
-  $('#socAdd').onclick = () => { const pk = $('#socPick'); pk.hidden = !pk.hidden; if (!pk.hidden) pk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+  // pick one type or several, then add a row for each (the same type can be added again for a second number)
+  const picked = () => [...document.querySelectorAll('#socPick [data-sadd][aria-pressed="true"]')].map(b => b.dataset.sadd);
+  const closePick = () => { $('#socPick').hidden = true; document.querySelectorAll('#socPick [data-sadd]').forEach(b => b.setAttribute('aria-pressed', 'false')); syncPick(); };
+  const syncPick = () => { const n = picked().length, ok = $('#socPickOk'); ok.disabled = !n; ok.textContent = n ? `أضف المختار (${n})` : 'أضف المختار'; };
+  $('#socAdd').onclick = () => { const pk = $('#socPick'); if (!pk.hidden) return closePick(); pk.hidden = false; pk.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
+  $('#socPickNo').onclick = closePick;
+  $('#socPickOk').onclick = () => { const ks = picked(); if (!ks.length) return; const from = socDraft.length;
+    ks.forEach(k => socDraft.push({ type: k, value: '' })); closePick(); draw();
+    const ins = $('#socList').querySelectorAll('[data-sv]'); ins[from] && ins[from].focus(); };
   $('#socForm').oninput = e => { const i = e.target.dataset.sv; if (i == null) return; socDraft[+i].value = e.target.value; const f = e.target.closest('.field'); if (f.classList.contains('bad') && !socErr(socDraft[+i])) { f.classList.remove('bad'); const m = f.querySelector('.f-err'); m && m.remove(); } };
   $('#socForm').onclick = e => {
     const a = e.target.closest('[data-sadd]'), d = e.target.closest('[data-sdel]');
-    if (a) { socDraft.push({ type: a.dataset.sadd, value: '' }); $('#socPick').hidden = true; draw(); const ins = $('#socList').querySelectorAll('[data-sv]'); ins[ins.length - 1].focus(); }
+    if (a) { a.setAttribute('aria-pressed', a.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); syncPick(); }
     if (d) { socDraft.splice(+d.dataset.sdel, 1); draw(); }
   };
   $('#socForm').onsubmit = async e => { e.preventDefault(); let bad = null;

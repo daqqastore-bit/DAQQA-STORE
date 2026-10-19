@@ -310,8 +310,11 @@
   DQ.socLink = socLink;
   function renderSocial() {
     const list = RC.socials(DQ.settings), ann = (DQ.settings.announcement || '').trim(), top = $('#topbar');
-    if (top) { top.hidden = !list.length && !ann;
-      top.innerHTML = `<div class="wrap tb-in"><span class="tb-ann">${esc(ann)}</span>${list.length ? `<span class="tb-soc">${list.slice(0, 6).map(x => socLink(x, 'tb-ic')).join('')}</span>` : ''}</div>`; }
+    if (top) {
+      // the top bar keeps it short: WhatsApp, call and Instagram only (the first of each)
+      const quick = ['whatsapp', 'phone', 'instagram'].map(k => list.find(x => x.type === k)).filter(Boolean);
+      top.hidden = !quick.length && !ann;
+      top.innerHTML = `<div class="wrap tb-in"><span class="tb-ann">${esc(ann)}</span>${quick.length ? `<span class="tb-soc">${quick.map(x => socLink(x, 'tb-ic')).join('')}</span>` : ''}</div>`; }
     const ft = $('#ftContact'); if (ft) { ft.hidden = !list.length; $('#ftSoc').innerHTML = list.map(x => `<li>${socLink(x, 'ft-ic')}</li>`).join(''); }
   }
 
