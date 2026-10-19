@@ -425,6 +425,16 @@
       $('#coPage').onpointerdown = e => { if (!dd.contains(e.target)) open(false); };
     }
   }
+  DQ.refreshCheckout = () => {
+    if (coState !== 'form' || !$('#coSums')) return;
+    if (!lines().length) return DQ.closeCheckout(true);
+    const t = totals(($('#f-city') || {}).value || savedCity());
+    $('#coSums').innerHTML = sumsHTML(t); if (!$('#place').disabled) $('#place').textContent = 'تأكيد الطلب · ' + money(t.total);
+    const showShip = zones().length || Number(DQ.settings.shipping_fee);
+    document.querySelectorAll('#cityDD .dd-list [data-v]').forEach(b => { let sm = b.querySelector('.dd-ship');
+      if (!showShip) { sm && sm.remove(); return; } if (!sm) { sm = document.createElement('small'); sm.className = 'dd-ship'; b.appendChild(sm); }
+      const v = DQ.shipFor(b.dataset.v); sm.textContent = v ? 'شحن ' + money(v) : 'شحن مجاني'; });
+  };
   // GPS → a Google Maps link that reaches the shop with the order
   let coLoc = '', coAddr = '';
   // pin → readable Arabic address (OpenStreetMap, free, no key)
@@ -787,6 +797,8 @@
   const busy = () => !!coState || (document.activeElement && /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName));
   let liveT = 0, lastLive = Date.now();
   async function refreshData() {
+    // checkout open: refresh prices/shipping in place without touching what the customer typed
+    if (coState === 'form' && $('#coSums')) { lastLive = Date.now(); try { await DQ.load(); } catch (e) { return; } return DQ.refreshCheckout(); }
     if (busy()) { clearTimeout(liveT); liveT = setTimeout(refreshData, 3000); return; }
     lastLive = Date.now(); const y = scrollY;
     try { await DQ.load(); } catch (e) { return; }
