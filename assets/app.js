@@ -504,7 +504,7 @@
         <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام</p>
         <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}</div>
         <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
-        <div class="cd-acts">${DQ.wa() ? `<a class="btn btn-amber cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.2-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
+        <div class="cd-acts">${DQ.wa() ? `<a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}">${WA_ICON}استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
     $('#cdMore').onclick = () => DQ.closeCheckout();
     $('#cdCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(data.code).then(() => DQ.toast('اتنسخ رقم الطلب ✓', 'ok')).catch(() => {}); };
     $('#coPage').scrollTop = 0;
@@ -543,6 +543,7 @@
     if (coState) DQ.closeCheckout(); else document.body.style.overflow = '';
   };
 
+  const WA_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.2-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>`;
   /* ---------- account: Google or email + password; orders are saved to the account ---------- */
   DQ.user = null; DQ.isAdmin = false;
   let accMode = 'login', accMsg = '';
@@ -563,7 +564,9 @@
       ${DQ.tracker(o.status)}
       <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
-      ${cancelBtn(o.code, o.status)}</div>`;
+      <div class="ao-acts">${waAsk(o.code)}${cancelBtn(o.code, o.status)}</div></div>`;
+  // green WhatsApp button with the order number already written in the message
+  function waAsk(code) { return DQ.wa() ? `<a class="btn wa-btn ao-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${code}`)}">${WA_ICON}استفسر على واتساب</a>` : ''; }
   // confirm popup: resolves true on the main button, false on back / outside / Esc
   DQ.ask = (title, html, ok, back) => new Promise(res => {
     const m = document.createElement('div'); m.className = 'ask-m'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
