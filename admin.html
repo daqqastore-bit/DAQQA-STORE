@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020150609">
+<link rel="stylesheet" href="assets/base.css?v=20261020151011">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -281,15 +281,18 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .soc-ic svg{width:22px;height:22px}
 .imgs .it > img{cursor:zoom-in}
 .iv{position:fixed;inset:0;z-index:300;background:rgba(10,8,6,.92);display:grid;place-items:center;animation:fmIn .2s ease}
-.iv-st{width:calc(100vw / var(--z) - 160px);height:calc(100vh / var(--z) - 120px);display:grid;place-items:center;overflow:hidden}
-.iv-st img{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in;transition:transform .3s cubic-bezier(.2,.7,.2,1);user-select:none}
-.iv.z .iv-st img{transform:scale(2.4);cursor:zoom-out}
+.iv-st{position:relative;width:calc(100vw / var(--z) - 160px);height:calc(100vh / var(--z) - 150px);margin-bottom:30px;overflow:hidden}
+.iv-st{touch-action:none;cursor:zoom-in}.iv.z .iv-st{cursor:grab}.iv.z .iv-st:active{cursor:grabbing}
+.iv-st img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transform-origin:center}
+.iv-zm{position:absolute;bottom:16px;left:50%;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;border:1px solid rgb(255 255 255/.16);background:rgb(255 255 255/.07);color:#EDE3D3}
+.iv-zm button{width:40px;height:40px;border-radius:50%;color:#fff;font-size:22px;line-height:1}.iv-zm button:hover{background:rgb(255 255 255/.14)}
+.iv-zm b{min-width:58px;text-align:center;font-size:14px}
+.iv-zm .iv-fit{width:auto;padding:0 14px;border-radius:99px;font-size:12.5px}
 .iv-x{position:absolute;top:16px;left:16px;width:44px;height:44px;border-radius:50%;background:rgb(255 255 255/.1);color:#fff;font-size:26px}
 .iv-a{position:absolute;top:50%;margin-top:-24px;width:48px;height:48px;border-radius:50%;background:rgb(255 255 255/.1);color:#fff;font-size:28px;line-height:1}
 .iv-p{right:20px}.iv-nx{left:20px}.iv-x:hover,.iv-a:hover{background:rgb(255 255 255/.2)}
 .iv-n{position:absolute;top:26px;right:24px;color:#ddd;font-size:14px}
-.iv-h{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#aaa;font-size:12.5px}
-@media (max-width:600px){.iv-st{width:100vw;height:calc(100vh - 140px)}.iv-a{top:auto;bottom:50px}}
+@media (max-width:600px){.iv-st{width:100vw;height:calc(100vh / var(--z) - 140px)}.iv-a{top:auto;bottom:50px}}
 .pk-part{display:flex;flex-direction:column;gap:14px}.pk-part[hidden]{display:none}
 .pk-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
 .pk-ics{display:flex;flex-wrap:wrap;gap:4px;max-width:190px;align-self:center}
@@ -536,7 +539,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020150609"></script>
+<script src="assets/config.js?v=20261020151011"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -905,16 +908,28 @@ function openTexts(d) {
 // the original file name rides in the storage path (…-abc123--my-photo.webp) so the photo list can show it
 const slugName = n => { const b = String(n || '').replace(/\.[^.]+$/, '').normalize('NFKD').replace(/[^\w-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 60); return b ? '--' + b : ''; };
 const imgName = (u, i) => { const f = decodeURIComponent(String(u).split('?')[0].split('/').pop() || ''), m = f.match(/--(.+)\.\w+$/); return m ? m[1] : /^\d{10,}-/.test(f) ? `صورة ${i + 1}` : f.replace(/\.\w+$/, '') || `صورة ${i + 1}`; };
-// big photo preview from the editor: click to zoom in (follows the mouse), arrows / ← → to flip, Esc to close
+// big photo preview from the editor: wheel / + − / click to zoom (up to 500%), drag to move around, arrows / ← → to flip, Esc to close
 function imgView(list, i) {
   const m = document.createElement('div'); m.className = 'iv';
-  m.innerHTML = `<button type="button" class="iv-x" aria-label="قفل">×</button><div class="iv-st"><img alt=""></div><span class="iv-n en"></span>${list.length > 1 ? '<button type="button" class="iv-a iv-p" aria-label="السابقة">›</button><button type="button" class="iv-a iv-nx" aria-label="التالية">‹</button>' : ''}<small class="iv-h">دوس على الصورة عشان تقرّب</small>`;
-  const img = m.querySelector('img'), st = m.querySelector('.iv-st');
-  const show = k => { i = (k + list.length) % list.length; img.src = list[i]; m.classList.remove('z'); m.querySelector('.iv-n').textContent = `${i + 1} / ${list.length}`; };
+  m.innerHTML = `<button type="button" class="iv-x" aria-label="قفل">×</button><div class="iv-st"><img alt="" draggable="false"></div><span class="iv-n en"></span>${list.length > 1 ? '<button type="button" class="iv-a iv-p" aria-label="السابقة">›</button><button type="button" class="iv-a iv-nx" aria-label="التالية">‹</button>' : ''}
+    <div class="iv-zm"><button type="button" data-z="-1" aria-label="تصغير">−</button><b class="en">100%</b><button type="button" data-z="1" aria-label="تكبير">+</button><button type="button" class="iv-fit" data-z="0">↺ الحجم الأصلي</button></div>`;
+  const img = m.querySelector('img'), st = m.querySelector('.iv-st'), lbl = m.querySelector('.iv-zm b');
+  let z = 1, x = 0, y = 0;
+  const clamp = () => { const w = st.clientWidth, h = st.clientHeight; x = Math.max(-w * (z - 1) / 2, Math.min(w * (z - 1) / 2, x)); y = Math.max(-h * (z - 1) / 2, Math.min(h * (z - 1) / 2, y)); };
+  const paint = anim => { clamp(); img.style.transition = anim ? 'transform .25s ease' : 'none'; img.style.transform = `translate(${x}px,${y}px) scale(${z})`; lbl.textContent = Math.round(z * 100) + '%'; m.classList.toggle('z', z > 1); };
+  // zoom toward a point (px from the stage centre) so what is under the mouse stays under it
+  const zoomTo = (nz, px = 0, py = 0, anim = true) => { nz = Math.max(1, Math.min(5, nz)); const k = nz / z; x = px - (px - x) * k; y = py - (py - y) * k; z = nz; if (z === 1) x = y = 0; paint(anim); };
+  const at = e => { const r = st.getBoundingClientRect(), zz = r.width / st.offsetWidth || 1; return [(e.clientX - r.left) / zz - st.offsetWidth / 2, (e.clientY - r.top) / zz - st.offsetHeight / 2]; };
+  const show = k => { i = (k + list.length) % list.length; img.src = list[i]; z = 1; x = y = 0; paint(false); m.querySelector('.iv-n').textContent = `${i + 1} / ${list.length}`; };
   const close = () => { m.remove(); removeEventListener('keydown', key, true); };
-  const key = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else if (e.key === 'ArrowLeft') show(i + 1); else if (e.key === 'ArrowRight') show(i - 1); };
-  st.onmousemove = e => { const r = st.getBoundingClientRect(); img.style.transformOrigin = `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`; };
-  m.onclick = e => { if (e.target.closest('.iv-x') || e.target === m) return close(); if (e.target.closest('.iv-p')) return show(i - 1); if (e.target.closest('.iv-nx')) return show(i + 1); if (e.target === img) { st.onmousemove(e); m.classList.toggle('z'); } };
+  const key = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else if (e.key === 'ArrowLeft') show(i + 1); else if (e.key === 'ArrowRight') show(i - 1); else if (e.key === '+' || e.key === '=') zoomTo(z + .5); else if (e.key === '-') zoomTo(z - .5); };
+  st.addEventListener('wheel', e => { e.preventDefault(); zoomTo(z * (e.deltaY < 0 ? 1.2 : 1 / 1.2), ...at(e), false); }, { passive: false });
+  let drag = null, moved = false;
+  st.onpointerdown = e => { if (e.button) return; drag = [e.clientX, e.clientY, x, y]; moved = false; st.setPointerCapture(e.pointerId); };
+  st.onpointermove = e => { if (!drag) return; const zz = st.getBoundingClientRect().width / st.offsetWidth || 1, dx = (e.clientX - drag[0]) / zz, dy = (e.clientY - drag[1]) / zz; if (Math.abs(dx) + Math.abs(dy) > 4) moved = true; if (z > 1) { x = drag[2] + dx; y = drag[3] + dy; paint(false); } };
+  st.onpointerup = e => { const was = drag; drag = null; if (!was || moved) return; z > 1 ? zoomTo(1) : zoomTo(2.5, ...at(e)); };
+  m.onclick = e => { if (e.target.closest('.iv-x') || e.target === m) return close(); if (e.target.closest('.iv-p')) return show(i - 1); if (e.target.closest('.iv-nx')) return show(i + 1);
+    const zb = e.target.closest('[data-z]'); if (zb) return +zb.dataset.z ? zoomTo(z + +zb.dataset.z * .5) : zoomTo(1); };
   addEventListener('keydown', key, true); document.body.appendChild(m); show(i);
 }
 function openEditor(id, init) {
