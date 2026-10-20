@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020143557">
+<link rel="stylesheet" href="assets/base.css?v=20261020144312">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -230,7 +230,24 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 /* editor drawer */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s;z-index:80}
 .overlay.on{opacity:1;pointer-events:auto}
-.editor{position:fixed;top:0;bottom:0;left:0;width:min(480px,100%);background:var(--bg-2);border-right:1px solid var(--line);z-index:90;transform:translateX(-102%);transition:transform .4s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.editor{position:fixed;inset:0;width:100%;background:var(--bg);z-index:90;transform:translateY(24px);opacity:0;visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s .35s;display:flex;flex-direction:column}
+.editor.on{transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s;visibility:visible;opacity:1}
+.editor .ed-head,.editor .ed-foot{background:var(--bg-2)}
+.ed-body{display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start;gap:22px!important;width:100%;max-width:1240px;margin:0 auto;padding:26px 28px 40px!important}
+.ed-col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.ed-side{position:sticky;top:0}
+.ed-sec{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.ed-sec>h4{font-size:15.5px;font-weight:700;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.ed-sec>h4 small{font-size:12px;font-weight:400;color:var(--muted)}
+.ed-txt{min-height:110px;line-height:1.9;font-size:14.5px;resize:vertical}
+.spec-rows{display:flex;flex-direction:column;gap:8px}
+.spec-row{display:grid;grid-template-columns:auto minmax(0,.8fr) minmax(0,1.4fr) auto;align-items:center;gap:8px}
+.spec-row>i{width:7px;height:7px;border-radius:50%;background:var(--amber);margin-inline:2px 4px}
+.spec-x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);color:var(--muted);font-size:18px;line-height:1}
+.spec-x:hover{border-color:#d9534f;color:#d9534f}
+.spec-add{align-self:flex-start}
+.ed-foot{justify-content:center}.ed-foot>.btn-primary{max-width:520px}
+@media (max-width:900px){.ed-body{grid-template-columns:1fr;padding:16px 14px 30px!important}.ed-side{position:static}.ed-sec{padding:14px}}
 .editor.on{transform:none}
 .ed-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
 .ed-head h3{font-size:17px}
@@ -282,7 +299,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .gchip.av.on{background:#2f9e5b;border-color:#2f9e5b;color:#fff;font-weight:600}
 .gov-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px}
 @media(max-width:900px){.set-grid{grid-template-columns:1fr}}
-.imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
 .imgs .it{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--surface-2)}
 .imgs .it.main{border-color:var(--amber)}
 .imgs .it img{width:100%;height:100%;object-fit:cover}
@@ -293,6 +310,14 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .imgs .up:hover,.imgs.drag .up{border-color:var(--amber);color:var(--ink)}
 .imgs.drag{outline:2px dashed var(--amber);outline-offset:6px;border-radius:12px;background:rgb(201 169 122/.08)}
 .imgs .up svg{width:20px;height:20px}
+.imgs .it{cursor:grab;transition:transform .15s,opacity .15s,box-shadow .15s}
+.imgs .it.dragging{opacity:.35}
+.imgs .it.over{transform:scale(1.04);box-shadow:0 0 0 3px var(--amber)}
+.imgs .it .num{position:absolute;bottom:4px;left:4px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+.imgs .it .mv{position:absolute;inset:auto 0 4px;display:flex;justify-content:center;gap:4px;opacity:0;transition:opacity .15s}
+.imgs .it:hover .mv{opacity:1}
+.imgs .it .mv button{width:26px;height:22px;border-radius:7px;background:rgba(0,0,0,.72);color:#fff;font-size:16px;line-height:1}
+@media (hover:none){.imgs .it .mv{opacity:1}}
 .disc-box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .presets{display:flex;gap:6px;flex-wrap:wrap}
 .presets button{height:36px;min-width:54px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font:600 13px var(--f-ui)}
@@ -474,7 +499,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020143557"></script>
+<script src="assets/config.js?v=20261020144312"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -521,7 +546,7 @@ const SCOPES = {
 let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { cover_only: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
+const COLS = { shipping_note: false, cover_only: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -827,13 +852,24 @@ document.addEventListener('click', async e => {
 
 let draft = null;
 const nextSort = lux => Math.max(0, ...products.filter(x => RC.isLuxury(x) === lux).map(x => +x.sort || 0)) + 1;
+// product page texts the admin edits as sections; defaults open pre-filled so he only changes what differs
+const SPEC_DEF = { watches: ['الماكينة', 'قطر الإطار', 'الخامة', 'مقاومة المياه', 'المميزات'], glasses: ['الإطار', 'العدسات', 'الحماية', 'المقاس'], accessories: ['الخامة', 'المقاس', 'اللون'] };
+const aboutDef = k => `${(RC.kinds[k] || RC.kinds.watches).one} مختارة من كولكشن DAQQA، متفحوصة قبل الشحن.`;
+const shipDef = k => { const n = (RC.kinds[k] || RC.kinds.watches).one; return `الشحن لكل المحافظات خلال 2–5 أيام عمل.\nالدفع كاش عند الاستلام بعد ما تفحص ال${n}.\nتقدر تستبدل خلال 14 يوم لو ال${n} بحالتها.`; };
+function openTexts(d) {
+  const { specs, body } = RC.splitDesc(d.description);
+  d._about = body || aboutDef(d.kind);
+  d._specs = specs.length ? specs : (SPEC_DEF[d.kind] || []).map(k => [k, '']);
+  d._ship = d.shipping_note || shipDef(d.kind);
+}
 function openEditor(id, init) {
   const p = id ? products.find(x => x.id === id) : null;
   draft = p ? {...p, images: [...p.images], kind: RC.kindOf(p), colors: RC.colors(p)} : {kind: pKind !== 'all' ? pKind : 'watches', style:'', colors:[], name:'', brand:'DAQQA', category:'men', description:'', price:'', sale_price:null, images:[], stock:'', shown_left:'', featured:false, luxury:false, active:true};
   if (!p && init) Object.assign(draft, init);
   // a new product goes last in its own section (regular and Luxury are numbered separately) until the admin types a number
   if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
-  renderEditor();
+  openTexts(draft);
+  renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
 }
 function closeEditor() { $('#editor').classList.remove('on'); $('#overlay').classList.remove('on'); }
@@ -844,14 +880,16 @@ function renderEditor() {
   const d = draft, off = curOff();
   $('#editor').innerHTML = `
     <div class="ed-head"><h3>${d.id ? 'تعديل المنتج' : 'منتج جديد'}${d.id ? ` <a href="${RC.productUrl(d)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:500;color:var(--accent);margin-inline-start:8px">فتح صفحة المنتج ↗</a>` : ''}</h3><button class="icon-btn" id="edClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="ed-body">
-      <div class="field"><label>الصور (الأولى هي الرئيسية — دوس ★ عشان تخليها رئيسية)</label>
-        <div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}"><img src="${esc(u)}" alt="">${i ? `<button class="star" data-star="${i}" aria-label="اجعلها رئيسية">★</button>` : '<span class="tag">رئيسية</span>'}<button class="x" data-rmimg="${i}" aria-label="حذف الصورة">×</button></div>`).join('')}
+    <div class="ed-body"><div class="ed-col ed-main">
+      <section class="ed-sec"><h4>الصور</h4>
+      <div class="field"><label>اسحب أي صورة وحطها مكان التانية عشان ترتبهم (الأولى هي الرئيسية) · أو اسحب صور من جهازك وسيبها هنا ترتفع</label>
+        <div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}" draggable="true" data-ii="${i}"><img src="${esc(u)}" alt="" draggable="false"><span class="num en">${i + 1}</span>${i ? `<button class="star" data-star="${i}" aria-label="اجعلها رئيسية">★</button>` : '<span class="tag">رئيسية</span>'}<button class="x" data-rmimg="${i}" aria-label="حذف الصورة">×</button><span class="mv">${i ? `<button type="button" data-mv="${i}" data-to="${i - 1}" aria-label="قدّمها">›</button>` : ''}${i < d.images.length - 1 ? `<button type="button" data-mv="${i}" data-to="${i + 1}" aria-label="أخّرها">‹</button>` : ''}</span></div>`).join('')}
           <button class="up" id="upBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>رفع صور</button></div>
         <label class="cov-sw" ${COLS.cover_only ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_cover" ${d.cover_only?'checked':''}><span class="tg" aria-hidden="true"></span>
           <span class="tx"><b>الصورة الرئيسية غلاف بس <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
             <small class="st-on">الصورة الرئيسية هتظهر في كارت المنتج بس، ولما العميل يفتح المنتج مش هيشوفها.</small>
-            <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div>
+            <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
+      <section class="ed-sec"><h4>بيانات المنتج</h4>
       <div class="two">
         <div class="field"><label>القسم</label><select class="input" id="f_kind" ${COLS.kind ? '' : 'disabled title="محتاج تفعيل من Supabase"'}>${Object.entries(RC.kinds).map(([k,v]) => `<option value="${k}" ${k===d.kind?'selected':''}>${v.ar} — ${v.en}</option>`).join('')}</select></div>
         <div class="field"><label>النوع (بيظهر كتاب)</label><input class="input en" id="f_style" list="styleList" value="${esc(d.style || '')}" placeholder="${RC.kinds[d.kind].styles.slice(0,2).join(' / ')}" ${COLS.style ? '' : 'disabled'}><datalist id="styleList">${RC.kinds[d.kind].styles.map(x => `<option value="${x}">`).join('')}</datalist></div>
@@ -870,7 +908,16 @@ function renderEditor() {
       <div class="two">
         <div class="field"><label>الماركة</label><input class="input en" id="f_brand" value="${esc(d.brand)}"></div>
         <div class="field"><label>الفئة</label><select class="input" id="f_cat">${Object.entries(categories).map(([k,v]) => `<option value="${k}" ${k===d.category?'selected':''}>${v}</option>`).join('')}</select></div>
-      </div>
+      </div></section>
+      <section class="ed-sec"><h4>عن ال${(RC.kinds[d.kind] || RC.kinds.watches).one}</h4>
+        <textarea class="input ed-txt" id="f_about" rows="4" dir="rtl" placeholder="اكتب وصف قصير يشد العميل">${esc(d._about)}</textarea></section>
+      <section class="ed-sec"><h4>المواصفات <small>بتظهر كبنود في صفحة المنتج · البند الفاضي مش بيظهر</small></h4>
+        <div class="spec-rows" id="specRows">${(d._specs || []).map(([k, v], i) => `<div class="spec-row"><i aria-hidden="true"></i><input class="input" data-sk="${i}" value="${esc(k)}" placeholder="البند" dir="auto"><input class="input" data-sv="${i}" value="${esc(v)}" placeholder="القيمة" dir="auto"><button type="button" class="spec-x" data-srm="${i}" aria-label="شيل البند">×</button></div>`).join('')}</div>
+        <button type="button" class="btn btn-ghost btn-sm spec-add" id="specAdd">+ إضافة بند</button></section>
+      <section class="ed-sec"><h4>الشحن والاستبدال <small>لو سبته زي ما هو بيتكتب فيه سعر الشحن تلقائي</small></h4>
+        <textarea class="input ed-txt" id="f_ship" rows="4" dir="rtl" ${COLS.shipping_note ? '' : 'disabled'}>${esc(d._ship)}</textarea></section>
+    </div><div class="ed-col ed-side">
+      <section class="ed-sec"><h4>السعر</h4>
       <div class="field"><label>السعر الأصلي *</label><input class="input en" id="f_price" inputmode="decimal" value="${esc(d.price)}"></div>
       <div class="disc-box">
         <label style="font-size:13px;color:var(--muted)">الخصم</label>
@@ -878,7 +925,8 @@ function renderEditor() {
         <div class="two"><div class="field"><label>السعر بعد الخصم</label><input class="input en" id="f_sale" inputmode="decimal" value="${d.sale_price == null ? '' : esc(d.sale_price)}" placeholder="فاضي = بدون خصم"></div>
           <div class="field"><label>نسبة الخصم %</label><input class="input en" id="f_pct" inputmode="numeric" value="${off || ''}" placeholder="0"></div></div>
         <div class="preview-price" id="pv"></div>
-      </div>
+      </div></section>
+      <section class="ed-sec"><h4>المخزون</h4>
       <div class="stock-box">
         <div class="sb-col sb-me"><span class="sb-tag">ليك إنت بس</span>
           <label for="f_stock">المخزون الحقيقي</label>
@@ -889,18 +937,25 @@ function renderEditor() {
           <input class="input en" id="f_shownleft" inputmode="numeric" value="${esc(d.shown_left ?? '')}" placeholder="اختياري" ${COLS.show_left ? '' : 'disabled'}>
           <small>لو كتبت 3 هيظهر «فاضل 3 بس» وبيقل مع كل طلب. لو سبته فاضي مش هيظهر حاجة.</small></div>
       </div>
-      <div class="field"><label>الوصف والمواصفات</label><textarea class="input" id="f_desc" rows="6" placeholder="سطر وصف عادي…&#10;الماكينة: كوارتز ياباني&#10;قطر الإطار: 42 مم&#10;مقاومة المياه: 30 متر">${esc(d.description)}</textarea><small style="color:var(--muted-2);font-size:12px">أي سطر مكتوب بالشكل «الاسم: القيمة» بيظهر في جدول المواصفات في صفحة المنتج، والباقي بيظهر كوصف.</small></div>
+      </section>
+      <section class="ed-sec"><h4>الظهور</h4>
       <div class="two">
         <label class="check"><input type="checkbox" id="f_feat" ${d.featured?'checked':''}> منتج مميز (BEST)</label>
         <label class="check"><input type="checkbox" id="f_active" ${d.active?'checked':''}> ظاهر في المتجر</label>
       </div>
       <label class="check lux-check" ${COLS.luxury ? '' : 'title="محتاج تفعيل من Supabase (daqqa-pages.sql)" style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_lux" ${d.luxury?'checked':''}> <span>منتج Luxury <small>— يظهر في صفحة Luxury</small></span></label>
-      <div class="field"><label>الترتيب (الأصغر يظهر الأول)</label><input class="input en" id="f_sort" inputmode="numeric" value="${esc(d.sort)}"></div>
-    </div>
+      <div class="field"><label>الترتيب (الأصغر يظهر الأول)</label><input class="input en" id="f_sort" inputmode="numeric" value="${esc(d.sort)}"></div></section>
+    </div></div>
     <div class="ed-foot"><button class="btn btn-primary" id="saveP" style="flex:1">حفظ</button>${d.id ? '<button class="btn btn-danger" id="delP">حذف</button>' : ''}</div>`;
   updatePreview();
   $('#edClose').onclick = closeEditor;
-  $('#f_kind').onchange = () => { syncDraft(); renderEditor(); };
+  $('#f_kind').onchange = () => { const k0 = draft.kind; syncDraft(); const k = draft.kind;
+    if (draft._about === aboutDef(k0)) draft._about = aboutDef(k);
+    if (draft._ship === shipDef(k0)) draft._ship = shipDef(k);
+    if (draft._specs.every(([, v]) => !v)) draft._specs = (SPEC_DEF[k] || []).map(x => [x, '']);
+    renderEditor(); };
+  $('#specAdd').onclick = () => { syncDraft(); draft._specs.push(['', '']); renderEditor(); const ks = document.querySelectorAll('#specRows [data-sk]'); ks[ks.length - 1].focus(); };
+  $('#specRows').onclick = e => { const b = e.target.closest('[data-srm]'); if (b) { syncDraft(); draft._specs.splice(+b.dataset.srm, 1); renderEditor(); } };
   const normHex = v => { v = String(v || '').trim().replace(/^#?/, '#').toUpperCase(); if (/^#[0-9A-F]{3}$/.test(v)) v = '#' + [...v.slice(1)].map(x => x + x).join(''); return /^#[0-9A-F]{6}$/.test(v) ? v : null; };
   $('#f_sort').oninput = () => { draft._autoSort = false; };
   $('#f_lux').addEventListener('change', () => { if (draft._autoSort) $('#f_sort').value = nextSort($('#f_lux').checked); });
@@ -922,7 +977,15 @@ function renderEditor() {
   zone.ondragover = e => { if (!hasFiles(e)) return; e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; zone.classList.add('drag'); };
   zone.ondragleave = e => { if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag'); };
   zone.ondrop = e => { e.preventDefault(); zone.classList.remove('drag'); uploadFiles([...e.dataTransfer.files], true); };
-  $('#imgs').onclick = e => { const s = e.target.closest('[data-star]'), r = e.target.closest('[data-rmimg]');
+  // reorder: drag a photo onto another, or the small arrows (phones)
+  const moveImg = (from, to) => { if (from === to || to < 0 || to >= draft.images.length) return; syncDraft(); const [u] = draft.images.splice(from, 1); draft.images.splice(to, 0, u); renderEditor(); };
+  let dragI = null;
+  zone.addEventListener('dragstart', e => { const it = e.target.closest('[data-ii]'); if (!it) return; dragI = +it.dataset.ii; it.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ''); });
+  zone.addEventListener('dragend', () => { dragI = null; zone.querySelectorAll('.it').forEach(x => x.classList.remove('dragging', 'over')); });
+  zone.addEventListener('dragover', e => { if (dragI == null) return; const it = e.target.closest('[data-ii]'); e.preventDefault(); zone.querySelectorAll('.it.over').forEach(x => x !== it && x.classList.remove('over')); if (it && +it.dataset.ii !== dragI) it.classList.add('over'); });
+  zone.addEventListener('drop', e => { if (dragI == null) return; e.preventDefault(); e.stopImmediatePropagation(); const it = e.target.closest('[data-ii]'); const from = dragI; dragI = null; if (it) moveImg(from, +it.dataset.ii); }, true);
+  $('#imgs').onclick = e => { const mv = e.target.closest('[data-mv]'); if (mv) return moveImg(+mv.dataset.mv, +mv.dataset.to);
+    const s = e.target.closest('[data-star]'), r = e.target.closest('[data-rmimg]');
     if (s) { syncDraft(); const i = +s.dataset.star; const [u] = draft.images.splice(i, 1); draft.images.unshift(u); renderEditor(); }
     if (r) { syncDraft(); draft.images.splice(+r.dataset.rmimg, 1); renderEditor(); } };
   $('#presets').onclick = e => { const b = e.target.closest('[data-pre]'); if (!b) return; const v = +b.dataset.pre, pr = +$('#f_price').value;
@@ -940,9 +1003,12 @@ function updatePreview() {
   document.querySelectorAll('#presets [data-pre]').forEach(b => b.classList.toggle('on', +b.dataset.pre === off));
   $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new">${money(has ? sp : pr)}</span>${has ? `<span class="price-old">${money(pr)}</span><span class="badge-off">-${off}%</span>` : ''}</div>`;
 }
+// about + filled spec lines → the one description field the store reads ("البند: القيمة" lines become the specs list)
+const composeDesc = d => { const about = String(d._about || '').trim();
+  return [about === aboutDef(d.kind) ? '' : about, ...(d._specs || []).map(([k, v]) => [String(k).replace(/[:：]/g, ' ').trim(), String(v).trim()]).filter(([k, v]) => k && v).map(([k, v]) => `${k}: ${v}`)].filter(Boolean).join('\n'); };
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
-    stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, description: $('#f_desc').value,
+    stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, _about: $('#f_about').value, _ship: $('#f_ship').value, _specs: [...document.querySelectorAll('#specRows .spec-row')].map(r => [r.querySelector('[data-sk]').value, r.querySelector('[data-sv]').value]),
     colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
@@ -1037,9 +1103,10 @@ async function saveProduct() {
   const price = +d.price; if (!(price >= 0) || d.price === '') return toast('اكتب سعر صحيح', 'err');
   let sale = d.sale_price == null ? null : +d.sale_price;
   if (sale != null && (isNaN(sale) || sale >= price || sale < 0)) sale = null;
-  const row = { name: d.name, brand: d.brand, category: d.category, description: d.description, price, sale_price: sale, images: d.images,
+  const row = { name: d.name, brand: d.brand, category: d.category, description: composeDesc(d), price, sale_price: sale, images: d.images,
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
   if (COLS.cover_only) row.cover_only = !!d.cover_only;
+  if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
   if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
   const b = $('#saveP'); b.disabled = true; b.textContent = 'جاري الحفظ...';
   const res = d.id ? await sb.from('shop_products').update(row).eq('id', d.id).select().single() : await sb.from('shop_products').insert(row).select().single();
