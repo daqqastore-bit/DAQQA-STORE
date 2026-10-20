@@ -878,19 +878,25 @@
     DQ.reveal(); readyRes();
   };
   if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {}));
+  // a reload puts the visitor back where they were (not at the #section in the address)
+  const NAV = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null, YK = 'dq-y:' + location.pathname + location.search;
+  try { DQ.restoreY = NAV && NAV.type === 'reload' ? +sessionStorage.getItem(YK) || 0 : 0; } catch (e) { DQ.restoreY = 0; }
+  if (DQ.restoreY && 'scrollRestoration' in history) history.scrollRestoration = 'manual';
+  addEventListener('pagehide', () => { try { sessionStorage.setItem(YK, String(Math.round(scrollY))); } catch (e) {} });
+  const restoreY = () => { if (!DQ.restoreY) return; const y = DQ.restoreY; scrollTo(0, y); setTimeout(() => scrollTo(0, y), 300); setTimeout(() => { scrollTo(0, y); DQ.restoreY = 0; }, 900); };
   DQ.start = async (active, onReady) => {
     if (!window.DQ_LOADER) intro(); chrome(active); mouseFx();
     const c = DQ.readCache();
     if (c) {
       // open from the saved copy, then swap in the fresh data only if something changed
-      DQ.useCache(c); DQ._ready = onReady; onReady && onReady();
+      DQ.useCache(c); DQ._ready = onReady; onReady && onReady(); restoreY();
       await cap(Promise.all([document.fonts ? document.fonts.ready : null, firstImages()]), 1500);
       window.DQ_reveal(); live();
       DQ.load().then(changed => { if (changed) { lastLive = 0; refreshNow(); } }).catch(e => console.error(e));
       return;
     }
     try { await cap(DQ.load(), 15000); } catch (e) { console.error(e); DQ.loadError = true; }
-    DQ._ready = onReady; onReady && onReady();
+    DQ._ready = onReady; onReady && onReady(); restoreY();
     await cap(Promise.all([document.fonts ? document.fonts.ready : null, firstImages()]), 3500);
     window.DQ_reveal(); live();
   };
