@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020144312">
+<link rel="stylesheet" href="assets/base.css?v=20261020144607">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -161,6 +161,14 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .fin-it .input{height:40px;font-family:var(--f-ui)}
 .fin-box .field .input{font-family:var(--f-ui)}
 .who-pays{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.off-btn{display:inline-flex;align-items:center;gap:8px}.off-btn svg{width:18px;height:18px}
+.off-box{width:min(620px,100%)}
+.off-pick .cat-pop{max-height:300px}
+.off-opt{display:grid!important;grid-template-columns:38px 1fr auto;align-items:center;gap:10px;text-align:right}
+.off-opt img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--surface-2)}
+.off-opt b{font-size:12.5px;color:var(--muted)}
+.off-none{padding:12px;font-size:12.5px;color:var(--muted)}
+.off-hint{font-size:12px;color:var(--amber);min-height:1em}
 .who-pays button{min-height:56px;border:1px solid var(--line-2);border-radius:12px;padding:8px 12px;text-align:right;display:flex;flex-direction:column;gap:2px;transition:border-color .2s,background .2s}
 .who-pays button b{font-size:14px}.who-pays button small{font-size:11.5px;color:var(--muted)}
 .who-pays button.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent)}
@@ -499,7 +507,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020144312"></script>
+<script src="assets/config.js?v=20261020144607"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -687,6 +695,7 @@ function renderDash() {
   const savings = valid.reduce((s, o) => s + +o.savings, 0);
   const delivered = inRange.filter(o => o.status === 'delivered').reduce((s, o) => s + +o.total, 0);
   const newN = ORD.filter(o => o.status === 'new').length;
+  const OFF = offIn(since, dashScope), offRev = OFF.reduce((s, x) => s + +x.price, 0), offUnits = OFF.reduce((s, x) => s + +x.qty, 0);
   // daily series
   const days = range || Math.max(7, Math.ceil((Date.now() - Math.min(Date.now(), ...orders.map(o => +new Date(o.created_at)))) / 864e5) + 1);
   const nd = Math.min(days, 120), labels = [], vals = [], cnts = [];
@@ -694,22 +703,24 @@ function renderDash() {
     const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - i);
     const e = new Date(d); e.setDate(e.getDate() + 1);
     const dayO = valid.filter(o => { const t = new Date(o.created_at); return t >= d && t < e; });
-    labels.push(d.toLocaleDateString('en-GB', {day:'numeric', month:'short'})); vals.push(dayO.reduce((s, o) => s + +o.total, 0)); cnts.push(dayO.length);
+    const dayX = OFF.filter(x => { const t = new Date(x.sold_on + 'T12:00'); return t >= d && t < e; });
+    labels.push(d.toLocaleDateString('en-GB', {day:'numeric', month:'short'})); vals.push(dayO.reduce((s, o) => s + +o.total, 0) + dayX.reduce((s, x) => s + +x.price, 0)); cnts.push(dayO.length + dayX.length);
   }
   // top products
   const tp = {}; valid.forEach(o => o.shop_order_items.forEach(i => { const k = i.name; tp[k] = tp[k] || {name:k, units:0, rev:0}; tp[k].units += i.qty; tp[k].rev += +i.line_total; }));
+  OFF.forEach(x => { const k = x.name; tp[k] = tp[k] || {name:k, units:0, rev:0}; tp[k].units += +x.qty; tp[k].rev += +x.price; });
   const top = Object.values(tp).sort((a, b) => b.rev - a.rev).slice(0, 6); const topMax = top[0] ? top[0].rev : 1;
   const byStatus = STATUS_KEYS.map(k => [k, inRange.filter(o => o.status === k).length]);
   const lowStock = products.filter(p => p.active && p.stock != null && p.stock <= 3 && (dashScope === 'all' || RC.isLuxury(p) === (dashScope === 'lux')));
   $('#main').innerHTML = `
     <div class="head"><div><h1>المبيعات</h1><div class="sub">الأرقام بتتحدّث لحظياً مع كل طلب جديد</div></div>
       <div class="seg scope-seg" id="scopeSeg">${[['all','الكل'],['reg','المتجر العادي'],['lux','Luxury']].map(([v,l]) => `<button data-scope="${v}" class="${v===dashScope?'on':''} ${v==='lux'?'en':''}">${l}</button>`).join('')}</div>
-      <div class="seg" id="rangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div></div>
+      <div class="seg" id="rangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div>${OFF_BTN}</div>
     <div class="kpis">
-      <div class="kpi"><span>إجمالي المبيعات</span><b>${money(rev)}</b><small>بدون الملغي</small></div>
+      <div class="kpi"><span>إجمالي المبيعات</span><b>${money(rev + offRev)}</b><small>${offRev ? `منها ${money(offRev)} من برا الموقع` : 'بدون الملغي'}</small></div>
       <div class="kpi"><span>عدد الطلبات</span><b>${valid.length}</b><small>${newN} جديد محتاج تأكيد</small></div>
       <div class="kpi"><span>متوسط الطلب</span><b>${money(valid.length ? rev / valid.length : 0)}</b><small>لكل طلب</small></div>
-      <div class="kpi"><span>قطع اتباعت</span><b>${units}</b><small>ساعة</small></div>
+      <div class="kpi"><span>قطع اتباعت</span><b>${units + offUnits}</b><small>ساعة</small></div>
       <div class="kpi"><span>اتسلم فعلاً</span><b>${money(delivered)}</b><small>فلوس محصّلة</small></div>
       <div class="kpi"><span>خصومات اتقدمت</span><b>${money(savings)}</b><small>فرق السعر المشطوب</small></div>
     </div>
@@ -1312,17 +1323,23 @@ function renderSettings() {
 }
 
 /* ---------- accounts: what each order really earned, expenses, returns · mirrored to a Google Sheet ---------- */
+let offs = [], OFF_OK = true;   // sales made outside the website (shop, Instagram DM, a friend…)
 let fins = {}, pcosts = {}, expenses = [], adminSet = {}, FIN_OK = true, accTab = 'sum', accScope = 'all', accMissing = false;
 const COUNTED = ['confirmed', 'shipped', 'delivered'];          // sold (money expected / collected)
 const EXP_CATS = ['إعلانات', 'تصوير', 'تغليف', 'اشتراكات', 'مرتبات', 'إيجار', 'أخرى'];
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg>';
 async function loadFin() {
-  const [f, c, x, a] = await Promise.all([sb.from('shop_order_fin').select('*'), sb.from('shop_product_costs').select('*'), sb.from('shop_expenses').select('*').order('spent_on', { ascending: false }).order('id', { ascending: false }), sb.from('shop_admin_settings').select('*').eq('id', 1).maybeSingle()]);
+  const [f, c, x, a, ofs] = await Promise.all([sb.from('shop_order_fin').select('*'), sb.from('shop_product_costs').select('*'), sb.from('shop_expenses').select('*').order('spent_on', { ascending: false }).order('id', { ascending: false }), sb.from('shop_admin_settings').select('*').eq('id', 1).maybeSingle(), sb.from('shop_offline_sales').select('*').order('sold_on', { ascending: false }).order('id', { ascending: false })]);
+  OFF_OK = !ofs.error; offs = ofs.data || [];
   FIN_OK = !f.error;
   fins = Object.fromEntries((f.data || []).map(r => [r.order_id, r]));
   pcosts = Object.fromEntries((c.data || []).map(r => [r.product_id, +r.cost]));
   expenses = x.data || []; adminSet = a.data || {};
 }
+// outside-the-website sales in a period / store scope (a typed name with no product counts as the regular store)
+const offIn = (since, scope) => offs.filter(x => new Date(x.sold_on + 'T23:59').getTime() >= since && (scope === 'all' || (() => { const p = products.find(q => q.id === x.product_id); return !!(p && RC.isLuxury(p)) === (scope === 'lux'); })()));
+const offNet = x => +x.price - +x.cost - (x.ship_payer === 'me' ? +x.ship_cost : 0);
+const OFF_BTN = '<button type="button" class="btn btn-amber off-btn" data-offsale><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/></svg>بيع خارج الموقع</button>';
 // net of one order: sold → sale − cost − shipping you paid · returned → − what the return cost you
 const orderNet = o => { const f = fins[o.id]; if (o.status === 'returned') return -(f ? +f.return_loss : 0); if (!COUNTED.includes(o.status) || !f) return 0; return +f.sale - +f.cost - (f.ship_payer === 'me' ? +f.ship_cost : 0); };
 const signMoney = n => (n < 0 ? '− ' : '') + money(Math.abs(n));
@@ -1407,6 +1424,64 @@ function finBox(o) {
     fins[o.id] = row; m.remove(); toast('اتسجلت التكاليف ✓ صافي الربح ' + signMoney(orderNet(o)), 'ok'); refreshOrderUI(o); sheetOrder(o); };
   setTimeout(() => { const first = m.querySelector('[data-pc]'); first && !first.value && first.focus(); }, 60);
 }
+// a sale made outside the website: pick one of our products or type any name, then its numbers
+function offlineBox() {
+  if (!OFF_OK) return toast('جدول البيع خارج الموقع مش متفعل في Supabase', 'err');
+  let payer = 'buyer', pid = null;
+  const today = new Date().toISOString().slice(0, 10), num = v => Math.max(0, +String(v).replace(/[^\d.]/g, '') || 0);
+  const m = document.createElement('div'); m.className = 'fin-m';
+  m.innerHTML = `<form class="fin-box off-box" novalidate>
+    <h3>بيع خارج الموقع</h3>
+    <p class="fsub">بيعة تمت في المحل أو على الواتساب أو أي مكان برا الموقع. بتدخل في المبيعات وصافي الربح.</p>
+    <div class="field"><label>المنتج</label><div class="cat off-pick" id="offPick"><input class="input" name="pname" autocomplete="off" placeholder="اختار ساعة من عندك أو اكتب أي اسم" required>
+      <button type="button" class="cat-tg" aria-label="عرض المنتجات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="cat-pop" role="listbox"></div></div>
+      <small class="off-hint" id="offHint"></small></div>
+    <div class="two"><div class="field"><label>العدد</label><input class="input" name="qty" inputmode="numeric" value="1"></div>
+      <div class="field"><label>التاريخ</label><input class="input en" type="date" name="sold_on" value="${today}"></div></div>
+    <div class="two"><div class="field"><label>سعر البيع (للقطعة)</label><input class="input" name="price" inputmode="decimal" placeholder="0"></div>
+      <div class="field"><label>تكلفة الساعة (للقطعة)</label><input class="input" name="cost" inputmode="decimal" placeholder="اشتريتها بكام"></div></div>
+    <div class="field"><label>تكلفة الشحن</label><input class="input" name="ship" inputmode="decimal" placeholder="0 لو مفيش شحن"></div>
+    <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button></div></div>
+    <div class="two"><div class="field"><label>مين اللي باعها <small style="color:var(--muted-2);font-weight:400">(اختياري)</small></label><input class="input" name="seller" placeholder="اسم البائع" list="offSellers"><datalist id="offSellers">${[...new Set(offs.map(x => x.seller).filter(Boolean))].map(x => `<option value="${esc(x)}">`).join('')}</datalist></div>
+      <div class="field"><label>ملاحظة <small style="color:var(--muted-2);font-weight:400">(اختياري)</small></label><input class="input" name="note" placeholder="مثلاً: اتباعت في المحل"></div></div>
+    <label class="check off-stock" hidden><input type="checkbox" name="stock" checked> <span>اخصمها من المخزون</span></label>
+    <div class="fin-calc" id="offCalc"></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ البيعة</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m);
+  const form = m.querySelector('form'), box = m.querySelector('#offPick'), inp = form.elements.pname, pop = box.querySelector('.cat-pop');
+  const calc = () => { const q = Math.max(1, Math.round(num(form.qty.value)) || 1), pr = num(form.price.value) * q, co = num(form.cost.value) * q, sh = num(form.ship.value), net = pr - co - (payer === 'me' ? sh : 0);
+    m.querySelectorAll('[data-pay]').forEach(b => b.classList.toggle('on', b.dataset.pay === payer));
+    m.querySelector('#offCalc').innerHTML = `<div><span>سعر البيع${q > 1 ? ` (${q} قطع)` : ''}</span><b>${money(pr)}</b></div><div><span>− تكلفة الساعة</span><b>${money(co)}</b></div><div><span>− الشحن ${payer === 'me' ? '(على حسابك)' : '(على المشتري، مش بيتخصم)'}</span><b>${money(payer === 'me' ? sh : 0)}</b></div><div class="net"><span>صافي الربح</span><b class="${net < 0 ? 'neg' : ''}">${signMoney(net)}</b></div>`;
+    return { q, pr, co, sh }; };
+  const pick = p => { pid = p ? p.id : null; m.querySelector('.off-stock').hidden = !(p && (p.stock != null || p.shown_left != null));
+    m.querySelector('#offHint').textContent = p ? `من منتجاتك${p.stock != null ? ` · في المخزون ${p.stock}` : ''}` : (inp.value.trim() ? 'اسم مكتوب (مش من منتجات الموقع)' : '');
+    if (p) { inp.value = p.name; if (!form.price.value) form.price.value = finalPrice(p); if (!form.cost.value && pcosts[p.id] != null) form.cost.value = pcosts[p.id]; } calc(); };
+  const fill = () => { const q = inp.value.trim().toLowerCase(), list = products.filter(p => !q || p.name.toLowerCase().includes(q)).slice(0, 40);
+    pop.innerHTML = list.map(p => `<button type="button" data-op="${p.id}" class="off-opt"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><span>${esc(p.name)}</span><b class="en">${money(finalPrice(p))}</b></button>`).join('') || '<div class="off-none">مفيش منتج بالاسم ده · هيتسجل بالاسم اللي كتبته</div>'; };
+  const open = v => { if (v) fill(); box.classList.toggle('open', v); };
+  inp.onfocus = () => open(true); inp.oninput = () => { pid = null; open(true); pick(products.find(p => p.name.trim().toLowerCase() === inp.value.trim().toLowerCase()) || null); };
+  box.querySelector('.cat-tg').onclick = () => { open(!box.classList.contains('open')); inp.focus(); };
+  pop.onclick = e => { const b = e.target.closest('[data-op]'); if (!b) return; pick(products.find(p => p.id === +b.dataset.op)); open(false); form.price.focus(); };
+  m.addEventListener('input', e => { if (e.target !== inp) calc(); });
+  m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay; calc(); } if (!box.contains(e.target)) open(false); if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  calc(); setTimeout(() => inp.focus(), 60);
+  form.onsubmit = async e => { e.preventDefault(); const name = inp.value.trim(), v = calc(), btn = form.querySelector('[type=submit]');
+    if (!name) { inp.focus(); return toast('اختار المنتج أو اكتب اسمه', 'err'); }
+    if (!v.pr) { form.price.focus(); return toast('اكتب سعر البيع', 'err'); }
+    btn.disabled = true;
+    const row = { sold_on: form.sold_on.value || today, product_id: pid, name, qty: v.q, price: v.pr, cost: v.co, ship_cost: v.sh, ship_payer: payer, seller: form.seller.value.trim() || null, note: form.note.value.trim() || null };
+    const { data, error } = await sb.from('shop_offline_sales').insert(row).select().single(); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
+    offs.unshift(data);
+    if (pid && num(form.cost.value)) { await sb.from('shop_product_costs').upsert({ product_id: pid, cost: num(form.cost.value), updated_at: new Date().toISOString() }); pcosts[pid] = num(form.cost.value); }
+    const p = pid && products.find(x => x.id === pid);
+    if (p && form.stock.checked && !m.querySelector('.off-stock').hidden) {
+      const upd = {}; if (p.stock != null) upd.stock = Math.max(0, +p.stock - v.q); if (COLS.show_left && p.shown_left != null) upd.shown_left = Math.max(0, +p.shown_left - v.q);
+      if (Object.keys(upd).length) { const { error: se } = await sb.from('shop_products').update(upd).eq('id', p.id); if (!se) Object.assign(p, upd); }
+    }
+    m.remove(); toast('اتسجلت البيعة ✓ صافي الربح ' + signMoney(offNet(data)), 'ok');
+    if (tab === 'dash') renderDash(); else if (tab === 'accounts') renderAccounts(); };
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-offsale]')) offlineBox(); });
 // returned order: the pieces already went back to stock; log what the trip cost
 function returnBox(o) {
   if (!needFinTable()) return;
@@ -1452,27 +1527,29 @@ function renderAccounts() {
   const sales = sum(withFin, o => +fins[o.id].sale), cogs = sum(withFin, o => +fins[o.id].cost);
   const shipMe = sum(withFin, o => fins[o.id].ship_payer === 'me' ? +fins[o.id].ship_cost : 0);
   const retLoss = sum(rets, o => fins[o.id] ? +fins[o.id].return_loss : 0);
+  const OFF = offIn(since, accScope), offSales = OFF.reduce((s, x) => s + +x.price, 0), offCost = OFF.reduce((s, x) => s + +x.cost, 0), offShip = OFF.reduce((s, x) => s + (x.ship_payer === 'me' ? +x.ship_cost : 0), 0);
   const expIn = accScope === 'all' ? expenses.filter(x => new Date(x.spent_on).getTime() >= since - 864e5) : [];
   const expSum = expIn.reduce((s, x) => s + +x.amount, 0);
-  const net = sales - cogs - shipMe - retLoss - expSum, margin = sales ? net / sales * 100 : 0;
+  const allSales = sales + offSales, allCogs = cogs + offCost, allShip = shipMe + offShip;
+  const net = allSales - allCogs - allShip - retLoss - expSum, margin = allSales ? net / allSales * 100 : 0;
   const head = `<div class="head"><div><h1>الحسابات</h1><div class="sub">كل جنيه داخل وخارج — والنتيجة صافي ربح حقيقي</div></div>
       <div class="seg" id="accScopeSeg">${[['all','الكل'],['reg','المتجر العادي'],['lux','Luxury']].map(([v,l]) => `<button data-as="${v}" class="${v===accScope?'on':''} ${v==='lux'?'en':''}">${l}</button>`).join('')}</div>
       <div class="seg" id="accRangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div>
-      <button type="button" class="sheet-btn ${accTab === 'sheet' ? 'on' : ''}" id="sheetTab"><i class="${sheetOn() ? 'ok' : ''}"></i>Google Sheet</button></div>
+      ${OFF_BTN}<button type="button" class="sheet-btn ${accTab === 'sheet' ? 'on' : ''}" id="sheetTab"><i class="${sheetOn() ? 'ok' : ''}"></i>Google Sheet</button></div>
     ${FIN_OK ? '' : '<div class="warn-box">جداول الحسابات مش متفعلة في Supabase.</div>'}
-    <div class="acc-tabs" id="accTabs">${[['sum','الملخص وصافي الربح'],['orders','ربح كل أوردر'],['exp','المصاريف'],['ret','المرتجعات']].map(([k,l]) => `<button data-at="${k}" class="${k===accTab?'on':''}">${l}</button>`).join('')}</div>`;
+    <div class="acc-tabs" id="accTabs">${[['sum','الملخص وصافي الربح'],['orders','ربح كل أوردر'],['off','بيع خارج الموقع'],['exp','المصاريف'],['ret','المرتجعات']].map(([k,l]) => `<button data-at="${k}" class="${k===accTab?'on':''}">${l}</button>`).join('')}</div>`;
   let body = '';
   if (accTab === 'sum') {
-    const flow = [['مبيعات المنتجات', sales, ''], ['− تكلفة البضاعة', cogs, 'minus'], ['− الشحن على حسابك', shipMe, 'minus'], ['− خسارة المرتجعات', retLoss, 'minus'], ['− المصاريف', expSum, 'minus']];
-    const mx = Math.max(1, sales, ...flow.map(x => x[1]));
+    const flow = [['مبيعات الموقع', sales, ''], ...(offSales ? [['مبيعات خارج الموقع', offSales, '']] : []), ['− تكلفة البضاعة', allCogs, 'minus'], ['− الشحن على حسابك', allShip, 'minus'], ['− خسارة المرتجعات', retLoss, 'minus'], ['− المصاريف', expSum, 'minus']];
+    const mx = Math.max(1, allSales, ...flow.map(x => x[1]));
     const byCat = [...new Set([...EXP_CATS, ...expIn.map(x => x.category)])].map(c => [c, expIn.filter(x => x.category === c).reduce((s, x) => s + +x.amount, 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
     const cmx = byCat[0] ? byCat[0][1] : 1;
     body = `${missing.length ? `<div class="warn-box"><span><b>${missing.length} طلب</b> متأكد من غير تكاليف، فصافي الربح لسه ناقص.</span><button class="btn btn-sm btn-amber" id="goMissing">سجّل التكاليف</button></div>` : ''}
     <div class="kpis">
       <div class="kpi net ${net < 0 ? 'neg' : ''}"><span>صافي الربح</span><b>${signMoney(net)}</b><small>بعد كل حاجة</small></div>
-      <div class="kpi"><span>إجمالي المبيعات</span><b>${money(sales)}</b><small>${withFin.length} طلب متسجل</small></div>
-      <div class="kpi"><span>تكلفة البضاعة</span><b class="minus">${money(cogs)}</b><small>سعر الشراء</small></div>
-      <div class="kpi"><span>الشحن على حسابك</span><b class="minus">${money(shipMe)}</b><small>اللي اتخصم من الربح</small></div>
+      <div class="kpi"><span>إجمالي المبيعات</span><b>${money(allSales)}</b><small>${withFin.length} طلب متسجل${OFF.length ? ` + ${OFF.length} بيعة برا الموقع` : ''}</small></div>
+      <div class="kpi"><span>تكلفة البضاعة</span><b class="minus">${money(allCogs)}</b><small>سعر الشراء</small></div>
+      <div class="kpi"><span>الشحن على حسابك</span><b class="minus">${money(allShip)}</b><small>اللي اتخصم من الربح</small></div>
       <div class="kpi"><span>المصاريف</span><b class="minus">${money(expSum)}</b><small>${accScope === 'all' ? 'إعلانات وتصوير وغيره' : 'بتتحسب في «الكل» بس'}</small></div>
       <div class="kpi"><span>هامش الربح</span><b>${margin.toFixed(1)}%</b><small>من كل ١٠٠ جنيه</small></div>
     </div>
@@ -1497,6 +1574,11 @@ function renderAccounts() {
         <td class="n">${f ? money(f.sale) : '—'}</td><td class="n">${f ? money(f.cost) : '—'}</td><td class="n">${f ? `${money(f.ship_cost)} <small style="color:var(--muted)">${f.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small>` : '—'}</td>
         <td class="n">${o.status === 'returned' ? `<span class="neg">${signMoney(n)}</span>` : f ? `<span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span>` : '<span class="miss">مش متسجل</span>'}</td>
         <td><button class="btn btn-sm ${f ? 'btn-ghost' : 'btn-amber'}" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل التكاليف'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش طلبات متأكدة في الفترة دي.</div>'}</div>`;
+  } else if (accTab === 'off') {
+    body = `<div class="panel scroll-x" style="padding:6px 14px">${!OFF_OK ? '<div class="empty">جدول البيع خارج الموقع مش متفعل في Supabase.</div>' : OFF.length ? `<table class="atable" style="min-width:760px"><thead><tr><th>التاريخ</th><th>المنتج</th><th>البائع</th><th>البيع</th><th>التكلفة</th><th>الشحن</th><th>صافي الربح</th><th></th></tr></thead><tbody>
+      ${OFF.map(x => { const n = offNet(x); return `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.sold_on + 'T00:00')}</span></td><td><b>${esc(x.name)}</b>${+x.qty > 1 ? ` <small style="color:var(--muted)">× ${x.qty}</small>` : ''}${x.note ? `<div style="color:var(--muted-2);font-size:11.5px">${esc(x.note)}</div>` : ''}</td><td>${x.seller ? esc(x.seller) : '<span style="color:var(--muted-2)">—</span>'}</td>
+        <td class="n">${money(x.price)}</td><td class="n">${money(x.cost)}</td><td class="n">${money(x.ship_cost)} <small style="color:var(--muted)">${x.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small></td>
+        <td class="n"><span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span></td><td><button class="btn btn-sm btn-ghost" data-offdel="${x.id}">حذف</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش بيع خارج الموقع في الفترة دي. دوس «بيع خارج الموقع» فوق عشان تسجّل بيعة.</div>'}</div>`;
   } else if (accTab === 'exp') {
     const today = new Date().toISOString().slice(0, 10);
     body = `<form class="panel exp-form" id="expForm"><div class="field"><label>التاريخ</label><input class="input en" type="date" name="spent_on" value="${today}" required></div>
@@ -1511,6 +1593,9 @@ function renderAccounts() {
       ${rets.map(o => { const f = fins[o.id]; return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
   }
   $('#main').innerHTML = head + body;
+  $('#main').querySelectorAll('[data-offdel]').forEach(b => b.onclick = async () => { const id = +b.dataset.offdel; if (!(await confirmBox('تحذف البيعة دي من الحسابات؟', 'حذف'))) return;
+    const { error } = await sb.from('shop_offline_sales').delete().eq('id', id); if (error) return toast(error.message, 'err');
+    offs = offs.filter(x => x.id !== id); toast('اتحذفت'); renderAccounts(); });
   $('#sheetTab').onclick = () => { accTab = accTab === 'sheet' ? 'sum' : 'sheet'; renderAccounts(); };
   if ($('#sheetForm')) {
   $('#sheetForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
