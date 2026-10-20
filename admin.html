@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020164239">
+<link rel="stylesheet" href="assets/base.css?v=20261020164547">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -539,7 +539,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020164239"></script>
+<script src="assets/config.js?v=20261020164547"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -939,7 +939,7 @@ function openEditor(id, init) {
   // a new product goes last in its own section (regular and Luxury are numbered separately) until the admin types a number
   if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
   openTexts(draft);
-  renderEditor(); $('#editor').scrollTop = 0;
+  $('#editor').innerHTML = ''; renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
 }
 function closeEditor() { $('#editor').classList.remove('on'); $('#overlay').classList.remove('on'); }
@@ -947,7 +947,8 @@ $('#overlay').onclick = closeEditor;
 addEventListener('keydown', e => { if (e.key === 'Escape') closeEditor(); });
 function curOff() { const pr = +draft.price, sp = draft.sale_price == null || draft.sale_price === '' ? null : +draft.sale_price; return pr && sp != null && sp < pr ? Math.round((1 - sp / pr) * 100) : 0; }
 function renderEditor() {
-  const d = draft, off = curOff();
+  // re-drawing (delete a colour, move a photo…) keeps the page where it was
+  const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
   $('#editor').innerHTML = `
     <div class="ed-head"><h3>${d.id ? 'تعديل المنتج' : 'منتج جديد'}${d.id ? ` <a href="${RC.productUrl(d)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:500;color:var(--accent);margin-inline-start:8px">فتح صفحة المنتج ↗</a>` : ''}</h3><button class="icon-btn" id="edClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="ed-body"><div class="ed-col ed-main">
@@ -1079,6 +1080,7 @@ function renderEditor() {
   $('#f_price').oninput = () => { const v = +$('#f_pct').value, pr = +$('#f_price').value; if (v && pr) $('#f_sale').value = Math.round(pr * (1 - v/100)); updatePreview(); };
   $('#saveP').onclick = saveProduct;
   if ($('#delP')) $('#delP').onclick = deleteProduct;
+  if (keepY) $('#editor .ed-body').scrollTop = keepY;
 }
 function updatePreview() {
   const pr = +$('#f_price').value || 0, spv = $('#f_sale').value, sp = spv === '' ? null : +spv;
