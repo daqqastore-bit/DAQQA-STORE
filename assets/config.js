@@ -10,6 +10,7 @@ window.RC = {
 };
 RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' ' + RC.currency;
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
+RC.onOffer = (p) => !!(p && p.on_offer);
 RC.discountPct = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Math.round((1 - p.sale_price / p.price) * 100) : 0;
 RC.esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // store sections — p.kind: 'watches' | 'glasses' | 'accessories' (missing → watches)
@@ -102,7 +103,10 @@ RC.socialLabel = (s) => {
   if (/\.php$|=/.test(last)) return t.name;
   return '@' + last.replace(/^@/, '');
 };
-RC.socials = (settings) => (Array.isArray(settings && settings.socials) ? settings.socials : []).filter(s => RC.socialHref(s));
+// in the admin's order; the WhatsApp marked «main» goes ahead of the other WhatsApps (orders and the top bar use it)
+RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socials) ? settings.socials : []).filter(s => RC.socialHref(s));
+  const m = l.findIndex(s => s.type === 'whatsapp' && s.main), f = l.findIndex(s => s.type === 'whatsapp');
+  if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261020144607';
+RC.build = '20261020145020';

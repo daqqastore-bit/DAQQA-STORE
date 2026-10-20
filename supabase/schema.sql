@@ -67,6 +67,7 @@ alter table public.shop_settings add column if not exists shipping_zones jsonb n
 alter table public.shop_settings add column if not exists web_orders_off boolean not null default false;
 alter table public.shop_settings add column if not exists ship_govs jsonb;   -- governorates the shop ships to (null = all)
 alter table public.shop_products add column if not exists cover_only boolean not null default false;   -- first photo is a card cover only
+alter table public.shop_products add column if not exists on_offer boolean not null default false;     -- shows in the "العروض" tab
 alter table public.shop_products add column if not exists shipping_note text;   -- per-product shipping text (null = default)
 alter table public.shop_settings add column if not exists socials jsonb not null default '[]'::jsonb;  -- [{type: instagram|tiktok|whatsapp|phone|…, value}]  -- true = checkout sends the order on WhatsApp instead
 insert into public.shop_settings (id) values (1) on conflict do nothing;

@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020144607">
+<link rel="stylesheet" href="assets/base.css?v=20261020145020">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -241,7 +241,8 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .editor{position:fixed;inset:0;width:100%;background:var(--bg);z-index:90;transform:translateY(24px);opacity:0;visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s .35s;display:flex;flex-direction:column}
 .editor.on{transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s;visibility:visible;opacity:1}
 .editor .ed-head,.editor .ed-foot{background:var(--bg-2)}
-.ed-body{display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start;gap:22px!important;width:100%;max-width:1240px;margin:0 auto;padding:26px 28px 40px!important}
+.ed-body{display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start;gap:22px!important;width:100%;padding:26px max(28px,calc((100% - 1184px) / 2)) 40px!important}
+html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .ed-col{display:flex;flex-direction:column;gap:18px;min-width:0}
 .ed-side{position:sticky;top:0}
 .ed-sec{background:var(--bg-2);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
@@ -268,7 +269,13 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @media (prefers-reduced-motion:reduce){#main.pg-in>*{animation:none}}
 .set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .field .hint{display:block;margin-top:6px;font-size:12px;line-height:1.7;color:var(--muted)}
-.soc-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.soc-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);transition:background .15s,opacity .15s}
+.soc-row.dragging{opacity:.4}.soc-row.over{background:color-mix(in srgb,var(--amber) 10%,transparent);border-radius:12px}
+.soc-drag{flex:none;align-self:center;width:22px;color:var(--muted-2);cursor:grab}.soc-drag svg{width:18px;height:18px}
+.soc-mv{flex:none;align-self:center;display:flex;flex-direction:column;gap:2px}
+.soc-mv button{width:26px;height:20px;border-radius:6px;border:1px solid var(--line);font-size:9px;color:var(--muted)}.soc-mv button:disabled{opacity:.3}
+.soc-main{margin-inline-start:10px;padding:3px 10px;border-radius:99px;border:1px solid var(--line-2);font-size:11.5px;font-weight:600;color:var(--muted)}
+.soc-main.on{background:#25D366;border-color:#25D366;color:#fff}
 .soc-row .field{flex:1;margin:0}.soc-row label small{color:var(--muted);font-weight:400;margin-inline-start:4px}
 .soc-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);margin-bottom:2px}
 .soc-ic svg{width:22px;height:22px}
@@ -507,7 +514,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020144607"></script>
+<script src="assets/config.js?v=20261020145020"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -554,7 +561,7 @@ const SCOPES = {
 let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { shipping_note: false, cover_only: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
+const COLS = { shipping_note: false, cover_only: false, on_offer: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -936,6 +943,10 @@ function renderEditor() {
         <div class="two"><div class="field"><label>السعر بعد الخصم</label><input class="input en" id="f_sale" inputmode="decimal" value="${d.sale_price == null ? '' : esc(d.sale_price)}" placeholder="فاضي = بدون خصم"></div>
           <div class="field"><label>نسبة الخصم %</label><input class="input en" id="f_pct" inputmode="numeric" value="${off || ''}" placeholder="0"></div></div>
         <div class="preview-price" id="pv"></div>
+        <label class="cov-sw" ${COLS.on_offer ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_offer" ${d.on_offer?'checked':''}><span class="tg" aria-hidden="true"></span>
+          <span class="tx"><b>يظهر في "العروض" <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
+            <small class="st-on">المنتج هيظهر في تبويب العروض في الموقع.</small>
+            <small class="st-off">مش هيظهر في العروض. التبويب نفسه بيختفي لو مفيش ولا منتج متفعّل.</small></span></label>
       </div></section>
       <section class="ed-sec"><h4>المخزون</h4>
       <div class="stock-box">
@@ -1020,7 +1031,7 @@ const composeDesc = d => { const about = String(d._about || '').trim();
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, _about: $('#f_about').value, _ship: $('#f_ship').value, _specs: [...document.querySelectorAll('#specRows .spec-row')].map(r => [r.querySelector('[data-sk]').value, r.querySelector('[data-sv]').value]),
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 // a photo dropped off-target must not make the browser open it and lose the unsaved product
@@ -1117,6 +1128,7 @@ async function saveProduct() {
   const row = { name: d.name, brand: d.brand, category: d.category, description: composeDesc(d), price, sale_price: sale, images: d.images,
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
   if (COLS.cover_only) row.cover_only = !!d.cover_only;
+  if (COLS.on_offer) row.on_offer = !!d.on_offer;
   if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
   if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
   const b = $('#saveP'); b.disabled = true; b.textContent = 'جاري الحفظ...';
@@ -1185,8 +1197,10 @@ let setTab = 'general', socDraft = [];
 const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button></div>`;
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
-const socRow = (x, i) => { const t = RC.SOCIAL[x.type]; return `<div class="soc-row" data-si="${i}"><span class="soc-ic" style="--sc:${t.color}">${t.icon}</span>
-    <div class="field"><label>${esc(t.name)}${t.kind === 'phone' ? ' <small>رقم</small>' : t.kind === 'email' ? ' <small>إيميل</small>' : ' <small>لينك أو اسم الحساب</small>'}</label>
+const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+    <span class="soc-mv"><button type="button" data-smv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-smv="${i}" data-to="${i + 1}" ${i < n - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
+    <span class="soc-ic" style="--sc:${t.color}">${t.icon}</span>
+    <div class="field"><label>${esc(t.name)}${t.kind === 'phone' ? ' <small>رقم</small>' : t.kind === 'email' ? ' <small>إيميل</small>' : ' <small>لينك أو اسم الحساب</small>'}${x.type === 'whatsapp' ? `<button type="button" class="soc-main ${x.main ? 'on' : ''}" data-smain="${i}">${x.main ? '★ الأساسي — الطلبات بتتبعت عليه' : 'خليه الأساسي'}</button>` : ''}</label>
       <input class="input en" data-sv="${i}" value="${esc(x.value || '')}" placeholder="${esc(t.ph)}" dir="ltr" ${t.kind === 'phone' ? 'inputmode="tel"' : t.kind === 'email' ? 'inputmode="email"' : 'inputmode="url"'} required></div>
     <button type="button" class="soc-del" data-sdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`; };
 const socErr = x => { const t = RC.SOCIAL[x.type], v = String(x.value || '').trim();
@@ -1221,12 +1235,22 @@ function renderSocial() {
     const a = e.target.closest('[data-sadd]'), d = e.target.closest('[data-sdel]');
     if (a) { a.setAttribute('aria-pressed', a.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); syncPick(); }
     if (d) { socDraft.splice(+d.dataset.sdel, 1); draw(); }
+    const mn = e.target.closest('[data-smain]'); if (mn) { const i = +mn.dataset.smain; socDraft.forEach((x, k) => { if (x.type === 'whatsapp') x.main = k === i; }); draw(); }
+    const mv = e.target.closest('[data-smv]'); if (mv) moveSoc(+mv.dataset.smv, +mv.dataset.to);
   };
+  // order = how they show on the site; drag a row (or ▲▼)
+  const moveSoc = (from, to) => { if (to < 0 || to >= socDraft.length || from === to) return; socDraft.splice(to, 0, socDraft.splice(from, 1)[0]); draw(); };
+  let sDrag = null; const list = $('#socList');
+  list.addEventListener('dragstart', e => { const r = e.target.closest('[data-si]'); if (!r || /^(INPUT|BUTTON)$/.test(e.target.tagName)) return; sDrag = +r.dataset.si; r.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ''); });
+  list.addEventListener('dragend', () => { sDrag = null; list.querySelectorAll('.soc-row').forEach(x => x.classList.remove('dragging', 'over')); });
+  list.addEventListener('dragover', e => { if (sDrag == null) return; e.preventDefault(); const r = e.target.closest('[data-si]'); list.querySelectorAll('.soc-row.over').forEach(x => x !== r && x.classList.remove('over')); if (r && +r.dataset.si !== sDrag) r.classList.add('over'); });
+  list.addEventListener('drop', e => { if (sDrag == null) return; e.preventDefault(); const r = e.target.closest('[data-si]'), from = sDrag; sDrag = null; if (r) moveSoc(from, +r.dataset.si); });
   $('#socForm').onsubmit = async e => { e.preventDefault(); let bad = null;
     socDraft.forEach((x, i) => { const msg = socErr(x), inp = $(`[data-sv="${i}"]`), f = inp.closest('.field'); f.classList.toggle('bad', !!msg); let m = f.querySelector('.f-err');
       if (msg) { if (!m) { m = document.createElement('small'); m.className = 'f-err'; f.appendChild(m); } m.textContent = msg; bad = bad || inp; } else if (m) m.remove(); });
     if (bad) { bad.focus(); return toast('في خانة ناقصة أو مش مظبوطة', 'err'); }
-    const list = socDraft.map(x => ({ type: x.type, value: String(x.value).trim() }));
+    const was = socDraft.filter(x => x.type === 'whatsapp'); if (was.length && !was.some(x => x.main)) was[0].main = true;   // there is always one main WhatsApp
+    const list = socDraft.map(x => ({ type: x.type, value: String(x.value).trim(), ...(x.type === 'whatsapp' && x.main ? { main: true } : {}) }));
     const {error} = await sb.from('shop_settings').update({ socials: list, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/socials/.test(error.message) ? 'السوشيال محتاج تحديث في Supabase' : error.message, 'err');
     settings.socials = list; toast('اتحفظت الحسابات ✓', 'ok'); };
