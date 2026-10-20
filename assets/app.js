@@ -132,7 +132,7 @@
       <div class="topbar" id="topbar" hidden></div>
       <header class="nav-bar"><div class="wrap nav">
         <a href="./" class="brand" aria-label="DAQQA — الرئيسية"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
-        <nav class="links" aria-label="القائمة">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" class="${k === active ? 'on' : ''}">${l}</a>`).join('')}${pagesMenu(active)}</nav>
+        <nav class="links" aria-label="القائمة">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" class="${k === active ? 'on' : ''}" ${RC.kinds[k] ? 'hidden' : ''}>${l}</a>`).join('')}${pagesMenu(active)}</nav>
         <a href="luxury.html" class="lux-btn ${active === 'luxury' ? 'on' : ''}" data-page="luxury" hidden aria-label="DAQQA Privé — Luxury"><i aria-hidden="true"></i><span class="en">LUXURY</span></a>
         <div class="actions">
           <button class="icon-btn theme-btn" id="themeBtn" aria-label="تغيير الوضع"><span class="i-sun">${ICON.sun}</span><span class="i-moon">${ICON.moon}</span></button>
@@ -143,7 +143,7 @@
           <button class="icon-btn menu-btn" id="menuBtn" aria-label="القائمة">${ICON.menu}</button>
         </div></div></header>
       <div class="sheet" id="menuSheet" role="dialog" aria-label="القائمة"><div class="wrap sheet-head"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
-        <div class="wrap sheet-body"><a href="luxury.html" class="lux-row" data-page="luxury" hidden data-close><span class="en">LUXURY</span><small class="en">DAQQA PRIVÉ COLLECTION</small></a><nav class="menu-list">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" data-close>${l}<span class="en">${RC.kinds[k] ? RC.kinds[k].en.toUpperCase() : '→'}</span></a>`).join('')}<div class="menu-pages" data-pages hidden><small class="en">PAGES</small>${Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a href="${v.href}" data-page="${k}" hidden class="${k === 'luxury' ? 'lux' : ''}" data-close>${v.ar}<span class="en">${v.en.toUpperCase()}</span></a>`).join('')}</div><div class="menu-tools"><button type="button" id="mFav">${ICON.heart}<span>المفضلة</span></button><button type="button" id="mTheme"><span class="i-sun">${ICON.sun}</span><span class="i-moon">${ICON.moon}</span><span>تغيير الوضع</span></button><button type="button" id="mSearch">${ICON.search}<span>بحث</span></button><button type="button" id="mAcc">${ICON.user}<span>حسابي</span></button></div></nav></div></div>
+        <div class="wrap sheet-body"><a href="luxury.html" class="lux-row" data-page="luxury" hidden data-close><span class="en">LUXURY</span><small class="en">DAQQA PRIVÉ COLLECTION</small></a><nav class="menu-list">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" data-close ${RC.kinds[k] ? 'hidden' : ''}>${l}<span class="en">${RC.kinds[k] ? RC.kinds[k].en.toUpperCase() : '→'}</span></a>`).join('')}<div class="menu-pages" data-pages hidden><small class="en">PAGES</small>${Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a href="${v.href}" data-page="${k}" hidden class="${k === 'luxury' ? 'lux' : ''}" data-close>${v.ar}<span class="en">${v.en.toUpperCase()}</span></a>`).join('')}</div><div class="menu-tools"><button type="button" id="mFav">${ICON.heart}<span>المفضلة</span></button><button type="button" id="mTheme"><span class="i-sun">${ICON.sun}</span><span class="i-moon">${ICON.moon}</span><span>تغيير الوضع</span></button><button type="button" id="mSearch">${ICON.search}<span>بحث</span></button><button type="button" id="mAcc">${ICON.user}<span>حسابي</span></button></div></nav></div></div>
       <div class="sheet" id="favSheet" role="dialog" aria-label="المفضلة"><div class="wrap sheet-head"><b style="font-size:18px">المفضلة</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="wrap sheet-body"><div class="search-res" id="favRes"></div></div></div>
       <div class="sheet" id="accSheet" role="dialog" aria-label="حسابي"><div class="wrap sheet-head"><b style="font-size:18px" id="accTitle">حسابي</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="wrap sheet-body"><div class="acc" id="accBody"></div></div></div>
       <div class="sheet" id="searchSheet" role="dialog" aria-label="بحث"><div class="wrap sheet-head"><b style="font-size:18px">بحث</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
@@ -153,7 +153,7 @@
       <div class="foot-grid">
         <div class="foot-brand"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
           <p id="ftAbout" hidden></p></div>
-        <div><h4 class="en">SHOP</h4><ul>${Object.entries(RC.kinds).map(([k, v]) => `<li data-kind="${k}"><a href="./#${k}">${v.ar}</a></li>`).join('')}</ul></div>
+        <div><h4 class="en">SHOP</h4><ul>${Object.entries(RC.kinds).map(([k, v]) => `<li data-kind="${k}" hidden><a href="./#${k}">${v.ar}</a></li>`).join('')}</ul></div>
         <div id="ftHelpBox" hidden><h4 class="en">HELP</h4><ul id="ftHelp"></ul></div>
         <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul></div>
       </div>
@@ -249,7 +249,10 @@
       x = e.clientX; y = e.clientY; ring.classList.add('on'); dot.classList.add('on');
       const t = e.target.closest ? e.target : document.body;
       const card = t.closest('.card'), act = t.closest('a, button, select, [role=tab], label'), txt = t.closest('input, textarea');
-      ring.classList.toggle('view', !!card && !t.closest('.add, .fav'));
+      // product photos on the product page get the same big ring, labelled for zoom
+      const pic = !card && !act && t.closest('.slide, .lxp-gal img, [data-zoom]');
+      const lbl = pic ? 'تكبير' : 'عرض'; if (ring.firstChild.textContent !== lbl) ring.firstChild.textContent = lbl;
+      ring.classList.toggle('view', !!pic || !!card && !t.closest('.add, .fav'));
       ring.classList.toggle('big', !card && !!act || (!!card && !!t.closest('.add, .fav')));
       ring.classList.toggle('txt', !!txt);
       // light that follows the mouse across each section background
@@ -293,17 +296,26 @@
   DQ.liveKinds = () => Object.keys(RC.kinds).filter(k => DQ.products.some(p => RC.kindOf(p) === k && !RC.isLuxury(p) && p.images && p.images.length));
   function syncKinds() { const live = DQ.liveKinds(); document.querySelectorAll('[data-kind]').forEach(el => { if (RC.kinds[el.dataset.kind]) el.hidden = !live.includes(el.dataset.kind); });
     const lp = DQ.livePages(); document.querySelectorAll('[data-page]').forEach(el => { el.hidden = !lp.includes(el.dataset.page); }); document.querySelectorAll('[data-pages]').forEach(el => { el.hidden = !lp.length; }); }
+  // the last good copy of products + settings is kept on the device, so a repeat visit opens at once (even on a slow line) and is refreshed right after
+  const CACHE = 'dq-data-v1';
+  DQ.readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c && Date.now() - c.t < 7 * 864e5 && Array.isArray(c.p) ? c : null; } catch (e) { return null; } };
+  const apply = (prods, sets) => {
+    // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
+    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x); DQ.settings = sets || {};
+    renderSocial();
+    renderCart(); renderSearch(''); syncKinds(); renderFavs();
+  };
+  DQ.useCache = c => { DQ.dataSig = c.sig; apply(c.p, c.s); };
   DQ.load = async () => {
     const [p, s] = await Promise.all([
       sb.from('shop_products').select('*').eq('active', true).order('sort').order('id'),
       sb.from('shop_settings').select('*').eq('id', 1).maybeSingle()
     ]);
     if (p.error) throw p.error;
-    // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
-    DQ.products = (p.data || []).map(x => x.stock == null ? { ...x, stock: 999 } : x); DQ.settings = s.data || {};
-
-    renderSocial();
-    renderCart(); renderSearch(''); syncKinds(); renderFavs();
+    const sig = JSON.stringify([p.data, s.data]), same = sig === DQ.dataSig; DQ.dataSig = sig;
+    try { localStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), sig, p: p.data || [], s: s.data || {} })); } catch (e) {}
+    apply(p.data, s.data);
+    return !same;
   };
 
   /* ---------- social accounts: top bar (with the announcement) + footer; accounts without a link are skipped ---------- */
@@ -868,6 +880,15 @@
   if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {}));
   DQ.start = async (active, onReady) => {
     if (!window.DQ_LOADER) intro(); chrome(active); mouseFx();
+    const c = DQ.readCache();
+    if (c) {
+      // open from the saved copy, then swap in the fresh data only if something changed
+      DQ.useCache(c); DQ._ready = onReady; onReady && onReady();
+      await cap(Promise.all([document.fonts ? document.fonts.ready : null, firstImages()]), 1500);
+      window.DQ_reveal(); live();
+      DQ.load().then(changed => { if (changed) { lastLive = 0; refreshNow(); } }).catch(e => console.error(e));
+      return;
+    }
     try { await cap(DQ.load(), 15000); } catch (e) { console.error(e); DQ.loadError = true; }
     DQ._ready = onReady; onReady && onReady();
     await cap(Promise.all([document.fonts ? document.fonts.ready : null, firstImages()]), 3500);
@@ -887,6 +908,8 @@
     try { DQ._ready && DQ._ready(); } catch (e) { console.error(e); }
     scrollTo(0, y); DQ.reveal();
   }
+  function refreshNow() { if (busy()) return setTimeout(refreshNow, 3000); const y = scrollY; if (coState === 'form' && $('#coSums')) return DQ.refreshCheckout();
+    try { DQ._ready && DQ._ready(); } catch (e) { console.error(e); } scrollTo(0, y); DQ.reveal(); }
   const soon = () => { clearTimeout(liveT); liveT = setTimeout(refreshData, 1200); };
   async function checkBuild() {
     if (!RC.build) return;

@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020150056">
+<link rel="stylesheet" href="assets/base.css?v=20261020150609">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -279,6 +279,18 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .soc-row .field{flex:1;margin:0}.soc-row label small{color:var(--muted);font-weight:400;margin-inline-start:4px}
 .soc-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);margin-bottom:2px}
 .soc-ic svg{width:22px;height:22px}
+.imgs .it > img{cursor:zoom-in}
+.iv{position:fixed;inset:0;z-index:300;background:rgba(10,8,6,.92);display:grid;place-items:center;animation:fmIn .2s ease}
+.iv-st{width:calc(100vw / var(--z) - 160px);height:calc(100vh / var(--z) - 120px);display:grid;place-items:center;overflow:hidden}
+.iv-st img{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in;transition:transform .3s cubic-bezier(.2,.7,.2,1);user-select:none}
+.iv.z .iv-st img{transform:scale(2.4);cursor:zoom-out}
+.iv-x{position:absolute;top:16px;left:16px;width:44px;height:44px;border-radius:50%;background:rgb(255 255 255/.1);color:#fff;font-size:26px}
+.iv-a{position:absolute;top:50%;margin-top:-24px;width:48px;height:48px;border-radius:50%;background:rgb(255 255 255/.1);color:#fff;font-size:28px;line-height:1}
+.iv-p{right:20px}.iv-nx{left:20px}.iv-x:hover,.iv-a:hover{background:rgb(255 255 255/.2)}
+.iv-n{position:absolute;top:26px;right:24px;color:#ddd;font-size:14px}
+.iv-h{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#aaa;font-size:12.5px}
+@media (max-width:600px){.iv-st{width:100vw;height:calc(100vh - 140px)}.iv-a{top:auto;bottom:50px}}
+.pk-part{display:flex;flex-direction:column;gap:14px}.pk-part[hidden]{display:none}
 .pk-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
 .pk-ics{display:flex;flex-wrap:wrap;gap:4px;max-width:190px;align-self:center}
 .pk-ics button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center}
@@ -524,7 +536,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020150056"></script>
+<script src="assets/config.js?v=20261020150609"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -893,6 +905,18 @@ function openTexts(d) {
 // the original file name rides in the storage path (…-abc123--my-photo.webp) so the photo list can show it
 const slugName = n => { const b = String(n || '').replace(/\.[^.]+$/, '').normalize('NFKD').replace(/[^\w-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 60); return b ? '--' + b : ''; };
 const imgName = (u, i) => { const f = decodeURIComponent(String(u).split('?')[0].split('/').pop() || ''), m = f.match(/--(.+)\.\w+$/); return m ? m[1] : /^\d{10,}-/.test(f) ? `صورة ${i + 1}` : f.replace(/\.\w+$/, '') || `صورة ${i + 1}`; };
+// big photo preview from the editor: click to zoom in (follows the mouse), arrows / ← → to flip, Esc to close
+function imgView(list, i) {
+  const m = document.createElement('div'); m.className = 'iv';
+  m.innerHTML = `<button type="button" class="iv-x" aria-label="قفل">×</button><div class="iv-st"><img alt=""></div><span class="iv-n en"></span>${list.length > 1 ? '<button type="button" class="iv-a iv-p" aria-label="السابقة">›</button><button type="button" class="iv-a iv-nx" aria-label="التالية">‹</button>' : ''}<small class="iv-h">دوس على الصورة عشان تقرّب</small>`;
+  const img = m.querySelector('img'), st = m.querySelector('.iv-st');
+  const show = k => { i = (k + list.length) % list.length; img.src = list[i]; m.classList.remove('z'); m.querySelector('.iv-n').textContent = `${i + 1} / ${list.length}`; };
+  const close = () => { m.remove(); removeEventListener('keydown', key, true); };
+  const key = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } else if (e.key === 'ArrowLeft') show(i + 1); else if (e.key === 'ArrowRight') show(i - 1); };
+  st.onmousemove = e => { const r = st.getBoundingClientRect(); img.style.transformOrigin = `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`; };
+  m.onclick = e => { if (e.target.closest('.iv-x') || e.target === m) return close(); if (e.target.closest('.iv-p')) return show(i - 1); if (e.target.closest('.iv-nx')) return show(i + 1); if (e.target === img) { st.onmousemove(e); m.classList.toggle('z'); } };
+  addEventListener('keydown', key, true); document.body.appendChild(m); show(i);
+}
 function openEditor(id, init) {
   const p = id ? products.find(x => x.id === id) : null;
   draft = p ? {...p, images: [...p.images], kind: RC.kindOf(p), colors: RC.colors(p)} : {kind: pKind !== 'all' ? pKind : 'watches', style:'', colors:[], name:'', brand:'DAQQA', category:'men', description:'', price:'', sale_price:null, images:[], stock:'', shown_left:'', featured:false, luxury:false, active:true};
@@ -1027,6 +1051,7 @@ function renderEditor() {
   zone.addEventListener('drop', e => { if (dragI == null) return; e.preventDefault(); e.stopImmediatePropagation(); const it = e.target.closest('[data-ii]'); const from = dragI; dragI = null; if (it) moveImg(from, +it.dataset.ii); }, true);
   $('#imgs').onchange = e => { const o = e.target.closest('[data-ord]'); if (!o) return; const n = Math.round(+o.value); if (!o.isConnected) return; if (!(n >= 1)) { o.value = +o.dataset.ord + 1; return; } moveImg(+o.dataset.ord, Math.min(n, draft.images.length) - 1); };
   $('#imgs').onkeydown = e => { if (e.key === 'Enter' && e.target.closest('[data-ord]')) { e.preventDefault(); e.target.blur(); } };
+  $('#imgs').addEventListener('click', e => { const im = e.target.closest('.it > img'); if (im) imgView(draft.images, +im.closest('[data-ii]').dataset.ii); });
   $('#imgs').onclick = e => { const mv = e.target.closest('[data-mv]'); if (mv) return moveImg(+mv.dataset.mv, +mv.dataset.to);
     const s = e.target.closest('[data-star]'), r = e.target.closest('[data-rmimg]');
     if (s) { syncDraft(); const i = +s.dataset.star; const [u] = draft.images.splice(i, 1); draft.images.unshift(u); renderEditor(); }
@@ -1215,7 +1240,7 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = 'general', socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت ونصوص</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button></div>`;
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
 const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
@@ -1290,17 +1315,17 @@ function renderPerks(s) {
     <input class="input" data-hv="${i}" value="${esc(h)}" placeholder="مثلاً: ضمان على الماكينة"><button type="button" class="soc-del" data-hdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`;
   const ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7"/></svg>';
   $('#main').innerHTML = `
-    <div class="head"><div><h1>الإعدادات</h1><div class="sub">الكروت اللي في صفحة المنتج والكلام اللي في الفوتر</div></div></div>
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">${setTab === 'footer' ? 'الكلام اللي في آخر الموقع' : 'الكروت اللي بتظهر في صفحة كل منتج'}</div></div></div>
     ${setTabs()}
     <form class="panel set-card" id="pkForm" novalidate>
-      <div class="set-h"><span class="set-ic">${ic}</span><div><h2>كروت صفحة المنتج</h2><small>اللي بتظهر تحت زرار الطلب (كاش عند الاستلام، شحن، استبدال...). لحد ${MAXC} كروت، ولو مسحتهم كلهم مش هيظهر حاجة.</small></div></div>
+      <div class="pk-part" ${setTab === 'footer' ? 'hidden' : ''}><div class="set-h"><span class="set-ic">${ic}</span><div><h2>كروت صفحة المنتج</h2><small>اللي بتظهر تحت زرار الطلب (كاش عند الاستلام، شحن، استبدال...). لحد ${MAXC} كروت، ولو مسحتهم كلهم مش هيظهر حاجة.</small></div></div>
       <div id="pkCards"></div>
-      <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddC">+ كارت</button></div>
-      <div class="set-h" style="margin-top:10px"><span class="set-ic">${ic}</span><div><h2>قائمة HELP في الفوتر</h2><small>السطور اللي تحت كلمة HELP في آخر الموقع.</small></div></div>
+      <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddC">+ كارت</button></div></div>
+      <div class="pk-part" ${setTab === 'footer' ? '' : 'hidden'}><div class="set-h"><span class="set-ic">${ic}</span><div><h2>قائمة HELP في الفوتر</h2><small>السطور اللي تحت كلمة HELP في آخر الموقع.</small></div></div>
       <div id="pkHelp"></div>
       <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddH">+ سطر</button></div>
       <div class="set-h" style="margin-top:10px"><span class="set-ic">${ic}</span><div><h2>وصف المتجر في الفوتر</h2><small>الكلام اللي تحت لوجو DAQQA في آخر الموقع. فاضي = مش هيظهر.</small></div></div>
-      <textarea class="input" id="pkAbout" rows="3" dir="rtl">${esc(P.about)}</textarea>
+      <textarea class="input" id="pkAbout" rows="3" dir="rtl">${esc(P.about)}</textarea></div>
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="pkReset">رجّع الكلام الأصلي</button><button class="btn btn-primary" type="submit">حفظ</button></div>
     </form>`;
   bindSetTabs();
@@ -1318,7 +1343,7 @@ function renderPerks(s) {
     else if (d.cdel != null) { cards.splice(+d.cdel, 1); draw(); } else if (d.hdel != null) { help.splice(+d.hdel, 1); draw(); }
     else if (b.id === 'pkAddC' && cards.length < MAXC) { cards.push({ icon: 'star', t: '', s: '' }); draw(); $(`[data-ct="${cards.length - 1}"]`).focus(); }
     else if (b.id === 'pkAddH' && help.length < MAXH) { help.push(''); draw(); $(`[data-hv="${help.length - 1}"]`).focus(); }
-    else if (b.id === 'pkReset') { const D = RC.PERKS_DEF; cards.splice(0, cards.length, ...D.cards.map(c => ({ ...c }))); help.splice(0, help.length, ...D.help); $('#pkAbout').value = D.about; draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
+    else if (b.id === 'pkReset') { const D = RC.PERKS_DEF; if (setTab === 'footer') { help.splice(0, help.length, ...D.help); $('#pkAbout').value = D.about; } else cards.splice(0, cards.length, ...D.cards.map(c => ({ ...c }))); draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
   f.onsubmit = async e => { e.preventDefault();
     const perks = { cards: cards.map(c => ({ icon: c.icon, t: String(c.t || '').trim(), s: String(c.s || '').trim() })).filter(c => c.t || c.s), help: help.map(x => String(x).trim()).filter(Boolean), about: $('#pkAbout').value.trim() };
     const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
@@ -1327,7 +1352,7 @@ function renderPerks(s) {
 }
 function renderSettings() {
   const s = settings;
-  if (setTab === 'perks') return renderPerks(s);
+  if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   govDraft = AV();
