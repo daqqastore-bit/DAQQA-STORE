@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020145020">
+<link rel="stylesheet" href="assets/base.css?v=20261020145452">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -22,7 +22,7 @@ body{font-size:14px}
 .login p{text-align:center;color:var(--muted);font-size:13px;margin-top:-8px}
 /* shell */
 .app{display:flex;min-height:100vh}
-.side{width:240px;flex:none;background:var(--bg-2);border-left:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:100vh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.side{width:240px;flex:none;background:var(--bg-2);border-left:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:calc(100vh / var(--z));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .side::-webkit-scrollbar{width:6px}.side::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
 .side .brand{display:flex;align-items:center;gap:10px;padding:0 8px}
 /* theme switch sits next to the brand so it is always in view */
@@ -140,7 +140,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 /* order costs popup */
 .fin-m{position:fixed;inset:0;z-index:125;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);animation:fmIn .25s ease}
 @keyframes fmIn{from{opacity:0}}
-.fin-box{width:min(520px,100%);max-height:calc(100dvh - 36px);overflow:auto;background:var(--bg-2);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;animation:fbIn .35s cubic-bezier(.2,.8,.2,1)}
+.fin-box{width:min(520px,100%);max-height:calc(100dvh / var(--z) - 36px);overflow:auto;background:var(--bg-2);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;animation:fbIn .35s cubic-bezier(.2,.8,.2,1)}
 @keyframes fbIn{from{transform:translateY(16px) scale(.98);opacity:0}}
 .fin-box h3{font-size:18px;display:flex;align-items:center;gap:10px}
 .fin-box h3 .en{font-size:13px;color:var(--amber);font-weight:600;letter-spacing:.04em}
@@ -279,6 +279,12 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .soc-row .field{flex:1;margin:0}.soc-row label small{color:var(--muted);font-weight:400;margin-inline-start:4px}
 .soc-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);margin-bottom:2px}
 .soc-ic svg{width:22px;height:22px}
+.pk-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+.pk-ics{display:flex;flex-wrap:wrap;gap:4px;max-width:190px;align-self:center}
+.pk-ics button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center}
+.pk-ics button svg{width:18px;height:18px}.pk-ics button.on{border-color:var(--amber);background:var(--amber);color:#fff}
+.pk-tx{flex:1;min-width:240px}
+.pk-hrow{display:flex;align-items:center;gap:10px;padding:6px 0}.pk-hrow .input{flex:1}.pk-hrow .soc-del{width:40px;height:40px}
 .soc-del{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center;margin-bottom:2px}
 .soc-del:hover{color:var(--red);border-color:var(--red)}.soc-del svg{width:18px;height:18px}
 .soc-row .f-err{display:block;color:var(--red);font-size:12px;margin-top:5px}.soc-row .field.bad .input{border-color:var(--red)}
@@ -416,13 +422,15 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 }
 
 /* ---- device coverage ---- */
-.side{height:100dvh}
+.side{height:calc(100dvh / var(--z))}
 .editor .ed-foot{padding-bottom:max(14px,env(safe-area-inset-bottom))}
 @media (max-width:900px){ main{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))} }
 @media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr;gap:10px} .kpi{padding:14px} .kpi b{font-size:20px} .two{grid-template-columns:1fr} .imgs{grid-template-columns:repeat(3,1fr)} }
 @media (max-height:520px) and (orientation:landscape){ .mob-tabs .tab{height:44px;flex-direction:row;gap:6px} .chart-box{height:200px} }
-@media (min-width:1800px){ html{zoom:1.2} }
-@media (min-width:2400px){ html{zoom:1.5} }
+/* vh/dvh are not scaled by zoom, so heights use calc(... / var(--z)) */
+html{--z:1}
+@media (min-width:1800px){ html{zoom:1.2;--z:1.2} }
+@media (min-width:2400px){ html{zoom:1.5;--z:1.5} }
 .sec-imgs{display:flex;flex-direction:column;gap:12px;margin-bottom:10px}
 .sec-img-row{display:grid;grid-template-columns:150px 1fr 1fr;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px}
 .bslot{position:relative;display:flex;flex-direction:column;gap:6px}
@@ -514,7 +522,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020145020"></script>
+<script src="assets/config.js?v=20261020145452"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1194,7 +1202,7 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = 'general', socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت ونصوص</button></div>`;
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
 const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
@@ -1255,8 +1263,58 @@ function renderSocial() {
     if (error) return toast(/socials/.test(error.message) ? 'السوشيال محتاج تحديث في Supabase' : error.message, 'err');
     settings.socials = list; toast('اتحفظت الحسابات ✓', 'ok'); };
 }
+/* ---------- settings → perk cards on the product page + footer HELP list + footer about text ---------- */
+function renderPerks(s) {
+  const P = RC.perks(s), cards = P.cards.map(c => ({ ...c })), help = [...P.help];
+  const MAXC = 6, MAXH = 8;
+  const cardRow = (c, i) => `<div class="pk-row" data-ci="${i}">
+    <span class="soc-mv"><button type="button" data-cmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-cmv="${i}" data-to="${i + 1}" ${i < cards.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
+    <div class="pk-ics">${Object.entries(RC.PERK_IC).map(([k, ic]) => `<button type="button" class="${c.icon === k ? 'on' : ''}" data-cic="${i}" data-k="${k}" aria-label="${k}">${ic}</button>`).join('')}</div>
+    <div class="two pk-tx"><div class="field"><label>العنوان</label><input class="input" data-ct="${i}" value="${esc(c.t || '')}" placeholder="مثلاً: شحن لكل مصر"></div>
+      <div class="field"><label>السطر الصغير</label><input class="input" data-cs="${i}" value="${esc(c.s || '')}" placeholder="مثلاً: خلال 2–5 أيام"></div></div>
+    <button type="button" class="soc-del" data-cdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`;
+  const helpRow = (h, i) => `<div class="pk-hrow"><span class="soc-mv"><button type="button" data-hmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-hmv="${i}" data-to="${i + 1}" ${i < help.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
+    <input class="input" data-hv="${i}" value="${esc(h)}" placeholder="مثلاً: ضمان على الماكينة"><button type="button" class="soc-del" data-hdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`;
+  const ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7"/></svg>';
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">الكروت اللي في صفحة المنتج والكلام اللي في الفوتر</div></div></div>
+    ${setTabs()}
+    <form class="panel set-card" id="pkForm" novalidate>
+      <div class="set-h"><span class="set-ic">${ic}</span><div><h2>كروت صفحة المنتج</h2><small>اللي بتظهر تحت زرار الطلب (كاش عند الاستلام، شحن، استبدال...). لحد ${MAXC} كروت، ولو مسحتهم كلهم مش هيظهر حاجة.</small></div></div>
+      <div id="pkCards"></div>
+      <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddC">+ كارت</button></div>
+      <div class="set-h" style="margin-top:10px"><span class="set-ic">${ic}</span><div><h2>قائمة HELP في الفوتر</h2><small>السطور اللي تحت كلمة HELP في آخر الموقع.</small></div></div>
+      <div id="pkHelp"></div>
+      <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddH">+ سطر</button></div>
+      <div class="set-h" style="margin-top:10px"><span class="set-ic">${ic}</span><div><h2>وصف المتجر في الفوتر</h2><small>الكلام اللي تحت لوجو DAQQA في آخر الموقع. فاضي = مش هيظهر.</small></div></div>
+      <textarea class="input" id="pkAbout" rows="3" dir="rtl">${esc(P.about)}</textarea>
+      <div class="set-acts"><button type="button" class="btn btn-ghost" id="pkReset">رجّع الكلام الأصلي</button><button class="btn btn-primary" type="submit">حفظ</button></div>
+    </form>`;
+  bindSetTabs();
+  const draw = () => { $('#pkCards').innerHTML = cards.length ? cards.map(cardRow).join('') : '<div class="empty" style="padding:14px">مفيش كروت. الجزء ده مش هيظهر في صفحة المنتج.</div>';
+    $('#pkHelp').innerHTML = help.length ? help.map(helpRow).join('') : '<div class="empty" style="padding:14px">فاضية. قائمة HELP مش هتظهر.</div>';
+    $('#pkAddC').disabled = cards.length >= MAXC; $('#pkAddH').disabled = help.length >= MAXH; };
+  draw();
+  const mv = (a, f, t) => { if (t < 0 || t >= a.length) return; a.splice(t, 0, a.splice(f, 1)[0]); draw(); };
+  const f = $('#pkForm');
+  f.oninput = e => { const d = e.target.dataset;
+    if (d.ct != null) cards[+d.ct].t = e.target.value; if (d.cs != null) cards[+d.cs].s = e.target.value; if (d.hv != null) help[+d.hv] = e.target.value; };
+  f.onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
+    if (d.cic != null) { cards[+d.cic].icon = d.k; draw(); }
+    else if (d.cmv != null) mv(cards, +d.cmv, +d.to); else if (d.hmv != null) mv(help, +d.hmv, +d.to);
+    else if (d.cdel != null) { cards.splice(+d.cdel, 1); draw(); } else if (d.hdel != null) { help.splice(+d.hdel, 1); draw(); }
+    else if (b.id === 'pkAddC' && cards.length < MAXC) { cards.push({ icon: 'star', t: '', s: '' }); draw(); $(`[data-ct="${cards.length - 1}"]`).focus(); }
+    else if (b.id === 'pkAddH' && help.length < MAXH) { help.push(''); draw(); $(`[data-hv="${help.length - 1}"]`).focus(); }
+    else if (b.id === 'pkReset') { const D = RC.PERKS_DEF; cards.splice(0, cards.length, ...D.cards.map(c => ({ ...c }))); help.splice(0, help.length, ...D.help); $('#pkAbout').value = D.about; draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
+  f.onsubmit = async e => { e.preventDefault();
+    const perks = { cards: cards.map(c => ({ icon: c.icon, t: String(c.t || '').trim(), s: String(c.s || '').trim() })).filter(c => c.t || c.s), help: help.map(x => String(x).trim()).filter(Boolean), about: $('#pkAbout').value.trim() };
+    const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
+    settings.perks = perks; toast('اتحفظ ✓', 'ok'); renderPerks(settings); };
+}
 function renderSettings() {
   const s = settings;
+  if (setTab === 'perks') return renderPerks(s);
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   govDraft = AV();

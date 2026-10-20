@@ -109,4 +109,22 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261020145020';
+RC.build = '20261020145452';
+
+// product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
+RC.PERK_IC = {
+  cash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
+  ship: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
+  swap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
+  gift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13M12 8S10.5 3 8 4.2 9.5 8 12 8zm0 0s1.5-5 4-3.8S14.5 8 12 8z"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>'
+};
+RC.PERKS_DEF = { cards: [{ icon: 'cash', t: 'كاش عند الاستلام', s: 'افحص وادفع' }, { icon: 'ship', t: 'شحن لكل مصر', s: 'خلال 2–5 أيام' }, { icon: 'swap', t: 'استبدال', s: 'خلال 14 يوم' }],
+  help: ['الدفع عند الاستلام', 'شحن 2–5 أيام', 'استبدال خلال 14 يوم', 'ضمان على الماكينة'],
+  about: 'DAQQA STORE — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام والشحن لكل مصر.' };
+RC.perks = (settings) => { const p = (settings && settings.perks) || {}, D = RC.PERKS_DEF;
+  return { cards: Array.isArray(p.cards) ? p.cards.filter(c => c && (c.t || c.s)) : D.cards, help: Array.isArray(p.help) ? p.help.filter(Boolean) : D.help, about: typeof p.about === 'string' ? p.about : D.about }; };
