@@ -203,6 +203,8 @@ html{--z:1}
 .sw{display:flex;gap:9px;margin-top:10px;align-items:center}
 .sw i{width:20px;height:20px;border-radius:50%;box-shadow:0 0 0 2px var(--surface),0 0 0 3px rgb(var(--accent-rgb)/.6),inset 0 0 0 1px rgba(0,0,0,.12);transition:transform .25s}
 .sw i:hover{transform:scale(1.2)}
+.sw .swb{width:20px;height:20px;padding:0;border-radius:50%;cursor:pointer;box-shadow:0 0 0 2px var(--surface),0 0 0 3px rgb(var(--accent-rgb)/.6),inset 0 0 0 1px rgba(0,0,0,.12);transition:transform .25s,box-shadow .25s}
+.sw .swb:hover{transform:scale(1.2)}.sw .swb.on{transform:scale(1.15);box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--ink),inset 0 0 0 1px rgba(0,0,0,.12)}
 
 /* light product strip (cream) — used under each section banner */
 .strip{background:var(--strip-bg);color:var(--strip-ink);--s-muted:#6e5c49;--s-line:#e0d5c4;--s-tile:#ebe2d4}

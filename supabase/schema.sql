@@ -67,6 +67,7 @@ alter table public.shop_settings add column if not exists shipping_zones jsonb n
 alter table public.shop_settings add column if not exists web_orders_off boolean not null default false;
 alter table public.shop_settings add column if not exists ship_govs jsonb;   -- governorates the shop ships to (null = all)
 alter table public.shop_settings add column if not exists perks jsonb;       -- {cards:[{icon,t,s}], help:[...], about} product-page cards + footer texts
+alter table public.shop_products add column if not exists image_colors jsonb;  -- {photo url: "#hex"} a colour swatch shows its photo
 alter table public.shop_products add column if not exists cover_only boolean not null default false;   -- first photo is a card cover only
 alter table public.shop_products add column if not exists on_offer boolean not null default false;     -- shows in the "العروض" tab
 alter table public.shop_products add column if not exists shipping_note text;   -- per-product shipping text (null = default)

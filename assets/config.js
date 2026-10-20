@@ -32,6 +32,9 @@ RC.kinds = {
 RC.kindOf = (p) => (p && RC.kinds[p.kind]) ? p.kind : (p && p.kind === 'bracelets' ? 'accessories' : 'watches');
 RC.noun = (p) => RC.kinds[RC.kindOf(p)].one;
 RC.sku = (p) => RC.kinds[RC.kindOf(p)].code + '-' + String(1000 + Number(p.id));
+// p.image_colors: {photo url: '#hex'} set in the admin; a swatch click shows its photo (swatch order stays as entered)
+RC.colorImg = (p, c) => { const m = p && p.image_colors; if (!m || typeof m !== 'object') return null; c = String(c).toLowerCase();
+  const u = Object.keys(m).find(k => String(m[k]).toLowerCase() === c); return u && (p.images || []).includes(u) ? u : null; };
 RC.colors = (p) => (Array.isArray(p.colors) ? p.colors : String(p.colors || '').split(/[\s,]+/)).filter(c => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)).slice(0, 6);
 // product links: product.html?p=<id>-<name-slug>  (the id is what's used; the slug is for people and Google)
 RC.slug = (p) => p.id + '-' + String(p.name || '').toLowerCase().replace(/[^a-z0-9؀-ۿ]+/g, '-').replace(/^-+|-+$/g, '');
@@ -109,7 +112,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261020165043';
+RC.build = '20261020165652';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {

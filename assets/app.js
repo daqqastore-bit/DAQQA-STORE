@@ -94,7 +94,7 @@
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
         <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="أضف ${esc(p.name)} للـ Shopping Cart">${ICON.plus}</button>` : ''}</div>
-        ${cols.length ? `<div class="sw">${cols.map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
+        ${cols.length ? `<div class="sw">${cols.map(c => RC.colorImg(p, c) ? `<button type="button" class="swb" data-pick="${c}" style="background:${c}" title="${c.toUpperCase()}" aria-label="شوف اللون ${c.toUpperCase()}"></button>` : `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
       </div></article>`;
   };
   // the order WhatsApp: the number in store settings, else the WhatsApp account added under Social
@@ -105,11 +105,11 @@
     if (!matchMedia('(hover: hover)').matches) return;
     let cur = null, timer = null;
     const stop = () => { if (!cur) return; clearInterval(timer); const c = cur; cur = null; c.classList.remove('flipping'); const img = c.querySelector('.ph img:not(.alt)'), p = DQ.byId(+c.dataset.pid);
-      if (img && p) { img.style.transition = img.style.transform = ''; img.src = DQ.img(p, 0); } c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
+      if (img && p) { img.style.transition = img.style.transform = ''; img.src = c.dataset.picked || DQ.img(p, 0); } c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
     document.addEventListener('pointerover', e => {
       const c = e.target.closest && e.target.closest('[data-pid]');
       if (c === cur) return; stop();
-      const p = c && DQ.byId(+c.dataset.pid); if (!p || !p.images || p.images.length < 2) return;
+      const p = c && DQ.byId(+c.dataset.pid); if (!p || !p.images || p.images.length < 2 || c.dataset.picked) return;
       const img = c.querySelector('.ph img:not(.alt), [data-flip]'), dots = c.querySelectorAll('.ph-dots i'); if (!img) return;
       cur = c; c.classList.add('flipping'); let i = 0;
       p.images.slice(1).forEach(u => { const im = new Image(); im.src = u; });
@@ -199,6 +199,10 @@
       if (e.target.closest('[data-close]')) DQ.closeAll();
       const add = e.target.closest('[data-add]');
       if (add) { e.preventDefault(); pop(add); DQ.addToCart(+add.dataset.add, 1); }
+      // colour swatch on a card: show that colour's photo (stays until another colour is picked)
+      const pk = e.target.closest('.card [data-pick]');
+      if (pk) { e.preventDefault(); const card = pk.closest('[data-pid]'), p = DQ.byId(+card.dataset.pid), u = p && RC.colorImg(p, pk.dataset.pick), img = card.querySelector('.ph img:not(.alt)');
+        if (u && img) { card.dataset.picked = u; img.style.transition = img.style.transform = ''; img.src = u; card.querySelectorAll('[data-pick]').forEach(b => b.classList.toggle('on', b === pk)); const k = p.images.indexOf(u); card.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === k)); } }
       const fv = e.target.closest('[data-fav]');
       if (fv) { e.preventDefault(); pop(fv); DQ.toggleFav(+fv.dataset.fav); }
     });
@@ -259,11 +263,7 @@
       x = e.clientX; y = e.clientY; ring.classList.add('on'); dot.classList.add('on');
       const t = e.target.closest ? e.target : document.body;
       const card = t.closest('.card'), act = t.closest('a, button, select, [role=tab], label'), txt = t.closest('input, textarea');
-      // product photos on the product page get the same big ring, labelled for zoom
-      const pic = !card && !act && t.closest('.slide, .lxp-gal img, [data-zoom]');
-      const lbl = pic ? 'تكبير' : 'عرض'; if (ring.firstChild.textContent !== lbl) ring.firstChild.textContent = lbl;
-      ring.classList.toggle('view', !!pic || !!card && !t.closest('.add, .fav'));
-      ring.classList.toggle('big', !card && !!act || (!!card && !!t.closest('.add, .fav')));
+      ring.classList.toggle('big', !!act);
       ring.classList.toggle('txt', !!txt);
       // light that follows the mouse across each section background
       const g = t.closest('[data-glow]');
