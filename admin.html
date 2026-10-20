@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020145452">
+<link rel="stylesheet" href="assets/base.css?v=20261020150056">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -320,25 +320,27 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .gchip.av.on{background:#2f9e5b;border-color:#2f9e5b;color:#fff;font-weight:600}
 .gov-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 12px}
 @media(max-width:900px){.set-grid{grid-template-columns:1fr}}
-.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.imgs .it{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--surface-2)}
-.imgs .it.main{border-color:var(--amber)}
-.imgs .it img{width:100%;height:100%;object-fit:cover}
-.imgs .it .tag{position:absolute;bottom:4px;right:4px;background:var(--amber);color:var(--amber-ink);font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px}
-.imgs .it .x{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;display:grid;place-items:center;font-size:14px}
-.imgs .it .star{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;display:grid;place-items:center;font-size:12px}
-.imgs .up{aspect-ratio:1;border-radius:10px;border:1px dashed var(--line-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--muted);font-size:11px;cursor:pointer;transition:border-color .2s}
+.imgs{display:flex;flex-direction:column;gap:8px}
+.imgs .it{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);cursor:grab;transition:opacity .15s,box-shadow .15s,border-color .15s}
+.imgs .it.main{border-color:var(--amber);background:rgb(201 169 122/.1)}
+.imgs .it .grip{flex:none;width:18px;color:var(--muted);display:grid;place-items:center}.imgs .it .grip svg{width:18px;height:18px}
+.imgs .it img{flex:none;width:64px;height:64px;border-radius:9px;object-fit:cover;background:var(--bg)}
+.imgs .it .nm{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.imgs .it .nm b{max-width:100%;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.imgs .it .tag{background:var(--amber);color:var(--amber-ink);font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px}
+.imgs .it .star{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:2px 10px}.imgs .it .star:hover{color:var(--ink);border-color:var(--amber)}
+.imgs .it .ord{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;margin:0}.imgs .it .ord small{font-size:10.5px;color:var(--muted)}
+.imgs .it .ord .input{width:64px;height:38px;padding:0 6px;text-align:center;font-weight:700;font-size:15px}
+.imgs .it .mv{flex:none;display:flex;flex-direction:column;gap:3px}
+.imgs .it .mv button{width:30px;height:20px;border-radius:6px;border:1px solid var(--line);font-size:9px;color:var(--muted)}.imgs .it .mv button:disabled{opacity:.3}.imgs .it .mv button:not(:disabled):hover{border-color:var(--amber);color:var(--ink)}
+.imgs .it .x{flex:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center}.imgs .it .x svg{width:17px;height:17px}.imgs .it .x:hover{color:#c0392b;border-color:#c0392b66}
+.imgs .it.dragging{opacity:.35}
+.imgs .it.over{box-shadow:0 0 0 2px var(--amber)}
+.imgs .up{height:64px;border-radius:12px;border:1px dashed var(--line-2);display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;cursor:pointer;transition:border-color .2s}
 .imgs .up:hover,.imgs.drag .up{border-color:var(--amber);color:var(--ink)}
 .imgs.drag{outline:2px dashed var(--amber);outline-offset:6px;border-radius:12px;background:rgb(201 169 122/.08)}
 .imgs .up svg{width:20px;height:20px}
-.imgs .it{cursor:grab;transition:transform .15s,opacity .15s,box-shadow .15s}
-.imgs .it.dragging{opacity:.35}
-.imgs .it.over{transform:scale(1.04);box-shadow:0 0 0 3px var(--amber)}
-.imgs .it .num{position:absolute;bottom:4px;left:4px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
-.imgs .it .mv{position:absolute;inset:auto 0 4px;display:flex;justify-content:center;gap:4px;opacity:0;transition:opacity .15s}
-.imgs .it:hover .mv{opacity:1}
-.imgs .it .mv button{width:26px;height:22px;border-radius:7px;background:rgba(0,0,0,.72);color:#fff;font-size:16px;line-height:1}
-@media (hover:none){.imgs .it .mv{opacity:1}}
+@media (max-width:520px){.imgs .it{gap:8px;padding:7px}.imgs .it .grip{display:none}.imgs .it img{width:52px;height:52px}.imgs .it .ord .input{width:52px}}
 .disc-box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .presets{display:flex;gap:6px;flex-wrap:wrap}
 .presets button{height:36px;min-width:54px;padding:0 12px;border-radius:999px;border:1px solid var(--line-2);font:600 13px var(--f-ui)}
@@ -425,7 +427,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .side{height:calc(100dvh / var(--z))}
 .editor .ed-foot{padding-bottom:max(14px,env(safe-area-inset-bottom))}
 @media (max-width:900px){ main{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))} }
-@media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr;gap:10px} .kpi{padding:14px} .kpi b{font-size:20px} .two{grid-template-columns:1fr} .imgs{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr;gap:10px} .kpi{padding:14px} .kpi b{font-size:20px} .two{grid-template-columns:1fr} }
 @media (max-height:520px) and (orientation:landscape){ .mob-tabs .tab{height:44px;flex-direction:row;gap:6px} .chart-box{height:200px} }
 /* vh/dvh are not scaled by zoom, so heights use calc(... / var(--z)) */
 html{--z:1}
@@ -522,7 +524,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020145452"></script>
+<script src="assets/config.js?v=20261020150056"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -888,6 +890,9 @@ function openTexts(d) {
   d._specs = specs.length ? specs : (SPEC_DEF[d.kind] || []).map(k => [k, '']);
   d._ship = d.shipping_note || shipDef(d.kind);
 }
+// the original file name rides in the storage path (…-abc123--my-photo.webp) so the photo list can show it
+const slugName = n => { const b = String(n || '').replace(/\.[^.]+$/, '').normalize('NFKD').replace(/[^\w-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 60); return b ? '--' + b : ''; };
+const imgName = (u, i) => { const f = decodeURIComponent(String(u).split('?')[0].split('/').pop() || ''), m = f.match(/--(.+)\.\w+$/); return m ? m[1] : /^\d{10,}-/.test(f) ? `صورة ${i + 1}` : f.replace(/\.\w+$/, '') || `صورة ${i + 1}`; };
 function openEditor(id, init) {
   const p = id ? products.find(x => x.id === id) : null;
   draft = p ? {...p, images: [...p.images], kind: RC.kindOf(p), colors: RC.colors(p)} : {kind: pKind !== 'all' ? pKind : 'watches', style:'', colors:[], name:'', brand:'DAQQA', category:'men', description:'', price:'', sale_price:null, images:[], stock:'', shown_left:'', featured:false, luxury:false, active:true};
@@ -908,8 +913,14 @@ function renderEditor() {
     <div class="ed-head"><h3>${d.id ? 'تعديل المنتج' : 'منتج جديد'}${d.id ? ` <a href="${RC.productUrl(d)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:500;color:var(--accent);margin-inline-start:8px">فتح صفحة المنتج ↗</a>` : ''}</h3><button class="icon-btn" id="edClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="ed-body"><div class="ed-col ed-main">
       <section class="ed-sec"><h4>الصور</h4>
-      <div class="field"><label>اسحب أي صورة وحطها مكان التانية عشان ترتبهم (الأولى هي الرئيسية) · أو اسحب صور من جهازك وسيبها هنا ترتفع</label>
-        <div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}" draggable="true" data-ii="${i}"><img src="${esc(u)}" alt="" draggable="false"><span class="num en">${i + 1}</span>${i ? `<button class="star" data-star="${i}" aria-label="اجعلها رئيسية">★</button>` : '<span class="tag">رئيسية</span>'}<button class="x" data-rmimg="${i}" aria-label="حذف الصورة">×</button><span class="mv">${i ? `<button type="button" data-mv="${i}" data-to="${i - 1}" aria-label="قدّمها">›</button>` : ''}${i < d.images.length - 1 ? `<button type="button" data-mv="${i}" data-to="${i + 1}" aria-label="أخّرها">‹</button>` : ''}</span></div>`).join('')}
+      <div class="field"><label>رتّب الصور بالرقم أو بالأسهم ▲▼ أو بالسحب. رقم 1 هي الصورة الرئيسية. وتقدر تسحب صور من جهازك وتسيبها هنا ترتفع.</label>
+        <div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}" draggable="true" data-ii="${i}">
+          <span class="grip" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+          <img src="${esc(u)}" alt="" draggable="false">
+          <span class="nm"><b class="en" dir="ltr">${esc(imgName(u, i))}</b>${i ? `<button type="button" class="star" data-star="${i}">خليها الرئيسية</button>` : '<span class="tag">★ الرئيسية</span>'}</span>
+          <label class="ord"><small>الترتيب</small><input class="input en" type="number" min="1" max="${d.images.length}" value="${i + 1}" data-ord="${i}" inputmode="numeric"></label>
+          <span class="mv"><button type="button" data-mv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-mv="${i}" data-to="${i + 1}" ${i < d.images.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
+          <button type="button" class="x" data-rmimg="${i}" aria-label="حذف الصورة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`).join('')}
           <button class="up" id="upBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>رفع صور</button></div>
         <label class="cov-sw" ${COLS.cover_only ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_cover" ${d.cover_only?'checked':''}><span class="tg" aria-hidden="true"></span>
           <span class="tx"><b>الصورة الرئيسية غلاف بس <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
@@ -1014,6 +1025,8 @@ function renderEditor() {
   zone.addEventListener('dragend', () => { dragI = null; zone.querySelectorAll('.it').forEach(x => x.classList.remove('dragging', 'over')); });
   zone.addEventListener('dragover', e => { if (dragI == null) return; const it = e.target.closest('[data-ii]'); e.preventDefault(); zone.querySelectorAll('.it.over').forEach(x => x !== it && x.classList.remove('over')); if (it && +it.dataset.ii !== dragI) it.classList.add('over'); });
   zone.addEventListener('drop', e => { if (dragI == null) return; e.preventDefault(); e.stopImmediatePropagation(); const it = e.target.closest('[data-ii]'); const from = dragI; dragI = null; if (it) moveImg(from, +it.dataset.ii); }, true);
+  $('#imgs').onchange = e => { const o = e.target.closest('[data-ord]'); if (!o) return; const n = Math.round(+o.value); if (!o.isConnected) return; if (!(n >= 1)) { o.value = +o.dataset.ord + 1; return; } moveImg(+o.dataset.ord, Math.min(n, draft.images.length) - 1); };
+  $('#imgs').onkeydown = e => { if (e.key === 'Enter' && e.target.closest('[data-ord]')) { e.preventDefault(); e.target.blur(); } };
   $('#imgs').onclick = e => { const mv = e.target.closest('[data-mv]'); if (mv) return moveImg(+mv.dataset.mv, +mv.dataset.to);
     const s = e.target.closest('[data-star]'), r = e.target.closest('[data-rmimg]');
     if (s) { syncDraft(); const i = +s.dataset.star; const [u] = draft.images.splice(i, 1); draft.images.unshift(u); renderEditor(); }
@@ -1119,7 +1132,7 @@ async function uploadFiles(files, direct = false) {
     if (f === 'ALL') { direct = true; f = f0; }
     try {
       const blob = await compress(f);
-      const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`;
+      const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}${slugName(f0.name)}.webp`;
       const {error} = await sb.storage.from(RC.bucket).upload(path, blob, {contentType: 'image/webp', cacheControl: '31536000'});
       if (error) throw error;
       draft.images.push(sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl); n++;
