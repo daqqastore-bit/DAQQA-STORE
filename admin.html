@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020165652">
+<link rel="stylesheet" href="assets/base.css?v=20261020165838">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -460,7 +460,9 @@ html{--z:1}
 .bslot .up:hover{border-color:var(--accent);color:var(--ink)}
 .bslot .up svg{width:20px;height:20px}
 .bslot .x{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff}
-.bslot small{font-size:11px;color:var(--muted-2)}
+.bslot small{font-size:11.5px;color:var(--muted);line-height:1.6}.bslot small b{color:var(--ink);font-weight:600}
+.bslot .up em{font-style:normal;font-size:11px;color:var(--muted-2)}
+.bslot.drop .up,.bslot.drop img{outline:2px dashed var(--amber);outline-offset:3px;background:rgb(201 169 122/.1)}
 @media (max-width:700px){.sec-img-row{grid-template-columns:1fr 1fr}.sec-img-row>b{grid-column:1/-1}}
 .link-btn{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:4px;align-self:center}
 .link-btn:hover{color:var(--ink)}
@@ -543,7 +545,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020165652"></script>
+<script src="assets/config.js?v=20261020165838"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1127,12 +1129,13 @@ async function watermark(g, w, h) {
   } catch (e) {}   // never block an upload over the mark
 }
 // let the admin pick the part of the photo that shows (free or a fixed ratio); resolves a File/Blob, or null to skip this photo
-function cropBox(file, idx, total) {
+// lock = [label, ratio]: the crop is fixed to the shape the site shows (section photos)
+function cropBox(file, idx, total, lock) {
   return new Promise(async res => {
     const url = URL.createObjectURL(file);
     const d = document.createElement('div'); d.className = 'crop';
-    const R = [['حر', 0], ['الأصل', -1], ['1:1', 1], ['4:5', 4 / 5], ['3:4', 3 / 4], ['16:9', 16 / 9]];
-    d.innerHTML = `<div class="crop-top"><div><b>قص الصورة</b><small>${total > 1 ? `${idx + 1} من ${total} · ` : ''}اسحب المربع وكبّره من الأركان</small></div>
+    const R = lock ? [lock] : [['حر', 0], ['الأصل', -1], ['1:1', 1], ['4:5', 4 / 5], ['3:4', 3 / 4], ['16:9', 16 / 9]];
+    d.innerHTML = `<div class="crop-top"><div><b>قص الصورة</b><small>${total > 1 ? `${idx + 1} من ${total} · ` : ''}${lock ? `المقاس مقفول على ${lock[0]} عشان يطلع مظبوط في مكانه · ` : ''}اسحب المربع وكبّره من الأركان</small></div>
       <div class="crop-ratios">${R.map(([t], i) => `<button type="button" data-r="${i}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div></div>
       <div class="crop-area"><div class="crop-wrap"><img alt="" src="${url}"><div class="crop-box"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div></div>
       <div class="crop-acts"><button type="button" class="btn btn-primary" data-a="ok">قص وارفع</button><button type="button" class="btn btn-ghost" data-a="full">ارفعها كاملة</button>${total - idx > 1 ? `<button type="button" class="btn btn-ghost" data-a="all">ارفع الباقي كله كامل (${total - idx})</button>` : ''}<button type="button" class="btn btn-ghost" data-a="skip">${total > 1 ? 'تخطّى الصورة دي' : 'إلغاء'}</button></div>`;
@@ -1146,7 +1149,7 @@ function cropBox(file, idx, total) {
     const setRatio = r => { ratio = r;
       if (r <= 0) { b = { x: 0, y: 0, w: W, h: H }; if (r < 0) ratio = W / H; return draw(); }
       let w = W, h = w / r; if (h > H) { h = H; w = h * r; } b = { x: (W - w) / 2, y: (H - h) / 2, w, h }; draw(); };
-    setRatio(0);
+    setRatio(lock ? lock[1] : 0);
     d.querySelector('.crop-ratios').onclick = e => { const t = e.target.closest('[data-r]'); if (!t) return;
       d.querySelectorAll('.crop-ratios button').forEach(x => x.classList.toggle('on', x === t)); setRatio(R[+t.dataset.r][1]); };
     addEventListener('resize', onResize); function onResize() { fit(); const k = img.clientWidth / W; W = img.clientWidth; H = img.clientHeight; b = { x: b.x * k, y: b.y * k, w: b.w * k, h: b.h * k }; draw(); }
@@ -1230,24 +1233,39 @@ const COVER_GROUPS = () => [
   ['صفحات رجالي وحريمي', 'صورة الغلاف أول الصفحة', [['men', 'رجالي', 'Men', [['hero', 'الغلاف']]], ['women', 'حريمي', 'Women', [['hero', 'الغلاف']]]]],
   ['Luxury — DAQQA Privé', 'صورة أول الصفحة (جوه الدايرة) + غلاف لكل سكشن جوه Luxury', [['luxury', 'الصفحة', 'Privé', [['hero', 'الصورة الرئيسية']]], ...Object.entries(RC.kinds).map(([k, v]) => ['lux-' + k, v.ar, v.en, [['hero', 'غلاف السكشن']]])]]
 ];
+// the shape each section photo is shown in on the site → crop is locked to it, and the admin sees the best size to upload
+const slotSpec = (k, slot) => k === 'luxury' ? ['1:1', 1, '1600×1600', 'بتظهر جوه دايرة، خلي الساعة في النص']
+  : k.startsWith('lux-') ? ['21:9', 21 / 9, '2400×1030', 'شريط عريض فوق كل سكشن']
+  : slot === 'life' ? ['16:9', 16 / 9, '1920×1080', 'خلفية الشريط تحت المنتجات']
+  : ['16:9', 16 / 9, '1920×1080', 'الكلام بيظهر على اليمين، خلي الساعة في الشمال'];
+async function upBanner(k, slot, f, btn) {
+  if (!f || !f.type.startsWith('image/')) return toast('اختار صورة', 'err');
+  const sp = slotSpec(k, slot), c = await cropBox(f, 0, 1, [sp[0], sp[1]]); if (!c) return;
+  if (btn) { btn.disabled = true; btn.textContent = 'جاري الرفع...'; }
+  try { const blob = await compress(c, 2400); const path = `banners/${k}-${slot}-${Date.now()}.webp`;
+    const { error } = await sb.storage.from(RC.bucket).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000' }); if (error) throw error;
+    await saveBanner(k, slot, sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl); } catch (err) { toast('فشل الرفع: ' + (err.message || err), 'err'); go(tab, true); }
+}
 function renderCovers() {
   const s = settings, B = s.banners || {};
   $('#main').innerHTML = `<div class="head"><div><h1>صور الأقسام</h1><div class="sub">صورة لكل سكشن وصفحة في الموقع — منفصلة عن صور المنتجات. لو مفيش صورة، الموقع بيستخدم صورة أهم منتج.</div></div></div>
     ${'banners' in s ? COVER_GROUPS().map(([title, sub, rows]) => `<div class="panel cov-panel"><h2>${title} <small>${sub}</small></h2><div class="sec-imgs">${rows.map(([k, ar, en, slots]) => { const b = B[k] || {}; return `
       <div class="sec-img-row"><b>${ar} <span class="en" style="color:var(--muted)">${en}</span></b>
-        ${slots.map(([slot, lbl]) => `<div class="bslot">${b[slot] ? `<img src="${esc(b[slot])}" alt=""><button class="x" data-bdel="${k}:${slot}" aria-label="حذف">×</button><button class="re" data-bup="${k}:${slot}">تغيير</button>` : `<button class="up" data-bup="${k}:${slot}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>${lbl}</button>`}<small>${lbl}</small></div>`).join('')}
+        ${slots.map(([slot, lbl]) => `<div class="bslot" data-slot="${k}:${slot}">${b[slot] ? `<img src="${esc(b[slot])}" alt=""><button class="x" data-bdel="${k}:${slot}" aria-label="حذف">×</button><button class="re" data-bup="${k}:${slot}">تغيير</button>` : `<button class="up" data-bup="${k}:${slot}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>${lbl}<em>اسحب صورة هنا أو دوس</em></button>`}<small><b>${lbl}</b> · <span class="en">${slotSpec(k, slot)[0]}</span> · <span class="en" dir="ltr">${slotSpec(k, slot)[2]}</span> · ${slotSpec(k, slot)[3]}</small></div>`).join('')}
       </div>`; }).join('')}</div></div>`).join('')
     : `<div class="panel" style="color:var(--muted);font-size:13px">محتاج تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor.</div>`}`;
   $('#main').onclick = async e => {
     const up = e.target.closest('[data-bup]'), del = e.target.closest('[data-bdel]');
     if (up) { const [k, slot] = up.dataset.bup.split(':'); const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
-      inp.onchange = async () => { const f = inp.files[0]; if (!f) return; up.disabled = true; up.textContent = 'جاري الرفع...';
-        try { const blob = await compress(f, 2200); const path = `banners/${k}-${slot}-${Date.now()}.webp`;
-          const { error } = await sb.storage.from(RC.bucket).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000' }); if (error) throw error;
-          await saveBanner(k, slot, sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl); } catch (err) { toast('فشل الرفع: ' + (err.message || err), 'err'); go(tab, true); } };
+      inp.onchange = () => upBanner(k, slot, inp.files[0], up);
       inp.click(); }
     if (del) { const [k, slot] = del.dataset.bdel.split(':'); if (await confirmBox('تشيل الصورة دي؟', 'شيل')) saveBanner(k, slot, null); }
   };
+  // drop a photo on a slot: crop (locked to its shape) then upload
+  const slotOf = e => e.target.closest && e.target.closest('.bslot[data-slot]'), hasF = e => [...(e.dataTransfer?.types || [])].includes('Files');
+  $('#main').ondragover = e => { const b = slotOf(e); if (!b || !hasF(e)) return; e.preventDefault(); document.querySelectorAll('.bslot.drop').forEach(x => x !== b && x.classList.remove('drop')); b.classList.add('drop'); };
+  $('#main').ondragleave = e => { const b = slotOf(e); if (b && !b.contains(e.relatedTarget)) b.classList.remove('drop'); };
+  $('#main').ondrop = e => { const b = slotOf(e); if (!b) return; e.preventDefault(); b.classList.remove('drop'); const [k, slot] = b.dataset.slot.split(':'); upBanner(k, slot, e.dataTransfer.files[0], b.querySelector('[data-bup]')); };
 }
 const GOV = ['القاهرة','الجيزة','القليوبية','الإسكندرية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
 // governorates the shop ships to; nothing saved yet = all of them
