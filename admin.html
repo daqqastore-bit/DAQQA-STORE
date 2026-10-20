@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020141531">
+<link rel="stylesheet" href="assets/base.css?v=20261020142100">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -331,15 +331,15 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .sb-cust{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:color-mix(in srgb,var(--accent) 7%,transparent)}.sb-cust .sb-tag{background:var(--accent);color:#1A140E}
 @media (max-width:520px){.stock-box{grid-template-columns:1fr;gap:16px}}
 /* crop before upload */
-.crop{position:fixed;inset:0;z-index:130;display:flex;flex-direction:column;background:rgba(8,6,4,.92);color:#EDE3D3}
+.crop{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;background:#0c0907;color:#EDE3D3}
 .crop-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
 .crop-top b{font-size:15px}.crop-top small{color:#A99C88;margin-inline-start:8px}
 .crop-ratios{display:flex;gap:6px;flex-wrap:wrap}
 .crop-ratios button{padding:6px 12px;border-radius:99px;border:1px solid rgba(255,255,255,.18);color:#EDE3D3;font-size:12px}
 .crop-ratios button.on{background:#C9A97A;border-color:#C9A97A;color:#1A140E}
-.crop-area{flex:1;position:relative;display:grid;place-items:center;overflow:hidden;padding:10px 18px;touch-action:none}
+.crop-area{flex:1;min-height:0;position:relative;display:grid;place-items:center;overflow:hidden;padding:10px 18px;touch-action:none}
 .crop-wrap{position:relative;line-height:0;user-select:none}
-.crop-wrap img{max-width:calc(100vw - 36px);max-height:calc(100svh - 170px);display:block;-webkit-user-drag:none}
+.crop-wrap img{display:block;-webkit-user-drag:none}
 .crop-box{position:absolute;box-shadow:0 0 0 9999px rgba(0,0,0,.6);outline:1.5px solid #fff;cursor:move;background-image:linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);background-size:33.333% 33.333%;background-position:-1px -1px}
 .crop-box i{position:absolute;width:18px;height:18px;border:3px solid #fff;touch-action:none}
 .crop-box i[data-h="nw"]{left:-3px;top:-3px;border-width:3px 0 0 3px;cursor:nwse-resize}
@@ -347,6 +347,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .crop-box i[data-h="sw"]{left:-3px;bottom:-3px;border-width:0 0 3px 3px;cursor:nesw-resize}
 .crop-box i[data-h="se"]{right:-3px;bottom:-3px;border-width:0 3px 3px 0;cursor:nwse-resize}
 .crop-acts{display:flex;gap:8px;justify-content:center;padding:14px 18px 18px;flex-wrap:wrap}
+.crop-acts .btn-ghost{color:#EDE3D3;border-color:rgba(255,255,255,.3);background:transparent}.crop-acts .btn-ghost:hover{border-color:#C9A97A;color:#fff}
 .btn-danger{border:1px solid var(--red);color:var(--red)}
 .btn-danger:hover{background:var(--red);color:#fff}
 .mob-tabs{display:none}
@@ -460,7 +461,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020141531"></script>
+<script src="assets/config.js?v=20261020142100"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -943,8 +944,10 @@ function cropBox(file, idx, total) {
       <div class="crop-area"><div class="crop-wrap"><img alt="" src="${url}"><div class="crop-box"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div></div>
       <div class="crop-acts"><button type="button" class="btn btn-primary" data-a="ok">قص وارفع</button><button type="button" class="btn btn-ghost" data-a="full">ارفعها كاملة</button><button type="button" class="btn btn-ghost" data-a="skip">${total > 1 ? 'تخطّى الصورة دي' : 'إلغاء'}</button></div>`;
     document.body.appendChild(d);
-    const img = d.querySelector('img'), box = d.querySelector('.crop-box');
+    const img = d.querySelector('img'), box = d.querySelector('.crop-box'), area = d.querySelector('.crop-area');
     await img.decode().catch(() => {});
+    const fit = () => { img.style.maxWidth = Math.max(80, area.clientWidth - 36) + 'px'; img.style.maxHeight = Math.max(80, area.clientHeight - 20) + 'px'; };
+    fit();
     let W = img.clientWidth, H = img.clientHeight, ratio = 0, b = { x: 0, y: 0, w: W, h: H };
     const draw = () => Object.assign(box.style, { left: b.x + 'px', top: b.y + 'px', width: b.w + 'px', height: b.h + 'px' });
     const setRatio = r => { ratio = r;
@@ -953,10 +956,10 @@ function cropBox(file, idx, total) {
     setRatio(0);
     d.querySelector('.crop-ratios').onclick = e => { const t = e.target.closest('[data-r]'); if (!t) return;
       d.querySelectorAll('.crop-ratios button').forEach(x => x.classList.toggle('on', x === t)); setRatio(R[+t.dataset.r][1]); };
-    addEventListener('resize', onResize); function onResize() { const k = img.clientWidth / W; W = img.clientWidth; H = img.clientHeight; b = { x: b.x * k, y: b.y * k, w: b.w * k, h: b.h * k }; draw(); }
+    addEventListener('resize', onResize); function onResize() { fit(); const k = img.clientWidth / W; W = img.clientWidth; H = img.clientHeight; b = { x: b.x * k, y: b.y * k, w: b.w * k, h: b.h * k }; draw(); }
     let drag = null;
-    box.onpointerdown = e => { e.preventDefault(); box.setPointerCapture(e.pointerId); drag = { h: e.target.dataset.h || 'move', sx: e.clientX, sy: e.clientY, b0: { ...b } }; };
-    box.onpointermove = e => { if (!drag) return; const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy, o = drag.b0, MIN = 40;
+    box.onpointerdown = e => { e.preventDefault(); box.setPointerCapture(e.pointerId); drag = { h: e.target.dataset.h || 'move', sx: e.clientX, sy: e.clientY, z: (box.getBoundingClientRect().width / box.offsetWidth) || 1, b0: { ...b } }; };
+    box.onpointermove = e => { if (!drag) return; const dx = (e.clientX - drag.sx) / drag.z, dy = (e.clientY - drag.sy) / drag.z, o = drag.b0, MIN = 40;
       if (drag.h === 'move') { b.x = Math.max(0, Math.min(W - o.w, o.x + dx)); b.y = Math.max(0, Math.min(H - o.h, o.y + dy)); return draw(); }
       const L = drag.h.includes('w'), T = drag.h.includes('n');
       const ax = L ? o.x + o.w : o.x, ay = T ? o.y + o.h : o.y;            // the fixed corner
@@ -972,7 +975,8 @@ function cropBox(file, idx, total) {
       const k = img.naturalWidth / W, c = document.createElement('canvas');
       c.width = Math.round(b.w * k); c.height = Math.round(b.h * k);
       c.getContext('2d').drawImage(img, b.x * k, b.y * k, b.w * k, b.h * k, 0, 0, c.width, c.height);
-      c.toBlob(bl => done(bl || file), 'image/png'); };
+      const png = file.type === 'image/png';
+      c.toBlob(bl => done(bl ? new File([bl], (file.name || 'image').replace(/\.\w+$/, '') + (png ? '.png' : '.jpg'), { type: bl.type }) : file), png ? 'image/png' : 'image/jpeg', .92); };
   });
 }
 async function uploadFiles(files) {
