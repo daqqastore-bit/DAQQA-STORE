@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020142100">
+<link rel="stylesheet" href="assets/base.css?v=20261020143304">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -302,6 +302,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .check{display:flex;align-items:center;gap:12px;cursor:pointer;font-size:15px;font-weight:600;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);transition:border-color .2s,background .2s}
 .check:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--bg))}
 .lux-check{margin-top:10px;border-style:dashed}
+.cover-check{margin-top:10px}.cover-check small{font-weight:400;color:var(--muted)}
 .lux-check small{font-weight:400;color:var(--muted)}
 .check input{width:20px;height:20px;accent-color:var(--accent);flex:none}
 .clr-list{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -461,7 +462,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020142100"></script>
+<script src="assets/config.js?v=20261020143304"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -508,7 +509,7 @@ const SCOPES = {
 let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
+const COLS = { cover_only: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -834,7 +835,8 @@ function renderEditor() {
     <div class="ed-body">
       <div class="field"><label>الصور (الأولى هي الرئيسية — دوس ★ عشان تخليها رئيسية)</label>
         <div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}"><img src="${esc(u)}" alt="">${i ? `<button class="star" data-star="${i}" aria-label="اجعلها رئيسية">★</button>` : '<span class="tag">رئيسية</span>'}<button class="x" data-rmimg="${i}" aria-label="حذف الصورة">×</button></div>`).join('')}
-          <button class="up" id="upBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>رفع صور</button></div></div>
+          <button class="up" id="upBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>رفع صور</button></div>
+        <label class="check cover-check" ${COLS.cover_only ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_cover" ${d.cover_only?'checked':''}> <span>الصورة الرئيسية غلاف بس <small>— تظهر في الكارت ومتظهرش لما العميل يفتح المنتج</small></span></label></div>
       <div class="two">
         <div class="field"><label>القسم</label><select class="input" id="f_kind" ${COLS.kind ? '' : 'disabled title="محتاج تفعيل من Supabase"'}>${Object.entries(RC.kinds).map(([k,v]) => `<option value="${k}" ${k===d.kind?'selected':''}>${v.ar} — ${v.en}</option>`).join('')}</select></div>
         <div class="field"><label>النوع (بيظهر كتاب)</label><input class="input en" id="f_style" list="styleList" value="${esc(d.style || '')}" placeholder="${RC.kinds[d.kind].styles.slice(0,2).join(' / ')}" ${COLS.style ? '' : 'disabled'}><datalist id="styleList">${RC.kinds[d.kind].styles.map(x => `<option value="${x}">`).join('')}</datalist></div>
@@ -923,15 +925,26 @@ function updatePreview() {
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, description: $('#f_desc').value,
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 async function compress(file, maxSide) {
   const bmp = await createImageBitmap(file);
   const max = maxSide || 1400, s = Math.min(1, max / Math.max(bmp.width, bmp.height));
   const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
-  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const g = c.getContext('2d'); g.drawImage(bmp, 0, 0, c.width, c.height);
+  await watermark(g, c.width, c.height);
   return await new Promise(r => c.toBlob(r, 'image/webp', .86));
+}
+// every uploaded photo gets our small Q-clock mark in the bottom corner
+let wmImg = null;
+async function watermark(g, w, h) {
+  try {
+    if (!wmImg) { wmImg = new Image(); wmImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(RC.logo().replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ').replace(/currentColor/g, '#fff')); await wmImg.decode(); }
+    const s = Math.round(Math.max(36, Math.min(130, Math.min(w, h) * .075))), m = Math.round(s * .45), ww = s * 184 / 190;
+    g.save(); g.globalAlpha = .72; g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = s * .18;
+    g.drawImage(wmImg, m, h - s - m, ww, s); g.restore();
+  } catch (e) {}   // never block an upload over the mark
 }
 // let the admin pick the part of the photo that shows (free or a fixed ratio); resolves a File/Blob, or null to skip this photo
 function cropBox(file, idx, total) {
@@ -1003,6 +1016,7 @@ async function saveProduct() {
   if (sale != null && (isNaN(sale) || sale >= price || sale < 0)) sale = null;
   const row = { name: d.name, brand: d.brand, category: d.category, description: d.description, price, sale_price: sale, images: d.images,
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
+  if (COLS.cover_only) row.cover_only = !!d.cover_only;
   if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
   const b = $('#saveP'); b.disabled = true; b.textContent = 'جاري الحفظ...';
   const res = d.id ? await sb.from('shop_products').update(row).eq('id', d.id).select().single() : await sb.from('shop_products').insert(row).select().single();
