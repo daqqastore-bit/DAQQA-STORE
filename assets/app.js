@@ -70,7 +70,16 @@
   function renderFavs() {
     $('#favCount').textContent = DQ.favs.size; $('#favCount').classList.toggle('show', DQ.favs.size > 0);
     const list = DQ.products.filter(p => DQ.favs.has(p.id));
-    $('#favRes').innerHTML = list.length ? list.map(p => `<a href="${RC.productUrl(p)}"><img src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><span><b class="en">${esc(p.name)}</b><br><small>${RC.kinds[RC.kindOf(p)].ar}</small></span>${DQ.priceHTML(p)}</a>`).join('') : `<div class="empty">لسه مفيش حاجة في المفضلة. دوس على القلب في أي منتج.</div>`;
+    const total = list.reduce((a, p) => a + finalPrice(p), 0), sub = $('#favSub');
+    if (sub) sub.textContent = list.length ? `${list.length} ${list.length === 1 ? 'قطعة' : list.length === 2 ? 'قطعتين' : list.length <= 10 ? 'قطع' : 'قطعة'} محفوظة · ${money(total)}` : 'القطع اللي بتعجبك بتتحفظ هنا';
+    $('#favRes').innerHTML = list.length ? list.map((p, i) => { const off = discountPct(p), url = RC.productUrl(p), st = RC.kindOf(p);
+      return `<article class="fv-card" style="animation-delay:${Math.min(i, 8) * 60}ms">
+        <a class="fv-ph" href="${url}"><img loading="lazy" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="fv-off en">-${off}%</span>` : ''}${p.stock > 0 ? '' : '<span class="fv-out">خلصت</span>'}</a>
+        <button class="fv-rm" data-fav="${p.id}" aria-label="شيلها من المفضلة" title="شيلها من المفضلة">${ICON.heart}</button>
+        <div class="fv-info"><small>${esc(RC.kinds[st].ar)}${p.style ? ` · <span class="en">${esc(p.style)}</span>` : ''}</small><a class="fv-name en" href="${url}">${esc(p.name)}</a>${DQ.priceHTML(p)}</div>
+        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>أضف للسلة</span></button>` : '<span class="fv-add off">مش متاحة دلوقتي</span>'}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
+      </article>`; }).join('') : `<div class="fv-empty"><span class="fv-empty-ic">${ICON.heart}</span><b>المفضلة فاضية</b><p>دوس على القلب في أي منتج عشان تحفظه هنا وترجعله بعدين.</p><a class="btn btn-primary" href="./" data-close>تصفّح المنتجات</a></div>`;
+    const all = $('#favAll'); if (all) { const ok = list.filter(p => p.stock > 0); all.hidden = ok.length < 2; all.dataset.ids = ok.map(p => p.id).join(','); }
     document.querySelectorAll('[data-fav]').forEach(b => { const on = DQ.favs.has(+b.dataset.fav); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   }
   DQ.toggleFav = id => { DQ.favs.has(id) ? DQ.favs.delete(id) : DQ.favs.add(id); try { localStorage.setItem('dq-favs', JSON.stringify([...DQ.favs])) } catch (e) {} renderFavs(); DQ.toast(DQ.favs.has(id) ? 'اتضافت للمفضلة' : 'اتشالت من المفضلة'); };
@@ -144,7 +153,7 @@
         </div></div></header>
       <div class="sheet" id="menuSheet" role="dialog" aria-label="القائمة"><div class="wrap sheet-head"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
         <div class="wrap sheet-body"><a href="luxury.html" class="lux-row" data-page="luxury" hidden data-close><span class="en">LUXURY</span><small class="en">DAQQA PRIVÉ COLLECTION</small></a><nav class="menu-list">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" data-close ${RC.kinds[k] ? 'hidden' : ''}>${l}<span class="en">${RC.kinds[k] ? RC.kinds[k].en.toUpperCase() : '→'}</span></a>`).join('')}<div class="menu-pages" data-pages hidden><small class="en">PAGES</small>${Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a href="${v.href}" data-page="${k}" hidden class="${k === 'luxury' ? 'lux' : ''}" data-close>${v.ar}<span class="en">${v.en.toUpperCase()}</span></a>`).join('')}</div><div class="menu-tools"><button type="button" id="mFav">${ICON.heart}<span>المفضلة</span></button><button type="button" id="mTheme"><span class="i-sun">${ICON.sun}</span><span class="i-moon">${ICON.moon}</span><span>تغيير الوضع</span></button><button type="button" id="mSearch">${ICON.search}<span>بحث</span></button><button type="button" id="mAcc">${ICON.user}<span>حسابي</span></button></div></nav></div></div>
-      <div class="sheet" id="favSheet" role="dialog" aria-label="المفضلة"><div class="wrap sheet-head"><b style="font-size:18px">المفضلة</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="wrap sheet-body"><div class="search-res" id="favRes"></div></div></div>
+      <div class="sheet fv-sheet" id="favSheet" role="dialog" aria-label="المفضلة"><div class="wrap sheet-head fv-head"><div class="fv-title"><span class="en">WISHLIST</span><h2>المفضلة</h2><small id="favSub"></small></div><div class="fv-tools"><button class="fv-all" id="favAll" hidden>${ICON.bag || ''}<span>أضف الكل للسلة</span></button><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div></div><div class="sheet-body"><div class="wrap"><div class="fv-grid" id="favRes"></div></div></div></div>
       <div class="sheet" id="accSheet" role="dialog" aria-label="حسابي"><div class="wrap sheet-head"><b style="font-size:18px" id="accTitle">حسابي</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="wrap sheet-body"><div class="acc" id="accBody"></div></div></div>
       <div class="sheet" id="searchSheet" role="dialog" aria-label="بحث"><div class="wrap sheet-head"><b style="font-size:18px">بحث</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
         <div class="wrap sheet-body"><input class="input search-input" id="searchInput" placeholder="دوّر على ساعة، نضارة أو اكسسوار…" autocomplete="off"><div class="search-res" id="searchRes"></div></div></div>`;
@@ -176,6 +185,7 @@
     $('#themeBtn').onclick = toggleTheme;
     $('#mTheme').onclick = e => toggleTheme(e); $('#mFav').onclick = () => { renderFavs(); openSheet('#favSheet'); }; $('#mAcc').onclick = () => DQ.openAccount(); $('#mSearch').onclick = () => { openSheet('#searchSheet'); setTimeout(() => $('#searchInput').focus(), 80); };
     $('#favBtn').onclick = () => { renderFavs(); openSheet('#favSheet'); };
+    $('#favAll').onclick = e => { const ids = (e.currentTarget.dataset.ids || '').split(',').filter(Boolean).map(Number); ids.forEach(id => DQ.addToCart(id, 1, true)); if (ids.length) DQ.toast(`اتضافوا ${ids.length} للسلة`); };
     $('#searchBtn').onclick = () => { openSheet('#searchSheet'); setTimeout(() => $('#searchInput').focus(), 80); };
     $('#searchInput').oninput = e => renderSearch(e.target.value);
     $('#overlay').onclick = DQ.closeAll;
