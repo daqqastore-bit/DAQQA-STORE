@@ -210,6 +210,12 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .cat-pop button:hover{background:var(--surface-2)}.cat-pop button.on{background:var(--surface-2);font-weight:700}
 .cat-pop button.new{color:var(--amber)}.cat-pop button.new b{color:var(--ink)}
 .rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
+.exp-form{position:relative;z-index:30}
+.panel:has(.cat.open),.fin-box:has(.cat.open){position:relative;z-index:30}
+/* while a save is running the button stays disabled and shows a spinner */
+form[data-busy] [type=submit],button[data-busy]{opacity:.65;cursor:wait;pointer-events:none}
+form[data-busy] [type=submit]::after{content:"";display:inline-block;width:13px;height:13px;margin-inline-start:8px;vertical-align:-2px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:dqspin .7s linear infinite}
+@keyframes dqspin{to{transform:rotate(360deg)}}
 .exp-form{display:grid;grid-template-columns:150px 1fr 130px 1.4fr auto;gap:10px;align-items:end;margin-bottom:16px}
 .sheet-btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--red) 55%,transparent);color:var(--red);font:700 13px var(--f-ui);background:color-mix(in srgb,var(--red) 8%,transparent);margin-inline-start:auto;order:99;transition:background .2s,color .2s}
 .sheet-btn:hover,.sheet-btn.on{background:var(--red);color:#fff}
@@ -263,7 +269,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .ed-body{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
 .ed-foot{border-top:1px solid var(--line);padding:14px 20px;display:flex;gap:10px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-#main.pg-in>*{animation:pgIn .38s cubic-bezier(.2,.8,.2,1) both}
+#main.pg-in>*{animation:pgIn .38s cubic-bezier(.2,.8,.2,1) backwards}
 #main.pg-in>*:nth-child(2){animation-delay:.04s}#main.pg-in>*:nth-child(3){animation-delay:.08s}#main.pg-in>*:nth-child(n+4){animation-delay:.12s}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#main.pg-in>*{animation:none}}
@@ -602,6 +608,28 @@ const dmy = RC.dmy;
 const fmtDate = d => `<span class="en" dir="ltr">${RC.when(d)}</span>`;
 $('#themeBtn').onclick = () => { const h = document.documentElement; h.dataset.theme = h.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('rc-theme', h.dataset.theme) } catch(e) {} ; if (tab === 'dash') renderDash(); };
 
+/* ---------- double-submit guard ----------
+   every form handler (onsubmit) is wrapped once, here: while it is running the form is locked,
+   the submit button is disabled with a spinner, and a second Enter / click is ignored.
+   it unlocks only when the handler finishes (saved or failed). */
+(function () {
+  const d = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'onsubmit'); if (!d || !d.set) return;
+  Object.defineProperty(HTMLFormElement.prototype, 'onsubmit', { configurable: true, get() { return d.get.call(this); },
+    set(fn) { if (typeof fn !== 'function') return d.set.call(this, fn);
+      d.set.call(this, function (e) {
+        if (this.dataset.busy) { e.preventDefault(); return false; }
+        const btn = e.submitter || this.querySelector('[type=submit]');
+        let r; try { r = fn.call(this, e); } catch (err) { throw err; }
+        if (r && typeof r.then === 'function') {
+          this.dataset.busy = '1'; const was = btn && !btn.disabled; if (btn) btn.disabled = true;
+          const done = () => { delete this.dataset.busy; if (btn && was && btn.isConnected) btn.disabled = false; };
+          r.then(done, done);
+        }
+        return r; }); } });
+})();
+// one run at a time per key (buttons that are not inside a form)
+const _busy = new Set();
+async function once(key, fn) { if (_busy.has(key)) return; _busy.add(key); try { return await fn(); } finally { _busy.delete(key); } }
 /* ---------- auth ---------- */
 async function boot() {
   const {data:{session}} = await sb.auth.getSession();
@@ -617,7 +645,7 @@ async function boot() {
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   listen(); askNotify();
   // orders that came in while the panel was closed reach the sheet when it opens (merged, older rows stay; at most every 20 min)
-  try { if (Date.now() - (+localStorage.getItem('dq-sheet-merge') || 0) > 12e5) { localStorage.setItem('dq-sheet-merge', Date.now()); sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow) }); } } catch (e) {}
+  try { if (Date.now() - (+localStorage.getItem('dq-sheet-merge') || 0) > 12e5) { localStorage.setItem('dq-sheet-merge', Date.now()); sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow), offline: offs.map(offRow) }); } } catch (e) {}
 }
 function authPanel(id) { ['#loginForm','#forgotForm','#resetForm'].forEach(f => $(f).classList.toggle('hidden', f !== id)); }
 function showLogin() { $('#appView').classList.add('hidden'); $('#loginView').classList.remove('hidden'); authPanel('#loginForm'); setTimeout(() => $('#em').focus(), 50); }
@@ -864,10 +892,10 @@ document.addEventListener('click', async e => {
   const tg = e.target.closest('[data-toggle]');
   if (tg) { const el = tg.closest('.order'), id = +el.dataset.oid; el.classList.toggle('open'); openOrders.has(id) ? openOrders.delete(id) : openOrders.add(id); }
   const del = e.target.closest('[data-del-order]');
-  if (del) { const id = +del.dataset.delOrder; if (!(await confirmBox('تحذف الطلب ده نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالته لـ "ملغي" الأول)', 'حذف'))) return;
+  if (del) await once('delo' + del.dataset.delOrder, async () => { const id = +del.dataset.delOrder; if (!(await confirmBox('تحذف الطلب ده نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالته لـ "ملغي" الأول)', 'حذف'))) return;
     const {error} = await sb.from('shop_orders').delete().eq('id', id); if (error) return toast(error.message, 'err');
     const gone = orders.find(o => o.id === id); if (gone) sheetSend({ action: 'delete', sheet: 'orders', id: gone.code });
-    orders = orders.filter(o => o.id !== id); toast('اتحذف'); renderTabs(); renderOrders(); }
+    orders = orders.filter(o => o.id !== id); toast('اتحذف'); renderTabs(); renderOrders(); });
 });
 document.addEventListener('change', async e => {
   const n = e.target.closest('[data-note]');
@@ -1195,6 +1223,7 @@ async function uploadFiles(files, direct = false) {
   renderEditor(); if (n) toast('اترفعت الصور — متنساش تدوس حفظ', 'ok');
 }
 async function saveProduct() {
+  const sbtn = $('#saveP'); if (!sbtn || sbtn.disabled || sbtn.dataset.busy) return;
   syncDraft(); const d = draft;
   if (!d.name) return toast('اكتب اسم المنتج', 'err');
   const price = +d.price; if (!(price >= 0) || d.price === '') return toast('اكتب سعر صحيح', 'err');
@@ -1213,7 +1242,8 @@ async function saveProduct() {
   if (res.error) return toast(res.error.message, 'err');
   await loadProducts(); closeEditor(); renderProducts(); toast('اتحفظ ✓', 'ok');
 }
-async function deleteProduct() {
+function deleteProduct() { return once('delprod', deleteProduct_); }
+async function deleteProduct_() {
   if (!(await confirmBox(`تحذف "${draft.name}" نهائياً؟ لو عاوز تخفيه بس اقفل "ظاهر في المتجر".`, 'حذف'))) return;
   const {error} = await sb.from('shop_products').delete().eq('id', draft.id); if (error) return toast(error.message, 'err');
   const paths = draft.images.map(u => u.split(`/object/public/${RC.bucket}/`)[1]).filter(Boolean);
@@ -1431,26 +1461,26 @@ function renderSettings() {
       <div id="zones">${zonesHTML()}</div>
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="zoneAdd">+ إضافة سعر شحن</button><button class="btn btn-primary" type="submit">حفظ أسعار الشحن</button></div>
     </form>`;
-  $('#woSw').onclick = async () => {
+  $('#woSw').onclick = () => once('wo', async () => {
     const off = !settings.web_orders_off;
     if (off && !(await confirmBox('تقفل الطلب من الموقع؟ العميل هيملا بياناته والطلب هيتبعتلك رسالة على واتساب بدل ما يتسجل في اللوحة.', 'اقفل'))) return;
     const {error} = await sb.from('shop_settings').update({ web_orders_off: off, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/web_orders_off/.test(error.message) ? 'الخاصية دي محتاجة تحديث في Supabase' : error.message, 'err');
     settings.web_orders_off = off; $('#woSw').classList.toggle('on', !off);
     $('#woTxt').textContent = off ? 'مقفول: العميل بيملا بياناته والطلب بيتبعتلك رسالة على واتساب' : 'شغال: الطلبات بتتسجل هنا في اللوحة';
-    toast(off ? 'الطلب من الموقع اتقفل، الطلبات هتوصلك واتساب' : 'الطلب من الموقع اشتغل ✓', 'ok'); };
+    toast(off ? 'الطلب من الموقع اتقفل، الطلبات هتوصلك واتساب' : 'الطلب من الموقع اشتغل ✓', 'ok'); });
   bindSetTabs();
   const drawZones = () => { $('#zones').innerHTML = zonesHTML(); };
   const drawGov = () => { $('#govChips').innerHTML = govHTML(); $('#govCount').textContent = govCount(); $('#govAll').textContent = govDraft.length === GOV.length ? 'إلغاء الكل' : 'كل المحافظات'; };
   $('#govChips').onclick = e => { const b = e.target.closest('[data-gv]'); if (!b) return; const c = b.dataset.gv;
     govDraft = govDraft.includes(c) ? govDraft.filter(x => x !== c) : GOV.filter(x => x === c || govDraft.includes(x)); drawGov(); };
   $('#govAll').onclick = () => { govDraft = govDraft.length === GOV.length ? [] : GOV.slice(); drawGov(); };
-  $('#govSave').onclick = async () => {
+  $('#govSave').onclick = () => once('gov', async () => {
     if (!govDraft.length) return toast('اختار محافظة واحدة على الأقل', 'err');
     const list = GOV.filter(c => govDraft.includes(c));
     const {error} = await sb.from('shop_settings').update({ ship_govs: list, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/ship_govs/.test(error.message) ? 'المحافظات محتاجة تحديث في Supabase' : error.message, 'err');
-    settings.ship_govs = list; drawZones(); toast('اتحفظت المحافظات ✓', 'ok'); };
+    settings.ship_govs = list; drawZones(); toast('اتحفظت المحافظات ✓', 'ok'); });
   $('#zoneAdd').onclick = () => { zonesDraft.push({ price: '', cities: [] }); drawZones(); const ins = $('#zones').querySelectorAll('[data-zprice]'); ins[ins.length - 1].focus(); };
   $('#zones').oninput = e => { const i = e.target.dataset.zprice; if (i == null) return; zonesDraft[+i].price = e.target.value; const tag = e.target.closest('.zone').querySelector('.zone-tag'), z = zonesDraft[+i]; tag.className = 'zone-tag ' + (+z.price ? '' : 'free'); tag.textContent = zTag(z); };
   $('#zones').onclick = async e => {
@@ -1537,7 +1567,12 @@ function refreshOrderUI(o) {
   if (card) { const fresh = document.createElement('div'); fresh.innerHTML = orderHTML(o); const n = fresh.firstElementChild; if (card.classList.contains('open')) n.classList.add('open'); card.replaceWith(n); }
   if (tab === 'accounts') renderAccounts();
 }
+const statusBusy = new Set();
 async function setStatus(id, st) {
+  if (statusBusy.has(id)) return; statusBusy.add(id);
+  try { await setStatus_(id, st); } finally { statusBusy.delete(id); }
+}
+async function setStatus_(id, st) {
   const o = orders.find(x => x.id === id); if (!o || o.status === st) return;
   const prev = o.status;
   const patch = st === 'cancelled' ? { status: st, cancelled_at: new Date().toISOString(), cancelled_by: 'admin' } : { status: st };
@@ -1636,7 +1671,7 @@ function offlineBox() {
     btn.disabled = true;
     const row = { sold_on: form.sold_on.value || today, product_id: pid, name, qty: v.q, price: v.pr, cost: v.co, ship_cost: v.sh, ship_payer: payer, seller: form.seller.value.trim() || null, note: form.note.value.trim() || null };
     const { data, error } = await sb.from('shop_offline_sales').insert(row).select().single(); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
-    offs.unshift(data);
+    offs.unshift(data); sheetSend({ action: 'upsert', sheet: 'offline', row: offRow(data) });
     if (pid && num(form.cost.value)) { await sb.from('shop_product_costs').upsert({ product_id: pid, cost: num(form.cost.value), updated_at: new Date().toISOString() }); pcosts[pid] = num(form.cost.value); }
     const p = pid && products.find(x => x.id === pid);
     if (p && form.stock.checked && !m.querySelector('.off-stock').hidden) {
@@ -1675,11 +1710,13 @@ function sheetSend(body) {
 const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
   sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, net: orderNet(o), location: o.location || '' }; };
 const expRow = x => ({ id: x.id, date: x.spent_on, category: x.category, amount: +x.amount, note: x.note || '' });
+const offRow = x => ({ id: x.id, date: x.sold_on, name: x.name, qty: +x.qty, seller: x.seller || '', price: +x.price, cost: +x.cost, ship_cost: +x.ship_cost,
+  ship_payer: x.ship_payer === 'me' ? 'عليا' : 'على المشتري', net: offNet(x), note: x.note || '' });
 const sheetOrder = o => sheetSend({ action: 'upsert', sheet: 'orders', row: orderRow(o) });
 async function sheetSyncAll() {
   if (!sheetOn()) return toast('اربط الشيت الأول من الإعدادات', 'err');
-  const ok = await sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow) });
-  toast(ok ? `اتبعت ${orders.length} طلب و${expenses.length} مصروف للشيت ✓` : 'معرفناش نوصل للشيت، اتأكد من اللينك', ok ? 'ok' : 'err');
+  const ok = await sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow), offline: offs.map(offRow) });
+  toast(ok ? `اتبعت ${orders.length} طلب و${expenses.length} مصروف و${offs.length} بيعة برا الموقع للشيت ✓` : 'معرفناش نوصل للشيت، اتأكد من اللينك', ok ? 'ok' : 'err');
 }
 
 function renderAccounts() {
@@ -1758,9 +1795,9 @@ function renderAccounts() {
       ${rets.map(o => { const f = fins[o.id]; return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
   }
   $('#main').innerHTML = head + body;
-  $('#main').querySelectorAll('[data-offdel]').forEach(b => b.onclick = async () => { const id = +b.dataset.offdel; if (!(await confirmBox('تحذف البيعة دي من الحسابات؟', 'حذف'))) return;
+  $('#main').querySelectorAll('[data-offdel]').forEach(b => b.onclick = () => once('offdel' + b.dataset.offdel, async () => { const id = +b.dataset.offdel; if (!(await confirmBox('تحذف البيعة دي من الحسابات؟', 'حذف'))) return;
     const { error } = await sb.from('shop_offline_sales').delete().eq('id', id); if (error) return toast(error.message, 'err');
-    offs = offs.filter(x => x.id !== id); toast('اتحذفت'); renderAccounts(); });
+    offs = offs.filter(x => x.id !== id); sheetSend({ action: 'delete', sheet: 'offline', id }); toast('اتحذفت'); renderAccounts(); }));
   $('#sheetTab').onclick = () => { accTab = accTab === 'sheet' ? 'sum' : 'sheet'; renderAccounts(); };
   if ($('#sheetForm')) {
   $('#sheetForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
@@ -1768,7 +1805,7 @@ function renderAccounts() {
     if (row.sheet_url && !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(row.sheet_url)) return toast('اللينك لازم يبقى بالشكل ده: https://script.google.com/macros/s/…/exec', 'err');
     const {error} = await sb.from('shop_admin_settings').upsert(row); if (error) return toast(error.message, 'err');
     Object.assign(adminSet, row); toast('اتحفظ ✓', 'ok'); renderAccounts(); if (sheetOn()) sheetSyncAll(); };
-  $('#sheetSync').onclick = sheetSyncAll;
+  $('#sheetSync').onclick = () => once('sheetsync', sheetSyncAll);
   }
   $('#accTabs').onclick = e => { const b = e.target.closest('[data-at]'); if (b) { accTab = b.dataset.at; renderAccounts(); } };
   $('#accScopeSeg').onclick = e => { const b = e.target.closest('[data-as]'); if (b) { accScope = b.dataset.as; renderAccounts(); } };
@@ -1790,12 +1827,13 @@ function renderAccounts() {
     inp.onkeydown = e => { if (e.key === 'Escape') open(false); };
   }
   if ($('#expForm')) $('#expForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target)); const amount = +String(f.amount).replace(/[^\d.]/g, '');
+    if (!String(f.category).trim()) return toast('اكتب البند', 'err');
     if (!amount) return toast('اكتب المبلغ', 'err');
-    const { data, error } = await sb.from('shop_expenses').insert({ spent_on: f.spent_on, category: f.category, amount, note: f.note.trim() || null }).select().single(); if (error) return toast(error.message, 'err');
+    const { data, error } = await sb.from('shop_expenses').insert({ spent_on: f.spent_on, category: String(f.category).trim(), amount, note: f.note.trim() || null }).select().single(); if (error) return toast(error.message, 'err');
     expenses.unshift(data); sheetSend({ action: 'upsert', sheet: 'expenses', row: expRow(data) }); toast('اتضاف المصروف ✓', 'ok'); renderAccounts(); };
-  $('#main').querySelectorAll('[data-xdel]').forEach(b => b.onclick = async () => { const id = +b.dataset.xdel; if (!(await confirmBox('تحذف المصروف ده؟', 'حذف'))) return;
+  $('#main').querySelectorAll('[data-xdel]').forEach(b => b.onclick = () => once('xdel' + b.dataset.xdel, async () => { const id = +b.dataset.xdel; if (!(await confirmBox('تحذف المصروف ده؟', 'حذف'))) return;
     const { error } = await sb.from('shop_expenses').delete().eq('id', id); if (error) return toast(error.message, 'err');
-    expenses = expenses.filter(x => x.id !== id); sheetSend({ action: 'delete', sheet: 'expenses', id }); toast('اتحذف'); renderAccounts(); });
+    expenses = expenses.filter(x => x.id !== id); sheetSend({ action: 'delete', sheet: 'expenses', id }); toast('اتحذف'); renderAccounts(); }));
 }
 
 /* ---------- auto-update: a new release reloads the panel by itself (same tab, same scroll) ---------- */
