@@ -882,6 +882,7 @@ function orderHTML(o) {
         <div class="acts">
           <a class="btn btn-sm btn-amber" target="_blank" rel="noopener" href="https://wa.me/${wa}?text=${msg}">واتساب</a>
           <a class="btn btn-sm btn-ghost" href="tel:${esc(o.phone)}">اتصال</a>
+          <button class="btn btn-sm btn-ghost" data-oedit="${o.id}">تعديل البيانات</button>
           <button class="btn btn-sm btn-ghost" data-fin="${o.id}">التكاليف</button>
           <button class="btn btn-sm btn-danger" data-del-order="${o.id}">حذف</button>
         </div>
@@ -1690,8 +1691,36 @@ function offlineBox(ed) {
 document.addEventListener('click', e => {
   if (e.target.closest('[data-offsale]')) return offlineBox();
   const oe = e.target.closest('[data-offedit]'); if (oe) { const x = offs.find(q => q.id === +oe.dataset.offedit); if (x) offlineBox(x); return; }
+  const oo = e.target.closest('[data-oedit]'); if (oo) { const o = orders.find(q => q.id === +oo.dataset.oedit); if (o) orderEditBox(o); return; }
   const xe = e.target.closest('[data-xedit]'); if (xe) { const x = expenses.find(q => q.id === +xe.dataset.xedit); if (x) expEditBox(x); }
 });
+// edit the customer data of an order (name, phone, governorate, address, notes, map link). totals and shipping are not recalculated
+function orderEditBox(o) {
+  const m = document.createElement('div'); m.className = 'fin-m';
+  m.innerHTML = `<form class="fin-box" novalidate><h3>تعديل بيانات الطلب <span class="en">${esc(o.code)}</span></h3>
+    <p class="fsub">بيغيّر بيانات العميل بس. الإجمالي وسعر الشحن بيفضلوا زي ما هما.</p>
+    <div class="two"><div class="field"><label>اسم العميل</label><input class="input" name="customer_name" value="${esc(o.customer_name)}"></div>
+      <div class="field"><label>التليفون</label><input class="input en" name="phone" inputmode="tel" dir="ltr" value="${esc(o.phone)}"></div></div>
+    <div class="field"><label>المحافظة</label><input class="input" name="city" list="ordCities" autocomplete="off" value="${esc(o.city || '')}"><datalist id="ordCities">${GOV.map(c => `<option value="${c}">`).join('')}</datalist></div>
+    <div class="field"><label>العنوان</label><textarea class="input" name="address" rows="2">${esc(o.address || '')}</textarea></div>
+    <div class="field"><label>ملاحظة العميل</label><input class="input" name="notes" value="${esc(o.notes || '')}"></div>
+    <div class="field"><label>لينك اللوكيشن</label><input class="input en" name="location" dir="ltr" placeholder="https://maps.google.com/…" value="${esc(o.location || '')}"></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ التعديل</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m);
+  const form = m.querySelector('form');
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  form.onsubmit = async e => { e.preventDefault();
+    const v = k => form[k].value.trim();
+    if (!v('customer_name')) return toast('اكتب اسم العميل', 'err');
+    if (digits(v('phone')).length < 8) return toast('رقم التليفون مش مظبوط', 'err');
+    if (!v('address') && !v('city')) return toast('اكتب المحافظة أو العنوان', 'err');
+    const patch = { customer_name: v('customer_name'), phone: v('phone'), city: v('city'), address: v('address'), notes: v('notes') || null, location: v('location') || null };
+    const { error } = await sb.from('shop_orders').update(patch).eq('id', o.id);
+    if (error) return toast(error.message, 'err');
+    Object.assign(o, patch); m.remove(); toast('اتعدلت بيانات الطلب ✓', 'ok');
+    sheetOrder(o); if (tab === 'accounts') renderAccounts(); else renderOrders(); };
+  setTimeout(() => form.customer_name.focus(), 60);
+}
 // edit an expense that was already saved (the sheet row is updated too)
 function expEditBox(x) {
   const m = document.createElement('div'); m.className = 'fin-m';
