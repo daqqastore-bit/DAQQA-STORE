@@ -1625,13 +1625,13 @@ function finBox(o) {
   setTimeout(() => { const first = m.querySelector('[data-pc]'); first && !first.value && first.focus(); }, 60);
 }
 // a sale made outside the website: pick one of our products or type any name, then its numbers
-function offlineBox() {
+function offlineBox(ed) {
   if (!OFF_OK) return toast('جدول البيع خارج الموقع مش متفعل في Supabase', 'err');
-  let payer = 'buyer', pid = null;
+  let payer = ed ? ed.ship_payer : 'buyer', pid = ed ? ed.product_id : null;
   const today = new Date().toISOString().slice(0, 10), num = v => Math.max(0, +String(v).replace(/[^\d.]/g, '') || 0);
   const m = document.createElement('div'); m.className = 'fin-m';
   m.innerHTML = `<form class="fin-box off-box" novalidate>
-    <h3>بيع خارج الموقع</h3>
+    <h3>${ed ? 'تعديل بيعة خارج الموقع' : 'بيع خارج الموقع'}</h3>
     <p class="fsub">بيعة تمت في المحل أو على الواتساب أو أي مكان برا الموقع. بتدخل في المبيعات وصافي الربح.</p>
     <div class="field"><label>المنتج</label><div class="cat off-pick" id="offPick"><input class="input" name="pname" autocomplete="off" placeholder="اختار ساعة من عندك أو اكتب أي اسم" required>
       <button type="button" class="cat-tg" aria-label="عرض المنتجات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="cat-pop" role="listbox"></div></div>
@@ -1646,7 +1646,7 @@ function offlineBox() {
       <div class="field"><label>ملاحظة <small style="color:var(--muted-2);font-weight:400">(اختياري)</small></label><input class="input" name="note" placeholder="مثلاً: اتباعت في المحل"></div></div>
     <label class="check off-stock" hidden><input type="checkbox" name="stock" checked> <span>اخصمها من المخزون</span></label>
     <div class="fin-calc" id="offCalc"></div>
-    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ البيعة</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">${ed ? 'حفظ التعديل' : 'حفظ البيعة'}</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
   document.body.appendChild(m);
   const form = m.querySelector('form'), box = m.querySelector('#offPick'), inp = form.elements.pname, pop = box.querySelector('.cat-pop');
   const calc = () => { const q = Math.max(1, Math.round(num(form.qty.value)) || 1), pr = num(form.price.value) * q, co = num(form.cost.value) * q, sh = num(form.ship.value), net = pr - co - (payer === 'me' ? sh : 0);
@@ -1664,24 +1664,56 @@ function offlineBox() {
   pop.onclick = e => { const b = e.target.closest('[data-op]'); if (!b) return; pick(products.find(p => p.id === +b.dataset.op)); open(false); form.price.focus(); };
   m.addEventListener('input', e => { if (e.target !== inp) calc(); });
   m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay; calc(); } if (!box.contains(e.target)) open(false); if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  if (ed) {   // editing: fill the form with what was saved (price and cost are saved as totals, the form takes them per piece)
+    const q = Math.max(1, +ed.qty || 1);
+    inp.value = ed.name; form.qty.value = q; form.sold_on.value = ed.sold_on; form.price.value = +ed.price / q; form.cost.value = +ed.cost / q; form.ship.value = +ed.ship_cost || '';
+    form.seller.value = ed.seller || ''; form.note.value = ed.note || ''; m.querySelector('.off-stock').hidden = true;
+    m.querySelector('#offHint').textContent = 'تعديل البيعة دي مش بيغيّر المخزون';
+  }
   calc(); setTimeout(() => inp.focus(), 60);
   form.onsubmit = async e => { e.preventDefault(); const name = inp.value.trim(), v = calc(), btn = form.querySelector('[type=submit]');
     if (!name) { inp.focus(); return toast('اختار المنتج أو اكتب اسمه', 'err'); }
     if (!v.pr) { form.price.focus(); return toast('اكتب سعر البيع', 'err'); }
     btn.disabled = true;
     const row = { sold_on: form.sold_on.value || today, product_id: pid, name, qty: v.q, price: v.pr, cost: v.co, ship_cost: v.sh, ship_payer: payer, seller: form.seller.value.trim() || null, note: form.note.value.trim() || null };
-    const { data, error } = await sb.from('shop_offline_sales').insert(row).select().single(); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
-    offs.unshift(data); sheetSend({ action: 'upsert', sheet: 'offline', row: offRow(data) });
+    const { data, error } = await (ed ? sb.from('shop_offline_sales').update(row).eq('id', ed.id) : sb.from('shop_offline_sales').insert(row)).select().single(); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
+    if (ed) offs = offs.map(x => x.id === data.id ? data : x); else offs.unshift(data); sheetSend({ action: 'upsert', sheet: 'offline', row: offRow(data) });
     if (pid && num(form.cost.value)) { await sb.from('shop_product_costs').upsert({ product_id: pid, cost: num(form.cost.value), updated_at: new Date().toISOString() }); pcosts[pid] = num(form.cost.value); }
     const p = pid && products.find(x => x.id === pid);
-    if (p && form.stock.checked && !m.querySelector('.off-stock').hidden) {
+    if (p && !ed && form.stock.checked && !m.querySelector('.off-stock').hidden) {
       const upd = {}; if (p.stock != null) upd.stock = Math.max(0, +p.stock - v.q); if (COLS.show_left && p.shown_left != null) upd.shown_left = Math.max(0, +p.shown_left - v.q);
       if (Object.keys(upd).length) { const { error: se } = await sb.from('shop_products').update(upd).eq('id', p.id); if (!se) Object.assign(p, upd); }
     }
-    m.remove(); toast('اتسجلت البيعة ✓ صافي الربح ' + signMoney(offNet(data)), 'ok');
+    m.remove(); toast((ed ? 'اتعدلت البيعة ✓ صافي الربح ' : 'اتسجلت البيعة ✓ صافي الربح ') + signMoney(offNet(data)), 'ok');
     if (tab === 'dash') renderDash(); else if (tab === 'accounts') renderAccounts(); };
 }
-document.addEventListener('click', e => { if (e.target.closest('[data-offsale]')) offlineBox(); });
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-offsale]')) return offlineBox();
+  const oe = e.target.closest('[data-offedit]'); if (oe) { const x = offs.find(q => q.id === +oe.dataset.offedit); if (x) offlineBox(x); return; }
+  const xe = e.target.closest('[data-xedit]'); if (xe) { const x = expenses.find(q => q.id === +xe.dataset.xedit); if (x) expEditBox(x); }
+});
+// edit an expense that was already saved (the sheet row is updated too)
+function expEditBox(x) {
+  const m = document.createElement('div'); m.className = 'fin-m';
+  const cats = [...new Set([...EXP_CATS, ...expenses.map(e => e.category).filter(Boolean)])];
+  m.innerHTML = `<form class="fin-box" novalidate><h3>تعديل مصروف</h3>
+    <div class="two"><div class="field"><label>التاريخ</label><input class="input en" type="date" name="spent_on" value="${esc(x.spent_on)}"></div>
+      <div class="field"><label>المبلغ</label><input class="input en" name="amount" inputmode="decimal" value="${+x.amount}"></div></div>
+    <div class="field"><label>البند</label><input class="input" name="category" list="expCatsEdit" autocomplete="off" value="${esc(x.category)}"><datalist id="expCatsEdit">${cats.map(c => `<option value="${esc(c)}">`).join('')}</datalist></div>
+    <div class="field"><label>ملاحظة</label><input class="input" name="note" value="${esc(x.note || '')}"></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ التعديل</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m);
+  const form = m.querySelector('form');
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  form.onsubmit = async e => { e.preventDefault();
+    const amount = +String(form.amount.value).replace(/[^\d.]/g, ''), category = form.category.value.trim();
+    if (!category) return toast('اكتب البند', 'err'); if (!amount) return toast('اكتب المبلغ', 'err');
+    const { data, error } = await sb.from('shop_expenses').update({ spent_on: form.spent_on.value || x.spent_on, category, amount, note: form.note.value.trim() || null }).eq('id', x.id).select().single();
+    if (error) return toast(error.message, 'err');
+    expenses = expenses.map(q => q.id === data.id ? data : q); sheetSend({ action: 'upsert', sheet: 'expenses', row: expRow(data) });
+    m.remove(); toast('اتعدل المصروف ✓', 'ok'); renderAccounts(); };
+  setTimeout(() => form.amount.focus(), 60);
+}
 // returned order: the pieces already went back to stock; log what the trip cost
 function returnBox(o) {
   if (!needFinTable()) return;
@@ -1780,7 +1812,7 @@ function renderAccounts() {
     body = `<div class="panel scroll-x" style="padding:6px 14px">${!OFF_OK ? '<div class="empty">جدول البيع خارج الموقع مش متفعل في Supabase.</div>' : OFF.length ? `<table class="atable" style="min-width:760px"><thead><tr><th>التاريخ</th><th>المنتج</th><th>البائع</th><th>البيع</th><th>التكلفة</th><th>الشحن</th><th>صافي الربح</th><th></th></tr></thead><tbody>
       ${OFF.map(x => { const n = offNet(x); return `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.sold_on + 'T00:00')}</span></td><td><b>${esc(x.name)}</b>${+x.qty > 1 ? ` <small style="color:var(--muted)">× ${x.qty}</small>` : ''}${x.note ? `<div style="color:var(--muted-2);font-size:11.5px">${esc(x.note)}</div>` : ''}</td><td>${x.seller ? esc(x.seller) : '<span style="color:var(--muted-2)">—</span>'}</td>
         <td class="n">${money(x.price)}</td><td class="n">${money(x.cost)}</td><td class="n">${money(x.ship_cost)} <small style="color:var(--muted)">${x.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small></td>
-        <td class="n"><span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span></td><td><button class="btn btn-sm btn-ghost" data-offdel="${x.id}">حذف</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش بيع خارج الموقع في الفترة دي. دوس «بيع خارج الموقع» فوق عشان تسجّل بيعة.</div>'}</div>`;
+        <td class="n"><span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span></td><td style="white-space:nowrap"><button class="btn btn-sm btn-ghost" data-offedit="${x.id}">تعديل</button> <button class="btn btn-sm btn-ghost" data-offdel="${x.id}">حذف</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش بيع خارج الموقع في الفترة دي. دوس «بيع خارج الموقع» فوق عشان تسجّل بيعة.</div>'}</div>`;
   } else if (accTab === 'exp') {
     const today = new Date().toISOString().slice(0, 10);
     body = `<form class="panel exp-form" id="expForm"><div class="field"><label>التاريخ</label><input class="input en" type="date" name="spent_on" value="${today}" required></div>
@@ -1789,7 +1821,7 @@ function renderAccounts() {
       <div class="field"><label>المبلغ</label><input class="input en" name="amount" inputmode="decimal" required placeholder="0"></div>
       <div class="field"><label>ملاحظة</label><input class="input" name="note" placeholder="اختياري"></div>
       <button class="btn btn-amber" type="submit">+ إضافة</button></form>
-    <div class="panel scroll-x" style="padding:6px 14px">${expIn.length || accScope !== 'all' ? (accScope !== 'all' ? '<div class="empty">المصاريف بتظهر في «الكل».</div>' : `<table class="atable" style="min-width:560px"><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody>${expIn.map(x => `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.spent_on + 'T00:00')}</span></td><td>${esc(x.category)}</td><td class="n neg">${money(x.amount)}</td><td style="color:var(--muted)">${esc(x.note || '')}</td><td><button class="btn btn-sm btn-ghost" data-xdel="${x.id}">حذف</button></td></tr>`).join('')}</tbody></table>`) : '<div class="empty">مفيش مصاريف في الفترة دي.</div>'}</div>`;
+    <div class="panel scroll-x" style="padding:6px 14px">${expIn.length || accScope !== 'all' ? (accScope !== 'all' ? '<div class="empty">المصاريف بتظهر في «الكل».</div>' : `<table class="atable" style="min-width:560px"><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th><th>ملاحظة</th><th></th></tr></thead><tbody>${expIn.map(x => `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.spent_on + 'T00:00')}</span></td><td>${esc(x.category)}</td><td class="n neg">${money(x.amount)}</td><td style="color:var(--muted)">${esc(x.note || '')}</td><td style="white-space:nowrap"><button class="btn btn-sm btn-ghost" data-xedit="${x.id}">تعديل</button> <button class="btn btn-sm btn-ghost" data-xdel="${x.id}">حذف</button></td></tr>`).join('')}</tbody></table>`) : '<div class="empty">مفيش مصاريف في الفترة دي.</div>'}</div>`;
   } else {
     body = `<div class="panel scroll-x" style="padding:6px 14px">${rets.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>المنتجات (رجعت للمخزون)</th><th>قيمة الطلب</th><th>خسارة المرتجع</th><th></th></tr></thead><tbody>
       ${rets.map(o => { const f = fins[o.id]; return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
