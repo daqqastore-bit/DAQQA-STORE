@@ -928,3 +928,6 @@ html.lite:not(.vt-theme)::view-transition-new(root){animation:pgInL .5s cubic-be
 html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .ph-cnt{display:block;margin-top:6px;font:600 12px var(--f-ui);color:var(--muted);text-align:right;direction:rtl;transition:color .2s}
 .ph-cnt.bad{color:#C2513A}.ph-cnt.ok{color:#3E8E5A}
+.ph-xf{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.05);transition:opacity .6s ease;pointer-events:none;z-index:1}
+.ph-xf.on{opacity:1}
+.card .ph .badge-off,.card .ph .out,.card .ph::after{z-index:2}
