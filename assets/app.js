@@ -394,7 +394,7 @@
     const m = document.createElement('div'); m.className = 'oc-m qa-m';
     m.innerHTML = `<div class="oc-card qa-card" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
       <div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>
-      ${vs.length ? `<p class="qa-lead">اختار المواصفات اللي تعجبك</p>` : ''}
+      ${vs.length ? `<p class="qa-lead po-need">يجب اختيار الاختيارات الآتية</p>` : ''}
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
       <div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
