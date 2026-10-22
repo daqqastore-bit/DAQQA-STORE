@@ -215,7 +215,7 @@ create trigger shop_order_stock after update of status on public.shop_orders for
 -- guests track an order with its code + phone
 create or replace function public.shop_track_order(p_code text, p_phone text)
 returns jsonb language sql stable security definer set search_path = public as $$
-  select jsonb_build_object('code', o.code, 'status', o.status, 'total', o.total, 'created_at', o.created_at, 'cancelled_at', o.cancelled_at,
+  select jsonb_build_object('code', o.code, 'status', o.status, 'total', o.total, 'created_at', o.created_at, 'cancelled_at', o.cancelled_at, 'cancelled_by', o.cancelled_by,
     'items', coalesce((select jsonb_agg(jsonb_build_object('name', i.name, 'qty', i.qty, 'image', i.image)) from public.shop_order_items i where i.order_id = o.id), '[]'::jsonb))
   from public.shop_orders o
   where o.code = upper(trim(p_code))

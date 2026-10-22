@@ -691,7 +691,7 @@
   /* ---------- account: Google or email + password; orders are saved to the account ---------- */
   DQ.user = null; DQ.isAdmin = false;
   let accMode = 'login', accMsg = '';
-  const STATUS = { new: 'تم الطلب', confirmed: 'جاري التجهيز', shipped: 'في الطريق', delivered: 'تم التسليم', cancelled: 'تم إلغاء الطلب', returned: 'مرتجع' };
+  const STATUS = { new: 'تم الطلب', confirmed: 'جاري التجهيز', shipped: 'في الطريق', delivered: 'تم التسليم', cancelled: 'تم إلغاء الطلب', returned: 'مرتجع', removed: 'تم إلغاء الطلب' };
   /* ---------- order tracking: 4 steps, live ---------- */
   const STEPS = [['new', 'تم الطلب', 'وصلنا طلبك، هنكلمك قريب للتأكيد.', 'bag'], ['confirmed', 'جاري التجهيز', 'استلمنا طلبك وبنجهزه دلوقتي.', 'gift'], ['shipped', 'في الطريق', 'طلبك خرج مع المندوب وفي الطريق ليك.', 'truck'], ['delivered', 'تم التسليم', 'تم استلام الطلب — نتمنى تكون مبسوط بالخدمة', 'heart']];
   DQ.tracker = (st) => {
@@ -704,11 +704,18 @@
   const mine = () => { try { return JSON.parse(localStorage.getItem('dq-my-orders') || '[]') } catch (e) { return [] } };
   const saveMine = l => { try { localStorage.setItem('dq-my-orders', JSON.stringify(l.slice(0, 30))) } catch (e) {} };
   DQ.rememberOrder = (o) => saveMine([o, ...mine().filter(x => x.code !== o.code)]);
-  const orderCard = o => `<div class="acc-order" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
-      ${DQ.tracker(o.status)}
+  // cancelled by the shop (or deleted from the dashboard): the customer is told so, with the shop's WhatsApp and phone
+  const byShop = o => o.status === 'removed' || (o.status === 'cancelled' && !!o.cancelled_by && o.cancelled_by !== 'customer');
+  const ENDED = ['cancelled', 'removed', 'delivered', 'returned'];
+  const contactBtns = code => { const list = RC.socials(DQ.settings), ph = list.find(x => x.type === 'phone');
+    return `${waAsk(code)}${ph && RC.socialHref(ph) ? `<a class="btn btn-ghost ao-call" href="${esc(RC.socialHref(ph))}">${RC.SOCIAL.phone.icon}اتصل بخدمة العملاء</a>` : ''}`; };
+  const endBox = o => byShop(o) ? `<div class="ao-end shop"><b>تم إلغاء الطلب من قِبل DAQQA</b><p>لو عندك أي استفسار تواصل مع خدمة العملاء على واتساب أو بالتليفون.</p><div class="ao-end-acts">${contactBtns(o.code)}</div></div>`
+    : `<div class="ao-end"><b>إنت لغيت الطلب ده</b>${o.cancelled_at ? `<p class="en" dir="ltr">${RC.when(o.cancelled_at)}</p>` : ''}</div>`;
+  const orderCard = o => `<div class="acc-order${['cancelled', 'removed'].includes(o.status) ? ' ended' : ''}" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
+      ${['cancelled', 'removed'].includes(o.status) ? endBox(o) : DQ.tracker(o.status)}
       <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
-      <div class="ao-acts">${waAsk(o.code)}${cancelBtn(o.code, o.status)}</div></div>`;
+      <div class="ao-acts">${byShop(o) ? '' : waAsk(o.code)}${cancelBtn(o.code, o.status)}${ENDED.includes(o.status) ? `<button type="button" class="ao-del" data-odel="${esc(o.code)}">مسح من طلباتي</button>` : ''}</div></div>`;
   // green WhatsApp button with the order number already written in the message
   function waAsk(code) { return DQ.wa() ? `<a class="btn wa-btn ao-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${code}`)}">${WA_ICON}استفسر على واتساب</a>` : ''; }
   // confirm popup: resolves true on the main button, false on back / outside / Esc
@@ -744,27 +751,47 @@
     b.disabled = true; b.textContent = 'جاري الإلغاء…';
     const local = mine().find(x => x.code === code);
     const { data, error } = await sb.rpc('shop_cancel_order', { p_code: code, p_phone: local ? local.phone : null, p_reason: reason });
+    if (error && /موجود/.test(error.message)) return applyStatus(code, 'removed');
     if (error) { b.disabled = false; b.textContent = 'إلغاء الطلب'; return DQ.toast(/شحن|واتساب|موجود/.test(error.message) ? error.message : 'معرفناش نلغي الطلب، جرّب تاني', 'err'); }
     const at = (data && data.cancelled_at) || new Date().toISOString(), l = mine(), lo = l.find(x => x.code === code);
     if (lo) { lo.cancelled_at = at; saveMine(l); }
     applyStatus(code, (data && data.status) || 'cancelled'); hideLater(code, at);
   });
   // a cancelled order stays on the customer's page for 5 minutes, then it's gone
+  // the customer's own cancels leave after 5 minutes; a cancel by the shop stays until the customer clears it (مسح من طلباتي)
   const HIDE_MS = 5 * 60 * 1000;
-  const shown = o => o.status !== 'cancelled' || (o.cancelled_at && Date.now() - new Date(o.cancelled_at).getTime() < HIDE_MS);
+  const hiddenSet = () => { try { return new Set(JSON.parse(localStorage.getItem('dq-hidden-orders') || '[]')) } catch (e) { return new Set() } };
+  const shown = o => !hiddenSet().has(o.code) && (o.status !== 'cancelled' || byShop(o) || (o.cancelled_at && Date.now() - new Date(o.cancelled_at).getTime() < HIDE_MS));
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-odel]'); if (!b) return;
+    const code = b.dataset.odel;
+    if (!(await DQ.ask('تمسح الطلب من طلباتك؟', `الطلب <b class="en">${esc(code)}</b> هيختفي من «طلباتي» على الجهاز ده.`, 'مسح', 'رجوع'))) return;
+    const h = hiddenSet(); h.add(code); try { localStorage.setItem('dq-hidden-orders', JSON.stringify([...h].slice(-100))) } catch (er) {}
+    saveMine(mine().filter(x => x.code !== code));
+    document.querySelectorAll(`.acc-order[data-trk="${CSS.escape(code)}"]`).forEach(el => { el.classList.add('gone'); setTimeout(() => el.remove(), 400); });
+    DQ.toast('اتمسح من طلباتك');
+  });
   function hideLater(code, at) {
     const left = HIDE_MS - (Date.now() - new Date(at || 0).getTime());
+    const o = mine().find(x => x.code === code); if (o && byShop(o)) return;
     setTimeout(() => document.querySelectorAll(`.acc-order[data-trk="${CSS.escape(code)}"]`).forEach(el => { el.classList.add('gone'); setTimeout(() => el.remove(), 400); }), Math.max(0, left));
   }
   async function trackLocal(codesToSkip = []) {
     const list = mine().filter(o => !codesToSkip.includes(o.code)), out = [];
-    for (const o of list) { let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {} if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, cancelled_at: o.cancelled_at, items: o.items || [] }); }
+    for (const o of list) { let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {}
+      if (r && !r.error && !r.data && o.status !== 'removed') { o.status = 'removed'; saveMine(mine().map(x => x.code === o.code ? { ...x, status: 'removed' } : x)); }   // gone from the shop = deleted from the dashboard
+      if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, cancelled_at: o.cancelled_at, cancelled_by: o.cancelled_by, items: o.items || [] }); }
     return out.filter(shown);
   }
   // a status changed → update every tracker on the page + tell the customer
-  function applyStatus(code, st) {
+  function applyStatus(code, st, by) {
     const l = mine(), o = l.find(x => x.code === code); const was = o ? o.status : null;
-    if (o) { o.status = st; saveMine(l); }
+    if (o) { o.status = st; if (by) o.cancelled_by = by; if (st === 'removed') o.cancelled_by = 'admin'; saveMine(l); }
+    if (st === 'cancelled' || st === 'removed') {
+      document.querySelectorAll(`.acc-order[data-trk="${CSS.escape(code)}"]`).forEach(el => { el.outerHTML = orderCard({ ...(o || {}), code, status: st, cancelled_by: (o && o.cancelled_by) || by, created_at: (o && o.at) || null, total: o ? o.total : 0, items: (o && o.items) || [] }); });
+      if (was !== st) DQ.toast(st === 'removed' || (by && by !== 'customer') ? `طلبك ${code} اتلغى من DAQQA` : `اتلغى الطلب ${code}`, st === 'removed' || (by && by !== 'customer') ? 'err' : 'ok');
+      return;
+    }
     document.querySelectorAll(`[data-trk="${CSS.escape(code)}"]`).forEach(el => { const t = el.querySelector('.trk'), b = el.querySelector('.ao-st'); if (t) t.outerHTML = DQ.tracker(st); if (b) { b.textContent = STATUS[st] || st; b.className = 'ao-st st-' + st; }
       const c = el.querySelector('.ao-cancel'); if (c && !CANCELABLE.includes(st)) c.remove(); });
     if (was !== st) DQ.toast(st === 'delivered' ? `تم تسليم طلبك ${code} — نتمنى تكون مبسوط بالخدمة` : `طلبك ${code}: ${STATUS[st] || st}`, 'ok');
@@ -773,13 +800,14 @@
   let myCh = null;
   function liveOrders(u) {
     if (myCh) { sb.removeChannel(myCh); myCh = null; }
-    if (u) myCh = sb.channel('my-orders-' + u.id).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'shop_orders', filter: 'user_id=eq.' + u.id }, p => p.new && p.new.code && applyStatus(p.new.code, p.new.status)).subscribe();
+    if (u) myCh = sb.channel('my-orders-' + u.id).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'shop_orders', filter: 'user_id=eq.' + u.id }, p => p.new && p.new.code && applyStatus(p.new.code, p.new.status, p.new.cancelled_by)).subscribe();
   }
   async function pollMine() {
     if (document.hidden) return;
-    for (const o of mine().filter(x => !['delivered', 'cancelled'].includes(x.status))) {
+    for (const o of mine().filter(x => !['delivered', 'cancelled', 'removed'].includes(x.status))) {
       let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {}
-      if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status);
+      if (r && !r.error && !r.data) applyStatus(o.code, 'removed');
+      else if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status, r.data.cancelled_by);
     }
   }
   setInterval(pollMine, 90000); document.addEventListener('visibilitychange', pollMine); setTimeout(pollMine, 4000);
@@ -881,7 +909,7 @@
       <h4 class="acc-h">طلباتي</h4><div id="accOrders"><div class="acc-empty">جاري التحميل…</div></div>
       <button class="btn btn-ghost acc-out" id="accOut">تسجيل خروج</button>`;
     $('#accOut').onclick = async () => { await sb.auth.signOut(); DQ.toast('اتسجل الخروج'); };
-    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,shop_order_items(name,qty,image)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
+    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,cancelled_by,shop_order_items(name,qty,image)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
     const el = $('#accOrders'); if (!el) return;
     const acc = error ? [] : data.filter(shown), extra = await trackLocal(acc.map(o => o.code));
     const all = [...acc, ...extra].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
