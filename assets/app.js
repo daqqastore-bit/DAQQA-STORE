@@ -967,6 +967,9 @@
       .subscribe();
     setInterval(() => { if (!document.hidden) checkBuild(); }, 120000);
     setInterval(() => { if (!document.hidden && Date.now() - lastLive > 600000) refreshData(); }, 120000);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) return; checkBuild(); if (Date.now() - lastLive > 30000) refreshData(); });
+    // back on the page (phone unlocked, app switched back, back-button cache): new version or fresh prices/stock show at once
+    const wake = () => { checkBuild(); if (Date.now() - lastLive > 5000) refreshData(); };
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+    addEventListener('pageshow', e => { if (e.persisted) wake(); }); addEventListener('online', wake);
   }
 })();

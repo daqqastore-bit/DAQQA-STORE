@@ -18,6 +18,8 @@ self.addEventListener('fetch', e => {
 // order notifications for the admin (sent by the order-push function when a new order comes in)
 self.addEventListener('push', e => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch (er) { d = { title: 'DAQQA', body: e.data ? e.data.text() : '' }; }
+  // an open dashboard reloads its orders right away
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(ws => ws.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }))).catch(() => {});
   e.waitUntil(self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: true, requireInteraction: true,
     icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: d.url || 'admin.html#orders' } }));
 });

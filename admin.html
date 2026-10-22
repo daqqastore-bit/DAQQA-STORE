@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022105558">
+<link rel="stylesheet" href="assets/base.css?v=20261022110910">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -465,6 +465,9 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .side{height:calc(100dvh / var(--z))}
 .editor .ed-foot{padding-bottom:max(14px,env(safe-area-inset-bottom))}
 @media (max-width:900px){ main{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))} }
+/* home-screen app on iPhone: the page runs under the clock/battery bar, so everything at the top steps down below it */
+@media (max-width:900px){ main{padding-top:calc(18px + env(safe-area-inset-top))} .side{padding-top:calc(22px + env(safe-area-inset-top))} }
+.editor .ed-head{padding-top:calc(16px + env(safe-area-inset-top))}
 @media (max-width:420px){ .kpis{grid-template-columns:1fr 1fr;gap:10px} .kpi{padding:14px} .kpi b{font-size:20px} .two{grid-template-columns:1fr} }
 @media (max-height:520px) and (orientation:landscape){ .mob-tabs .tab{height:44px;flex-direction:row;gap:6px} .chart-box{height:200px} }
 /* vh/dvh are not scaled by zoom, so heights use calc(... / var(--z)) */
@@ -578,7 +581,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022105558"></script>
+<script src="assets/config.js?v=20261022110910"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -2000,8 +2003,25 @@ async function checkBuild() {
   } catch (e) {}
 }
 setInterval(() => { if (!document.hidden) checkBuild(); }, 30000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) checkBuild(); });
-addEventListener('focus', checkBuild);
+// back in the app (phone unlocked, home-screen app reopened, notification tapped): the live connection may have slept,
+// so the orders are reloaded and the connection restarted — new orders show without closing the app
+let lastSync = Date.now();
+async function resync(force) {
+  if ($('#appView').classList.contains('hidden') || (!force && Date.now() - lastSync < 4000)) return;
+  lastSync = Date.now();
+  const before = new Set(orders.map(o => o.id));
+  await Promise.all([loadOrders(), loadProducts(), loadFin()]);
+  const fresh = before.size ? orders.filter(o => !before.has(o.id)) : [];
+  if (fresh.length) { fresh.forEach(o => { freshIds.add(o.id); sheetOrder(o); }); beep(); toast(fresh.length === 1 ? `طلب جديد ${fresh[0].code}` : `${fresh.length} طلبات جديدة`, 'ok'); }
+  listen(); renderTabs();
+  if (!adminBusy() && !$('#editor').classList.contains('on')) go(tab, true);
+}
+const wake = () => { checkBuild(); resync(); };
+document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
+addEventListener('focus', wake); addEventListener('online', wake);
+addEventListener('pageshow', e => { if (e.persisted) wake(); });
+// a push that lands while the app is open refreshes it straight away (sw.js passes it on)
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.type === 'dq-push') resync(true); });
 
 boot();
 </script>
