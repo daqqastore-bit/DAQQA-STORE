@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022114434">
+<link rel="stylesheet" href="assets/base.css?v=20261022115736">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -589,7 +589,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022114434"></script>
+<script src="assets/config.js?v=20261022115736"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1651,11 +1651,11 @@ function stPicker(o) {
 // the order's money in full, shown under its totals
 function finPanel(o) {
   const f = fins[o.id];
-  if (o.status === 'returned') return `<div class="o-fin"><h4>الحسابات</h4>${f ? `<div><span>خسارة المرتجع</span><b class="neg">− ${money(f.return_loss)}</b></div>` : ''}<div class="net"><span>صافي الربح</span><b class="${f && +f.return_loss ? 'neg' : ''}">${signMoney(orderNet(o))}</b></div><small>المنتجات رجعت للمخزون.</small></div>`;
-  if (!COUNTED.includes(o.status)) return o.status === 'new' ? `<div class="o-fin muted"><h4>الحسابات</h4><small>بتتسجّل لما تخلي الحالة «تم الاستلام».</small></div>` : '';
-  if (!f) return `<div class="o-fin warn"><h4>الحسابات</h4><small>لسه مسجّلتش التكاليف، فصافي الربح مش محسوب.</small><button class="btn btn-sm btn-amber" data-fin="${o.id}">سجّل التكاليف</button></div>`;
+  if (o.status === 'returned') return `<div class="o-fin"><h4>ربح الأوردر ده</h4>${f ? `<div><span>خسارة المرتجع</span><b class="neg">− ${money(f.return_loss)}</b></div>` : ''}<div class="net"><span>صافي الربح</span><b class="${f && +f.return_loss ? 'neg' : ''}">${signMoney(orderNet(o))}</b></div><small>المنتجات رجعت للمخزون.</small></div>`;
+  if (!COUNTED.includes(o.status)) return o.status === 'new' ? `<div class="o-fin muted"><h4>ربح الأوردر ده</h4><small>بتتسجّل لما تخلي الحالة «تم الاستلام».</small></div>` : '';
+  if (!f) return `<div class="o-fin warn"><h4>ربح الأوردر ده</h4><small>لسه مسجّلتش تكلفة الأوردر ده (اشتريت الساعة بكام والشحن عليك بكام)، فمش محسوب كسبت منه كام.</small><button class="btn btn-sm btn-amber" data-fin="${o.id}">سجّل التكلفة</button></div>`;
   const n = orderNet(o), me = f.ship_payer === 'me';
-  return `<div class="o-fin"><h4>الحسابات</h4>
+  return `<div class="o-fin"><h4>ربح الأوردر ده</h4>
     <div><span>سعر البيع</span><b>${money(f.sale)}</b></div>
     <div><span>تكلفة المنتجات</span><b>− ${money(f.cost)}</b></div>
     <div><span>تكلفة الشحن · ${me ? 'على حسابك' : 'على المشتري'}</span><b>${me ? '− ' : ''}${money(f.ship_cost)}${me ? '' : ' <i>(مش بتتخصم)</i>'}</b></div>
