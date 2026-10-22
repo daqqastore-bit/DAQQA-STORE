@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022120906">
+<link rel="stylesheet" href="assets/base.css?v=20261022121543">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -596,7 +596,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022120906"></script>
+<script src="assets/config.js?v=20261022121543"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1070,7 +1070,8 @@ function renderEditor() {
   // re-drawing (delete a colour, move a photo…) keeps the page where it was
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
   // the four buyer options always exist in the draft (empty ones are simply not saved)
-  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
+  // runs on every render: the old single img / dials are folded into imgs / links once and dropped, so removing a photo or a link sticks
+  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
   if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
   $('#editor').innerHTML = `
