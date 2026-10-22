@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022121543">
+<link rel="stylesheet" href="assets/base.css?v=20261022131355">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -114,7 +114,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-body{display:none;border-top:1px solid var(--line);padding:16px;gap:18px;flex-wrap:wrap}
 .order.open .o-body{display:flex}
 .o-items{flex:2 1 320px;display:flex;flex-direction:column;gap:10px}
-.o-item{display:flex;gap:10px;align-items:center}
+.o-item{display:flex;gap:10px;align-items:flex-start}
 .o-item img{width:48px;height:48px;border-radius:10px;object-fit:cover;background:var(--surface-2)}
 .o-item .n{flex:1;font:600 13px var(--f-ui)}
 .o-item .q{color:var(--muted);font:13px var(--f-ui)}
@@ -268,7 +268,11 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .spec-x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);color:var(--muted);font-size:18px;line-height:1}
 .spec-x:hover{border-color:#d9534f;color:#d9534f}
 .spec-add{align-self:flex-start}
-.o-opts{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px;font-size:12px;color:var(--muted)}.o-opts span{display:inline-flex;align-items:center;gap:4px}.o-opts b{color:var(--ink);font-weight:600}.o-opts i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}
+.o-opts{display:grid;gap:6px;margin-top:8px;max-width:420px}.o-opts em{font-style:normal;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--amber)}
+.o-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid color-mix(in srgb,var(--amber) 35%,var(--line));border-radius:10px;background:color-mix(in srgb,var(--amber) 7%,transparent);font-size:13px;line-height:1.35}
+.o-opt img{width:30px;height:30px;border-radius:7px;object-fit:cover;flex:none}
+.o-opt i{width:16px;height:16px;border-radius:50%;flex:none;box-shadow:0 0 0 1px var(--line),0 0 0 3px var(--bg-2)}
+.o-opt small{color:var(--muted);font-size:12px;flex:none;min-width:58px}.o-opt b{color:var(--ink);font-weight:700;font-size:14px;overflow-wrap:anywhere}
 .vg{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px;background:var(--bg)}
 .vg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
 .vg-h b{font-size:14px}.vg-h b small{font:600 10.5px var(--f-ui);letter-spacing:.12em;color:var(--amber);text-transform:uppercase;margin-inline-start:4px}
@@ -596,7 +600,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022121543"></script>
+<script src="assets/config.js?v=20261022131355"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -629,7 +633,8 @@ const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = product
 let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
 // which sections / genders an order touches (from its products)
 // the options the buyer picked for a piece (dial, strap, case, movement)
-const optChips = i => (i.options || []).length ? `<span class="o-opts">${i.options.map(o => `<span>${o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(o.g)}: <b>${esc(o.v)}</b></span>`).join('')}</span>` : '';
+// what the buyer picked (dial, strap…): one clear row each, with the option's colour and photo, so it can't be missed when packing
+const optChips = i => (i.options || []).length ? `<span class="o-opts"><em>اختيارات العميل</em>${i.options.map(o => `<span class="o-opt">${o.img ? `<img src="${esc(o.img)}" alt="">` : ''}${o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}<small>${esc(o.g)}</small><b>${esc(o.v)}</b></span>`).join('')}</span>` : '';
 const orderProds = o => (o.shop_order_items || []).map(i => products.find(x => x.id === i.product_id)).filter(Boolean);
 const orderHasKind = (o, k) => orderProds(o).some(p => RC.kindOf(p) === k);
 const orderHasGen = (o, g) => orderProds(o).some(p => p.category === g || p.category === 'unisex');
