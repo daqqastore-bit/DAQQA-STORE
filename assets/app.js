@@ -167,9 +167,9 @@
       <div class="foot-grid">
         <div class="foot-brand"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
           <p id="ftAbout" hidden></p></div>
-        <div><h4>تصفّح</h4><ul><li><a href="./">الرئيسية</a></li>${Object.entries(RC.pages).map(([k, v]) => `<li data-page="${k}" hidden><a href="${v.href}">${v.ar}</a></li>`).join('')}<li><a href="social.html">تواصل معانا</a></li></ul></div>
+        <div><h4 class="en">EXPLORE</h4><ul><li><a href="./">الرئيسية</a></li>${Object.entries(RC.pages).map(([k, v]) => `<li data-page="${k}" hidden><a href="${v.href}">${v.ar}</a></li>`).join('')}<li><a href="social.html">تواصل معانا</a></li></ul></div>
         <div><h4 class="en">SHOP</h4><ul>${Object.entries(RC.kinds).map(([k, v]) => `<li data-kind="${k}" hidden><a href="./#${k}">${v.ar}</a></li>`).join('')}</ul></div>
-        <div id="ftHelpBox" hidden><h4 class="en">HELP</h4><ul id="ftHelp"></ul></div>
+        <div id="ftHelpBox" hidden><h4 class="en">POLICY</h4><ul id="ftHelp"></ul></div>
         <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul></div>
       </div>
       <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div>
