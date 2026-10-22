@@ -669,14 +669,14 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .loc-acts a,.loc-acts button{font-size:12.5px;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);display:inline-flex;align-items:center;color:var(--muted)}
 .loc-acts a:hover,.loc-acts button:hover{color:var(--ink);border-color:var(--accent)}
 /* summary card */
-.co-side{position:sticky;top:96px}
+.co-side{position:static}
 .co-card{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(160deg,rgb(var(--accent-rgb)/.07),transparent 45%),var(--surface);box-shadow:var(--shadow)}
 .co-card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .co-card h2{font:500 22px var(--f-display)}
 .co-edit{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 45%,transparent);background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);font:600 12.5px var(--f-ar);transition:background .2s,color .2s,border-color .2s}
 .co-edit svg{width:14px;height:14px}
 .co-edit:hover{background:var(--accent);color:var(--bg);border-color:var(--accent)}
-.co-items{display:flex;flex-direction:column;max-height:300px;overflow:auto;margin:0 -6px;padding:0 6px}
+.co-items{display:flex;flex-direction:column;margin:0 -6px;padding:0 6px}
 .co-it{display:grid;grid-template-columns:60px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);opacity:0;transform:translateX(-14px)}
 .co-page.on .co-it{animation:coIt .6s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.8s + var(--k) * .08s)}
 @keyframes coIt{to{opacity:1;transform:none}}
@@ -1031,3 +1031,19 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 
 /* the page's main heading for search engines and screen readers, kept off screen */
 .sr-h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* compact lines in the cart, checkout and confirm pop-up: the picks sit on one row as small chips */
+.ci-opts{display:flex;flex-wrap:wrap;gap:4px 6px;margin:4px 0 6px;justify-items:initial}
+.ci-opts span,.co-it .ci-opts span{width:auto;padding:2px 9px 2px 8px;gap:5px;border-radius:999px;font-size:12px;line-height:1.5;border-color:color-mix(in srgb,var(--accent) 28%,var(--line))}
+.ci-opts small,.co-it .ci-opts small{display:none}
+.ci-opts b,.co-it .ci-opts b{font:600 12px/1.5 var(--f-ui);color:var(--ink);overflow-wrap:anywhere}
+.ci-opts i{width:10px;height:10px}
+.ci-opts img{width:16px;height:16px;border-radius:4px}
+.ci{padding:10px 0;align-items:start}
+.ci .price{margin:2px 0 6px}
+/* the discount code stays one quiet line until it's opened */
+.cp-open{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 12px;padding:9px 12px;border:1.5px dashed rgb(var(--accent-rgb)/.45);border-radius:12px;background:transparent;color:var(--muted);font:500 13.5px var(--f-ui);cursor:pointer;text-align:start;transition:border-color .2s,color .2s}
+.cp-open .cp-ic{display:grid;place-items:center;width:20px;height:20px;color:var(--accent)}.cp-open .cp-ic svg{width:17px;height:17px}
+.cp-open i{margin-inline-start:auto;font-style:normal;font-size:18px;line-height:1;color:var(--accent)}
+.cp-open:hover{border-color:var(--accent);color:var(--ink)}
+.cp-open.cp-lx{border-color:rgb(201 169 110/.5);color:#cdbb98}

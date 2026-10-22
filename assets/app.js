@@ -468,8 +468,12 @@
     if ($('#drawer').classList.contains('on')) renderCart(); DQ.refreshCheckout && DQ.refreshCheckout(); };
   const cpHTML = t => { const lx = t.ls.length && t.ls.every(l => RC.isLuxury(l.p));
     if (t.cp) return `<div class="cp-box on${lx ? ' cp-lx' : ''}"><span class="cp-ic">${CP_ICON}</span><span class="cp-t"><b class="en">${esc(t.cp.code)}</b><small>${t.cpOff ? `تم خصم ${money(t.cpOff)} (${t.cp.pct}%)` : `الكود ده على ${esc(cpWho(t.cp))} بس، مفيش منها في طلبك`}</small></span><button type="button" class="cp-rm" data-cp-rm aria-label="شيل الكود">✕</button></div>`;
+    // closed to a single line until the customer wants it, so the cart keeps its room for the products
+    if (!DQ.cpOpen) return `<button type="button" class="cp-open${lx ? ' cp-lx' : ''}" data-cp-open><span class="cp-ic">${CP_ICON}</span>عندك كود خصم؟<i aria-hidden="true">+</i></button>`;
     return `<form class="cp-box${lx ? ' cp-lx' : ''}" data-cp-form><span class="cp-ic">${CP_ICON}</span><input class="cp-in en" name="cp" placeholder="عندك كود خصم؟" aria-label="كود الخصم" autocomplete="off" autocapitalize="characters" dir="auto" maxlength="30"><button type="submit" class="cp-go">تطبيق</button></form>`; };
   const CP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>';
+  document.addEventListener('click', e => { const b = e.target.closest('[data-cp-open]'); if (!b) return;
+    DQ.cpOpen = true; const box = b.parentNode, t = totals(); b.outerHTML = cpHTML(t); const inp = box.querySelector('[data-cp-form] .cp-in'); if (inp) inp.focus(); });
   document.addEventListener('submit', async e => {
     const f = e.target.closest('[data-cp-form]'); if (!f) return; e.preventDefault();
     const code = f.cp.value.trim().toUpperCase(); if (!code) return f.cp.focus();
@@ -491,7 +495,8 @@
       <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
   // the options the buyer picked, as small chips (a colour option shows its dot)
   const optsHTML = l => { const vs = RC.variants(l.p); if (!vs.length || !l.opt) return '';
-    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.c ? `<i style="background:${esc(o.c)}"></i>` : o.img ? `<img src="${esc(o.img)}" alt="">` : ''}<small>${esc(g.ar)}</small><b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
+    // one compact line: a dot of the colour + the choice (the group name stays in the tooltip)
+    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span title="${esc(g.ar)}: ${esc(o.n)}">${o.c ? `<i style="background:${esc(o.c)}"></i>` : o.img ? `<img src="${esc(o.img)}" alt="">` : ''}<small>${esc(g.ar)}</small><b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
   // a line shows the photo of the option the buyer picked (e.g. the green dial), otherwise the product's main photo
   const lineImg = l => { const u = l.opt && RC.optPhoto(l.p, l.opt); return u ? esc(u) : DQ.img(l.p); };
   const optLine = l => l.opt && RC.variants(l.p).length ? ` [${RC.optText(l.opt, '، ')}]` : '';
@@ -736,7 +741,7 @@
       m.innerHTML = `<div class="oc-card" role="dialog" aria-modal="true" aria-labelledby="ocH"><h3 id="ocH">متأكد من اختياراتك؟</h3><p>ده بالظبط اللي هيوصلك:</p>
         <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)}</b><span class="qty-pill">الكمية <b class="en">${l.qty}</b>${l.qty > 1 ? ` <small>قطع</small>` : ` <small>قطعة</small>`}</span>${optsHTML(l)}<span class="oc-price"><span class="op-r"><small>سعر القطعة</small><b class="en">${money(finalPrice(l.p))}</b>${discountPct(l.p) ? `<s class="en">${money(l.p.price)}</s><em class="en">-${discountPct(l.p)}%</em>` : ''}</span>${l.qty > 1 ? `<span class="op-r tot"><small>إجمالي ${l.qty} قطع</small><b class="en">${money(finalPrice(l.p) * l.qty)}</b></span>` : ''}</span></div></div>`).join('')}</div>
         <div class="oc-sums">${sumsHTML(t, true)}</div>
-        <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب · <span class="en">${money(t.total)}</span></button><button type="button" class="btn btn-ghost" data-no>رجوع أعدّل</button></div></div>`;
+        <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب · <span class="en">${money(t.total)}</span></button><button type="button" class="btn btn-ghost" data-no>رجوع</button></div></div>`;
       document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
       const end = v => { m.classList.remove('on'); setTimeout(() => m.remove(), 250); done(v); };
       m.addEventListener('click', e => { if (e.target.closest('[data-ok]')) end(true); else if (e.target === m || e.target.closest('[data-no]')) end(false); });

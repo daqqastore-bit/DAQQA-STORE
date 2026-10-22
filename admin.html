@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022182448">
+<link rel="stylesheet" href="assets/base.css?v=20261022184010">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -29,7 +29,7 @@ body{font-size:14px}
 /* shell */
 .app{display:flex;min-height:100vh}
 .side{width:240px;flex:none;background:var(--bg-2);border-left:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:calc(100vh / var(--z));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
-.side::-webkit-scrollbar{width:6px}.side::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+.side::-webkit-scrollbar{width:6px}
 .side .brand{display:flex;align-items:center;gap:10px;padding:0 8px}
 /* theme switch sits next to the brand so it is always in view */
 .th-sw{margin-inline-start:auto;position:relative;width:58px;height:30px;flex:none;border-radius:99px;border:1px solid var(--line);background:var(--surface);display:flex;align-items:center;justify-content:space-between;padding:0 7px;direction:ltr;color:var(--muted);cursor:pointer;transition:border-color .3s}
@@ -709,7 +709,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022182448"></script>
+<script src="assets/config.js?v=20261022184010"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
