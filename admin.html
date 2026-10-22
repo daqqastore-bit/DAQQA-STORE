@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261020170114">
+<link rel="stylesheet" href="assets/base.css?v=20261022095400">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -269,6 +269,10 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .ed-body{flex:1;overflow:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px}
 .ed-foot{border-top:1px solid var(--line);padding:14px 20px;display:flex;gap:10px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two>*,.field{min-width:0}
+/* iOS gives date inputs a fixed native width that spills out of narrow columns */
+input.input[type=date]{-webkit-appearance:none;appearance:none;min-width:0;width:100%;display:block;text-align:right;line-height:46px}
+input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 #main.pg-in>*{animation:pgIn .38s cubic-bezier(.2,.8,.2,1) backwards}
 #main.pg-in>*:nth-child(2){animation-delay:.04s}#main.pg-in>*:nth-child(3){animation-delay:.08s}#main.pg-in>*:nth-child(n+4){animation-delay:.12s}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -483,11 +487,21 @@ html{--z:1}
 .tab.tab-lux.on{background:linear-gradient(120deg,rgba(201,169,110,.18),rgba(201,169,110,.06));color:#F2E3C2;box-shadow:inset 0 0 0 1px rgba(201,169,110,.35)}
 .scope-seg button.on.en{background:linear-gradient(120deg,#9c7642,#C9A96E);color:#140E08}
 .mob-tabs .tab-h{display:none}
+/* phone: the full sidebar (all pages, theme, store link, logout) opens from «القائمة» in the bottom bar */
+.side-bg{display:none}
+@media (max-width:900px){
+  .side{display:flex;position:fixed;top:0;right:0;bottom:0;width:min(290px,84vw);height:auto;z-index:90;transform:translateX(105%);transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:-20px 0 50px rgba(0,0,0,.35);padding-bottom:max(22px,env(safe-area-inset-bottom))}
+  body.side-open .side{transform:none}
+  .side-bg{display:block;position:fixed;inset:0;z-index:85;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
+  body.side-open .side-bg{opacity:1;pointer-events:auto}
+  body.side-open{overflow:hidden}
+}
 .ord-scope{margin-bottom:10px;flex-wrap:wrap;gap:10px}
 .cov-panel{margin-bottom:14px}
 .bslot .re{position:absolute;bottom:6px;left:6px;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.65);color:#fff}
 .lux-h{background:linear-gradient(100deg,#9c7642,#f6e3b5 40%,#c9a96e 60%,#9c7642);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.12em}
 .notify-ask{position:fixed;bottom:20px;left:20px;z-index:90;box-shadow:0 20px 40px -16px rgba(0,0,0,.6)}
+@media (max-width:900px){.notify-ask{bottom:calc(84px + env(safe-area-inset-bottom));left:16px;z-index:70}}
 .g-or[hidden],.g-btn[hidden]{display:none!important}
 .g-or{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px}
 .g-or::before,.g-or::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -542,6 +556,7 @@ html{--z:1}
   </aside>
   <main id="main"></main>
   <nav class="mob-tabs" id="mobTabs"></nav>
+  <div class="side-bg" id="sideBg"></div>
 </div>
 
 <div class="overlay" id="overlay"></div>
@@ -551,7 +566,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261020170114"></script>
+<script src="assets/config.js?v=20261022095400"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -578,7 +593,7 @@ const TABS = [['accounts','الحسابات'], ['dash','المبيعات'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['settings','الإعدادات']];
-const MOB_TABS = ['accounts','dash','orders','products','lux-orders','lux','settings'];
+const MOB_TABS = ['accounts','dash','orders','products','lux-orders'];
 // an order counts as Luxury when any of its pieces is a Luxury product
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
 let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
@@ -738,9 +753,11 @@ function renderTabs() {
   const ic = k => ICONS[k] || ICONS[k.replace('lux-', '')] || ICONS.lux;
   const btn = ([k, l]) => { const n = k === 'orders' ? nNew(false) : k === 'lux-orders' ? nNew(true) : 0; return `<button class="tab ${k===tab?'on':''} ${k.startsWith('lux') ? 'tab-lux' : ''}" data-tab="${k}">${ic(k)}<span>${l}</span>${n ? `<span class="pill en">${n}</span>` : ''}</button>`; };
   $('#tabs').innerHTML = TABS.map(t => t[0] === '_h' ? `<div class="tab-h ${t[2] || ''}">${t[1] ? `<span class="${t[2] ? 'en' : ''}">${t[1]}</span>` : ''}</div>` : btn(t)).join('');
-  $('#mobTabs').innerHTML = TABS.filter(t => MOB_TABS.includes(t[0])).map(([k, l]) => btn([k, {orders: 'الطلبات', 'lux-orders': 'Luxury', lux: 'منتجات L', products: 'المنتجات'}[k] || l])).join('');
+  $('#mobTabs').innerHTML = TABS.filter(t => MOB_TABS.includes(t[0])).map(([k, l]) => btn([k, {orders: 'الطلبات', 'lux-orders': 'Luxury', lux: 'منتجات L', products: 'المنتجات'}[k] || l])).join('')
+    + `<button type="button" class="tab ${MOB_TABS.includes(tab) ? '' : 'on'}" id="mobMenu" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>القائمة</span></button>`;
 }
-document.addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (t) go(t.dataset.tab); });
+document.addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (t) { document.body.classList.remove('side-open'); go(t.dataset.tab); }
+  if (e.target.closest('#mobMenu')) document.body.classList.add('side-open'); else if (e.target.closest('#sideBg')) document.body.classList.remove('side-open'); });
 function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }

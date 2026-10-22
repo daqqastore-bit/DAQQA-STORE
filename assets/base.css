@@ -1,4 +1,6 @@
 /* DAQQA Watches — brand tokens (one palette, dark) */
+/* the hidden attribute always wins over display rules (menu links, empty sections) */
+[hidden]{display:none!important}
 :root{
   --bg:#18110A;          /* page background */
   --nav:#20160E;         /* navbar */
