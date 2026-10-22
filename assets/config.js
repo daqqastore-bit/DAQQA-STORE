@@ -149,7 +149,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022181627';
+RC.build = '20261022182448';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -170,7 +170,12 @@ RC.thumb = u => /\/storage\/v1\/object\/public\/[^?]*\/products\/[^?]+(?<!\.sm)\
 RC.band = (k, settings) => { const D = RC.kinds[k].band, o = ((settings && settings.bands) || {})[k] || {}, esc = RC.esc;
   const lines = v => esc(v).replace(/\n/g, '<br>');
   return { en: o.en ? lines(o.en) : D.en, ar: o.ar ? esc(o.ar) : D.ar,
-    feats: Array.isArray(o.feats) && o.feats.length ? o.feats.filter(f => f && f.t).map(f => [f.i, esc(f.t)]) : D.feats }; };
+    feats: Array.isArray(o.feats) && o.feats.length ? o.feats.filter(f => f && f.t).map(f => [f.i, esc(f.t), RC.safeLink(f.l)]) : D.feats.map(([i, t]) => [i, t, RC.FEAT_LINK[i] || '']) }; };
+// where a feature can lead: our own pages and sections, or any https link the admin types
+RC.FEAT_LINK = { truck: 'policy.html#shipping', shield: 'policy.html#exchange' };
+RC.LINKS = [['policy.html#shipping', 'سياسة الشحن'], ['policy.html#payment', 'الدفع'], ['policy.html#exchange', 'الاستبدال والاسترجاع'], ['policy.html#cancel', 'إلغاء الطلب'], ['policy.html#privacy', 'الخصوصية'], ['policy.html', 'كل السياسات'],
+  ['social.html', 'تواصل معانا'], ['luxury.html', 'Luxury'], ['collection.html?c=men', 'رجالي'], ['collection.html?c=women', 'حريمي'], ['./#watches', 'قسم الساعات'], ['./#glasses', 'قسم النضارات'], ['./#accessories', 'قسم الاكسسوارات']];
+RC.safeLink = u => { u = String(u || '').trim(); return /^(https:\/\/|\.\/|#|[a-z]+\.html)/i.test(u) && !/^javascript:/i.test(u) ? u : ''; };
 RC.featIcon = k => RC.FEAT_IC[k] || RC.PERK_IC[k] || RC.FEAT_IC.gem;
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {

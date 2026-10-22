@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022181627">
-<link rel="stylesheet" href="assets/store.css?v=20261022181627">
+<link rel="stylesheet" href="assets/base.css?v=20261022182448">
+<link rel="stylesheet" href="assets/store.css?v=20261022182448">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -188,9 +188,11 @@
 .band h2{font:400 clamp(36px,4.6vw,60px)/1.05 var(--f-display);color:var(--ink);margin-top:12px}
 .band .ar{font:700 22px 'Amiri',var(--f-ar);color:var(--muted);margin-top:8px}
 .feats{display:grid;grid-template-columns:repeat(var(--n,4),1fr);margin-top:40px;border-top:1px solid rgb(var(--accent-rgb)/.22)}
-.feats div{display:flex;flex-direction:column;align-items:center;gap:12px;padding:26px 10px 34px;text-align:center;font-size:13px;color:var(--muted);border-inline-start:1px solid rgb(var(--accent-rgb)/.22)}
-.feats div:first-child{border-inline-start:0}
+.feats>*{display:flex;flex-direction:column;align-items:center;gap:12px;padding:26px 10px 34px;text-align:center;font-size:13px;color:var(--muted);border-inline-start:1px solid rgb(var(--accent-rgb)/.22)}
+.feats>:first-child{border-inline-start:0}
 .feats svg{width:34px;height:34px;color:var(--ink)}
+.feats a{color:var(--muted);text-decoration:none;transition:color .2s,background .2s}.feats a span{border-bottom:1px solid rgb(var(--accent-rgb)/.35);padding-bottom:2px}
+@media (hover:hover){.feats a:hover{color:var(--accent);background:rgb(var(--accent-rgb)/.06)}.feats a:hover svg{color:var(--accent)}}
 .kind{scroll-margin-top:76px}
 .kind+.kind{border-top:1px solid var(--line)}
 .none{padding:140px 0;text-align:center;color:var(--muted)}
@@ -215,8 +217,8 @@
   .strip .grid.clip>.card:nth-child(4){display:flex}
   .band{min-height:440px}
   .feats{grid-template-columns:repeat(2,1fr)}
-  .feats div:nth-child(3){border-inline-start:0}
-  .feats div:nth-child(n+3){border-top:1px solid rgb(var(--accent-rgb)/.22)}
+  .feats>:nth-child(3){border-inline-start:0}
+  .feats>:nth-child(n+3){border-top:1px solid rgb(var(--accent-rgb)/.22)}
   .strip-in{padding-top:40px;padding-bottom:48px}
 }
 
@@ -294,8 +296,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022181627"></script>
-<script src="assets/app.js?v=20261022181627"></script>
+<script src="assets/config.js?v=20261022182448"></script>
+<script src="assets/app.js?v=20261022182448"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -502,7 +504,7 @@ function build() {
       </div></div>
       <div data-glow class="band op op-drop ${img.life ? 'has-photo op-zoom' : 'plain'}" ${img.life ? 'data-parallax' : ''}>${img.life ? `<div class="bg" style="--img:url('${esc(img.life)}')"></div>` : `<div class="wm" aria-hidden="true">${RC.logo()}</div>`}
         <div class="wrap"><div class="op op-stagger"><div class="lbl en">DAQQA</div><h2 class="en" dir="ltr" style="text-align:right">${B.en}</h2><div class="ar">${B.ar}</div></div>
-          <div class="feats op op-stagger" style="--n:${B.feats.length}">${B.feats.map(([ic, t]) => `<div>${RC.featIcon(ic)}<span>${t}</span></div>`).join('')}</div></div></div>
+          <div class="feats op op-stagger" style="--n:${B.feats.length}">${B.feats.map(([ic, t, l]) => l ? `<a href="${RC.esc(l)}" ${/^https:/.test(l) ? 'target="_blank" rel="noopener"' : ''}>${RC.featIcon(ic)}<span>${t}</span></a>` : `<div>${RC.featIcon(ic)}<span>${t}</span></div>`).join('')}</div></div></div>
       ${storyHTML(k)}
     </section>`;
   }).join('') + MOTTO();

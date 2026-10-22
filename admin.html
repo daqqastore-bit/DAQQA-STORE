@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022181627">
+<link rel="stylesheet" href="assets/base.css?v=20261022182448">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -709,7 +709,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022181627"></script>
+<script src="assets/config.js?v=20261022182448"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -794,6 +794,19 @@ $('#themeBtn').onclick = () => { const h = document.documentElement; h.dataset.t
 // one run at a time per key (buttons that are not inside a form)
 const _busy = new Set();
 async function once(key, fn) { if (_busy.has(key)) return; _busy.add(key); try { return await fn(); } finally { _busy.delete(key); } }
+/* ---------- a refresh comes back to the same place: every tab, sub-tab, filter and sort the admin picked, plus the scroll ---------- */
+const UI_KEYS = { dashScope: v => dashScope = v, orderKind: v => orderKind = v, orderGen: v => orderGen = v, orderProd: v => orderProd = v, dashSt: v => dashSt = v,
+  range: v => range = v, orderFilter: v => orderFilter = v, ovStk: v => ovStk = v, custSort: v => custSort = v, custView: v => custView = v,
+  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v };
+function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope }; }
+function saveUI() { try { localStorage.setItem('dq-ui', JSON.stringify(uiNow())); if (tab) sessionStorage.setItem('dq-admin-y', scrollY); } catch (e) {} }
+function restoreUI() {
+  try { const o = JSON.parse(localStorage.getItem('dq-ui') || '{}'), now = uiNow();
+    Object.entries(o).forEach(([k, v]) => { if (UI_KEYS[k] && v != null && typeof v === typeof now[k]) UI_KEYS[k](v); }); } catch (e) {}
+}
+// saved on every pick, and once more as the page goes away (refresh, closing the tab, the phone switching apps)
+['click', 'change'].forEach(t => document.addEventListener(t, () => setTimeout(saveUI, 0), true));
+addEventListener('pagehide', saveUI); document.addEventListener('visibilitychange', () => { if (document.hidden) saveUI(); });
 /* ---------- auth ---------- */
 async function boot() {
   const {data:{session}} = await sb.auth.getSession();
@@ -802,6 +815,7 @@ async function boot() {
   const {data: ok, error} = await sb.rpc('shop_is_admin');
   if (error || !ok) { await sb.auth.signOut(); toast('الحساب ده مش أدمن', 'err'); return showLogin(); }
   $('#loginView').classList.add('hidden'); $('#appView').classList.remove('hidden');
+  restoreUI();
   await loadAll(); renderTabs(); setTimeout(backfillThumbs, 4000);
   const [h0, code] = decodeURIComponent(location.hash.slice(1)).split('/');
   if (code) { const o = orders.find(x => x.code === code); orderQuery = code; orderFilter = 'all'; if (o) openOrders.add(o.id); go(o && isLuxOrder(o) ? 'lux-orders' : 'orders'); }
@@ -1966,7 +1980,7 @@ function renderBands(s) {
   const IC = { ...RC.FEAT_IC, ...Object.fromEntries(Object.entries(RC.PERK_IC).filter(([k]) => !RC.FEAT_IC[k] && k !== 'ship')) }, MAXF = 4;
   const plain = v => String(v || '').replace(/<br\s*\/?>/gi, '\n');
   const cur = () => { const D = RC.kinds[bandK].band, o = B[bandK] || {};
-    return B[bandK] = { en: o.en != null ? o.en : plain(D.en), ar: o.ar != null ? o.ar : D.ar, feats: Array.isArray(o.feats) ? o.feats : D.feats.map(([i, t]) => ({ i, t })) }; };
+    return B[bandK] = { en: o.en != null ? o.en : plain(D.en), ar: o.ar != null ? o.ar : D.ar, feats: Array.isArray(o.feats) ? o.feats : D.feats.map(([i, t]) => ({ i, t, l: RC.FEAT_LINK[i] || '' })) }; };
   const ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18M8 15v5M13 15v5"/></svg>';
   $('#main').innerHTML = `
     <div class="head"><div><h1>الإعدادات</h1><div class="sub">الكلام والأيقونات اللي في آخر كل سكشن في الصفحة الرئيسية</div></div></div>
@@ -1984,13 +1998,15 @@ function renderBands(s) {
       <div class="bd-fs">${c.feats.map((f, i) => `<div class="pk-row">
         <span class="soc-mv"><button type="button" data-fmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-fmv="${i}" data-to="${i + 1}" ${i < c.feats.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
         <div class="pk-ics bd-ics">${Object.entries(IC).map(([k, svg]) => `<button type="button" class="${f.i === k ? 'on' : ''}" data-fic="${i}" data-k="${k}" aria-label="${k}">${svg}</button>`).join('')}</div>
-        <div class="field" style="flex:1;min-width:160px"><label>الكلام</label><input class="input" data-ft="${i}" value="${esc(f.t || '')}" placeholder="مثلاً: ضمان على الماكينة"></div>
+        <div class="two" style="flex:1;min-width:220px"><div class="field"><label>الكلام</label><input class="input" data-ft="${i}" value="${esc(f.t || '')}" placeholder="مثلاً: ضمان على الماكينة"></div>
+          <div class="field"><label>اللينك <small style="color:var(--muted)">(اختار أو الصق لينك)</small></label><input class="input en" dir="ltr" list="bdLinks" data-fl="${i}" value="${esc(f.l || '')}" placeholder="policy.html#shipping"></div></div>
         <button type="button" class="soc-del" data-fdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('') || '<div class="empty" style="padding:14px">مفيش مميزات، الشريط هيظهر بالعنوان بس.</div>'}</div>
+      <datalist id="bdLinks">${RC.LINKS.map(([u, n]) => `<option value="${esc(u)}">${esc(n)}</option>`).join('')}</datalist>
       <div><button type="button" class="btn btn-ghost btn-sm" id="bdAdd" ${c.feats.length >= MAXF ? 'disabled' : ''}>+ ميزة</button></div>`; };
   draw();
   const f = $('#bdForm');
   f.oninput = e => { const c = cur(), t = e.target;
-    if (t.id === 'bdEn') c.en = t.value; else if (t.id === 'bdAr') c.ar = t.value; else if (t.dataset.ft != null) c.feats[+t.dataset.ft].t = t.value; };
+    if (t.id === 'bdEn') c.en = t.value; else if (t.id === 'bdAr') c.ar = t.value; else if (t.dataset.ft != null) c.feats[+t.dataset.ft].t = t.value; else if (t.dataset.fl != null) c.feats[+t.dataset.fl].l = t.value; };
   f.onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset, c = cur();
     if (d.bk) { bandK = d.bk; document.querySelectorAll('#bdK button').forEach(x => x.classList.toggle('on', x === b)); draw(); }
     else if (d.fic != null) { c.feats[+d.fic].i = d.k; draw(); }
@@ -2000,7 +2016,8 @@ function renderBands(s) {
     else if (b.id === 'bdReset') { delete B[bandK]; draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
   f.onsubmit = async e => { e.preventDefault();
     const out = {}; Object.entries(B).forEach(([k, o]) => { if (!RC.kinds[k] || !o) return;
-      out[k] = { en: String(o.en || '').trim().slice(0, 80), ar: String(o.ar || '').trim().slice(0, 80), feats: (o.feats || []).map(x => ({ i: IC[x.i] ? x.i : 'star', t: String(x.t || '').trim().slice(0, 40) })).filter(x => x.t).slice(0, MAXF) }; });
+      out[k] = { en: String(o.en || '').trim().slice(0, 80), ar: String(o.ar || '').trim().slice(0, 80), feats: (o.feats || []).map(x => ({ i: IC[x.i] ? x.i : 'star', t: String(x.t || '').trim().slice(0, 40), ...(RC.safeLink(x.l) ? { l: RC.safeLink(x.l).slice(0, 300) } : {}) })).filter(x => x.t).slice(0, MAXF) }; });
+    const bad = Object.values(B).flatMap(o => (o && o.feats) || []).find(x => String(x.l || '').trim() && !RC.safeLink(x.l)); if (bad) return toast(`اللينك بتاع «${bad.t}» مش مظبوط، لازم يبدأ بـ https:// أو يكون من صفحات الموقع`, 'err');
     const { error } = await sb.from('shop_settings').update({ bands: out, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/bands/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
     settings.bands = out; toast('اتحفظ ✓', 'ok'); renderBands(settings); };
