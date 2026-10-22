@@ -479,7 +479,7 @@
   const viaWA = () => !!(DQ.settings.web_orders_off && DQ.wa());
   const placeLbl = total => viaWA() ? `${WA_ICON}اطلب على واتساب · ${money(total)}` : 'تأكيد الطلب · ' + money(total);
   const shipTxt = t => t.ship == null ? '<small class="ship-tbd">حسب المحافظة</small>' : t.ship ? money(t.ship) : 'مجاني';
-  const sumsHTML = t => `${cpHTML(t)}${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
+  const sumsHTML = (t, bare) => `${bare ? '' : cpHTML(t)}${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
       <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>${t.cpOff ? `<div class="sum save cp-sum"><span>كود الخصم <b class="en">${esc(t.cp.code)}</b> (${t.cp.pct}%)</span><b>− ${money(t.cpOff)}</b></div>` : ''}
       <div class="sum"><span>الشحن${t.city && t.ship != null ? ` <small>(${esc(t.city)})</small>` : ''}</span><b>${shipTxt(t)}</b></div>
       <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
@@ -725,10 +725,12 @@
   }
   function confirmOpts() {
     return new Promise(done => {
+      const t = totals(($('#f-city') || {}).value || savedCity());
       const m = document.createElement('div'); m.className = 'oc-m';
       m.innerHTML = `<div class="oc-card" role="dialog" aria-modal="true" aria-labelledby="ocH"><h3 id="ocH">متأكد من اختياراتك؟</h3><p>ده بالظبط اللي هيوصلك:</p>
-        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)}</b><span class="qty-pill">الكمية <b class="en">${l.qty}</b>${l.qty > 1 ? ` <small>قطع</small>` : ` <small>قطعة</small>`}</span>${optsHTML(l)}</div></div>`).join('')}</div>
-        <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب</button><button type="button" class="btn btn-ghost" data-no>رجوع أعدّل</button></div></div>`;
+        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)}</b><span class="qty-pill">الكمية <b class="en">${l.qty}</b>${l.qty > 1 ? ` <small>قطع</small>` : ` <small>قطعة</small>`}</span>${optsHTML(l)}<span class="oc-price"><b class="en">${money(finalPrice(l.p) * l.qty)}</b>${l.qty > 1 ? `<small>${money(finalPrice(l.p))} للقطعة</small>` : ''}</span></div></div>`).join('')}</div>
+        <div class="oc-sums">${sumsHTML(t, true)}</div>
+        <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب · <span class="en">${money(t.total)}</span></button><button type="button" class="btn btn-ghost" data-no>رجوع أعدّل</button></div></div>`;
       document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
       const end = v => { m.classList.remove('on'); setTimeout(() => m.remove(), 250); done(v); };
       m.addEventListener('click', e => { if (e.target.closest('[data-ok]')) end(true); else if (e.target === m || e.target.closest('[data-no]')) end(false); });

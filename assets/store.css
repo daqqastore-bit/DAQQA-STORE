@@ -1018,3 +1018,8 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .cp-box.cp-lx .cp-go{background:linear-gradient(135deg,#E6C987,#B8904A);color:#17110A}
 .cp-box.cp-lx.on .cp-t b{color:#F3E6C8}.cp-box.cp-lx.on .cp-t small{color:#D4AF69}.cp-box.cp-lx .cp-rm{color:#D4AF69}
 .cp-box.shake{animation:fShake .4s ease}
+/* confirm pop-up: price of each line + the final total before sending */
+.oc-price{display:flex;align-items:baseline;gap:8px;margin-top:6px;align-self:stretch}.oc-price b{font:700 15px var(--f-ui);color:var(--ink)}.oc-price small{font-size:12px;color:var(--muted)}
+.oc-sums{margin:12px 0 4px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.oc-sums .sum{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:3px 0}
+.oc-sums .sum.total{margin-top:6px;padding-top:9px;border-top:1px dashed var(--line);font-size:16px;font-weight:700}.oc-sums .sum.total b{font-size:19px}
