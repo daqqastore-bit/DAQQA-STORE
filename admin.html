@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022132521">
+<link rel="stylesheet" href="assets/base.css?v=20261022132809">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -601,7 +601,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022132521"></script>
+<script src="assets/config.js?v=20261022132809"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1075,6 +1075,8 @@ function curOff() { const pr = +draft.price, sp = draft.sale_price == null || dr
 function renderEditor() {
   // re-drawing (delete a colour, move a photo…) keeps the page where it was
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
+  // what's typed in the "add" row of each option section (name, colour) but not added yet survives the re-draw
+  const adds = [...document.querySelectorAll('#varSec .vg-add')].map(r => ({ k: r.closest('.vg').dataset.vg, n: r.querySelector('[data-vn]').value, h: r.querySelector('[data-vnh]').value, c: r.querySelector('[data-vnc]').value, on: r.querySelector('[data-vnc]').dataset.on }));
   // the four buyer options always exist in the draft (empty ones are simply not saved)
   // runs on every render: the old single img / dials are folded into imgs / links once and dropped, so removing a photo or a link sticks
   d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
@@ -1181,6 +1183,7 @@ function renderEditor() {
     if (g.o.some(o => o.n === n)) return toast('الاختيار ده موجود'); if (g.o.length >= 12) return toast('أقصى حاجة 12 اختيار', 'err');
     const ci = box.querySelector('[data-vnc]'), c = ci.dataset.on ? ci.value.toUpperCase() : null;
     // a new option opens its photo picker straight away, so the buyer sees the right watch when picking it
+    box.querySelector('[data-vn]').value = box.querySelector('[data-vnh]').value = ''; delete ci.dataset.on;
     syncDraft(); g.o.push(c ? { n, c, imgs: [] } : { n, imgs: [] }); draft._pick = draft.images.length ? g.k + ':' + (g.o.length - 1) : null; renderEditor();
     const nc = document.querySelector(`.vg[data-vg="${g.k}"] .vo:last-child`); nc && nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
   $('#varSec').addEventListener('click', e => { const box = e.target.closest('.vg'); if (!box) return; const { g, i, o } = vOpt(e.target);
@@ -1254,6 +1257,9 @@ function renderEditor() {
   $('#f_price').oninput = () => { const v = +$('#f_pct').value, pr = +$('#f_price').value; if (v && pr) $('#f_sale').value = Math.round(pr * (1 - v/100)); updatePreview(); };
   $('#saveP').onclick = saveProduct;
   if ($('#delP')) $('#delP').onclick = deleteProduct;
+  adds.forEach(a => { const r = document.querySelector(`#varSec .vg[data-vg="${a.k}"] .vg-add`); if (!r) return;
+    r.querySelector('[data-vn]').value = a.n; r.querySelector('[data-vnh]').value = a.h; const ci = r.querySelector('[data-vnc]'); ci.value = a.c;
+    if (a.on) { ci.dataset.on = 1; const l = r.querySelector('.vg-ac'); l.classList.add('on'); l.querySelector('i').style.background = a.c; } });
   if (keepY) $('#editor .ed-body').scrollTop = keepY;
 }
 function updatePreview() {
