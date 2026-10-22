@@ -390,7 +390,9 @@
       <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
   // the options the buyer picked, as small chips (a colour option shows its dot)
   const optsHTML = l => { const vs = RC.variants(l.p); if (!vs.length || !l.opt) return '';
-    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(g.ar)}: <b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
+    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.img ? `<img src="${esc(o.img)}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(g.ar)}: <b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
+  // a line shows the photo of the option the buyer picked (e.g. the green dial), otherwise the product's main photo
+  const lineImg = l => { const u = RC.variants(l.p).map(g => (g.o.find(o => o.n === (l.opt || {})[g.k]) || {}).img).find(Boolean); return u ? esc(u) : DQ.img(l.p); };
   const optLine = l => l.opt && RC.variants(l.p).length ? ` [${RC.optText(l.opt, '، ')}]` : '';
   function renderCart() {
     if (DQ.products.length) DQ.cart = DQ.cart.filter(c => DQ.products.some(p => p.id === c.id && p.stock > 0 && DQ.optsOk(p, c.opt)));
@@ -406,7 +408,7 @@
     if (view === 'cart') {
       $('#drTitle').textContent = `Shopping Cart (${n})`;
       // Luxury pieces get their own glowing Privé block with their value, regular items follow
-      const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"></a>
+      const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"></a>
         <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${optsHTML(l)}${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.i}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.i}" data-d="1" aria-label="زيادة">+</button></div></div>
         <button class="rm" data-rm="${l.i}" aria-label="حذف ${esc(l.p.name)} من الـ Shopping Cart" title="حذف من الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
       const lxs = t.ls.filter(l => RC.isLuxury(l.p)), regs = t.ls.filter(l => !RC.isLuxury(l.p));
@@ -434,7 +436,7 @@
       if (saved.city && !govs().includes(saved.city)) saved.city = '';
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
       const loc = coLoc || '';
-      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}${optsHTML(l)}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
+      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}${optsHTML(l)}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
       $('#coMain').innerHTML = `
         <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
         <div class="co-grid">
@@ -624,7 +626,7 @@
     return new Promise(done => {
       const m = document.createElement('div'); m.className = 'oc-m';
       m.innerHTML = `<div class="oc-card" role="dialog" aria-modal="true" aria-labelledby="ocH"><h3 id="ocH">متأكد من اختياراتك؟</h3><p>ده بالظبط اللي هيوصلك:</p>
-        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)} <small>× ${l.qty}</small></b>${optsHTML(l)}</div></div>`).join('')}</div>
+        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)} <small>× ${l.qty}</small></b>${optsHTML(l)}</div></div>`).join('')}</div>
         <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب</button><button type="button" class="btn btn-ghost" data-no>رجوع أعدّل</button></div></div>`;
       document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
       const end = v => { m.classList.remove('on'); setTimeout(() => m.remove(), 250); done(v); };

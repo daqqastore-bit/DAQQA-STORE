@@ -36,7 +36,7 @@ RC.sku = (p) => RC.kinds[RC.kindOf(p)].code + '-' + String(1000 + Number(p.id));
 RC.colorImg = (p, c) => { const m = p && p.image_colors; if (!m || typeof m !== 'object') return null; c = String(c).toLowerCase();
   const u = Object.keys(m).find(k => String(m[k]).toLowerCase() === c); return u && (p.images || []).includes(u) ? u : null; };
 RC.colors = (p) => (Array.isArray(p.colors) ? p.colors : String(p.colors || '').split(/[\s,]+/)).filter(c => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)).slice(0, 6);
-// watch options the buyer must pick (set per product in the admin): p.variants = [{k, ar, en, t: 'color'|'text', o: [{n, c?}]}]
+// watch options the buyer must pick (set per product in the admin): p.variants = [{k, ar, en, o: [{n, c?, img?}]}] — each option is a card with an optional colour and photo
 RC.VARS = [
   { k: 'dial', ar: 'المينا', en: 'Dial', hint: 'لون المينا، الأرقام، المؤشرات، شكل العقارب، وعرض التاريخ' },
   { k: 'strap', ar: 'السوار', en: 'Strap / Bracelet', hint: 'ستانلس ستيل، جلد، سيليكون، أو قماش، مع اختلاف اللون والقفل' },
@@ -44,7 +44,7 @@ RC.VARS = [
   { k: 'movement', ar: 'الماكينة', en: 'Movement', hint: 'Quartz بالبطارية · Automatic بتتشحن من حركة المعصم · Mechanical تعبئة يدوية' }
 ];
 RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g => g && RC.VARS.some(v => v.k === g.k) && Array.isArray(g.o) && g.o.some(o => o && o.n))
-  .map(g => ({ ...RC.VARS.find(v => v.k === g.k), t: g.t === 'color' ? 'color' : 'text', o: g.o.filter(o => o && o.n) }))
+  .map(g => ({ ...RC.VARS.find(v => v.k === g.k), o: g.o.filter(o => o && o.n) }))
   .sort((a, b) => RC.VARS.findIndex(v => v.k === a.k) - RC.VARS.findIndex(v => v.k === b.k));
 // the picked options as readable text: "المينا: أسود · الماكينة: Automatic"
 RC.optText = (opts, sep = ' · ') => (Array.isArray(opts) ? opts.map(o => `${o.g}: ${o.v}`) : Object.entries(opts || {}).map(([k, v]) => `${(RC.VARS.find(x => x.k === k) || { ar: k }).ar}: ${v}`)).join(sep);
@@ -124,7 +124,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022104942';
+RC.build = '20261022105558';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {
