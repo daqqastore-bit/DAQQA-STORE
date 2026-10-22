@@ -443,7 +443,7 @@
       <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
   // the options the buyer picked, as small chips (a colour option shows its dot)
   const optsHTML = l => { const vs = RC.variants(l.p); if (!vs.length || !l.opt) return '';
-    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.img ? `<img src="${esc(o.img)}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(g.ar)}: <b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
+    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.c ? `<i style="background:${esc(o.c)}"></i>` : o.img ? `<img src="${esc(o.img)}" alt="">` : ''}<small>${esc(g.ar)}</small><b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
   // a line shows the photo of the option the buyer picked (e.g. the green dial), otherwise the product's main photo
   const lineImg = l => { const u = l.opt && RC.optPhoto(l.p, l.opt); return u ? esc(u) : DQ.img(l.p); };
   const optLine = l => l.opt && RC.variants(l.p).length ? ` [${RC.optText(l.opt, '، ')}]` : '';
