@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022165700">
+<link rel="stylesheet" href="assets/base.css?v=20261022165827">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -683,7 +683,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022165700"></script>
+<script src="assets/config.js?v=20261022165827"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -927,6 +927,7 @@ function go(t, keepScroll) {
 }
 
 /* ---------- overview: the whole shop at a glance ---------- */
+const LOW_STK = 5;   // «Low Stock» = this many pieces or fewer
 let ovStk = 'all', ovQ = '';
 const stkTimers = {};
 function renderOverview() {
@@ -934,7 +935,7 @@ function renderOverview() {
   const lux = live.filter(p => RC.isLuxury(p)), reg = live.filter(p => !RC.isLuxury(p));
   const cnt = (l, c) => l.filter(p => p.category === c).length;
   const offers = live.filter(p => RC.onOffer(p) || discountPct(p) > 0), disc = live.filter(p => discountPct(p) > 0).length;
-  const low = products.filter(p => p.active && p.stock != null && p.stock <= 3).sort((a, b) => a.stock - b.stock);
+  const low = products.filter(p => p.active && p.stock != null && p.stock <= LOW_STK).sort((a, b) => a.stock - b.stock);
   // net profit since day one (same math as «الحسابات» › الكل)
   const sold = orders.filter(o => COUNTED.includes(o.status)), missing = sold.filter(o => !fins[o.id]).length;
   const net = orders.reduce((s, o) => s + orderNet(o), 0) + offs.reduce((s, x) => s + offNet(x), 0) - expenses.reduce((s, x) => s + +x.amount, 0);
@@ -971,7 +972,7 @@ function renderOverview() {
         <div class="ov-tools"><div class="seg" id="ovStkSeg">${[['all','الكل'],['reg','العادي'],['lux','Luxury'],['low','قليل']].map(([v, l]) => `<button data-ovs="${v}" class="${v === ovStk ? 'on' : ''} ${v === 'lux' ? 'en' : ''}">${l}</button>`).join('')}</div>
           <input class="input" id="ovQ" type="search" placeholder="دوّر على منتج…" value="${esc(ovQ)}"></div>
         <div class="ov-stk" id="ovStkList"></div></div>
-      <div class="panel" id="ovLow"><h2>Low Stock <small>3 قطع أو أقل</small></h2>
+      <div class="panel" id="ovLow"><h2>Low Stock <small>${LOW_STK} قطع أو أقل</small></h2>
         ${low.length ? `<div class="ov-low">${low.map(p => `<button type="button" class="ov-l" data-ovfind="${p.id}"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><span>${esc(p.name)}<small>${RC.isLuxury(p) ? 'Luxury · ' : ''}${esc(categories[p.category] || p.category)}</small></span><b class="${p.stock ? '' : 'out'}">${p.stock ? 'فاضل ' + p.stock : 'خلص'}</b></button>`).join('')}</div>` : '<div class="empty" style="padding:24px 10px">كل المنتجات متوفرة.</div>'}</div>
     </div>`;
   ovStockList();
@@ -984,18 +985,18 @@ function renderOverview() {
 function ovStockList() {
   const box = $('#ovStkList'); if (!box) return;
   const q = ovQ.trim().toLowerCase();
-  const l = products.filter(p => (ovStk === 'all' || (ovStk === 'low' ? p.stock != null && p.stock <= 3 : RC.isLuxury(p) === (ovStk === 'lux'))) && (!q || (p.name || '').toLowerCase().includes(q)));
+  const l = products.filter(p => (ovStk === 'all' || (ovStk === 'low' ? p.stock != null && p.stock <= LOW_STK : RC.isLuxury(p) === (ovStk === 'lux'))) && (!q || (p.name || '').toLowerCase().includes(q)));
   box.innerHTML = l.length ? l.map(p => `<div class="ov-s ${p.active ? '' : 'off'}" data-ovp="${p.id}"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'">
       <span class="ov-sn"><b>${esc(p.name)}</b><small>${RC.isLuxury(p) ? 'Luxury · ' : ''}${esc(categories[p.category] || p.category)}${p.active ? '' : ' · مخفي'}</small></span>
       <span class="ov-step"><button type="button" data-sd="-1" aria-label="قلّل">−</button><input class="en" inputmode="numeric" value="${p.stock == null ? '' : p.stock}" placeholder="∞" aria-label="الكمية"><button type="button" data-sd="1" aria-label="زوّد">+</button></span>
-      <i class="ov-dot ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= 3 ? 'low' : 'in'}"></i></div>`).join('') : '<div class="empty" style="padding:24px 10px">مفيش منتجات.</div>';
+      <i class="ov-dot ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}"></i></div>`).join('') : '<div class="empty" style="padding:24px 10px">مفيش منتجات.</div>';
 }
 // stock edits save themselves a moment after the last tap (several taps = one save)
 function ovSetStock(row, v) {
   const p = products.find(x => x.id === +row.dataset.ovp); if (!p) return;
   const next = v === '' || v == null ? null : Math.max(0, Math.min(99999, Math.round(+v) || 0));
   row.querySelector('input').value = next == null ? '' : next;
-  row.querySelector('.ov-dot').className = 'ov-dot ' + (next === 0 ? 'out' : next != null && next <= 3 ? 'low' : 'in');
+  row.querySelector('.ov-dot').className = 'ov-dot ' + (next === 0 ? 'out' : next != null && next <= LOW_STK ? 'low' : 'in');
   row.classList.add('saving'); clearTimeout(stkTimers[p.id]);
   stkTimers[p.id] = setTimeout(async () => {
     if (next === p.stock) { row.classList.remove('saving'); return; }
@@ -1041,7 +1042,7 @@ function renderDash() {
   OFF.forEach(x => { const k = x.name; tp[k] = tp[k] || {name:k, units:0, rev:0}; tp[k].units += +x.qty; tp[k].rev += +x.price; });
   const top = Object.values(tp).sort((a, b) => b.rev - a.rev).slice(0, 6); const topMax = top[0] ? top[0].rev : 1;
   const byStatus = STATUS_KEYS.map(k => [k, inRange.filter(o => o.status === k).length]);
-  const lowStock = products.filter(p => p.active && p.stock != null && p.stock <= 3 && (dashScope === 'all' || RC.isLuxury(p) === (dashScope === 'lux')));
+  const lowStock = products.filter(p => p.active && p.stock != null && p.stock <= LOW_STK && (dashScope === 'all' || RC.isLuxury(p) === (dashScope === 'lux')));
   $('#main').innerHTML = `
     <div class="head"><div><h1>المبيعات</h1><div class="sub">الأرقام بتتحدّث لحظياً مع كل طلب جديد</div></div>
       <div class="seg scope-seg" id="scopeSeg">${[['all','الكل'],['reg','المتجر العادي'],['lux','Luxury']].map(([v,l]) => `<button data-scope="${v}" class="${v===dashScope?'on':''} ${v==='lux'?'en':''}">${l}</button>`).join('')}</div>
@@ -1180,7 +1181,7 @@ function renderProducts() {
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
         <td class="en"><b>${money(finalPrice(p))}</b>${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
-        <td><button type="button" class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= 3 ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
+        <td><button type="button" class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
         <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td></tr>`; }).join('')}
       </tbody></table>` : `<div class="empty">مفيش منتجات هنا لسه. دوس «+ منتج جديد».</div>`}</div>`;
   $('#newP').onclick = () => openEditor(null, SC.init);
