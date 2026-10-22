@@ -258,3 +258,31 @@ begin
   return jsonb_build_object('code', o.code, 'status', 'cancelled', 'cancelled_at', t);
 end $$;
 grant execute on function public.shop_cancel_order(text, text, text) to anon, authenticated;
+
+-- ---------- order notifications on the admin's phone / computer (web push) ----------
+-- sw.js shows them; the edge function supabase/functions/order-push sends them (deployed with verify_jwt = false, it checks hook_secret itself).
+-- keys: VAPID pair (public one is also in admin.html) + a random hook secret. Real values live only in the database, never in this public repo.
+create extension if not exists pg_net with schema extensions;
+create table if not exists public.shop_push_conf (id int primary key default 1 check (id = 1), vapid_public text not null, vapid_private text not null, hook_secret text not null);
+alter table public.shop_push_conf enable row level security;  -- no policies: service role only
+-- insert into public.shop_push_conf values (1, '<vapid public>', '<vapid private>', '<random secret>');
+create table if not exists public.shop_push_subs (endpoint text primary key, p256dh text not null, auth text not null, device text, created_at timestamptz not null default now());
+alter table public.shop_push_subs enable row level security;
+create policy "admins manage push subs" on public.shop_push_subs for all to authenticated using (public.shop_is_admin()) with check (public.shop_is_admin());
+create schema if not exists private;  -- not exposed by the API
+create or replace function private.shop_push_send(body jsonb) returns void language plpgsql security definer set search_path = public, extensions as $$
+declare c public.shop_push_conf;
+begin
+  select * into c from public.shop_push_conf where id = 1;
+  if not found or not exists (select 1 from public.shop_push_subs) then return; end if;
+  perform net.http_post(url := 'https://iyxgiukausajvxpkwaaw.supabase.co/functions/v1/order-push', body := body,
+    headers := jsonb_build_object('Content-Type', 'application/json', 'x-hook', c.hook_secret), timeout_milliseconds := 10000);
+end $$;
+create or replace function private.shop_push_on_order() returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  begin perform private.shop_push_send(jsonb_build_object('id', new.id)); exception when others then null; end;  -- a notification problem never blocks an order
+  return new;
+end $$;
+create trigger shop_orders_push after insert on public.shop_orders for each row execute function private.shop_push_on_order();
+create or replace function public.shop_push_test() returns void language plpgsql security definer set search_path = public as $$
+begin if not public.shop_is_admin() then raise exception 'not allowed'; end if; perform private.shop_push_send('{"test":true}'::jsonb); end $$;

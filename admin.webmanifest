@@ -1,0 +1,12 @@
+{
+  "name": "DAQQA Admin",
+  "short_name": "DAQQA Admin",
+  "start_url": "admin.html#orders",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#18110A",
+  "theme_color": "#20160E",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [{ "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }]
+}

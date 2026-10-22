@@ -7,9 +7,15 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#20160E">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="manifest" href="admin.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DAQQA Admin">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022103944">
+<link rel="stylesheet" href="assets/base.css?v=20261022104423">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -515,6 +521,8 @@ html{--z:1}
 .cov-panel{margin-bottom:14px}
 .bslot .re{position:absolute;bottom:6px;left:6px;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.65);color:#fff}
 .lux-h{background:linear-gradient(100deg,#9c7642,#f6e3b5 40%,#c9a96e 60%,#9c7642);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.12em}
+.push-how ol{margin:12px 0 4px;padding-inline-start:20px;display:grid;gap:8px;font-size:13.5px;color:var(--muted);text-align:right}.push-how ol b{color:var(--ink)}.push-how .sh{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--line);border-radius:6px;color:var(--amber)}
+.notify-ask i{font-style:normal;margin-inline-start:10px;opacity:.6;font-size:16px}
 .notify-ask{position:fixed;bottom:20px;left:20px;z-index:90;box-shadow:0 20px 40px -16px rgba(0,0,0,.6)}
 @media (max-width:900px){.notify-ask{bottom:calc(84px + env(safe-area-inset-bottom));left:16px;z-index:70}}
 .g-or[hidden],.g-btn[hidden]{display:none!important}
@@ -565,6 +573,7 @@ html{--z:1}
     <nav class="tabs" id="tabs"></nav>
     <div class="foot">
       <a href="./" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>فتح المتجر</a>
+      <button id="pushBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 20a2 2 0 0 0 4 0"/></svg><span>إشعارات الطلبات</span></button>
       <button id="pwBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>تغيير الباسورد</button>
       <button id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/></svg>خروج</button>
     </div>
@@ -581,7 +590,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022103944"></script>
+<script src="assets/config.js?v=20261022104423"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -719,6 +728,7 @@ $('#gLogin').onclick = async () => {
 };
 RC.googleOn().then(on => { $('#gLogin').hidden = !on; document.querySelector('.g-or').hidden = !on; });
 // change password: a popup from the sidebar
+$('#pushBtn').onclick = async () => { document.body.classList.remove('side-open'); if (await pushOn()) { const { error } = await sb.rpc('shop_push_test'); toast(error ? error.message : 'بعتنا إشعار تجربة ✓', error ? 'err' : 'ok'); } else enablePush(); };
 $('#pwBtn').onclick = () => {
   const m = document.createElement('div'); m.className = 'fin-m';
   m.innerHTML = `<form class="fin-box" novalidate style="width:min(420px,100%)"><h3>تغيير الباسورد</h3><p class="fsub">8 حروف على الأقل. هتفضل داخل بعد التغيير.</p>
@@ -756,11 +766,46 @@ function listen() {
   }).subscribe();
 }
 // desktop notification (when the dashboard is open, even in another tab)
-function askNotify() { if ('Notification' in window && Notification.permission === 'default') { const b = document.createElement('button'); b.className = 'btn btn-amber btn-sm notify-ask'; b.textContent = 'فعّل إشعارات الطلبات على الجهاز ده'; b.onclick = () => Notification.requestPermission().then(() => b.remove()); document.body.appendChild(b); } }
+// order notifications on this device (phone or computer), even when the dashboard is closed: web push through sw.js
+const VAPID = 'BLM8Nc4B3ri7HxqTkM0mjXVuJhwUj4xE6yRuCd5bcXZmZQ726BYVvn4tV0ZaIXS6m3eJLk378Tmm71tnMDiBqDU';
+const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const pushReady = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const swReg = () => navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(() => navigator.serviceWorker.ready);
+async function pushOn() { try { if (!pushReady() || Notification.permission !== 'granted') return false; const r = await swReg(); const s = await r.pushManager.getSubscription(); return !!s; } catch (e) { return false; } }
+const b64u = s => { const p = '='.repeat((4 - s.length % 4) % 4), b = atob((s + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+function iosHowTo() {
+  const m = document.createElement('div'); m.className = 'confirm';
+  m.innerHTML = `<div class="box push-how"><b>علشان الإشعارات توصل الآيفون</b><ol><li>افتح لوحة التحكم من <b>Safari</b>.</li><li>اضغط زرار المشاركة <span class="sh">⬆︎</span> تحت.</li><li>اختار <b>Add to Home Screen</b> ← Add.</li><li>افتح <b>DAQQA Admin</b> من الأيقونة الجديدة واضغط «إشعارات الطلبات» تاني.</li></ol><div class="acts"><button class="btn btn-primary btn-sm" data-no>تمام</button></div></div>`;
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-no]')) m.remove(); }; document.body.appendChild(m);
+}
+async function enablePush() {
+  if (isIOS && !standalone()) return iosHowTo();
+  if (!pushReady()) return toast('المتصفح ده مش بيدعم الإشعارات، جرّب Chrome أو Safari', 'err');
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') return toast('الإشعارات مقفولة، فعّلها من إعدادات المتصفح للموقع ده', 'err');
+  try {
+    const r = await swReg(); const sub = (await r.pushManager.getSubscription()) || await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID) });
+    const j = sub.toJSON(), dev = (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB');
+    const { error } = await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: dev });
+    if (error) throw error;
+    await sb.rpc('shop_push_test'); toast('اتفعّلت ✓ هيوصلك إشعار تجربة دلوقتي', 'ok'); askNotify();
+  } catch (e) { toast('معرفناش نفعّل الإشعارات: ' + (e.message || e), 'err'); }
+}
+async function askNotify() {
+  document.querySelectorAll('.notify-ask').forEach(b => b.remove());
+  const on = pushActive = await pushOn(); const sb_ = $('#pushBtn'); if (sb_) sb_.querySelector('span').textContent = on ? 'الإشعارات شغالة ✓ (جرّب)' : 'إشعارات الطلبات';
+  if (on || localStorage.getItem('dq-push-later')) return;
+  const b = document.createElement('button'); b.className = 'btn btn-amber btn-sm notify-ask'; b.innerHTML = 'فعّل إشعارات الطلبات على الجهاز ده <i data-later aria-label="بعدين">×</i>';
+  b.onclick = e => { if (e.target.closest('[data-later]')) { try { localStorage.setItem('dq-push-later', 1) } catch (er) {} b.remove(); return; } enablePush(); }; document.body.appendChild(b);
+}
+let pushActive = false;
 function desktopNotify(o) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  // with push on, the notification comes from sw.js (works with the dashboard closed too), so no second one here
+  if (pushActive || !('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
   const n = new Notification(`طلب جديد ${o.code} — DAQQA`, { body: `${o.customer_name || ''} · ${o.city || ''}\nالإجمالي: ${money(o.total || 0)}`, icon: 'assets/icon-512.png', tag: o.code, requireInteraction: true });
-  n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); };
+  n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [880, 1320].forEach((f, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.0001, a.currentTime + i*.15); g.gain.exponentialRampToValueAtTime(.2, a.currentTime + i*.15 + .02); g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + i*.15 + .25); o.start(a.currentTime + i*.15); o.stop(a.currentTime + i*.15 + .3); }); } catch(e) {} }
 
