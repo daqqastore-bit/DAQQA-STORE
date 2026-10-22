@@ -68,6 +68,9 @@ alter table public.shop_settings add column if not exists web_orders_off boolean
 alter table public.shop_settings add column if not exists ship_govs jsonb;   -- governorates the shop ships to (null = all)
 alter table public.shop_settings add column if not exists perks jsonb;       -- {cards:[{icon,t,s}], help:[...], about} product-page cards + footer texts
 alter table public.shop_products add column if not exists image_colors jsonb;  -- {photo url: "#hex"} a colour swatch shows its photo
+-- buyer options (dial / strap / case / movement): [{k, ar, en, t: 'color'|'text', o: [{n, c?}]}] — every group with options must be picked
+alter table public.shop_products add column if not exists variants jsonb not null default '[]'::jsonb;
+alter table public.shop_order_items add column if not exists options jsonb;  -- [{k, g, v, c}] what the buyer picked
 alter table public.shop_products add column if not exists cover_only boolean not null default false;   -- first photo is a card cover only
 alter table public.shop_products add column if not exists on_offer boolean not null default false;     -- shows in the "العروض" tab
 alter table public.shop_products add column if not exists shipping_note text;   -- per-product shipping text (null = default)
@@ -143,6 +146,7 @@ declare
   it jsonb; p public.shop_products; q int;
   v_sub numeric := 0; v_orig numeric := 0; v_ship numeric := 0; v_unit numeric;
   v_code text; v_id bigint;
+  g jsonb; v_o jsonb; v_opts jsonb;
 begin
   if coalesce(trim(customer->>'name'), '') = '' or coalesce(trim(customer->>'phone'), '') = '' then
     raise exception 'اكتب الاسم ورقم التليفون';
@@ -166,9 +170,18 @@ begin
     select * into p from public.shop_products where id = (it->>'id')::bigint and active for update;
     if not found then raise exception 'منتج مش متاح دلوقتي'; end if;
     if p.stock is not null and p.stock < q then raise exception 'الكمية المطلوبة من % مش متاحة دلوقتي، قلّل العدد', p.name; end if;
+    -- every option group the product offers (dial, strap, case, movement) must be picked from its own list
+    v_opts := '[]'::jsonb;
+    for g in select * from jsonb_array_elements(case when jsonb_typeof(p.variants) = 'array' then p.variants else '[]'::jsonb end) loop
+      if jsonb_array_length(coalesce(g->'o', '[]'::jsonb)) = 0 then continue; end if;
+      v_o := null;
+      select o into v_o from jsonb_array_elements(g->'o') o where o->>'n' = (it->'opt'->>(g->>'k')) limit 1;
+      if v_o is null then raise exception 'اختار % لـ %', coalesce(g->>'ar', g->>'k'), p.name; end if;
+      v_opts := v_opts || jsonb_build_array(jsonb_build_object('k', g->>'k', 'g', coalesce(g->>'ar', g->>'k'), 'v', v_o->>'n', 'c', v_o->>'c'));
+    end loop;
     v_unit := case when p.sale_price is not null and p.sale_price < p.price then p.sale_price else p.price end;
-    insert into public.shop_order_items (order_id, product_id, name, image, qty, unit_price, original_price, line_total)
-    values (v_id, p.id, p.name, p.images[1], q, v_unit, p.price, v_unit * q);
+    insert into public.shop_order_items (order_id, product_id, name, image, qty, unit_price, original_price, line_total, options)
+    values (v_id, p.id, p.name, p.images[1], q, v_unit, p.price, v_unit * q, case when jsonb_array_length(v_opts) > 0 then v_opts end);
     update public.shop_products set stock = case when stock is null then null else stock - q end,
       shown_left = case when shown_left is null then null else greatest(0, shown_left - q) end
     where id = p.id;

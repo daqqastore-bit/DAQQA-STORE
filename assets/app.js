@@ -77,9 +77,9 @@
         <a class="fv-ph" href="${url}"><img loading="lazy" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="fv-off en">-${off}%</span>` : ''}${p.stock > 0 ? '' : '<span class="fv-out">خلصت</span>'}</a>
         <button class="fv-rm" data-fav="${p.id}" aria-label="شيلها من المفضلة" title="شيلها من المفضلة">${ICON.heart}</button>
         <div class="fv-info"><small>${esc(RC.kinds[st].ar)}${p.style ? ` · <span class="en">${esc(p.style)}</span>` : ''}</small><a class="fv-name en" href="${url}">${esc(p.name)}</a>${DQ.priceHTML(p)}</div>
-        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>أضف للسلة</span></button>` : '<span class="fv-add off">مش متاحة دلوقتي</span>'}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
+        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>${RC.variants(p).length ? 'اختار المواصفات' : 'أضف للسلة'}</span></button>` : '<span class="fv-add off">مش متاحة دلوقتي</span>'}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
       </article>`; }).join('') : `<div class="fv-empty"><span class="fv-empty-ic">${ICON.heart}</span><b>المفضلة فاضية</b><p>دوس على القلب في أي منتج عشان تحفظه هنا وترجعله بعدين.</p><a class="btn btn-primary" href="./" data-close>تصفّح المنتجات</a></div>`;
-    const all = $('#favAll'); if (all) { const ok = list.filter(p => p.stock > 0); all.hidden = ok.length < 2; all.dataset.ids = ok.map(p => p.id).join(','); }
+    const all = $('#favAll'); if (all) { const ok = list.filter(p => p.stock > 0 && !RC.variants(p).length); all.hidden = ok.length < 2; all.dataset.ids = ok.map(p => p.id).join(','); }
     document.querySelectorAll('[data-fav]').forEach(b => { const on = DQ.favs.has(+b.dataset.fav); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   }
   DQ.toggleFav = id => { DQ.favs.has(id) ? DQ.favs.delete(id) : DQ.favs.add(id); try { localStorage.setItem('dq-favs', JSON.stringify([...DQ.favs])) } catch (e) {} renderFavs(); DQ.toast(DQ.favs.has(id) ? 'اتضافت للمفضلة' : 'اتشالت من المفضلة'); };
@@ -93,7 +93,7 @@
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="أضف ${esc(p.name)} للـ Shopping Cart">${ICON.plus}</button>` : ''}</div>
+        <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="${RC.variants(p).length ? 'اختار مواصفات' : 'أضف'} ${esc(p.name)}${RC.variants(p).length ? '' : ' للـ Shopping Cart'}">${ICON.plus}</button>` : ''}</div>
         ${cols.length ? `<div class="sw">${cols.map(c => RC.colorImg(p, c) ? `<button type="button" class="swb" data-pick="${c}" style="background:${c}" title="${c.toUpperCase()}" aria-label="شوف اللون ${c.toUpperCase()}"></button>` : `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
       </div></article>`;
   };
@@ -209,13 +209,13 @@
     addEventListener('keydown', e => { if (e.key === 'Escape') DQ.closeAll(); });
     $('#drBody').addEventListener('click', e => {
       const q = e.target.closest('[data-q]'), rm = e.target.closest('[data-rm]');
-      if (q) { const l = DQ.cart.find(c => c.id === +q.dataset.q); if (!l) return; const p = DQ.byId(l.id);
+      if (q) { const l = DQ.cart[+q.dataset.q]; if (!l) return; const p = DQ.byId(l.id);
         const want = l.qty + +q.dataset.d, max = Math.min(p ? p.stock : 20, 20);
         if (want < 1) DQ.cart = DQ.cart.filter(c => c !== l);           // going below 1 takes it out of the cart
         else if (want > max) return DQ.toast('مفيش كمية أكتر متاحة من المنتج ده دلوقتي');
         else l.qty = want;
         saveCart(); renderCart(); }
-      if (rm) { DQ.cart = DQ.cart.filter(c => c.id !== +rm.dataset.rm); saveCart(); renderCart(); }
+      if (rm) { DQ.cart = DQ.cart.filter((c, i) => i !== +rm.dataset.rm); saveCart(); renderCart(); }
     });
   }
   function pop(el) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
@@ -349,12 +349,18 @@
   /* ---------- cart ---------- */
   let view = 'cart';
   function saveCart() { try { localStorage.setItem('dq-cart', JSON.stringify(DQ.cart)) } catch (e) {} }
-  const lines = () => DQ.cart.map(c => ({ ...c, p: DQ.byId(c.id) })).filter(c => c.p);
-  DQ.addToCart = (id, qty, silent) => {
+  const lines = () => DQ.cart.map((c, i) => ({ ...c, i, p: DQ.byId(c.id) })).filter(c => c.p);
+  // the same watch with different picked options (dial, strap…) is its own cart line
+  const optKey = o => JSON.stringify(Object.entries(o || {}).sort());
+  DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]));
+  DQ.addToCart = (id, qty, silent, opt) => {
     const p = DQ.byId(id); if (!p || p.stock <= 0) return;
-    const line = DQ.cart.find(c => c.id === id);
+    // a product with options can't be added from a card: open it so the buyer picks them
+    if (!DQ.optsOk(p, opt)) { location.href = RC.productUrl(p) + '#opts'; return; }
+    opt = RC.variants(p).length ? opt : undefined;
+    const line = DQ.cart.find(c => c.id === id && optKey(c.opt) === optKey(opt));
     const next = Math.min((line ? line.qty : 0) + qty, p.stock, 20);
-    if (line) line.qty = next; else DQ.cart.push({ id, qty: next });
+    if (line) line.qty = next; else DQ.cart.push(opt ? { id, qty: next, opt } : { id, qty: next });
     saveCart(); renderCart();
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
     if (!silent) DQ.toast('اتضافت للـ Shopping Cart ✓', 'ok');
@@ -382,8 +388,12 @@
       <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
       <div class="sum"><span>الشحن${t.city && t.ship != null ? ` <small>(${esc(t.city)})</small>` : ''}</span><b>${shipTxt(t)}</b></div>
       <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
+  // the options the buyer picked, as small chips (a colour option shows its dot)
+  const optsHTML = l => { const vs = RC.variants(l.p); if (!vs.length || !l.opt) return '';
+    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(g.ar)}: <b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
+  const optLine = l => l.opt && RC.variants(l.p).length ? ` [${RC.optText(l.opt, '، ')}]` : '';
   function renderCart() {
-    if (DQ.products.length) DQ.cart = DQ.cart.filter(c => DQ.products.some(p => p.id === c.id && p.stock > 0));
+    if (DQ.products.length) DQ.cart = DQ.cart.filter(c => DQ.products.some(p => p.id === c.id && p.stock > 0 && DQ.optsOk(p, c.opt)));
     const n = DQ.cart.reduce((s, c) => s + c.qty, 0);
     $('#cartCount').textContent = n; $('#cartCount').classList.toggle('show', n > 0);
     const t = totals();
@@ -397,8 +407,8 @@
       $('#drTitle').textContent = `Shopping Cart (${n})`;
       // Luxury pieces get their own glowing Privé block with their value, regular items follow
       const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"></a>
-        <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.id}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.id}" data-d="1" aria-label="زيادة">+</button></div></div>
-        <button class="rm" data-rm="${l.id}" aria-label="حذف ${esc(l.p.name)} من الـ Shopping Cart" title="حذف من الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
+        <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${optsHTML(l)}${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.i}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.i}" data-d="1" aria-label="زيادة">+</button></div></div>
+        <button class="rm" data-rm="${l.i}" aria-label="حذف ${esc(l.p.name)} من الـ Shopping Cart" title="حذف من الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
       const lxs = t.ls.filter(l => RC.isLuxury(l.p)), regs = t.ls.filter(l => !RC.isLuxury(l.p));
       const lxVal = lxs.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0), lxN = lxs.reduce((s, l) => s + l.qty, 0);
       $('#drBody').innerHTML = (lxs.length ? `<section class="cart-lx"><div class="cl-in">
@@ -424,7 +434,7 @@
       if (saved.city && !govs().includes(saved.city)) saved.city = '';
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
       const loc = coLoc || '';
-      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
+      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}${optsHTML(l)}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
       $('#coMain').innerHTML = `
         <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
         <div class="co-grid">
@@ -582,17 +592,19 @@
     const d = Object.fromEntries(new FormData(f));
     try { localStorage.setItem('dq-cust', JSON.stringify({ name: d.name, phone: d.phone, city: d.city, address: d.address })) } catch (e) {} /* notes are not kept for the next order */
     if (!LOC_RX.test(d.location || '')) delete d.location;
+    // pieces with picked options: the buyer sees exactly what they chose and confirms it before the order is sent
+    if (lines().some(l => l.opt) && !(await confirmOpts())) return;
     if (viaWA()) return orderOnWA(d);
     const btn = $('#place'), label = btn.textContent; btn.disabled = true; btn.classList.add('sending'); btn.setAttribute('aria-label', 'جاري إرسال الطلب');
     // a loaded cart rolls across the button while the order is on its way
     btn.innerHTML = `<span class="cart-run" aria-hidden="true"><i class="cr-lines"></i><svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><g class="cr-load"><rect x="13" y="5" width="9" height="9" rx="1.5" fill="currentColor" stroke="none"/><rect x="23.5" y="1.5" width="10" height="12.5" rx="1.5" fill="currentColor" stroke="none" opacity=".7"/></g><path d="M46 6h-6l-5 20H11L7 12h31"/><circle class="cr-w" cx="15" cy="33" r="3.2"/><circle class="cr-w" cx="31" cy="33" r="3.2"/></svg></span>`;
     const t0 = Date.now();
-    const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => ({ id: c.id, qty: c.qty })) });
+    const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => (c.opt ? { id: c.id, qty: c.qty, opt: c.opt } : { id: c.id, qty: c.qty })) });
     await new Promise(r => setTimeout(r, Math.max(0, 1400 - (Date.now() - t0)))); /* let the cart finish at least one trip */
     if (error) { btn.disabled = false; btn.classList.remove('sending'); btn.removeAttribute('aria-label'); btn.textContent = label; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); DQ.load(); return; }
     const ls = lines(); DQ.cart = []; saveCart(); coState = 'done'; coLoc = ''; coAddr = '';
     notifyOrder(data, d, ls);
-    DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name, qty: l.qty, image: (l.p.images || [])[0] || '' })) });
+    DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name + optLine(l), qty: l.qty, image: (l.p.images || [])[0] || '' })) });
     $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
     const ask = encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${data.code}`);
     $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
@@ -608,11 +620,23 @@
     $('#coPage').scrollTop = 0;
     DQ.load().then(() => DQ.onRefresh && DQ.onRefresh());
   }
+  function confirmOpts() {
+    return new Promise(done => {
+      const m = document.createElement('div'); m.className = 'oc-m';
+      m.innerHTML = `<div class="oc-card" role="dialog" aria-modal="true" aria-labelledby="ocH"><h3 id="ocH">متأكد من اختياراتك؟</h3><p>ده بالظبط اللي هيوصلك:</p>
+        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${DQ.img(l.p)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)} <small>× ${l.qty}</small></b>${optsHTML(l)}</div></div>`).join('')}</div>
+        <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب</button><button type="button" class="btn btn-ghost" data-no>رجوع أعدّل</button></div></div>`;
+      document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
+      const end = v => { m.classList.remove('on'); setTimeout(() => m.remove(), 250); done(v); };
+      m.addEventListener('click', e => { if (e.target.closest('[data-ok]')) end(true); else if (e.target === m || e.target.closest('[data-no]')) end(false); });
+      m.querySelector('[data-ok]').focus();
+    });
+  }
   // website orders switched off → the filled form becomes a ready WhatsApp message to the shop
   function orderOnWA(d) {
     const t = totals(d.city), ls = t.ls;
     const msg = ['أهلاً DAQQA 👋 عايز أطلب:', '',
-      ...ls.map(l => `• ${l.p.name} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`), '',
+      ...ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`), '',
       `المنتجات: ${money(t.sub)}`, `الشحن: ${t.ship == null ? 'حسب المحافظة' : t.ship ? money(t.ship) : 'مجاني'}`, `الإجمالي: ${money(t.total)} (كاش عند الاستلام)`, '',
       `الاسم: ${d.name}`, `الموبايل: ${d.phone}`, `المحافظة: ${d.city}`, `العنوان: ${d.address}`,
       d.location ? `اللوكيشن: ${d.location}` : '', d.notes ? `ملاحظات: ${d.notes}` : ''].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n').trim();
@@ -632,7 +656,7 @@
   function notifyOrder(data, d, ls) {
     if (!RC.notifyEmail) return;
     const base = location.origin + location.pathname.replace(/[^/]*$/, '');
-    const items = ls.map(l => `• ${l.p.name} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`).join('\n');
+    const items = ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`).join('\n');
     const body = { _subject: `طلب جديد ${data.code} — ${money(data.total)} — DAQQA`, _template: 'table', _captcha: 'false',
       'رقم الطلب': data.code, 'وقت الطلب': RC.when(new Date()), 'الإجمالي': money(data.total), 'المنتجات': items,
       'اسم العميل': d.name, 'التليفون': d.phone, 'واتساب العميل': 'https://wa.me/' + String(d.phone || '').replace(/\D/g, '').replace(/^0/, '20'),

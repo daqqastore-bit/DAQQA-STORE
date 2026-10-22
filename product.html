@@ -20,8 +20,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022095400">
-<link rel="stylesheet" href="assets/store.css?v=20261022095400">
+<link rel="stylesheet" href="assets/base.css?v=20261022103944">
+<link rel="stylesheet" href="assets/store.css?v=20261022103944">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -186,8 +186,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022095400"></script>
-<script src="assets/app.js?v=20261022095400"></script>
+<script src="assets/config.js?v=20261022103944"></script>
+<script src="assets/app.js?v=20261022103944"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -237,7 +237,9 @@ const ICONS = {
 };
 const key = new URLSearchParams(location.search).get('p') || '';
 const pid = parseInt(key, 10);
-let q = 1, galKey = null;
+let q = 1, galKey = null, sel = {};
+// came from a card's add button on a watch with options: point the buyer at them
+const askOpts = location.hash === '#opts';
 
 function notFound() {
   document.title = 'المنتج مش موجود | DAQQA STORE - دقّة ستور';
@@ -271,6 +273,14 @@ function render() {
   const left = p.shown_left > 0 ? p.shown_left : 0;
   const stockCls = p.stock <= 0 ? 'out' : left ? 'low' : '';
   const stockTxt = p.stock <= 0 ? 'نفدت الكمية' : left ? `فاضل ${left} بس` : 'متاح للطلب';
+  // watch options (dial, strap, case, movement): colours as swatches, words as a list; all required
+  const vs = RC.variants(p);
+  vs.forEach(g => { if (!g.o.some(o => o.n === sel[g.k])) { if (g.o.length === 1) sel[g.k] = g.o[0].n; else delete sel[g.k]; } });
+  const optsBox = !vs.length || p.stock <= 0 ? '' : `<div class="pd-opts" id="opts">${vs.map(g => `<div class="po-g" data-g="${g.k}">
+      <div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
+      ${g.t === 'color' ? `<div class="po-sw">${g.o.map(o => `<button type="button" class="po-c ${sel[g.k] === o.n ? 'on' : ''}" data-o="${esc(o.n)}" style="--c:${esc(o.c || '#888')}" title="${esc(o.n)}" aria-label="${esc(g.ar)}: ${esc(o.n)}" aria-pressed="${sel[g.k] === o.n}"><i></i></button>`).join('')}</div>`
+        : `<div class="po-sel"><select class="input" aria-label="${esc(g.ar)}"><option value="">اختار ${esc(g.ar)}…</option>${g.o.map(o => `<option ${sel[g.k] === o.n ? 'selected' : ''}>${esc(o.n)}</option>`).join('')}</select><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>`}
+    </div>`).join('')}</div>`;
   const waMsg = encodeURIComponent(`أهلاً DAQQA\nعاوز أسأل عن ${noun} ${p.name} (${money(finalPrice(p))})\n${url}`);
 
   $('#page').innerHTML = `
@@ -292,6 +302,7 @@ function render() {
         <div class="price-box"><span class="price-new">${money(finalPrice(p))}</span>${off ? `<span class="price-old">${money(p.price)}</span><span class="badge-off">-${off}%</span><span class="save-tag">قيمة الخصم ${money(p.price - finalPrice(p))}</span>` : ''}</div>
         <div class="stock ${stockCls}"><i></i>${stockTxt}</div>
         ${body ? `<p class="lead-d">${esc(body)}</p>` : ''}
+        ${optsBox}
         ${p.stock > 0 ? `<div class="buy" id="buy">
           <div class="qty"><button id="qm" aria-label="تقليل">−</button><span id="qv">1</span><button id="qp" aria-label="زيادة">+</button></div>
           <button class="btn btn-primary" id="addBtn">أضف للـ Shopping Cart</button>
@@ -334,6 +345,7 @@ function render() {
         ${RC.colors(p).length ? `<div class="lxp-sw"><span>${esc(p.colors_label || 'الألوان')}</span>${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
         <div class="lxp-price"><span class="now">${money(finalPrice(p))}</span>${off ? `<s>${money(p.price)}</s><span class="off en">-${off}%</span>` : ''}</div>
         <div class="lxp-stock ${stockCls}">${stockTxt}</div>
+        ${optsBox}
         ${p.stock > 0 ? `<div class="lxp-buy" id="buy">
           <div class="lxp-qty"><button id="qm" aria-label="تقليل">−</button><span id="qv" class="en">1</span><button id="qp" aria-label="زيادة">+</button></div>
           <button class="lxb solid" id="buyBtn">اطلب دلوقتي</button>
@@ -388,11 +400,25 @@ function render() {
   if (p.stock > 0) {
     $('#qm').onclick = () => { q = Math.max(1, q - 1); $('#qv').textContent = q; };
     $('#qp').onclick = () => { q = Math.min(p.stock, 20, q + 1); $('#qv').textContent = q; };
-    $('#addBtn').onclick = () => DQ.addToCart(p.id, q);
-    $('#buyBtn').onclick = () => { DQ.addToCart(p.id, q, true); DQ.openCart('checkout'); };
+    // every option must be chosen first; the first missing one lights up and says what's needed
+    const need = () => { const g = vs.find(g => !sel[g.k]); if (!g) return false;
+      const el = document.querySelector(`.po-g[data-g="${g.k}"]`); el.classList.remove('err'); void el.offsetWidth; el.classList.add('err');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast(`اختار ${g.ar} الأول`, 'err'); return true; };
+    const opt = () => vs.length ? { ...sel } : undefined;
+    $('#addBtn').onclick = () => { if (!need()) DQ.addToCart(p.id, q, false, opt()); };
+    $('#buyBtn').onclick = () => { if (need()) return; DQ.addToCart(p.id, q, true, opt()); DQ.openCart('checkout'); };
+    const pickOpt = (g, v) => { if (v) sel[g] = v; else delete sel[g]; const box = document.querySelector(`.po-g[data-g="${g}"]`); box.classList.remove('err');
+      box.querySelector('.po-v').textContent = v || 'لازم تختار'; box.querySelectorAll('.po-c').forEach(b => { b.classList.toggle('on', b.dataset.o === v); b.setAttribute('aria-pressed', b.dataset.o === v); }); };
+    if ($('#opts')) {
+      $('#opts').addEventListener('click', e => { const b = e.target.closest('.po-c'); if (!b) return; const g = b.closest('.po-g').dataset.g; pickOpt(g, b.dataset.o);
+        // a colour linked to a photo in the admin shows that photo
+        const o = vs.find(x => x.k === g).o.find(x => x.n === b.dataset.o), k = o && o.c ? imgs.indexOf(RC.colorImg(p, o.c)) : -1; if (k >= 0) { slides.dispatchEvent(new Event('click')); go(k); } });
+      $('#opts').addEventListener('change', e => { const s = e.target.closest('select'); if (s) pickOpt(s.closest('.po-g').dataset.g, s.value); });
+      if (askOpts && !window._askedOpts) { window._askedOpts = 1; setTimeout(() => { $('#opts').scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast('اختار المواصفات اللي تعجبك وبعدين أضفها للسلة'); }, 500); }
+    }
     const sb = $('#sbar');
     sb.innerHTML = `<img src="${DQ.img(p)}" alt=""><div class="t"><b class="en">${esc(p.name)}</b>${DQ.priceHTML(p)}</div><button class="btn btn-amber btn-sm" id="sbBuy">اطلب دلوقتي</button>`;
-    $('#sbBuy').onclick = () => { DQ.addToCart(p.id, 1, true); DQ.openCart('checkout'); };
+    $('#sbBuy').onclick = () => { if (need()) return; DQ.addToCart(p.id, q, true, opt()); DQ.openCart('checkout'); };
     new IntersectionObserver(([e]) => sb.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe($('#buy'));
   }
   $('#shareBtn').onclick = async () => {

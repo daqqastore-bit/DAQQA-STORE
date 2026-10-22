@@ -9,7 +9,7 @@
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022095400">
+<link rel="stylesheet" href="assets/base.css?v=20261022103944">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -261,6 +261,21 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .spec-x{width:34px;height:34px;border-radius:50%;border:1px solid var(--line-2);color:var(--muted);font-size:18px;line-height:1}
 .spec-x:hover{border-color:#d9534f;color:#d9534f}
 .spec-add{align-self:flex-start}
+.o-opts{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px;font-size:12px;color:var(--muted)}.o-opts span{display:inline-flex;align-items:center;gap:4px}.o-opts b{color:var(--ink);font-weight:600}.o-opts i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}
+.vg{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px;background:var(--bg)}
+.vg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.vg-h b{font-size:14px}.vg-h b small{font:600 10.5px var(--f-ui);letter-spacing:.12em;color:var(--amber);text-transform:uppercase;margin-inline-start:4px}
+.vg-h p{font-size:11.5px;color:var(--muted);margin-top:2px}
+.vg-t{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex:none}
+.vg-t button{padding:6px 11px;font-size:12px;color:var(--muted)}.vg-t button.on{background:var(--surface-2);color:var(--ink);font-weight:600}
+.vg-list{display:flex;flex-wrap:wrap;gap:6px}
+.vg-o{display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 10px;border:1px solid var(--line);border-radius:99px;font-size:12.5px;background:var(--bg-2)}
+.vg-o i{width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}
+.vg-o button{width:20px;height:20px;border-radius:50%;color:var(--muted);font-size:15px;line-height:1}.vg-o button:hover{color:var(--red);background:var(--surface)}
+.vg-none{font-size:12px;color:var(--muted)}
+.vg-add{display:flex;gap:8px;align-items:center}.vg-add .input{flex:1;min-width:0;height:40px}.vg-add .btn{flex:none}
+.vg-clr{width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:10px;background:none;flex:none;cursor:pointer}
+.vg-quick{display:flex;flex-wrap:wrap;gap:6px}.vg-quick button{font-size:11.5px;padding:5px 10px;border:1px dashed var(--line);border-radius:99px;color:var(--muted)}.vg-quick button:hover{color:var(--ink);border-color:var(--amber)}
 .ed-foot{justify-content:center}.ed-foot>.btn-primary{max-width:520px}
 @media (max-width:900px){.ed-body{grid-template-columns:1fr;padding:16px 14px 30px!important}.ed-side{position:static}.ed-sec{padding:14px}}
 .editor.on{transform:none}
@@ -566,7 +581,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022095400"></script>
+<script src="assets/config.js?v=20261022103944"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -598,6 +613,8 @@ const MOB_TABS = ['accounts','dash','orders','products','lux-orders'];
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
 let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
 // which sections / genders an order touches (from its products)
+// the options the buyer picked for a piece (dial, strap, case, movement)
+const optChips = i => (i.options || []).length ? `<span class="o-opts">${i.options.map(o => `<span>${o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(o.g)}: <b>${esc(o.v)}</b></span>`).join('')}</span>` : '';
 const orderProds = o => (o.shop_order_items || []).map(i => products.find(x => x.id === i.product_id)).filter(Boolean);
 const orderHasKind = (o, k) => orderProds(o).some(p => RC.kindOf(p) === k);
 const orderHasGen = (o, g) => orderProds(o).some(p => p.category === g || p.category === 'unisex');
@@ -613,7 +630,7 @@ const SCOPES = {
 let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { shipping_note: false, cover_only: false, on_offer: false, image_colors: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false }; let pKind = 'all';
+const COLS = { shipping_note: false, cover_only: false, on_offer: false, image_colors: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false, variants: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -887,7 +904,7 @@ function orderHTML(o) {
       <svg class="chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg>
     </div>
     <div class="o-body">
-      <div class="o-items">${o.shop_order_items.map(i => `<div class="o-item"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><span class="n">${esc(i.name)}</span><span class="q">${i.qty} × ${money(i.unit_price)}${+i.original_price > +i.unit_price ? ` <s style="color:var(--muted-2)">${money(i.original_price)}</s>` : ''}</span></div>`).join('')}
+      <div class="o-items">${o.shop_order_items.map(i => `<div class="o-item"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><span class="n">${esc(i.name)}${optChips(i)}</span><span class="q">${i.qty} × ${money(i.unit_price)}${+i.original_price > +i.unit_price ? ` <s style="color:var(--muted-2)">${money(i.original_price)}</s>` : ''}</span></div>`).join('')}
         <div class="o-sum"><div><span>المنتجات</span><b>${money(o.subtotal)}</b></div>${+o.savings ? `<div><span>خصم</span><b style="color:var(--green)">− ${money(o.savings)}</b></div>` : ''}<div><span>الشحن</span><b>${+o.shipping ? money(o.shipping) : 'مجاني'}</b></div><div style="color:var(--ink);font-weight:700"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>
         ${finPanel(o)}
       </div>
@@ -1001,6 +1018,8 @@ function curOff() { const pr = +draft.price, sp = draft.sale_price == null || dr
 function renderEditor() {
   // re-drawing (delete a colour, move a photo…) keeps the page where it was
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
+  // the four buyer options always exist in the draft (empty ones are simply not saved)
+  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, t: g && g.t === 'color' ? 'color' : 'text', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n).map(o => ({ ...o })) : [] }; });
   $('#editor').innerHTML = `
     <div class="ed-head"><h3>${d.id ? 'تعديل المنتج' : 'منتج جديد'}${d.id ? ` <a href="${RC.productUrl(d)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:500;color:var(--accent);margin-inline-start:8px">فتح صفحة المنتج ↗</a>` : ''}</h3><button class="icon-btn" id="edClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="ed-body"><div class="ed-col ed-main">
@@ -1044,6 +1063,14 @@ function renderEditor() {
       <section class="ed-sec"><h4>المواصفات <small>بتظهر كبنود في صفحة المنتج · البند الفاضي مش بيظهر</small></h4>
         <div class="spec-rows" id="specRows">${(d._specs || []).map(([k, v], i) => `<div class="spec-row"><i aria-hidden="true"></i><input class="input" data-sk="${i}" value="${esc(k)}" placeholder="البند" dir="auto"><input class="input" data-sv="${i}" value="${esc(v)}" placeholder="القيمة" dir="auto"><button type="button" class="spec-x" data-srm="${i}" aria-label="شيل البند">×</button></div>`).join('')}</div>
         <button type="button" class="btn btn-ghost btn-sm spec-add" id="specAdd">+ إضافة بند</button></section>
+      <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>لو ضفت اختيارات في خانة، المشتري لازم يختار منها قبل ما يطلب، والاختيار بيوصلك مع الطلب</small></h4>
+        ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k); return `<div class="vg" data-vg="${g.k}">
+          <div class="vg-h"><div><b>${V.ar} <small class="en">${V.en}</small></b><p>${V.hint}</p></div>
+            <div class="vg-t" role="group" aria-label="شكل الاختيار"><button type="button" data-vt="text" class="${g.t === 'text' ? 'on' : ''}">كلام (قايمة)</button><button type="button" data-vt="color" class="${g.t === 'color' ? 'on' : ''}">ألوان</button></div></div>
+          ${g.o.length ? `<div class="vg-list">${g.o.map((o, i) => `<span class="vg-o">${g.t === 'color' ? `<i style="background:${esc(o.c || '#888')}"></i>` : ''}${esc(o.n)}<button type="button" data-vrm="${i}" aria-label="شيل ${esc(o.n)}">×</button></span>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
+          <div class="vg-add">${g.t === 'color' ? `<input type="color" class="vg-clr" value="#1a1a1a" aria-label="اللون">` : ''}<input class="input" data-vn placeholder="${g.t === 'color' ? 'اسم اللون، مثلاً: أسود' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : g.k === 'movement' ? 'مثلاً: Automatic' : 'مثلاً: مينا سودا بأرقام رومانية'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
+          ${g.k === 'movement' ? `<div class="vg-quick">${['Quartz (بطارية)', 'Automatic (أوتوماتيك)', 'Mechanical (تعبئة يدوية)'].filter(n => !g.o.some(o => o.n === n)).map(n => `<button type="button" data-vq="${esc(n)}">+ ${esc(n)}</button>`).join('')}</div>` : ''}
+        </div>`; }).join('')}</section>
       <section class="ed-sec"><h4>الشحن والاستبدال <small>لو سبته زي ما هو بيتكتب فيه سعر الشحن تلقائي</small></h4>
         <textarea class="input ed-txt" id="f_ship" rows="4" dir="rtl" ${COLS.shipping_note ? '' : 'disabled'}>${esc(d._ship)}</textarea></section>
     </div><div class="ed-col ed-side">
@@ -1090,6 +1117,19 @@ function renderEditor() {
     renderEditor(); };
   $('#specAdd').onclick = () => { syncDraft(); draft._specs.push(['', '']); renderEditor(); const ks = document.querySelectorAll('#specRows [data-sk]'); ks[ks.length - 1].focus(); };
   $('#specRows').onclick = e => { const b = e.target.closest('[data-srm]'); if (b) { syncDraft(); draft._specs.splice(+b.dataset.srm, 1); renderEditor(); } };
+  // buyer options: add / remove an option, switch a group between a word list and colour swatches
+  const vAdd = (box, name) => { const g = draft.variants.find(x => x.k === box.dataset.vg), n = String(name || '').trim().slice(0, 60);
+    if (!n) { box.querySelector('[data-vn]').focus(); return toast('اكتب اسم الاختيار', 'err'); }
+    if (g.o.some(o => o.n === n)) return toast('الاختيار ده موجود'); if (g.o.length >= 12) return toast('أقصى حاجة 12 اختيار', 'err');
+    syncDraft(); g.o.push(g.t === 'color' ? { n, c: box.querySelector('.vg-clr').value.toUpperCase() } : { n }); renderEditor();
+    const nb = document.querySelector(`.vg[data-vg="${g.k}"] [data-vn]`); nb && nb.focus({ preventScroll: true }); };
+  $('#varSec').addEventListener('click', e => { const box = e.target.closest('.vg'); if (!box) return; const g = draft.variants.find(x => x.k === box.dataset.vg);
+    const t = e.target.closest('[data-vt]'), rm = e.target.closest('[data-vrm]'), ad = e.target.closest('[data-vadd]'), qk = e.target.closest('[data-vq]');
+    if (t && t.dataset.vt !== g.t) { syncDraft(); g.t = t.dataset.vt; if (g.t === 'color') g.o.forEach(o => { o.c = o.c || '#888888'; }); renderEditor(); }
+    if (rm) { syncDraft(); g.o.splice(+rm.dataset.vrm, 1); renderEditor(); }
+    if (ad) vAdd(box, box.querySelector('[data-vn]').value);
+    if (qk) vAdd(box, qk.dataset.vq); });
+  $('#varSec').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-vn]')) { e.preventDefault(); vAdd(e.target.closest('.vg'), e.target.value); } });
   const normHex = v => { v = String(v || '').trim().replace(/^#?/, '#').toUpperCase(); if (/^#[0-9A-F]{3}$/.test(v)) v = '#' + [...v.slice(1)].map(x => x + x).join(''); return /^#[0-9A-F]{6}$/.test(v) ? v : null; };
   $('#f_sort').oninput = () => { draft._autoSort = false; };
   $('#f_lux').addEventListener('change', () => { if (draft._autoSort) $('#f_sort').value = nextSort($('#f_lux').checked); });
@@ -1250,6 +1290,7 @@ async function saveProduct() {
   const row = { name: d.name, brand: d.brand, category: d.category, description: composeDesc(d), price, sale_price: sale, images: d.images,
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
   if (COLS.cover_only) row.cover_only = !!d.cover_only;
+  if (COLS.variants) row.variants = (d.variants || []).filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: V.ar, en: V.en, t: g.t, o: g.o.map(o => g.t === 'color' ? { n: o.n, c: o.c } : { n: o.n }) }; });
   if (COLS.on_offer) row.on_offer = !!d.on_offer;
   if (COLS.image_colors) { const m = {}, cl = (d.colors || []).map(c => c.toLowerCase()); Object.entries(d.image_colors || {}).forEach(([u, c]) => { if (d.images.includes(u) && cl.includes(String(c).toLowerCase())) m[u] = c; }); row.image_colors = Object.keys(m).length ? m : null; }
   if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
@@ -1785,7 +1826,7 @@ function sheetSend(body) {
   if (!sheetOn()) return Promise.resolve(false);
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
-const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
+const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
   sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, net: orderNet(o), location: o.location || '' }; };
 const expRow = x => ({ id: x.id, date: x.spent_on, category: x.category, amount: +x.amount, note: x.note || '' });
 const offRow = x => ({ id: x.id, date: x.sold_on, name: x.name, qty: +x.qty, seller: x.seller || '', price: +x.price, cost: +x.cost, ship_cost: +x.ship_cost,
