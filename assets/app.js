@@ -661,7 +661,7 @@
     notifyOrder(data, d, ls);
     DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name + optLine(l), qty: l.qty, image: (l.p.images || [])[0] || '' })) });
     $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
-    const ask = encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${data.code}`);
+    const ask = encodeURIComponent(`أهلاً DAQQA\nعايز أستفسر عن طلبي رقم ${data.code}`);
     $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
       <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
@@ -690,7 +690,7 @@
   // website orders switched off → the filled form becomes a ready WhatsApp message to the shop
   function orderOnWA(d) {
     const t = totals(d.city), ls = t.ls;
-    const msg = ['أهلاً DAQQA 👋 عايز أطلب:', '',
+    const msg = ['أهلاً DAQQA عايز أطلب:', '',
       ...ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`), '',
       `المنتجات: ${money(t.sub)}`, `الشحن: ${t.ship == null ? 'حسب المحافظة' : t.ship ? money(t.ship) : 'مجاني'}`, `الإجمالي: ${money(t.total)} (كاش عند الاستلام)`, '',
       `الاسم: ${d.name}`, `الموبايل: ${d.phone}`, `المحافظة: ${d.city}`, `العنوان: ${d.address}`,
@@ -770,7 +770,7 @@
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
       <div class="ao-acts">${byShop(o) ? '' : waAsk(o.code)}${cancelBtn(o.code, o.status)}${ENDED.includes(o.status) ? `<button type="button" class="ao-del" data-odel="${esc(o.code)}">مسح من طلباتي</button>` : ''}</div></div>`;
   // green WhatsApp button with the order number already written in the message
-  function waAsk(code) { return DQ.wa() ? `<a class="btn wa-btn ao-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${encodeURIComponent(`أهلاً DAQQA 👋\nعايز أستفسر عن طلبي رقم ${code}`)}">${WA_ICON}استفسر على واتساب</a>` : ''; }
+  function waAsk(code) { return DQ.wa() ? `<a class="btn wa-btn ao-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${encodeURIComponent(`أهلاً DAQQA\nعايز أستفسر عن طلبي رقم ${code}`)}">${WA_ICON}استفسر على واتساب</a>` : ''; }
   // confirm popup: resolves true on the main button, false on back / outside / Esc
   // with reasons: the customer must pick or write a reason first, and it resolves with that text
   const REASONS = ['طلبته بالغلط', 'غيّرت رأيي', 'لقيته بسعر أقل', 'التوصيل هيتأخر عليّا', 'عاوز أغيّر في الطلب'];
