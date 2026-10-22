@@ -133,13 +133,15 @@ RC.socialLabel = (s) => {
   if (/\.php$|=/.test(last)) return t.name;
   return '@' + last.replace(/^@/, '');
 };
+// the name shown on the site: the admin's own wording, or the platform name
+RC.socialName = (s) => String((s && s.label) || '').trim() || (RC.SOCIAL[s && s.type] || {}).name || '';
 // in the admin's order; the WhatsApp marked «main» goes ahead of the other WhatsApps (orders and the top bar use it)
 RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socials) ? settings.socials : []).filter(s => RC.socialHref(s));
   const m = l.findIndex(s => s.type === 'whatsapp' && s.main), f = l.findIndex(s => s.type === 'whatsapp');
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022134215';
+RC.build = '20261022144924';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {

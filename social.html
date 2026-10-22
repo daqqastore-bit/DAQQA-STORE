@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>try{var n=navigator,c=n.connection||{};if(matchMedia('(pointer:coarse)').matches||(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||c.saveData)document.documentElement.classList.add('lite')}catch(e){}</script>
 <script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>حساباتنا على السوشيال | DAQQA STORE - دقّة ستور</title>
@@ -18,8 +19,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022134215">
-<link rel="stylesheet" href="assets/store.css?v=20261022134215">
+<link rel="stylesheet" href="assets/base.css?v=20261022144924">
+<link rel="stylesheet" href="assets/store.css?v=20261022144924">
 <style>
 .so-page{min-height:70vh;display:grid;place-items:start center;padding:56px 0 20px;background:radial-gradient(ellipse at 50% 0%,rgb(var(--accent-rgb)/.14),transparent 60%)}
 .so-card{width:min(520px,100%);text-align:center}
@@ -89,8 +90,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022134215"></script>
-<script src="assets/app.js?v=20261022134215"></script>
+<script src="assets/config.js?v=20261022144924"></script>
+<script src="assets/app.js?v=20261022144924"></script>
 <script>
 // every social account + contact number the admin added, as one tidy page
 DQ.start(null, () => {
@@ -99,7 +100,7 @@ DQ.start(null, () => {
     <span class="so-logo">${RC.logo()}</span><h1>DAQQA</h1>
     <p class="so-sub">تابعنا واعرف الجديد أول بأول، وكلّمنا من أي مكان يريحك.</p>
     <div class="so-list">${list.length ? list.map((x, i) => { const t = RC.SOCIAL[x.type], href = RC.socialHref(x), ext = /^https?:/.test(href);
-      return `<a class="so-it" data-t="${esc(x.type)}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''} style="--sc:${t.color};--i:${i}"><span class="so-ic">${t.icon}</span><span class="so-txt"><b>${esc(t.name)}</b><small class="en" dir="ltr">${esc(RC.socialLabel(x))}</small></span>${DQ.ICON.arrow.replace('<svg', '<svg class="so-go"')}</a>`; }).join('')
+      return `<a class="so-it" data-t="${esc(x.type)}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''} style="--sc:${t.color};--i:${i}"><span class="so-ic">${t.icon}</span><span class="so-txt"><b>${esc(RC.socialName(x))}</b><small class="en" dir="ltr">${esc(RC.socialLabel(x))}</small></span>${DQ.ICON.arrow.replace('<svg', '<svg class="so-go"')}</a>`; }).join('')
       : '<div class="so-empty">مفيش حسابات متضافة لسه.</div>'}</div></div></section>`;
   DQ.reveal && DQ.reveal();
 });

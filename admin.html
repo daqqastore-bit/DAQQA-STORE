@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022134215">
+<link rel="stylesheet" href="assets/base.css?v=20261022144924">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -114,9 +114,9 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-body{display:none;border-top:1px solid var(--line);padding:16px;gap:18px;flex-wrap:wrap}
 .order.open .o-body{display:flex}
 .o-items{flex:2 1 320px;display:flex;flex-direction:column;gap:10px}
-.o-item{display:flex;gap:10px;align-items:flex-start}
+.o-item{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
 .o-item img{width:48px;height:48px;border-radius:10px;object-fit:cover;background:var(--surface-2)}
-.o-item .n{flex:1;font:600 13px var(--f-ui)}
+.o-item .n{flex:1 1 220px;min-width:0;font:600 13px var(--f-ui)}
 .o-item .q{color:var(--muted);font:13px var(--f-ui)}
 .o-sum{border-top:1px dashed var(--line-2);padding-top:10px;display:grid;gap:4px;font-size:13px;color:var(--muted)}
 .o-sum div{display:flex;justify-content:space-between}
@@ -273,7 +273,8 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .o-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid color-mix(in srgb,var(--amber) 35%,var(--line));border-radius:10px;background:color-mix(in srgb,var(--amber) 7%,transparent);font-size:13px;line-height:1.35}
 .o-opt img{width:30px;height:30px;border-radius:7px;object-fit:cover;flex:none}
 .o-opt i{width:16px;height:16px;border-radius:50%;flex:none;box-shadow:0 0 0 1px var(--line),0 0 0 3px var(--bg-2)}
-.o-opt small{color:var(--muted);font-size:12px;flex:none;min-width:58px}.o-opt b{color:var(--ink);font-weight:700;font-size:14px;overflow-wrap:anywhere}
+.o-opt small{color:var(--muted);font-size:12px;flex:none;min-width:58px}.o-opt b{flex:1;min-width:0;color:var(--ink);font-weight:700;font-size:14px;overflow-wrap:break-word}
+@media (max-width:600px){.o-item .q{width:100%;padding-inline-start:58px}.o-opts{max-width:none}}
 .vg{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px;background:var(--bg)}
 .vg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
 .vg-h b{font-size:14px}.vg-h b small{font:600 10.5px var(--f-ui);letter-spacing:.12em;color:var(--amber);text-transform:uppercase;margin-inline-start:4px}
@@ -334,7 +335,7 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .soc-mv button{width:26px;height:20px;border-radius:6px;border:1px solid var(--line);font-size:9px;color:var(--muted)}.soc-mv button:disabled{opacity:.3}
 .soc-main{margin-inline-start:10px;padding:3px 10px;border-radius:99px;border:1px solid var(--line-2);font-size:11.5px;font-weight:600;color:var(--muted)}
 .soc-main.on{background:#25D366;border-color:#25D366;color:#fff}
-.soc-row .field{flex:1;margin:0}.soc-row label small{color:var(--muted);font-weight:400;margin-inline-start:4px}
+.soc-row .field{flex:1;margin:0;min-width:0}.soc-ins{display:grid;grid-template-columns:1fr 200px;gap:8px}@media (max-width:700px){.soc-ins{grid-template-columns:1fr}}.soc-row label small{color:var(--muted);font-weight:400;margin-inline-start:4px}
 .soc-ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);margin-bottom:2px}
 .soc-ic svg{width:22px;height:22px}
 .imgs .it > img{cursor:zoom-in}
@@ -603,7 +604,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022134215"></script>
+<script src="assets/config.js?v=20261022144924"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1479,15 +1480,16 @@ function zonesHTML() {
       <div class="gov-chips">${AV().map(c => { const t = taken(c); return `<button type="button" class="gchip ${t === i ? 'on' : t >= 0 ? 'other' : ''}" data-zc="${i}" data-c="${c}" title="${t >= 0 && t !== i ? 'متحددة في سعر تاني — اضغط تنقلها هنا' : ''}">${c}</button>`; }).join('')}</div></div>`).join('')
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
-let setTab = 'general', socDraft = [];
+let setTab = (() => { try { return sessionStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
 const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button></div>`;
-function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; renderSettings(); }; }
+function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; try { sessionStorage.setItem('dq-set-tab', setTab); } catch (er) {} renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
 const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
     <span class="soc-mv"><button type="button" data-smv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-smv="${i}" data-to="${i + 1}" ${i < n - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
     <span class="soc-ic" style="--sc:${t.color}">${t.icon}</span>
     <div class="field"><label>${esc(t.name)}${t.kind === 'phone' ? ' <small>رقم</small>' : t.kind === 'email' ? ' <small>إيميل</small>' : ' <small>لينك أو اسم الحساب</small>'}${x.type === 'whatsapp' ? `<button type="button" class="soc-main ${x.main ? 'on' : ''}" data-smain="${i}">${x.main ? '★ الأساسي — الطلبات بتتبعت عليه' : 'خليه الأساسي'}</button>` : ''}</label>
-      <input class="input en" data-sv="${i}" value="${esc(x.value || '')}" placeholder="${esc(t.ph)}" dir="ltr" ${t.kind === 'phone' ? 'inputmode="tel"' : t.kind === 'email' ? 'inputmode="email"' : 'inputmode="url"'} required></div>
+      <div class="soc-ins"><input class="input en" data-sv="${i}" value="${esc(x.value || '')}" placeholder="${esc(t.ph)}" dir="ltr" ${t.kind === 'phone' ? 'inputmode="tel"' : t.kind === 'email' ? 'inputmode="email"' : 'inputmode="url"'} required>
+      <input class="input" data-sl="${i}" value="${esc(x.label || '')}" placeholder="الاسم: ${esc(t.name)}" maxlength="40" title="الاسم اللي يظهر في الموقع (سيبه فاضي يفضل ${esc(t.name)})"></div></div>
     <button type="button" class="soc-del" data-sdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`; };
 const socErr = x => { const t = RC.SOCIAL[x.type], v = String(x.value || '').trim();
   if (!v) return t.kind === 'phone' ? 'اكتب الرقم' : t.kind === 'email' ? 'اكتب الإيميل' : 'اكتب اللينك أو اسم الحساب';
@@ -1516,7 +1518,7 @@ function renderSocial() {
   $('#socPickOk').onclick = () => { const ks = picked(); if (!ks.length) return; const from = socDraft.length;
     ks.forEach(k => socDraft.push({ type: k, value: '' })); closePick(); draw();
     const ins = $('#socList').querySelectorAll('[data-sv]'); ins[from] && ins[from].focus(); };
-  $('#socForm').oninput = e => { const i = e.target.dataset.sv; if (i == null) return; socDraft[+i].value = e.target.value; const f = e.target.closest('.field'); if (f.classList.contains('bad') && !socErr(socDraft[+i])) { f.classList.remove('bad'); const m = f.querySelector('.f-err'); m && m.remove(); } };
+  $('#socForm').oninput = e => { if (e.target.dataset.sl != null) { socDraft[+e.target.dataset.sl].label = e.target.value; return; } const i = e.target.dataset.sv; if (i == null) return; socDraft[+i].value = e.target.value; const f = e.target.closest('.field'); if (f.classList.contains('bad') && !socErr(socDraft[+i])) { f.classList.remove('bad'); const m = f.querySelector('.f-err'); m && m.remove(); } };
   $('#socForm').onclick = e => {
     const a = e.target.closest('[data-sadd]'), d = e.target.closest('[data-sdel]');
     if (a) { a.setAttribute('aria-pressed', a.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); syncPick(); }
@@ -1536,7 +1538,7 @@ function renderSocial() {
       if (msg) { if (!m) { m = document.createElement('small'); m.className = 'f-err'; f.appendChild(m); } m.textContent = msg; bad = bad || inp; } else if (m) m.remove(); });
     if (bad) { bad.focus(); return toast('في خانة ناقصة أو مش مظبوطة', 'err'); }
     const was = socDraft.filter(x => x.type === 'whatsapp'); if (was.length && !was.some(x => x.main)) was[0].main = true;   // there is always one main WhatsApp
-    const list = socDraft.map(x => ({ type: x.type, value: String(x.value).trim(), ...(x.type === 'whatsapp' && x.main ? { main: true } : {}) }));
+    const list = socDraft.map(x => ({ type: x.type, value: String(x.value).trim(), ...(String(x.label || '').trim() ? { label: String(x.label).trim().slice(0, 40) } : {}), ...(x.type === 'whatsapp' && x.main ? { main: true } : {}) }));
     const {error} = await sb.from('shop_settings').update({ socials: list, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/socials/.test(error.message) ? 'السوشيال محتاج تحديث في Supabase' : error.message, 'err');
     settings.socials = list; toast('اتحفظت الحسابات ✓', 'ok'); };
@@ -2093,7 +2095,7 @@ async function resync(force) {
   if ($('#appView').classList.contains('hidden') || (!force && Date.now() - lastSync < 4000)) return;
   lastSync = Date.now();
   const before = new Set(orders.map(o => o.id));
-  await Promise.all([loadOrders(), loadProducts(), loadFin()]);
+  await Promise.all([loadOrders(), loadProducts(), loadFin(), loadSettings()]);
   const fresh = before.size ? orders.filter(o => !before.has(o.id)) : [];
   if (fresh.length) { fresh.forEach(o => { freshIds.add(o.id); sheetOrder(o); }); beep(); toast(fresh.length === 1 ? `طلب جديد ${fresh[0].code}` : `${fresh.length} طلبات جديدة`, 'ok'); }
   listen(); renderTabs();

@@ -892,3 +892,25 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .po-v.set{border:1px solid var(--accent);background:var(--accent);color:var(--bg);font-size:13px}
 .po-v.set::before{content:"";width:12px;height:7px;flex:none;border:2px solid currentColor;border-top:0;border-right:0;transform:translateY(-2px) rotate(-45deg)}
 .po-g.err .po-v{border-color:#C9583F;color:#C9583F;background:transparent}
+/* lite: phones and low-end devices skip the costly paint effects (blur behind glass, endless sheens/spins/glows) */
+html.lite *,html.lite *::before,html.lite *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.lite .ft-all,html.lite .cart-lx,html.lite .cl-in::after,html.lite .cl-total b,html.lite .lux-btn,html.lite .lux-btn span,html.lite .lux-btn::before,html.lite .lux-btn::after,html.lite .lux-row,html.lite .lux-row span,html.lite .lux-row::after,html.lite .lxp-price .now,html.lite .gold,html.lite .mo-line .gold,html.lite .ld-rail,html.lite .lx-none b{animation:none!important}
+html.lite .lxi-word{animation:lxWord 1.4s cubic-bezier(.2,.7,.2,1) 1.05s forwards!important}
+html.lite .lux-btn::before,html.lite .lux-btn::after,html.lite .lux-row::after,html.lite .cl-in::after{opacity:0}
+@keyframes pgOutL{to{opacity:.25;transform:scale(.97)}}@keyframes pgInL{from{opacity:0;transform:translateY(14px)}}
+html.lite:not(.vt-theme)::view-transition-old(root){animation-name:pgOutL}
+html.lite.pg-fx body{animation-name:pgInL}
+html.lite.pg-leave body{filter:none}
+html.lite .card .ph img.swap{filter:none}
+html.lite:not(.vt-theme)::view-transition-new(root){animation:pgInL .5s cubic-bezier(.2,.7,.2,1) both;-webkit-mask:none;mask:none}
+.co-it .ci-opts{gap:6px;margin:6px 0 0}
+.co-it .ci-opts span{width:100%;padding:6px 10px;gap:8px}
+.co-it .ci-opts b{display:inline;font:700 13px/1.4 var(--f-ui);letter-spacing:0;color:var(--ink)}
+.co-it .ci-opts small{font-size:11.5px;letter-spacing:0;color:var(--muted)}
+/* governorate picker: one card per row so the name and its shipping fee read together */
+.dd-list{grid-template-columns:1fr;gap:6px;max-height:300px;padding:2px}
+.dd-list button{height:auto;min-height:48px;padding:10px 14px;border:1px solid var(--line);background:var(--surface-2,var(--surface));font-size:15px;font-weight:600}
+.dd-list button:hover{border-color:rgb(var(--accent-rgb)/.5)}
+.dd-list button.on{border-color:var(--accent)}
+.dd-ship{padding:3px 9px;border-radius:99px;background:rgb(var(--accent-rgb)/.12);opacity:1!important;font-weight:600!important;white-space:nowrap}
+.dd-list button.on .dd-ship{background:rgb(0 0 0/.15)}

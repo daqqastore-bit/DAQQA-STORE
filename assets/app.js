@@ -56,7 +56,7 @@
   }, 400); };
   DQ.reveal = () => { scanLoops(); document.querySelectorAll('.reveal:not(.in), .op:not(.in)').forEach(el => { if (!pending.includes(el)) pending.push(el); }); queueCheck(); };
   // gentle parallax for section backgrounds (data-parallax) — one rAF per frame, skipped for reduced motion
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite')) {
     let ticking = false;
     addEventListener('scroll', () => { if (ticking) return; ticking = true; requestAnimationFrame(() => {
       ticking = false; const vh = innerHeight;
@@ -330,7 +330,7 @@
 
   /* ---------- social accounts: top bar (with the announcement) + footer; accounts without a link are skipped ---------- */
   const socLink = (x, cls) => { const t = RC.SOCIAL[x.type], href = RC.socialHref(x), ext = /^https?:/.test(href);
-    return `<a class="${cls}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''} aria-label="${esc(t.name)}" title="${esc(t.name)}" style="--sc:${t.color}">${t.icon}<span>${esc(t.name)}</span><small class="en" dir="ltr">${esc(RC.socialLabel(x))}</small></a>`; };
+    return `<a class="${cls}" href="${esc(href)}" ${ext ? 'target="_blank" rel="noopener"' : ''} aria-label="${esc(RC.socialName(x))}" title="${esc(RC.socialName(x))}" style="--sc:${t.color}">${t.icon}<span>${esc(RC.socialName(x))}</span><small class="en" dir="ltr">${esc(RC.socialLabel(x))}</small></a>`; };
   DQ.socLink = socLink;
   function renderSocial() {
     const list = RC.socials(DQ.settings), ann = (DQ.settings.announcement || '').trim(), top = $('#topbar');
