@@ -887,3 +887,8 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 /* the line above the options: they're required */
 .po-need{margin:0;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink)}
 .po-need::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;box-shadow:0 0 0 4px var(--glow)}
+/* the picked value next to the group title: a soft chip with a tick; before picking, a dashed "required" chip */
+.po-v{display:inline-flex;align-items:center;gap:6px;max-width:55%;padding:5px 12px;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);border-radius:999px;font:600 12.5px var(--f-ui);color:var(--accent);line-height:1.35;text-align:start;transition:background .25s,border-color .25s,color .25s}
+.po-v.set{border:1px solid var(--accent);background:var(--accent);color:var(--bg);font-size:13px}
+.po-v.set::before{content:"";width:12px;height:7px;flex:none;border:2px solid currentColor;border-top:0;border-right:0;transform:translateY(-2px) rotate(-45deg)}
+.po-g.err .po-v{border-color:#C9583F;color:#C9583F;background:transparent}

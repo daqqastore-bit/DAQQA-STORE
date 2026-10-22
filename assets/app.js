@@ -377,7 +377,7 @@
     Object.entries(picks).forEach(([k, v]) => { sel[k] = v; });
     RC.variants(p).forEach(g => { if (sel[g.k] && !(g.k in picks) && !RC.optFits(p, g.k, sel[g.k], sel)) delete sel[g.k]; });
     root.querySelectorAll('.po-g').forEach(box => { const k = box.dataset.g; if (k in picks) box.classList.remove('err');
-      box.querySelector('.po-v').textContent = sel[k] || 'لازم تختار';
+      const pv = box.querySelector('.po-v'); pv.textContent = sel[k] || 'لازم تختار'; pv.classList.toggle('set', !!sel[k]);
       box.querySelectorAll('.po-card').forEach(b => { const on = b.dataset.o === sel[k]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
         const ok = RC.optFits(p, k, b.dataset.o, sel); b.classList.toggle('off', !ok); b.title = ok ? '' : 'مش متاح مع اختيارك'; }); });
     DQ.optSync(root, p, sel); };
