@@ -964,3 +964,17 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 }
 .qv-card .qa-x{inset-inline-end:auto;inset-inline-start:14px;top:14px}.qv-off{right:auto;left:12px}
 @media (max-width:760px){.qv-card .qa-x{top:22px;inset-inline-start:22px}}
+/* «قصة الأقسام» — story block at the end of a home section (text + numbers beside a photo) */
+.story{padding:clamp(56px,8vw,110px) 0;background:var(--bg)}
+.story-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,72px);align-items:center}
+.story-in.no-img{grid-template-columns:minmax(0,760px);justify-content:center;text-align:center}
+.story-cap{display:block;font:600 12px var(--f-ui);letter-spacing:.32em;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+.story-txt h2{font:500 clamp(30px,4.2vw,52px)/1.15 var(--f-display);margin:0 0 20px;color:var(--ink)}
+.story-txt p{margin:0 0 14px;color:var(--muted);font-size:clamp(15px,1.3vw,17px);line-height:1.95;white-space:pre-line}
+.story-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:18px;margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.story-stats b{display:block;font:500 clamp(26px,3vw,36px)/1 var(--f-display);color:var(--accent)}
+.story-stats span{display:block;margin-top:8px;font-size:13px;color:var(--muted);letter-spacing:.04em}
+.story-pic{border-radius:22px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 40px 80px -40px rgb(0 0 0/.6)}
+.story-pic img{width:100%;height:100%;object-fit:cover;display:block}
+@media (max-width:820px){.story-in{grid-template-columns:1fr}.story-pic{order:-1}.story-stats{grid-template-columns:repeat(2,1fr)}}
+.story-stats b{unicode-bidi:isolate;direction:ltr;text-align:right}.story-in.no-img .story-stats b{text-align:center}

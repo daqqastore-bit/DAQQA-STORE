@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022164211">
+<link rel="stylesheet" href="assets/base.css?v=20261022164653">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -119,6 +119,14 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-item .n{flex:1 1 220px;min-width:0;font:600 13px var(--f-ui)}
 .o-item .q{color:var(--muted);font:13px var(--f-ui);display:flex;flex-direction:column;align-items:flex-end;gap:5px}
 .o-qty{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;background:color-mix(in srgb,var(--amber) 16%,transparent);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);color:var(--ink);font-weight:600}.o-qty b{font-size:16px}
+.st-card{display:grid;gap:14px;margin-bottom:16px}.st-h{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.st-h h2{margin:0;font-size:18px}.st-h small{color:var(--muted);font-size:12px;letter-spacing:.1em}
+.st-grid{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}
+.st-img{border-radius:14px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--line);background:var(--bg-2);position:relative}
+.st-img img{width:100%;height:100%;object-fit:cover;display:block}.st-img-a{position:absolute;inset:auto 8px 8px;display:flex;gap:6px;justify-content:center}.st-img-a .btn{background:var(--bg);}
+.st-add{width:100%;height:100%;display:grid;place-content:center;gap:4px;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.st-add:hover{border-color:var(--amber);color:var(--ink)}.st-add small{font-size:11px}
+.st-f{display:grid;gap:12px}.st-f .field{margin:0}.st-f label small{color:var(--muted);font-weight:400}
+.st-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.st-stats div{display:grid;gap:6px}.st-stats .input{height:38px}
+@media (max-width:760px){.st-grid{grid-template-columns:1fr}.st-stats{grid-template-columns:1fr 1fr}}
 .stk{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font:600 12.5px var(--f-ui);border:1px solid;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
 .stk:active{transform:scale(.96)}.stk i{width:7px;height:7px;border-radius:50%;background:currentColor}.stk b{font-weight:700;padding-inline-start:7px;border-inline-start:1px solid currentColor;opacity:.85}
 .stk.in{color:#2f8a55;background:rgb(47 138 85/.12);border-color:rgb(47 138 85/.35)}
@@ -621,7 +629,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022164211"></script>
+<script src="assets/config.js?v=20261022164653"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -633,6 +641,7 @@ sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { RECOVERY = t
 const $ = s => document.querySelector(s);
 const STATUS_KEYS = Object.keys(statuses);
 const ICONS = {
+  stories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h12M8 7h6M8 11h4"/></svg>',
   accounts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18.5h2M14 18.5h2"/></svg>',
   dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   orders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
@@ -647,7 +656,7 @@ const ICONS = {
 const TABS = [['accounts','الحسابات'], ['dash','المبيعات'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
-  ['_h',''], ['covers','صور الأقسام'], ['settings','الإعدادات']];
+  ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات']];
 const MOB_TABS = ['accounts','dash','orders','products','lux-orders'];
 // an order counts as Luxury when any of its pieces is a Luxury product
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
@@ -856,7 +865,7 @@ document.addEventListener('click', e => { const t = e.target.closest('[data-tab]
 function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
-  ({accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, settings: renderSettings}[t] || renderDash)();
+  ({accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, settings: renderSettings}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
@@ -1465,6 +1474,43 @@ async function upBanner(k, slot, f, btn) {
   try { const blob = await compress(c, 2400); const path = `banners/${k}-${slot}-${Date.now()}.webp`;
     const { error } = await sb.storage.from(RC.bucket).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000' }); if (error) throw error;
     await saveBanner(k, slot, sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl); } catch (err) { toast('فشل الرفع: ' + (err.message || err), 'err'); go(tab, true); }
+}
+// «قصة الأقسام»: a story block at the end of each section on the home page — photo, small title, headline, text and up to 4 numbers
+const STORY_DEF = { on: true, cap: 'OUR STORY', title: '', body: '', img: '', stats: [] };
+let storyDraft = null;
+function renderStories() {
+  renderTabs();
+  if (!('stories' in settings)) { $('#main').innerHTML = `<div class="head"><div><h1>قصة الأقسام</h1></div></div><div class="panel" style="color:var(--muted)">محتاج تحديث في Supabase.</div>`; return; }
+  storyDraft = storyDraft || JSON.parse(JSON.stringify(settings.stories || {}));
+  const K = Object.entries(RC.kinds);
+  $('#main').innerHTML = `<div class="head"><div><h1>قصة الأقسام</h1><div class="sub">سكشن في آخر كل قسم في الصفحة الرئيسية: صورة وكلام وأرقام على مزاجك. لو العنوان والكلام فاضيين السكشن مش بيظهر.</div></div></div>
+    ${K.map(([k, v]) => { const d = { ...STORY_DEF, ...(storyDraft[k] || {}) }, st = [0, 1, 2, 3].map(i => (d.stats || [])[i] || { v: '', l: '' });
+      return `<form class="panel st-card" data-sk="${k}"><div class="st-h"><h2>${v.ar} <small class="en">${v.en}</small></h2><label class="check"><input type="checkbox" name="on" ${d.on !== false ? 'checked' : ''}> ظاهر في الموقع</label></div>
+      <div class="st-grid"><div class="st-img">${d.img ? `<img src="${esc(d.img)}" alt=""><div class="st-img-a"><button type="button" class="btn btn-sm btn-ghost" data-stup="${k}">تغيير الصورة</button><button type="button" class="btn btn-sm btn-ghost" data-stdel="${k}">شيل</button></div>` : `<button type="button" class="st-add" data-stup="${k}"><b>+ صورة</b><small>4:3 · 1600×1200</small></button>`}</div>
+        <div class="st-f"><div class="field"><label>سطر صغير فوق العنوان</label><input class="input" name="cap" value="${esc(d.cap || '')}" maxlength="40" placeholder="OUR STORY"></div>
+          <div class="field"><label>العنوان</label><input class="input" name="title" value="${esc(d.title || '')}" maxlength="80" placeholder="مثلاً: دقة في كل تفصيلة"></div>
+          <div class="field"><label>الكلام <small>(سطر فاضي = فقرة جديدة)</small></label><textarea class="input" name="body" rows="5" maxlength="900" placeholder="احكي عن القسم ده…">${esc(d.body || '')}</textarea></div>
+          <div class="field"><label>أرقام <small>(اختياري، لحد 4)</small></label><div class="st-stats">${st.map((x, i) => `<div><input class="input en" name="v${i}" value="${esc(x.v || '')}" maxlength="10" placeholder="${['2024', '500+', '100%', '14'][i]}"><input class="input" name="l${i}" value="${esc(x.l || '')}" maxlength="24" placeholder="${['سنة البداية', 'عميل', 'أصلي', 'يوم استبدال'][i]}"></div>`).join('')}</div></div></div></div>
+        <div class="set-acts"><button class="btn btn-primary" type="submit">حفظ</button></div></form>`; }).join('')}`;
+  const read = f => { const g = n => (f.elements[n] ? f.elements[n].value.trim() : ''); const d = storyDraft[f.dataset.sk] = { ...STORY_DEF, ...(storyDraft[f.dataset.sk] || {}) };
+    d.on = f.elements.on.checked; d.cap = g('cap'); d.title = g('title'); d.body = f.elements.body.value.trim();
+    d.stats = [0, 1, 2, 3].map(i => ({ v: g('v' + i), l: g('l' + i) })).filter(x => x.v || x.l); return d; };
+  const save = async (msg = 'اتحفظ ✓') => { const stories = JSON.parse(JSON.stringify(storyDraft));
+    const { error } = await sb.from('shop_settings').update({ stories, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(error.message, 'err'), false; settings.stories = stories; toast(msg, 'ok'); return true; };
+  document.querySelectorAll('.st-card').forEach(f => { f.oninput = () => { read(f); dirty = true; }; f.onsubmit = async e => { e.preventDefault(); read(f); if (await save()) dirty = false; }; });
+  $('#main').onclick = async e => {
+    const up = e.target.closest('[data-stup]'), del = e.target.closest('[data-stdel]');
+    if (up) { const k = up.dataset.stup, f = document.querySelector(`.st-card[data-sk="${k}"]`); read(f); const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+      inp.onchange = async () => { const file = inp.files[0]; if (!file || !file.type.startsWith('image/')) return; const c = await cropBox(file, 0, 1, ['4:3', 4 / 3]); if (!c) return;
+        up.disabled = true; up.textContent = 'جاري الرفع...';
+        try { const blob = await compress(c, 1800), path = `stories/${k}-${Date.now()}.webp`;
+          const { error } = await sb.storage.from(RC.bucket).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000' }); if (error) throw error;
+          storyDraft[k].img = sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl; await save('اترفعت الصورة ✓'); } catch (err) { toast('فشل الرفع: ' + (err.message || err), 'err'); }
+        renderStories(); };
+      inp.click(); }
+    if (del) { const k = del.dataset.stdel; if (!(await confirmBox('تشيل الصورة دي؟', 'شيل'))) return; read(document.querySelector(`.st-card[data-sk="${k}"]`)); storyDraft[k].img = ''; await save('اتشالت ✓'); renderStories(); }
+  };
 }
 function renderCovers() {
   const s = settings, B = s.banners || {};
