@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022132053">
+<link rel="stylesheet" href="assets/base.css?v=20261022132235">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -601,7 +601,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022132053"></script>
+<script src="assets/config.js?v=20261022132235"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1108,7 +1108,7 @@ function renderEditor() {
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
               ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
               ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
-              ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
+              ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${d.images.length > 1 && o.imgs.length < d.images.length ? '<button type="button" class="vo-mini" data-vimgall>كل الصور</button>' : ''}${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
           <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
           ${g.k === 'movement' ? `<div class="vg-quick">${['Quartz (بطارية)', 'Automatic (أوتوماتيك)', 'Mechanical (تعبئة يدوية)'].filter(n => !g.o.some(o => o.n === n)).map(n => `<button type="button" data-vq="${esc(n)}">+ ${esc(n)}</button>`).join('')}</div>` : ''}
@@ -1193,6 +1193,7 @@ function renderEditor() {
     else if (e.target.closest('[data-vpick]')) draft._pick = draft._pick === g.k + ':' + i ? null : g.k + ':' + i;
     else if (im) { const u = im.dataset.vimg; o.imgs = !u ? [] : o.imgs.includes(u) ? o.imgs.filter(x => x !== u) : [...o.imgs, u]; if (!u) draft._pick = null; }
     else if (e.target.closest('[data-vdone]')) draft._pick = null;
+    else if (e.target.closest('[data-vimgall]')) o.imgs = [...o.imgs, ...draft.images.filter(u => !o.imgs.includes(u))];
     else if (e.target.closest('[data-vlall]')) { const k = e.target.closest('[data-vlall]').dataset.vlall; o.links = o.links || {}; o.links[k] = [];
       // goes with all of them again: options there that were limited keep this one in their own list
       draft.variants.find(x => x.k === k).o.forEach(y => { const l = y.links && y.links[g.k]; if (l && l.length && !l.includes(o.n)) y.links[g.k] = [...l, o.n]; }); }
