@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022170048">
-<link rel="stylesheet" href="assets/store.css?v=20261022170048">
+<link rel="stylesheet" href="assets/base.css?v=20261022170343">
+<link rel="stylesheet" href="assets/store.css?v=20261022170343">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -96,6 +96,9 @@
 .ld-rail{position:absolute;left:0;right:0;bottom:30px;margin:0 auto;width:max-content;z-index:3;display:flex;align-items:center;gap:14px;padding:12px 26px 12px 22px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.45);background:rgb(var(--accent-rgb)/.1);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:var(--ink);cursor:pointer;animation:ldFade 1.2s 1s both,railPulse 2.6s 2.2s ease-in-out infinite;transition:background .3s,border-color .3s}
 .ld-rail:hover{background:rgb(var(--accent-rgb)/.2);border-color:var(--accent)}
 .ld-rail b{font:700 19px var(--f-ar);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
+.ld-rail b.rl-brand{font:700 26px/1 'Amiri',var(--f-ar);color:var(--accent);padding-bottom:4px}
+@media (max-width:600px){.ld-rail b.rl-brand{font-size:22px}}
+.ld-ar{white-space:nowrap}
 .ld-rail small{font:600 10px var(--f-ui);letter-spacing:.42em;color:var(--accent)}
 .ld-rail .tr{display:none}
 .ld-rail .arw{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--accent);color:#fff;box-shadow:0 6px 18px rgb(var(--accent-rgb)/.45);animation:arwDown 1.1s ease-in-out infinite}
@@ -280,16 +283,16 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="dqLoad" aria-hidden="true"><div class="c"><svg viewBox="0 0 184 190"><circle class="ring" cx="92" cy="92" r="78"/><line class="hand" x1="92" y1="92" x2="92" y2="34"/><line class="tail" x1="122" y1="128" x2="160" y2="172"/></svg><b>DAQQA</b><span class="bar"><i></i></span></div></div>
 <script>if(!window.DQ_LOADER){var b=document.createElement('div');b.id='dqBar';document.body.appendChild(b)}</script>
 <div id="hdr"></div>
-<section class="landing" id="landing" aria-label="DAQQA"><div class="ld-stick"><div class="ld-bg"></div><div class="ld-grid"></div><div class="ld-slogan ld-fade" lang="ar"><span>دقت</span><span>ساعة</span><span>العمل</span></div><div class="ld-slogan r ld-fade" lang="ar"><span>دقّة</span><span>تصنع</span><span>الفرق</span></div>
+<section class="landing" id="landing" aria-label="DAQQA"><div class="ld-stick"><div class="ld-bg"></div><div class="ld-grid"></div>
   <span class="ld-side l en ld-fade">PRECISION IN EVERY TICK</span><span class="ld-side r en ld-fade">EST. 2026 · CAIRO</span>
-  <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><h1 class="ld-word en" id="ldWord" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></h1><div class="ld-sep ld-fade"><span aria-hidden="true"></span><button type="button" class="ld-rail" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b>اسكرول لتحت</b><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17"/><path d="m5 13 7 7 7-7"/></svg></span></button><span aria-hidden="true"></span></div><div class="ld-ar ld-fade" lang="ar">دقّة</div><div class="ld-beats ld-fade"><nav aria-label="الأقسام"><a href="#watches" data-kind="watches">ساعات</a><a href="#glasses" data-kind="glasses">نضارات</a><a href="#accessories" data-kind="accessories">اكسسوارات</a></nav></div></div>
+  <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><h1 class="ld-word en" id="ldWord" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></h1><div class="ld-sep ld-fade"><span aria-hidden="true"></span><button type="button" class="ld-rail" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b class="rl-brand" lang="ar">دقّة</b><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17"/><path d="m5 13 7 7 7-7"/></svg></span></button><span aria-hidden="true"></span></div><div class="ld-ar ld-fade" lang="ar">دقّة تصنع الفرق</div><div class="ld-beats ld-fade"><nav aria-label="الأقسام"><a href="#watches" data-kind="watches">ساعات</a><a href="#glasses" data-kind="glasses">نضارات</a><a href="#accessories" data-kind="accessories">اكسسوارات</a></nav></div></div>
   </div><div class="ld-ring" id="ldRing"></div></section>
 <main id="sections"><div class="none"><div class="m skeleton" style="border-radius:50%"></div>جاري التحميل…</div></main>
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022170048"></script>
-<script src="assets/app.js?v=20261022170048"></script>
+<script src="assets/config.js?v=20261022170343"></script>
+<script src="assets/app.js?v=20261022170343"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);

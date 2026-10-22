@@ -126,7 +126,7 @@
             img.complete ? done() : img.addEventListener('load', done, { once: true }); }, 650); });
         dots.forEach((d, j) => d.classList.toggle('on', j === k % dots.length)); };
       dots.forEach((d, j) => d.classList.toggle('on', j === 0));
-      setTimeout(step, 700); timer = setInterval(step, 2600);
+      setTimeout(step, 1000); timer = setInterval(step, 3400);
     });
   }
 
