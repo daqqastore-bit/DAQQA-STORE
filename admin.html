@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022131644">
+<link rel="stylesheet" href="assets/base.css?v=20261022131729">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -298,7 +298,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-lk{justify-self:start}.vo-lk.on{border-style:solid;border-color:var(--amber);color:var(--ink)}
 .vo-dl{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:8px}.vo-dl b{font-size:11.5px;font-weight:500;color:var(--muted)}.vo-dl small{font-size:10.5px;color:var(--muted)}
 .vo-dl div{display:flex;flex-wrap:wrap;gap:5px}.vo-dl button{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:4px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
-.vo-dl button i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-dl button.on{border-color:var(--amber);color:var(--ink);background:color-mix(in srgb,var(--amber) 14%,transparent)}
+.vo-dl button i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-dl button.all{font-weight:600}.vo-dl button.on{border-color:var(--amber);color:var(--ink);background:color-mix(in srgb,var(--amber) 14%,transparent)}
 .vo-hex{width:84px!important;height:30px!important;padding:0 8px!important;font-size:12px!important;text-align:center;text-transform:uppercase;letter-spacing:.03em}
 .vg-hex{flex:none!important;width:96px!important;text-align:center;text-transform:uppercase;letter-spacing:.03em}
 @media (max-width:600px){.vg-add{flex-wrap:wrap}.vg-add [data-vn]{flex:1 1 100%!important;order:-1}.vg-add .vg-hex{flex:1!important}}
@@ -601,7 +601,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022131644"></script>
+<script src="assets/config.js?v=20261022131729"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1107,7 +1107,7 @@ function renderEditor() {
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><input class="input vo-hex en" data-vhex value="${esc(o.c.toUpperCase())}" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
               ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
-              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
+              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
           <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
@@ -1193,6 +1193,9 @@ function renderEditor() {
     else if (e.target.closest('[data-vpick]')) draft._pick = draft._pick === g.k + ':' + i ? null : g.k + ':' + i;
     else if (im) { const u = im.dataset.vimg; o.imgs = !u ? [] : o.imgs.includes(u) ? o.imgs.filter(x => x !== u) : [...o.imgs, u]; if (!u) draft._pick = null; }
     else if (e.target.closest('[data-vdone]')) draft._pick = null;
+    else if (e.target.closest('[data-vlall]')) { const k = e.target.closest('[data-vlall]').dataset.vlall; o.links = o.links || {}; o.links[k] = [];
+      // goes with all of them again: options there that were limited keep this one in their own list
+      draft.variants.find(x => x.k === k).o.forEach(y => { const l = y.links && y.links[g.k]; if (l && l.length && !l.includes(o.n)) y.links[g.k] = [...l, o.n]; }); }
     else if (e.target.closest('[data-vlink]')) draft._link = draft._link === g.k + ':' + i ? null : g.k + ':' + i;
     else if (e.target.closest('[data-vlk]')) { const b = e.target.closest('[data-vlk]'), k = b.dataset.vlk, n = b.dataset.vln; o.links = o.links || {}; const l = o.links[k] || [];
       o.links[k] = l.includes(n) ? l.filter(x => x !== n) : [...l, n];
