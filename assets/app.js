@@ -84,6 +84,8 @@
   }
   DQ.toggleFav = id => { DQ.favs.has(id) ? DQ.favs.delete(id) : DQ.favs.add(id); try { localStorage.setItem('dq-favs', JSON.stringify([...DQ.favs])) } catch (e) {} renderFavs(); DQ.toast(DQ.favs.has(id) ? 'اتضافت للمفضلة' : 'اتشالت من المفضلة'); };
   DQ.renderFavs = renderFavs;
+  const QV_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  DQ.QV_EYE = QV_EYE;
   DQ.card = (p, i = 0) => {
     const off = discountPct(p), url = RC.productUrl(p), cols = RC.colors(p), fav = DQ.favs && DQ.favs.has(p.id);
     const nImg = (p.images || []).length;
@@ -91,6 +93,7 @@
       <a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'">
         ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off">-${off}%</span>` : ''}${p.stock <= 0 ? `<div class="out">نفدت الكمية</div>` : ''}</a>
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
+      <button type="button" class="qv-eye" data-qv="${p.id}" aria-label="عرض سريع لـ ${esc(p.name)}" title="عرض سريع">${QV_EYE}</button>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
         <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="${RC.variants(p).length ? 'اختار مواصفات' : 'أضف'} ${esc(p.name)}${RC.variants(p).length ? '' : ' للـ Shopping Cart'}">${ICON.plus}</button>` : ''}</div>
@@ -199,6 +202,7 @@
     imageFlip();
     document.addEventListener('click', e => {
       if (e.target.closest('[data-close]')) DQ.closeAll();
+      const qv = e.target.closest('[data-qv]'); if (qv) { e.preventDefault(); DQ.quickView(+qv.dataset.qv); return; }
       const add = e.target.closest('[data-add]');
       if (add) { e.preventDefault(); pop(add); DQ.quickAdd(+add.dataset.add); }
       // colour swatch on a card: show that colour's photo (stays until another colour is picked)
@@ -388,19 +392,29 @@
     const gk = c.closest('.po-g').dataset.g, u = RC.optPhoto(p, { ...sel, [gk]: c.dataset.o }, gk), im = c.querySelector(':scope>img');
     if (u && im && im.getAttribute('src') !== u) im.src = u; th.querySelectorAll('img').forEach(t => t.classList.toggle('on', t.dataset.ti === u)); });
   // quick add (card "+", favourites…): a pop-up to pick the quantity and every option before it goes in the cart
-  DQ.quickAdd = id => {
-    const p = DQ.byId(id); if (!p || p.stock <= 0) return;
+  // quick add (the card «+»), or the full quick view (the card eye: photos, details, specs) — same options/qty/cart logic
+  DQ.quickView = id => DQ.quickAdd(id, true);
+  DQ.quickAdd = (id, full) => {
+    const p = DQ.byId(id); if (!p || (!full && p.stock <= 0)) return;
+    const out = p.stock <= 0, imgs = (p.images || []).length ? p.images : [FALLBACK], { specs, body } = full ? RC.splitDesc(p.description) : { specs: [], body: '' }, off = discountPct(p);
     document.querySelectorAll('.qa-m').forEach(x => x.remove());
-    const vs = RC.variants(p), sel = {}, max = Math.min(p.stock, 20); let q = 1;
+    const vs = RC.variants(p), sel = {}, max = p.stock == null ? 20 : Math.min(p.stock, 20); let q = 1;
     vs.forEach(g => { if (g.o.length === 1) sel[g.k] = g.o[0].n; });
-    const m = document.createElement('div'); m.className = 'oc-m qa-m';
-    m.innerHTML = `<div class="oc-card qa-card" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
-      <div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>
+    const m = document.createElement('div'); m.className = 'oc-m qa-m' + (full ? ' qv-m' : '');
+    m.innerHTML = `<div class="oc-card qa-card${full ? ' qv-card' : ''}${out ? ' is-out' : ''}" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
+      ${full ? `<div class="qv-gal"><div class="qv-main"><img class="qa-im" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="qv-off en">-${off}%</span>` : ''}</div>
+        ${imgs.length > 1 ? `<div class="qv-th">${imgs.slice(0, 8).map((u, k) => `<button type="button" data-qvi="${k}" class="${k ? '' : 'on'}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div><div class="qv-info">
+        <span class="qv-cap en">${esc(p.brand || 'DAQQA')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
+        <h3 id="qaH" class="en qv-h">${esc(p.name)}</h3>${DQ.priceHTML(p)}
+        ${body ? `<p class="qv-d">${esc(body)}</p>` : ''}
+        ${specs.length ? `<ul class="qv-sp">${specs.slice(0, 6).map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>` : ''}`
+      : `<div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>`}
       ${vs.length ? `<p class="qa-lead po-need">يجب اختيار الاختيارات الآتية</p>` : ''}
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
       <div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
-      <button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button></div>`;
+      ${out ? `<div class="qv-out">نفدت الكمية</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}
+      ${full ? `<a class="qv-more" href="${RC.productUrl(p)}">شوف صفحة المنتج كاملة ←</a></div>` : ''}</div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on')); DQ.optApply(m, p, sel, {});
     const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };
     const esc_ = e => { if (e.key === 'Escape') end(); }; addEventListener('keydown', esc_);
@@ -408,6 +422,7 @@
     showImg();
     m.addEventListener('click', e => {
       if (e.target === m || e.target.closest('[data-no]')) return end();
+      const th = e.target.closest('[data-qvi]'); if (th) { $m('.qa-im').src = imgs[+th.dataset.qvi]; m.querySelectorAll('[data-qvi]').forEach(x => x.classList.toggle('on', x === th)); return; }
       const c = e.target.closest('.po-card');
       if (c) { const t = e.target.closest('[data-ti]'), r = t ? DQ.optThumb(p, t) : { picks: { [c.closest('.po-g').dataset.g]: c.dataset.o } };
         DQ.optApply(m, p, sel, r.picks); if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }

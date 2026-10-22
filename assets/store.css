@@ -931,3 +931,36 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .ph-xf{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.05);transition:opacity .6s ease;pointer-events:none;z-index:1}
 .ph-xf.on{opacity:1}
 .card .ph .badge-off,.card .ph .out,.card .ph::after{z-index:2}
+/* quick view (the eye on a card): photos on one side, details + options + add on the other */
+.qv-eye{position:absolute;top:56px;left:10px;z-index:3;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--ink);background:color-mix(in srgb,var(--bg) 55%,transparent);opacity:0;transform:translateY(-6px);transition:opacity .25s,transform .25s,color .2s}
+.qv-eye svg{width:18px;height:18px}.qv-eye:hover{color:var(--accent)}
+.card:hover .qv-eye,.card:focus-within .qv-eye{opacity:1;transform:none}
+@media (hover:none){.qv-eye{opacity:1;transform:none;width:34px;height:34px;top:52px}}
+.qv-card{width:min(980px,100%);grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:0;padding:0!important;overflow:hidden;max-height:min(88dvh,760px)}
+.qv-card .qa-x{z-index:3;background:var(--surface)}
+.qv-gal{display:grid;align-content:start;gap:10px;padding:22px;background:var(--surface-2)}
+.qv-main{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1;background:var(--bg)}
+.qv-main .qa-im{width:100%;height:100%;border-radius:0;object-fit:cover}
+.qv-off{position:absolute;top:12px;right:12px;padding:4px 10px;border-radius:99px;background:var(--accent);color:var(--bg);font:700 12px var(--f-ui)}
+.qv-th{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}.qv-th::-webkit-scrollbar{display:none}
+.qv-th button{flex:none;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2px solid transparent;opacity:.7;transition:opacity .2s,border-color .2s}
+.qv-th button.on{border-color:var(--accent);opacity:1}.qv-th img{width:100%;height:100%;object-fit:cover}
+.qv-info{display:grid;align-content:start;gap:12px;padding:28px 26px 24px;overflow-y:auto;overscroll-behavior:contain}
+.qv-cap{font:600 11px var(--f-ui);letter-spacing:.28em;color:var(--accent);text-transform:uppercase}
+.qv-h{font:500 28px/1.15 var(--f-display);margin:0;padding-inline-end:40px}
+.qv-info .prices{margin:0}.qv-info .price-new{font-size:22px}
+.qv-d{margin:0;color:var(--muted);font-size:14px;line-height:1.8;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.qv-sp{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qv-sp li{display:grid;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.qv-sp span{font-size:11.5px;color:var(--accent);font-weight:600}.qv-sp b{font-size:13.5px;font-weight:600;color:var(--ink);unicode-bidi:plaintext}
+.qv-more{justify-self:center;font-size:13.5px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}.qv-more:hover{color:var(--ink)}
+.qv-out{text-align:center;padding:14px;border-radius:14px;border:1px dashed var(--line);color:var(--muted);font-weight:600}
+.qa-card.is-out .qa-q{display:none}
+@media (max-width:760px){
+  .qv-card{grid-template-columns:1fr;max-height:92dvh;overflow-y:auto}
+  .qv-gal{padding:14px 14px 0;background:none}.qv-main{aspect-ratio:4/3}.qv-th button{width:52px;height:52px}
+  .qv-info{padding:14px 16px calc(16px + env(safe-area-inset-bottom));overflow:visible}
+  .qv-h{font-size:23px}.qv-card .qa-x{top:22px;inset-inline-end:22px}
+}
+.qv-card .qa-x{inset-inline-end:auto;inset-inline-start:14px;top:14px}.qv-off{right:auto;left:12px}
+@media (max-width:760px){.qv-card .qa-x{top:22px;inset-inline-start:22px}}
