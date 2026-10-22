@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022112829">
+<link rel="stylesheet" href="assets/base.css?v=20261022113649">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -284,6 +284,8 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-ph{aspect-ratio:1;border-radius:10px;border:1px dashed var(--line);display:grid;place-items:center;overflow:hidden;background:var(--bg);color:var(--muted);font-size:12px}
 .vo-ph.has{border-style:solid}.vo-ph img{width:100%;height:100%;object-fit:cover}.vo-ph i{width:46%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 3px var(--bg-2),0 0 0 4px var(--line)}
 .vo-ph:hover{border-color:var(--amber)}
+.vo-ph{position:relative}.vo-ph em,.vo-pop div button em{position:absolute;top:5px;inset-inline-start:5px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--amber);color:#1a120b;font:600 11px/20px var(--f-ui,system-ui);font-style:normal;text-align:center}
+.vo-pop div button{position:relative}.vo-acts{display:flex;justify-content:flex-end;gap:8px;align-items:center;margin:0}
 .vo-n{height:38px!important;font-size:13px;text-align:center}
 .vo-row{display:flex;align-items:center;gap:6px}
 .vo-c{position:relative;width:26px;height:26px;flex:none;cursor:pointer}.vo-c i{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-c input{position:absolute;inset:0;opacity:0;cursor:pointer}
@@ -585,7 +587,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022112829"></script>
+<script src="assets/config.js?v=20261022113649"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1059,9 +1061,9 @@ function renderEditor() {
   // re-drawing (delete a colour, move a photo…) keeps the page where it was
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
   // the four buyer options always exist in the draft (empty ones are simply not saved)
-  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o })) : [] }; });
+  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))] })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
-  if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), img: Object.keys(d.image_colors || {}).find(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) || '' })); }
+  if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
   $('#editor').innerHTML = `
     <div class="ed-head"><h3>${d.id ? 'تعديل المنتج' : 'منتج جديد'}${d.id ? ` <a href="${RC.productUrl(d)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:500;color:var(--accent);margin-inline-start:8px">فتح صفحة المنتج ↗</a>` : ''}</h3><button class="icon-btn" id="edClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="ed-body"><div class="ed-col ed-main">
@@ -1083,11 +1085,11 @@ function renderEditor() {
         ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k); return `<div class="vg" data-vg="${g.k}">
           <div class="vg-h"><b>${V.ar} <small class="en">${V.en}</small></b><p>${V.hint}</p></div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo" data-vi="${i}">
-              <button type="button" class="vo-ph ${o.img ? 'has' : ''}" data-vpick title="اربطه بصورة">${o.img ? `<img src="${esc(o.img)}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
+              <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">${o.imgs.length > 1 ? `<em class="en">${o.imgs.length}</em>` : ''}` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
               <input class="input vo-n" data-vname value="${esc(o.n)}" placeholder="الاسم" dir="auto" maxlength="60">
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
-              ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصورة اللي تظهر لما يختاره</b><div>${d.images.map(u => `<button type="button" class="${o.img === u ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt=""></button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div>${o.img ? '<button type="button" class="vo-mini" data-vimg="">من غير صورة</button>' : ''}</div>` : ''}
+              ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
           <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
           ${g.k === 'movement' ? `<div class="vg-quick">${['Quartz (بطارية)', 'Automatic (أوتوماتيك)', 'Mechanical (تعبئة يدوية)'].filter(n => !g.o.some(o => o.n === n)).map(n => `<button type="button" data-vq="${esc(n)}">+ ${esc(n)}</button>`).join('')}</div>` : ''}
@@ -1160,7 +1162,7 @@ function renderEditor() {
     if (g.o.some(o => o.n === n)) return toast('الاختيار ده موجود'); if (g.o.length >= 12) return toast('أقصى حاجة 12 اختيار', 'err');
     const ci = box.querySelector('[data-vnc]'), c = ci.dataset.on ? ci.value.toUpperCase() : null;
     // a new option opens its photo picker straight away, so the buyer sees the right watch when picking it
-    syncDraft(); g.o.push(c ? { n, c } : { n }); draft._pick = draft.images.length ? g.k + ':' + (g.o.length - 1) : null; renderEditor();
+    syncDraft(); g.o.push(c ? { n, c, imgs: [] } : { n, imgs: [] }); draft._pick = draft.images.length ? g.k + ':' + (g.o.length - 1) : null; renderEditor();
     const nc = document.querySelector(`.vg[data-vg="${g.k}"] .vo:last-child`); nc && nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
   $('#varSec').addEventListener('click', e => { const box = e.target.closest('.vg'); if (!box) return; const { g, i, o } = vOpt(e.target);
     const ad = e.target.closest('[data-vadd]'), qk = e.target.closest('[data-vq]'), im = e.target.closest('[data-vimg]');
@@ -1170,7 +1172,8 @@ function renderEditor() {
     syncDraft();
     if (e.target.closest('[data-vrm]')) { g.o.splice(i, 1); draft._pick = null; }
     else if (e.target.closest('[data-vpick]')) draft._pick = draft._pick === g.k + ':' + i ? null : g.k + ':' + i;
-    else if (im) { o.img = im.dataset.vimg; draft._pick = null; }
+    else if (im) { const u = im.dataset.vimg; o.imgs = !u ? [] : o.imgs.includes(u) ? o.imgs.filter(x => x !== u) : [...o.imgs, u]; if (!u) draft._pick = null; }
+    else if (e.target.closest('[data-vdone]')) draft._pick = null;
     else if (e.target.closest('[data-vaddclr]')) o.c = '#1B1B1B';
     else if (e.target.closest('[data-vnoclr]')) delete o.c;
     else return;
@@ -1325,7 +1328,7 @@ async function saveProduct() {
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
   if (COLS.cover_only) row.cover_only = !!d.cover_only;
   // options: names trimmed, empty names dropped, photo links only to photos still on the product
-  const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => ({ n: String(o.n || '').trim().slice(0, 60), c: o.c || null, img: d.images.includes(o.img) ? o.img : null })).filter(o => o.n) }));
+  const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => { const imgs = (o.imgs || []).filter(u => d.images.includes(u)); return { n: String(o.n || '').trim().slice(0, 60), c: o.c || null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null }; }).filter(o => o.n) }));
   const dup = vs.find(g => new Set(g.o.map(o => o.n)).size < g.o.length); if (dup) return toast(`فيه اختيارين بنفس الاسم في ${RC.VARS.find(v => v.k === dup.k).ar}`, 'err');
   if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: V.ar, en: V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
   // the store cards keep showing colour dots: they come from the options that have a colour (first 6), each with its photo

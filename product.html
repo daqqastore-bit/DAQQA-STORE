@@ -20,8 +20,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022112829">
-<link rel="stylesheet" href="assets/store.css?v=20261022112829">
+<link rel="stylesheet" href="assets/base.css?v=20261022113649">
+<link rel="stylesheet" href="assets/store.css?v=20261022113649">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -186,8 +186,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022112829"></script>
-<script src="assets/app.js?v=20261022112829"></script>
+<script src="assets/config.js?v=20261022113649"></script>
+<script src="assets/app.js?v=20261022113649"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -411,7 +411,7 @@ function render() {
     if ($('#opts')) {
       $('#opts').addEventListener('click', e => { const b = e.target.closest('.po-card'); if (!b) return; const g = b.closest('.po-g').dataset.g; pickOpt(g, b.dataset.o);
         // the option's own photo (or the photo linked to its colour) shows in the gallery
-        const o = vs.find(x => x.k === g).o.find(x => x.n === b.dataset.o), k = !o ? -1 : o.img && imgs.includes(o.img) ? imgs.indexOf(o.img) : o.c ? imgs.indexOf(RC.colorImg(p, o.c)) : -1;
+        const u = RC.optPhoto(p, sel, g), k = u ? imgs.indexOf(u) : -1;
         if (k >= 0) { slides.dispatchEvent(new Event('click')); go(k); } });
       if (askOpts && !window._askedOpts) { window._askedOpts = 1; setTimeout(() => { $('#opts').scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast('اختار المواصفات اللي تعجبك وبعدين أضفها للسلة'); }, 500); }
     }

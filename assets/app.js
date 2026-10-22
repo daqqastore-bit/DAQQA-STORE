@@ -371,7 +371,6 @@
     document.querySelectorAll('.qa-m').forEach(x => x.remove());
     const vs = RC.variants(p), sel = {}, max = Math.min(p.stock, 20); let q = 1;
     vs.forEach(g => { if (g.o.length === 1) sel[g.k] = g.o[0].n; });
-    const optImg = o => o && (o.img || (o.c && RC.colorImg(p, o.c)));
     const m = document.createElement('div'); m.className = 'oc-m qa-m';
     m.innerHTML = `<div class="oc-card qa-card" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
       <div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>
@@ -383,13 +382,13 @@
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
     const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };
     const esc_ = e => { if (e.key === 'Escape') end(); }; addEventListener('keydown', esc_);
-    const showImg = () => { const u = vs.map(g => optImg(g.o.find(o => o.n === sel[g.k]))).find(Boolean); $m('.qa-im').src = u || (p.images && p.images[0]) || FALLBACK; };
+    const showImg = last => { $m('.qa-im').src = RC.optPhoto(p, sel, last) || (p.images && p.images[0]) || FALLBACK; };
     showImg();
     m.addEventListener('click', e => {
       if (e.target === m || e.target.closest('[data-no]')) return end();
       const c = e.target.closest('.po-card');
       if (c) { const g = c.closest('.po-g'); sel[g.dataset.g] = c.dataset.o; g.classList.remove('err'); g.querySelector('.po-v').textContent = c.dataset.o;
-        g.querySelectorAll('.po-card').forEach(b => { b.classList.toggle('on', b === c); b.setAttribute('aria-pressed', b === c); }); showImg(); return; }
+        g.querySelectorAll('.po-card').forEach(b => { b.classList.toggle('on', b === c); b.setAttribute('aria-pressed', b === c); }); showImg(g.dataset.g); return; }
       const d = e.target.closest('[data-qd]');
       if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; $m('#qaT').textContent = money(finalPrice(p) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
       if (e.target.closest('[data-ok]')) {
@@ -426,7 +425,7 @@
   const optsHTML = l => { const vs = RC.variants(l.p); if (!vs.length || !l.opt) return '';
     return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span>${o.img ? `<img src="${esc(o.img)}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${esc(g.ar)}: <b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
   // a line shows the photo of the option the buyer picked (e.g. the green dial), otherwise the product's main photo
-  const lineImg = l => { const u = RC.variants(l.p).map(g => (g.o.find(o => o.n === (l.opt || {})[g.k]) || {}).img).find(Boolean); return u ? esc(u) : DQ.img(l.p); };
+  const lineImg = l => { const u = l.opt && RC.optPhoto(l.p, l.opt); return u ? esc(u) : DQ.img(l.p); };
   const optLine = l => l.opt && RC.variants(l.p).length ? ` [${RC.optText(l.opt, '، ')}]` : '';
   function renderCart() {
     if (DQ.products.length) DQ.cart = DQ.cart.filter(c => DQ.products.some(p => p.id === c.id && p.stock > 0 && DQ.optsOk(p, c.opt)));
@@ -635,7 +634,7 @@
     // a loaded cart rolls across the button while the order is on its way
     btn.innerHTML = `<span class="cart-run" aria-hidden="true"><i class="cr-lines"></i><svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><g class="cr-load"><rect x="13" y="5" width="9" height="9" rx="1.5" fill="currentColor" stroke="none"/><rect x="23.5" y="1.5" width="10" height="12.5" rx="1.5" fill="currentColor" stroke="none" opacity=".7"/></g><path d="M46 6h-6l-5 20H11L7 12h31"/><circle class="cr-w" cx="15" cy="33" r="3.2"/><circle class="cr-w" cx="31" cy="33" r="3.2"/></svg></span>`;
     const t0 = Date.now();
-    const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => (c.opt ? { id: c.id, qty: c.qty, opt: c.opt } : { id: c.id, qty: c.qty })) });
+    const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => { const p = DQ.byId(c.id), u = c.opt && p && RC.optPhoto(p, c.opt); return c.opt ? { id: c.id, qty: c.qty, opt: c.opt, ...(u ? { img: u } : {}) } : { id: c.id, qty: c.qty }; }) });
     await new Promise(r => setTimeout(r, Math.max(0, 1400 - (Date.now() - t0)))); /* let the cart finish at least one trip */
     if (error) { btn.disabled = false; btn.classList.remove('sending'); btn.removeAttribute('aria-label'); btn.textContent = label; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); DQ.load(); return; }
     const ls = lines(); DQ.cart = []; saveCart(); coState = 'done'; coLoc = ''; coAddr = '';

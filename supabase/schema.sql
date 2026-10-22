@@ -182,7 +182,7 @@ begin
     end loop;
     v_unit := case when p.sale_price is not null and p.sale_price < p.price then p.sale_price else p.price end;
     insert into public.shop_order_items (order_id, product_id, name, image, qty, unit_price, original_price, line_total, options)
-    values (v_id, p.id, p.name, coalesce(v_img, p.images[1]), q, v_unit, p.price, v_unit * q, case when jsonb_array_length(v_opts) > 0 then v_opts end);
+    values (v_id, p.id, p.name, coalesce(case when v_opts <> '[]'::jsonb and (it->>'img') = any(p.images) then it->>'img' end, v_img, p.images[1]), q, v_unit, p.price, v_unit * q, case when jsonb_array_length(v_opts) > 0 then v_opts end);
     update public.shop_products set stock = case when stock is null then null else stock - q end,
       shown_left = case when shown_left is null then null else greatest(0, shown_left - q) end
     where id = p.id;
