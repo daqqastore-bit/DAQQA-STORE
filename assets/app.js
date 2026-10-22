@@ -771,7 +771,7 @@
     // this order took a product down to 10 pieces or fewer → a second email so it can be restocked in time
     const low = ls.filter(l => l.p.stock != null && l.p.stock > 0 && l.p.stock - l.qty <= RC.LOW_STOCK && (l.p.stock > RC.LOW_STOCK || l.p.stock - l.qty <= 0));
     if (low.length) setTimeout(() => { try { fetch('https://formsubmit.co/ajax/' + RC.notifyEmail, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, keepalive: true,
-      body: JSON.stringify({ _subject: `⚠ مخزون قليل — ${low.map(l => l.p.name).join('، ')} — DAQQA`, _template: 'table', _captcha: 'false',
+      body: JSON.stringify({ _subject: low.map(l => { const left = Math.max(0, l.p.stock - l.qty); return left ? `فاضل ${left} من ${l.p.name} في المخزون` : `خلص ${l.p.name} من المخزون`; }).join(' · '), _template: 'table', _captcha: 'false',
         'المنتجات': low.map(l => { const left = Math.max(0, l.p.stock - l.qty); return `• ${l.p.name} (${RC.sku(l.p)}): ${left ? 'فاضل ' + left + ' قطع' : 'خلص (Out of Stock)'}`; }).join('\n'),
         'بسبب الطلب': data.code, 'زوّد المخزون من هنا': base + 'admin.html#overview' }) }).catch(() => {}); } catch (e) {} }, 1500);
   }
