@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022175052">
+<link rel="stylesheet" href="assets/base.css?v=20261022175505">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -638,6 +638,17 @@ html{--z:1}
 .cp-tag{font:700 11.5px var(--f-ui);letter-spacing:.06em;padding:1px 6px;border:1px dashed var(--amber);border-radius:6px;color:var(--amber)}
 .o-unit{display:inline-flex;align-items:baseline;gap:8px;font-family:var(--f-ui)}.o-unit small{font:500 12.5px var(--f-ar);color:var(--muted)}.o-unit b{font-size:16px;color:var(--ink)}.o-unit s{font-size:13px;color:var(--muted-2);text-decoration-color:var(--red)}
 .o-unit.tot{padding-top:6px;border-top:1px dashed var(--line-2)}.o-unit.tot b{font-size:17px;color:var(--green)}
+.rep-chip{font-style:normal;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--blue) 16%,transparent);color:var(--blue);width:max-content}
+.ch-box{border-radius:12px;padding:12px;background:var(--surface-2);display:grid;gap:9px;font-size:12.5px}
+.ch-box.new{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted)}.ch-box.new b{color:var(--green);font-size:13px}
+.ch-h{display:flex;justify-content:space-between;align-items:center}.ch-h b{font-size:13.5px}.ch-all{font-size:12px;color:var(--amber);font-weight:600}
+.ch-n{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.ch-n>span{display:grid;justify-items:center;gap:1px;padding:7px 4px;border-radius:10px;background:var(--surface);color:var(--muted);font-size:11.5px}
+.ch-n b{font:700 17px var(--f-ui);color:var(--ink)}.ch-n .ok b{color:var(--green)}.ch-n .bad b{color:var(--red)}.ch-n small{font-size:10.5px}
+.ch-l{display:grid;gap:4px;max-height:150px;overflow:auto}.ch-l>span{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.ch-l>span.me{color:var(--ink);font-weight:600}
+.ch-l i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}.ch-l em{font-style:normal;margin-inline-start:auto;color:var(--c)}.ch-l>span:has(.st-cancelled) em{color:var(--red)}
+.ch-sp{color:var(--muted)}.ch-sp b{color:var(--green)}
+.cu-tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
+.cu-t td{vertical-align:middle}.cu-cx{color:var(--red);font-weight:700}.cu-cx small{font-weight:400;color:var(--muted)}.cu-acc{font-size:12px;color:var(--green);font-weight:600;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -698,7 +709,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022175052"></script>
+<script src="assets/config.js?v=20261022175505"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -710,6 +721,7 @@ sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { RECOVERY = t
 const $ = s => document.querySelector(s);
 const STATUS_KEYS = Object.keys(statuses);
 const ICONS = {
+  customers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></svg>',
   overview: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
   stories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h12M8 7h6M8 11h4"/></svg>',
   accounts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18.5h2M14 18.5h2"/></svg>',
@@ -723,7 +735,7 @@ const ICONS = {
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['customers','العملاء'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات']];
@@ -935,7 +947,7 @@ document.addEventListener('click', e => { const t = e.target.closest('[data-tab]
 function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
-  ({overview: renderOverview, accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, settings: renderSettings}[t] || renderDash)();
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, settings: renderSettings}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
@@ -1082,6 +1094,46 @@ function lowMail(p, prev) {
   try { fetch('https://formsubmit.co/ajax/' + RC.notifyEmail, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ _subject: p.stock ? `فاضل ${p.stock} من ${p.name} في المخزون` : `خلص ${p.name} من المخزون`, _template: 'table', _captcha: 'false', 'المنتج': `${p.name} (${RC.sku(p)})`, 'المخزون': p.stock ? `فاضل ${p.stock} قطع` : 'خلص (Out of Stock)', 'زوّد المخزون من هنا': location.href.split('#')[0] + '#overview' }) }).catch(() => {}); } catch (e) {}
 }
+/* ---------- customers: everyone who ordered (by phone / account) + registered accounts ---------- */
+let custQ = '', custSort = 'last', custView = 'buyers', users = null;
+function custList() {
+  const map = new Map();
+  orders.forEach(o => { const k = phoneKey(o.phone) || 'u:' + o.user_id; let c = map.get(k); if (!c) map.set(k, c = { k, orders: [], users: new Set() }); c.orders.push(o); if (o.user_id) c.users.add(o.user_id); });
+  return [...map.values()].map(c => { const l = c.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)), last = l[0], n = st => l.filter(x => x.status === st).length;
+    return { ...c, name: last.customer_name, phone: last.phone, city: last.city, last: last.created_at, first: l[l.length - 1].created_at, count: l.length,
+      done: n('delivered'), cx: n('cancelled'), cxMe: l.filter(x => x.status === 'cancelled' && x.cancelled_by === 'customer').length, ret: n('returned'),
+      spent: l.filter(x => COUNTED.includes(x.status)).reduce((a, x) => a + +x.total, 0) }; });
+}
+async function renderCustomers() {
+  const all = custList(), q = custQ.trim().toLowerCase();
+  const sorters = { last: (a, b) => new Date(b.last) - new Date(a.last), count: (a, b) => b.count - a.count, spent: (a, b) => b.spent - a.spent, cx: (a, b) => b.cx - a.cx };
+  const list = all.filter(c => !q || [c.name, c.phone, c.city, ...c.orders.map(o => o.code)].join(' ').toLowerCase().includes(q)).sort(sorters[custSort]);
+  const rep = all.filter(c => c.count > 1).length, risky = all.filter(c => c.cx >= 2 || (c.cx && !c.done)).length;
+  $('#main').innerHTML = `<div class="head"><div><h1>العملاء</h1><div class="sub">كل اللي طلب منك، وطلب كام مرة، ولغى كام</div></div></div>
+    <div class="kpis"><div class="kpi"><span>عملاء طلبوا</span><b>${all.length}</b><small>برقم تليفون مختلف</small></div><div class="kpi"><span>رجعوا طلبوا تاني</span><b>${rep}</b><small>أكتر من طلب</small></div><div class="kpi"><span>عندهم إلغاء</span><b>${all.filter(c => c.cx).length}</b><small>${risky} محتاجين انتباه</small></div><div class="kpi"><span>حسابات مسجّلة</span><b id="usrN">${users ? users.length : '…'}</b><small>عاملين حساب في الموقع</small></div></div>
+    <div class="toolbar cu-tools"><div class="seg" id="cuView"><button data-cv="buyers" class="${custView === 'buyers' ? 'on' : ''}">اللي طلبوا</button><button data-cv="users" class="${custView === 'users' ? 'on' : ''}">الحسابات المسجّلة</button></div>
+      ${custView === 'buyers' ? `<div class="seg" id="cuSort">${[['last', 'الأحدث'], ['count', 'الأكتر طلبات'], ['spent', 'الأكتر شراء'], ['cx', 'الأكتر إلغاء']].map(([k, l]) => `<button data-cs="${k}" class="${k === custSort ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}
+      <label class="search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="cuQ" placeholder="دوّر بالاسم أو الرقم أو كود الطلب" value="${esc(custQ)}"></label></div>
+    <div id="cuBody"></div>`;
+  const body = $('#cuBody');
+  if (custView === 'buyers') body.innerHTML = list.length ? `<div class="panel scroll-x" style="padding:6px 14px"><table class="atable cu-t"><thead><tr><th>العميل</th><th>الطلبات</th><th>اتسلّم</th><th>ملغي</th><th>مرتجع</th><th>اشترى بـ</th><th>آخر طلب</th><th>حساب</th></tr></thead><tbody>
+      ${list.map(c => `<tr class="rowlink" data-custq="${esc(c.phone)}"><td><b>${esc(c.name)}</b><div class="en" style="color:var(--muted);font-size:12px">${esc(c.phone)}${c.city ? ' · ' + esc(c.city) : ''}</div></td>
+        <td class="n"><b>${c.count}</b></td><td class="n" style="color:var(--green)">${c.done || '—'}</td><td class="n">${c.cx ? `<span class="cu-cx">${c.cx}${c.cxMe ? ` <small>(${c.cxMe} منه)</small>` : ''}</span>` : '—'}</td><td class="n">${c.ret || '—'}</td>
+        <td class="n">${c.spent ? money(c.spent) : '—'}</td><td style="font-size:12px">${fmtDate(c.last)}</td><td>${c.users.size ? '<span class="cu-acc">✓ عنده حساب</span>' : '<span style="color:var(--muted-2)">ضيف</span>'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="panel empty">مفيش عملاء بالبحث ده.</div>';
+  else {
+    body.innerHTML = '<div class="panel" style="color:var(--muted)">بيحمّل…</div>';
+    if (!users) { const { data, error } = await sb.rpc('shop_admin_users'); if (tab !== 'customers') return; if (error) { body.innerHTML = '<div class="panel empty">محتاج تحديث في Supabase.</div>'; return; } users = data || []; if ($('#usrN')) $('#usrN').textContent = users.length; }
+    const ul = users.filter(u => !q || [u.email, u.name, u.phone].join(' ').toLowerCase().includes(q));
+    body.innerHTML = ul.length ? `<div class="panel scroll-x" style="padding:6px 14px"><table class="atable cu-t"><thead><tr><th>الحساب</th><th>اتسجّل</th><th>آخر دخول</th><th>طلباته</th><th>ملغي</th></tr></thead><tbody>
+      ${ul.map(u => { const uk = phoneKey(u.phone), mine = orders.filter(o => o.user_id === u.id || (uk.length >= 9 && phoneKey(o.phone) === uk)); return `<tr class="${mine.length ? 'rowlink' : ''}" ${mine.length ? `data-custq="${esc(mine[0].phone)}"` : ''}><td><b>${esc(u.name || '—')}</b><div class="en" style="color:var(--muted);font-size:12px">${esc(u.email || u.phone || '')}</div></td>
+        <td style="font-size:12px">${fmtDate(u.created_at)}</td><td style="font-size:12px">${u.last_sign_in_at ? fmtDate(u.last_sign_in_at) : '—'}</td><td class="n"><b>${mine.length}</b></td><td class="n">${mine.filter(o => o.status === 'cancelled').length || '—'}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="panel empty">مفيش حسابات.</div>';
+  }
+  $('#cuView').onclick = e => { const b = e.target.closest('[data-cv]'); if (b) { custView = b.dataset.cv; renderCustomers(); } };
+  if ($('#cuSort')) $('#cuSort').onclick = e => { const b = e.target.closest('[data-cs]'); if (b) { custSort = b.dataset.cs; renderCustomers(); } };
+  $('#cuQ').oninput = e => { custQ = e.target.value; clearTimeout(renderCustomers.t); renderCustomers.t = setTimeout(() => { renderCustomers(); const i = $('#cuQ'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250); };
+}
+// «كل طلباته» / a customer row → the orders page searched by their phone number
+document.addEventListener('click', e => { const b = e.target.closest('[data-custq]'); if (!b) return; e.stopPropagation(); orderQuery = b.dataset.custq; orderFilter = 'all'; go('orders'); });
 /* ---------- dashboard ---------- */
 function renderDash() {
   const ORD = orders.filter(o => dashScope === 'all' || isLuxOrder(o) === (dashScope === 'lux'));
@@ -1183,6 +1235,17 @@ function pastCancels(o) {
     && ((o.user_id && x.user_id === o.user_id) || (k.length >= 9 && phoneKey(x.phone) === k)))
     .sort((a, b) => new Date(cxAt(b)) - new Date(cxAt(a)));
 }
+// every order from the same customer (same phone number or same account), newest first
+const custOrders = o => { const k = phoneKey(o.phone); return orders.filter(x => (o.user_id && x.user_id === o.user_id) || (k.length >= 9 && phoneKey(x.phone) === k)).sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); };
+function custHist(o) {
+  const all = custOrders(o); if (all.length < 2) return `<div class="ch-box new"><b>عميل جديد</b><span>ده أول طلب من الرقم ده</span></div>`;
+  const n = st => all.filter(x => x.status === st).length, cx = all.filter(x => x.status === 'cancelled'), byMe = cx.filter(x => x.cancelled_by === 'customer').length;
+  const spent = all.filter(x => COUNTED.includes(x.status)).reduce((a, x) => a + +x.total, 0);
+  return `<div class="ch-box"><div class="ch-h"><b>سجل العميل</b><button type="button" class="ch-all" data-custq="${esc(o.phone)}">كل طلباته</button></div>
+    <div class="ch-n"><span><b class="en">${all.length}</b>طلبات</span><span class="ok"><b class="en">${n('delivered')}</b>اتسلّم</span><span class="bad"><b class="en">${cx.length}</b>ملغي${cx.length ? ` <small>(${byMe} منه)</small>` : ''}</span><span><b class="en">${n('returned')}</b>مرتجع</span></div>
+    <div class="ch-l">${all.map(x => `<span class="${x.id === o.id ? 'me' : ''}"><i class="st-${x.status}"></i><span class="en">${esc(x.code)}</span>${fmtDate(x.created_at)}<em>${statuses[x.status] || x.status}</em></span>`).join('')}</div>
+    ${spent ? `<small class="ch-sp">اشترى بـ <b class="en">${money(spent)}</b> لحد دلوقتي</small>` : ''}</div>`;
+}
 const cancelWhy = o => ((o.admin_note || '').match(/سبب الإلغاء: (.+)/) || [])[1] || '';
 function cancelInfo(o) {
   const own = o.status === 'cancelled' && o.cancelled_by === 'customer' ? `<div class="cx-box"><b>تم الإلغاء من العميل ${esc(o.customer_name)}</b><span>${o.cancelled_at ? fmtDate(o.cancelled_at) : ''}</span>${cancelWhy(o) ? `<span>السبب: ${esc(cancelWhy(o))}</span>` : ''}</div>` : '';
@@ -1195,7 +1258,7 @@ function orderHTML(o) {
   return `<div class="order ${openOrders.has(o.id)?'open':''} ${freshIds.has(o.id)?'fresh':''}" data-oid="${o.id}">
     <div class="o-top" data-toggle>
       <div><div class="code">${esc(o.code)}</div><div class="date">${fmtDate(o.created_at)}</div></div>
-      <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span>${pastCancels(o).length ? `<em class="warn-chip" title="الرقم ده عليه طلبات اتلغت قبل كدا">⚠ اتلغى له قبل كدا (${pastCancels(o).length})</em>` : ''}</div>
+      <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span>${custOrders(o).length > 1 ? `<em class="rep-chip">طلب ${custOrders(o).length} مرات</em>` : ''}${pastCancels(o).length ? `<em class="warn-chip" title="الرقم ده عليه طلبات اتلغت قبل كدا">⚠ اتلغى له قبل كدا (${pastCancels(o).length})</em>` : ''}</div>
       <div class="city" style="color:var(--muted)">${esc(o.city)}</div>
       <div class="total en">${money(o.total)}</div>
       <div><span class="badge st-${o.status}">${statuses[o.status]}</span></div>
@@ -1208,6 +1271,7 @@ function orderHTML(o) {
       </div>
       <div class="o-side">
         ${cancelInfo(o)}
+        ${custHist(o)}
         <div class="addr"><b style="color:var(--ink)">${esc(o.city)}</b><br>${esc(o.address)}${o.notes ? `<br><span style="color:var(--amber)">ملاحظة: ${esc(o.notes)}</span>` : ''}${o.location ? `<br><a class="loc-link" href="${esc(o.location)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>فتح اللوكيشن على الخريطة</a>` : ''}</div>
         <div class="field"><label>الحالة</label>${stPicker(o)}</div>
         <div class="field"><label>ملاحظة داخلية</label><textarea class="input" rows="2" data-note="${o.id}" placeholder="مش بتظهر للعميل">${esc(o.admin_note || '')}</textarea></div>
