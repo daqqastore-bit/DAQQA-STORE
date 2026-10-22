@@ -455,9 +455,9 @@
   }
   /* ---------- discount code ---------- */
   DQ.coupon = (() => { try { return JSON.parse(localStorage.getItem('dq-coupon') || 'null') } catch (e) { return null } })();
-  const cpFits = (cp, p) => (cp.scope === 'all' || (cp.scope === 'lux') === RC.isLuxury(p)) && (cp.gender === 'all' || p.category === cp.gender || p.category === 'unisex');
+  const cpFits = (cp, p) => (cp.scope === 'all' || (cp.scope === 'lux') === RC.isLuxury(p)) && (cp.gender === 'all' || p.category === cp.gender || p.category === 'unisex') && (!cp.kind || cp.kind === 'all' || RC.kindOf(p) === cp.kind);
   const CP_WHO = { reg: 'المتجر العادي', lux: 'قطع Luxury', men: 'الرجالي', women: 'الحريمي' };
-  const cpWho = cp => [cp.scope !== 'all' && CP_WHO[cp.scope], cp.gender !== 'all' && CP_WHO[cp.gender]].filter(Boolean).join(' · ');
+  const cpWho = cp => [cp.kind && cp.kind !== 'all' && RC.kinds[cp.kind] && RC.kinds[cp.kind].ar, cp.scope !== 'all' && CP_WHO[cp.scope], cp.gender !== 'all' && CP_WHO[cp.gender]].filter(Boolean).join(' · ');
   const setCoupon = cp => { DQ.coupon = cp; try { cp ? localStorage.setItem('dq-coupon', JSON.stringify(cp)) : localStorage.removeItem('dq-coupon') } catch (e) {}
     if ($('#drawer').classList.contains('on')) renderCart(); DQ.refreshCheckout && DQ.refreshCheckout(); };
   const cpHTML = t => { const lx = t.ls.length && t.ls.every(l => RC.isLuxury(l.p));
