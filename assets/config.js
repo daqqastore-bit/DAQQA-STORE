@@ -44,7 +44,7 @@ RC.VARS = [
   { k: 'movement', ar: 'الماكينة', en: 'Movement', hint: 'Quartz بالبطارية · Automatic بتتشحن من حركة المعصم · Mechanical تعبئة يدوية' }
 ];
 RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g => g && RC.VARS.some(v => v.k === g.k) && Array.isArray(g.o) && g.o.some(o => o && o.n))
-  .map(g => ({ ...RC.VARS.find(v => v.k === g.k), o: g.o.filter(o => o && o.n).map(o => { const imgs = [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))]; return { ...o, imgs, img: imgs[0] || null }; }) }))
+  .map(g => { const V = RC.VARS.find(v => v.k === g.k); return { ...V, ar: String(g.ar || '').trim() || V.ar, en: String(g.en || '').trim() || V.en, o: g.o.filter(o => o && o.n).map(o => { const imgs = [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))]; return { ...o, imgs, img: imgs[0] || null }; }) }; })
   .sort((a, b) => RC.VARS.findIndex(v => v.k === a.k) - RC.VARS.findIndex(v => v.k === b.k));
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
 RC.optImgs = (p, o) => !o ? [] : o.imgs && o.imgs.length ? o.imgs : o.c && RC.colorImg(p, o.c) ? [RC.colorImg(p, o.c)] : [];
@@ -139,7 +139,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022131450';
+RC.build = '20261022131644';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {

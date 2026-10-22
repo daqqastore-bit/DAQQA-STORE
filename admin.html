@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022131450">
+<link rel="stylesheet" href="assets/base.css?v=20261022131644">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -277,6 +277,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
 .vg-h b{font-size:14px}.vg-h b small{font:600 10.5px var(--f-ui);letter-spacing:.12em;color:var(--amber);text-transform:uppercase;margin-inline-start:4px}
 .vg-h p{font-size:11.5px;color:var(--muted);margin-top:2px}
+.vg-t{display:flex;gap:6px;flex-wrap:wrap}.vg-t .input{height:38px;width:150px;font-weight:700;font-size:15px}.vg-t .en{width:170px;font:600 12px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
 .vg-none{font-size:12px;color:var(--muted)}
 .vg-add{display:flex;gap:8px;align-items:center}
 .vg-ac{position:relative;flex:none;height:40px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border:1px dashed var(--line);border-radius:10px;font-size:12px;color:var(--muted);cursor:pointer}
@@ -600,7 +601,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022131450"></script>
+<script src="assets/config.js?v=20261022131644"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1076,7 +1077,7 @@ function renderEditor() {
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
   // the four buyer options always exist in the draft (empty ones are simply not saved)
   // runs on every render: the old single img / dials are folded into imgs / links once and dropped, so removing a photo or a link sticks
-  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
+  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
   if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
   $('#editor').innerHTML = `
@@ -1098,7 +1099,7 @@ function renderEditor() {
             <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
       <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>اكتب اسم الاختيار، ولو ليه لون اختاره من «لون»، واضغط إضافة، وبعدها اختار صورة الساعة بتاعته. كل اختيار كارت باسم ولون وصورة (اللون والصورة اختياري). أي خانة فيها اختيارات المشتري لازم يختار منها، ولما يختار بتظهرله الصورة، والاختيار بيوصلك مع الطلب</small></h4>
         ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); return `<div class="vg" data-vg="${g.k}">
-          <div class="vg-h"><b>${V.ar} <small class="en">${V.en}</small></b><p>${V.hint}</p></div>
+          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p></div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo" data-vi="${i}">
               <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length > 1 ? `<span class="vo-mos m${Math.min(o.imgs.length, 4)}">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="">`).join('')}</span><em class="en">${o.imgs.length}</em>` : o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
               <input class="input vo-n" data-vname value="${esc(o.n)}" placeholder="الاسم" dir="auto" maxlength="60">
@@ -1106,7 +1107,7 @@ function renderEditor() {
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><input class="input vo-hex en" data-vhex value="${esc(o.c.toUpperCase())}" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
               ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
-              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${V2.ar} المتاحة معاه</b><div>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
+              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
           <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
@@ -1208,6 +1209,7 @@ function renderEditor() {
     if (e.target.matches('[data-vnc], [data-vnh]')) { const box = e.target.closest('.vg-add'), ci = box.querySelector('[data-vnc]'), hi = box.querySelector('[data-vnh]'), l = box.querySelector('.vg-ac');
       const c = e.target === ci ? ci.value.toUpperCase() : hex(hi.value); if (!c) return;
       ci.value = c.toLowerCase(); ci.dataset.on = 1; if (e.target === ci) hi.value = c; l.classList.add('on'); l.querySelector('i').style.background = c; return; }
+    if (e.target.matches('[data-vtar], [data-vten]')) { const g = draft.variants.find(x => x.k === e.target.closest('.vg').dataset.vg); g[e.target.matches('[data-vtar]') ? 'ar' : 'en'] = e.target.value; return; }
     const { g, o } = vOpt(e.target); if (!o) return;
     if (e.target.matches('[data-vname]')) { const was = o.n; o.n = e.target.value;
       // renaming a dial keeps the straps/cases that were limited to it pointing at it
@@ -1366,7 +1368,7 @@ async function saveProduct() {
       const lk = Object.fromEntries(d.variants.filter(x => x.k !== g.k).map(x => { const all = x.o.map(y => String(y.n || '').trim()).filter(Boolean), l = [...new Set(((o.links || {})[x.k] || []).map(v => String(v).trim()))].filter(v => all.includes(v)); return [x.k, l.length && l.length < all.length ? l : null]; }).filter(([, l]) => l));
       return { n: String(o.n || '').trim().slice(0, 60), d: String(o.d || '').trim().slice(0, 120) || null, c: o.c || null, links: Object.keys(lk).length ? lk : null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null }; }).filter(o => o.n) }));
   const dup = vs.find(g => new Set(g.o.map(o => o.n)).size < g.o.length); if (dup) return toast(`فيه اختيارين بنفس الاسم في ${RC.VARS.find(v => v.k === dup.k).ar}`, 'err');
-  if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: V.ar, en: V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
+  if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: String(g.ar || '').trim().slice(0, 30) || V.ar, en: String(g.en || '').trim().slice(0, 30) || V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
   // the store cards keep showing colour dots: they come from the options that have a colour (first 6), each with its photo
   const cl = vs.flatMap(g => g.o.filter(o => o.c).map(o => ({ c: o.c.toUpperCase(), img: o.img, g: g.k }))).filter((x, k, a) => a.findIndex(y => y.c === x.c) === k).slice(0, 6);
   d.colors = cl.map(x => x.c); d.image_colors = Object.fromEntries(cl.filter(x => x.img).map(x => [x.img, x.c])); d.colors_label = cl.length ? RC.VARS.find(v => v.k === cl[0].g).ar : null;
