@@ -449,14 +449,38 @@
     const fso = DQ.settings.free_shipping_over != null ? Number(DQ.settings.free_shipping_over) : null;
     // null = not known yet (no governorate chosen, or no shipping prices set at all)
     const ship = !ls.length ? 0 : fso != null && sub >= fso ? 0 : (!zones().length && !Number(DQ.settings.shipping_fee)) || (zones().length && !city) ? null : DQ.shipFor(city);
-    return { ls, sub, save: orig - sub, ship, total: sub + (ship || 0), fso, city };
+    // a discount code only takes off from the pieces it covers (regular / Luxury · men / women), never from shipping
+    const cp = DQ.coupon, cpOff = cp ? ls.reduce((s, l) => s + (cpFits(cp, l.p) ? Math.round(finalPrice(l.p) * l.qty * cp.pct / 100) : 0), 0) : 0;
+    return { ls, sub, save: orig - sub, ship, total: sub - cpOff + (ship || 0), fso, city, cp, cpOff };
   }
+  /* ---------- discount code ---------- */
+  DQ.coupon = (() => { try { return JSON.parse(localStorage.getItem('dq-coupon') || 'null') } catch (e) { return null } })();
+  const cpFits = (cp, p) => (cp.scope === 'all' || (cp.scope === 'lux') === RC.isLuxury(p)) && (cp.gender === 'all' || p.category === cp.gender || p.category === 'unisex');
+  const CP_WHO = { reg: 'المتجر العادي', lux: 'قطع Luxury', men: 'الرجالي', women: 'الحريمي' };
+  const cpWho = cp => [cp.scope !== 'all' && CP_WHO[cp.scope], cp.gender !== 'all' && CP_WHO[cp.gender]].filter(Boolean).join(' · ');
+  const setCoupon = cp => { DQ.coupon = cp; try { cp ? localStorage.setItem('dq-coupon', JSON.stringify(cp)) : localStorage.removeItem('dq-coupon') } catch (e) {}
+    if ($('#drawer').classList.contains('on')) renderCart(); DQ.refreshCheckout && DQ.refreshCheckout(); };
+  const cpHTML = t => { const lx = t.ls.length && t.ls.every(l => RC.isLuxury(l.p));
+    if (t.cp) return `<div class="cp-box on${lx ? ' cp-lx' : ''}"><span class="cp-ic">${CP_ICON}</span><span class="cp-t"><b class="en">${esc(t.cp.code)}</b><small>${t.cpOff ? `خصم ${t.cp.pct}% · وفّرت ${money(t.cpOff)}` : `الكود ده على ${esc(cpWho(t.cp))} بس، مفيش منها في طلبك`}</small></span><button type="button" class="cp-rm" data-cp-rm aria-label="شيل الكود">✕</button></div>`;
+    return `<form class="cp-box${lx ? ' cp-lx' : ''}" data-cp-form><span class="cp-ic">${CP_ICON}</span><input class="cp-in en" name="cp" placeholder="عندك كود خصم؟" aria-label="كود الخصم" autocomplete="off" autocapitalize="characters" dir="auto" maxlength="30"><button type="submit" class="cp-go">تطبيق</button></form>`; };
+  const CP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>';
+  document.addEventListener('submit', async e => {
+    const f = e.target.closest('[data-cp-form]'); if (!f) return; e.preventDefault();
+    const code = f.cp.value.trim().toUpperCase(); if (!code) return f.cp.focus();
+    const b = f.querySelector('.cp-go'); b.disabled = true; b.textContent = '…';
+    let r = null; try { r = await sb.rpc('shop_check_coupon', { p_code: code }); } catch (er) {}
+    b.disabled = false; b.textContent = 'تطبيق';
+    if (!r || r.error || !r.data) { f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake', 'bad'); return DQ.toast((r && r.error && r.error.message) || 'معرفناش نتأكد من الكود، جرّب تاني', 'err'); }
+    setCoupon(r.data); const t = totals();
+    DQ.toast(t.cpOff ? `اتطبق الكود ✓ وفّرت ${money(t.cpOff)}` : `الكود ده على ${cpWho(r.data)} بس`, t.cpOff ? 'ok' : 'err');
+  });
+  document.addEventListener('click', e => { if (e.target.closest('[data-cp-rm]')) { setCoupon(null); DQ.toast('اتشال الكود'); } });
   // the admin can switch website orders off: checkout then hands the whole order to WhatsApp
   const viaWA = () => !!(DQ.settings.web_orders_off && DQ.wa());
   const placeLbl = total => viaWA() ? `${WA_ICON}اطلب على واتساب · ${money(total)}` : 'تأكيد الطلب · ' + money(total);
   const shipTxt = t => t.ship == null ? '<small class="ship-tbd">حسب المحافظة</small>' : t.ship ? money(t.ship) : 'مجاني';
-  const sumsHTML = t => `${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
-      <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>
+  const sumsHTML = t => `${cpHTML(t)}${t.save > 0 ? `<div class="sum save"><span>تم خصم</span><b>${money(t.save)}</b></div>` : ''}
+      <div class="sum"><span>المنتجات</span><b>${money(t.sub)}</b></div>${t.cpOff ? `<div class="sum save cp-sum"><span>كود الخصم <b class="en">${esc(t.cp.code)}</b> (${t.cp.pct}%)</span><b>− ${money(t.cpOff)}</b></div>` : ''}
       <div class="sum"><span>الشحن${t.city && t.ship != null ? ` <small>(${esc(t.city)})</small>` : ''}</span><b>${shipTxt(t)}</b></div>
       <div class="sum total"><span>الإجمالي${t.ship == null ? ' <small>من غير الشحن</small>' : ''}</span><b>${money(t.total)}</b></div>`;
   // the options the buyer picked, as small chips (a colour option shows its dot)
@@ -678,11 +702,11 @@
     // a loaded cart rolls across the button while the order is on its way
     btn.innerHTML = `<span class="cart-run" aria-hidden="true"><i class="cr-lines"></i><svg viewBox="0 0 48 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><g class="cr-load"><rect x="13" y="5" width="9" height="9" rx="1.5" fill="currentColor" stroke="none"/><rect x="23.5" y="1.5" width="10" height="12.5" rx="1.5" fill="currentColor" stroke="none" opacity=".7"/></g><path d="M46 6h-6l-5 20H11L7 12h31"/><circle class="cr-w" cx="15" cy="33" r="3.2"/><circle class="cr-w" cx="31" cy="33" r="3.2"/></svg></span>`;
     const t0 = Date.now();
-    const { data, error } = await sb.rpc('shop_place_order', { customer: d, items: DQ.cart.map(c => { const p = DQ.byId(c.id), u = c.opt && p && RC.optPhoto(p, c.opt); return c.opt ? { id: c.id, qty: c.qty, opt: c.opt, ...(u ? { img: u } : {}) } : { id: c.id, qty: c.qty }; }) });
+    const { data, error } = await sb.rpc('shop_place_order', { customer: { ...d, ...(totals(d.city).cpOff ? { coupon: DQ.coupon.code } : {}) }, items: DQ.cart.map(c => { const p = DQ.byId(c.id), u = c.opt && p && RC.optPhoto(p, c.opt); return c.opt ? { id: c.id, qty: c.qty, opt: c.opt, ...(u ? { img: u } : {}) } : { id: c.id, qty: c.qty }; }) });
     await new Promise(r => setTimeout(r, Math.max(0, 1400 - (Date.now() - t0)))); /* let the cart finish at least one trip */
-    if (error) { btn.disabled = false; btn.classList.remove('sending'); btn.removeAttribute('aria-label'); btn.textContent = label; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); DQ.load(); return; }
-    const ls = lines(); DQ.cart = []; saveCart(); coState = 'done'; coLoc = ''; coAddr = '';
-    notifyOrder(data, d, ls);
+    if (error) { btn.disabled = false; btn.classList.remove('sending'); btn.removeAttribute('aria-label'); btn.textContent = label; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); if (/كود الخصم/.test(error.message || '')) setCoupon(null); DQ.load(); return; }
+    const ls = lines(), cpUsed = +data.coupon_off ? { ...DQ.coupon, off: +data.coupon_off } : null; DQ.cart = []; saveCart(); coState = 'done'; setCoupon(null); coLoc = ''; coAddr = '';
+    notifyOrder(data, d, ls, cpUsed);
     DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name + optLine(l), qty: l.qty, image: (l.p.images || [])[0] || '' })) });
     $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
     const ask = encodeURIComponent(`أهلاً DAQQA\nعايز أستفسر عن طلبي رقم ${data.code}`);
@@ -690,7 +714,7 @@
       <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
         <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
-        <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام</p>
+        <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام${cpUsed ? `<br><span class="cd-cp">وفّرت <b class="en">${money(cpUsed.off)}</b> بكود <b class="en">${esc(cpUsed.code)}</b></span>` : ''}</p>
         <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
         <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
         <div class="cd-acts">${DQ.wa() ? `<a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}">${WA_ICON}استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
@@ -716,12 +740,12 @@
     const t = totals(d.city), ls = t.ls;
     const msg = ['أهلاً DAQQA عايز أطلب:', '',
       ...ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`), '',
-      `المنتجات: ${money(t.sub)}`, `الشحن: ${t.ship == null ? 'حسب المحافظة' : t.ship ? money(t.ship) : 'مجاني'}`, `الإجمالي: ${money(t.total)} (كاش عند الاستلام)`, '',
+      `المنتجات: ${money(t.sub)}`, t.cpOff ? `كود الخصم ${t.cp.code} (${t.cp.pct}%): − ${money(t.cpOff)}` : '', `الشحن: ${t.ship == null ? 'حسب المحافظة' : t.ship ? money(t.ship) : 'مجاني'}`, `الإجمالي: ${money(t.total)} (كاش عند الاستلام)`, '',
       `الاسم: ${d.name}`, `الموبايل: ${d.phone}`, `المحافظة: ${d.city}`, `العنوان: ${d.address}`,
       d.location ? `اللوكيشن: ${d.location}` : '', d.notes ? `ملاحظات: ${d.notes}` : ''].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n').trim();
     const url = `https://wa.me/${DQ.wa()}?text=${encodeURIComponent(msg)}`;
     const w = window.open(url, '_blank', 'noopener'); if (!w) location.href = url;
-    DQ.cart = []; saveCart(); coState = 'done'; coLoc = ''; coAddr = '';
+    DQ.cart = []; saveCart(); coState = 'done'; setCoupon(null); coLoc = ''; coAddr = '';
     $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
     $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
       <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
@@ -732,12 +756,12 @@
     $('#coPage').scrollTop = 0;
   }
   // email the shop owner every new order with all details + a link that opens it in the dashboard
-  function notifyOrder(data, d, ls) {
+  function notifyOrder(data, d, ls, cp) {
     if (!RC.notifyEmail) return;
     const base = location.origin + location.pathname.replace(/[^/]*$/, '');
     const items = ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`).join('\n');
     const body = { _subject: `طلب جديد ${data.code} — ${money(data.total)} — DAQQA`, _template: 'table', _captcha: 'false',
-      'رقم الطلب': data.code, 'وقت الطلب': RC.when(new Date()), 'الإجمالي': money(data.total), 'المنتجات': items,
+      'رقم الطلب': data.code, 'وقت الطلب': RC.when(new Date()), 'الإجمالي': money(data.total), ...(cp ? { 'كود الخصم': `${cp.code} (${cp.pct}%) − ${money(cp.off)}` } : {}), 'المنتجات': items,
       'اسم العميل': d.name, 'التليفون': d.phone, 'واتساب العميل': 'https://wa.me/' + String(d.phone || '').replace(/\D/g, '').replace(/^0/, '20'),
       'المحافظة': d.city || '', 'العنوان': d.address || '', 'اللوكيشن': d.location || '—', 'ملاحظات': d.notes || '—',
       'افتح الطلب في الداشبورد': base + 'admin.html#orders/' + encodeURIComponent(data.code) };

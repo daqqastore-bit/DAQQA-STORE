@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022170343">
+<link rel="stylesheet" href="assets/base.css?v=20261022171141">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -627,6 +627,15 @@ html{--z:1}
 .ovp-split{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ovp-split div{display:grid;gap:2px;padding:10px;border-radius:12px;background:var(--surface);text-align:center}.ovp-split small{color:var(--muted);font-size:12px}.ovp-split b{font:700 15px var(--f-ui);color:var(--green)}
 .ovp-st{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ovp-st .sd{justify-content:space-between;background:var(--surface);width:100%}.ovp-st .sd b{margin-inline-start:auto;font-family:var(--f-ui)}
 .ovp-t{width:100%;border-collapse:collapse;font-size:13.5px;text-align:center}.ovp-t th,.ovp-t td{padding:10px 6px;border-bottom:1px solid var(--line)}.ovp-t td:first-child{text-align:start;font-weight:600}.ovp-t thead th{color:var(--muted);font-weight:500;font-size:12px}.ovp-t td.en{font:700 16px var(--f-ui)}
+.cp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.cp-card{display:grid;gap:12px}.cp-card.off{opacity:.6}
+.cp-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cp-top code{font:700 20px var(--f-ui);letter-spacing:.1em;padding:6px 12px;border:1.5px dashed var(--amber);border-radius:10px;color:var(--amber)}
+.cp-top b{font:800 28px var(--f-ui);color:var(--green)}
+.cp-tags{display:flex;flex-wrap:wrap;gap:6px}.cp-tags span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}.cp-tags b{color:var(--ink)}
+.cp-acts{display:flex;align-items:center;gap:8px}.cp-acts small{font-size:12px;color:var(--muted)}
+.cp-seg{width:100%}.cp-seg button{flex:1}
+.cp-tag{font:700 11.5px var(--f-ui);letter-spacing:.06em;padding:1px 6px;border:1px dashed var(--amber);border-radius:6px;color:var(--amber)}
 </style>
 </head>
 <body>
@@ -687,7 +696,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022170343"></script>
+<script src="assets/config.js?v=20261022171141"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1192,7 +1201,7 @@ function orderHTML(o) {
     </div>
     <div class="o-body">
       <div class="o-items">${o.shop_order_items.map(i => `<div class="o-item"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><span class="n">${esc(i.name)}${optChips(i)}</span><span class="q"><span class="o-qty">الكمية <b>${i.qty}</b></span><span>${money(i.unit_price)} للقطعة${+i.original_price > +i.unit_price ? ` <s style="color:var(--muted-2)">${money(i.original_price)}</s>` : ''}</span>${i.qty > 1 ? `<span class="o-line">الإجمالي ${money(i.unit_price * i.qty)}</span>` : ''}</span></div>`).join('')}
-        <div class="o-sum"><div><span>المنتجات</span><b>${money(o.subtotal)}</b></div>${+o.savings ? `<div><span>خصم</span><b style="color:var(--green)">− ${money(o.savings)}</b></div>` : ''}<div><span>الشحن</span><b>${+o.shipping ? money(o.shipping) : 'مجاني'}</b></div><div style="color:var(--ink);font-weight:700"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>
+        <div class="o-sum"><div><span>المنتجات</span><b>${money(o.subtotal)}</b></div>${+o.savings ? `<div><span>خصم</span><b style="color:var(--green)">− ${money(o.savings)}</b></div>` : ''}${+o.coupon_off ? `<div><span>كود خصم <b class="cp-tag en">${esc(o.coupon || '')}</b> ${o.coupon_pct ? o.coupon_pct + '%' : ''}</span><b style="color:var(--green)">− ${money(o.coupon_off)}</b></div>` : ''}<div><span>الشحن</span><b>${+o.shipping ? money(o.shipping) : 'مجاني'}</b></div><div style="color:var(--ink);font-weight:700"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>
         ${finPanel(o)}
       </div>
       <div class="o-side">
@@ -1751,7 +1760,7 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; try { localStorage.setItem('dq-set-tab', setTab); } catch (er) {} renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
 const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
@@ -1862,9 +1871,59 @@ function renderPerks(s) {
     if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
     settings.perks = perks; toast('اتحفظ ✓', 'ok'); renderPerks(settings); };
 }
+/* ---------- discount codes (settings › أكواد خصم) ---------- */
+let coupons = null;
+const CP_SCOPE = { all: 'العادي و Luxury', reg: 'العادي بس', lux: 'Luxury بس' }, CP_GEN = { all: 'رجالي وحريمي', men: 'رجالي بس', women: 'حريمي بس' };
+async function renderCoupons() {
+  if (!coupons) { $('#main').innerHTML = `<div class="head"><div><h1>الإعدادات</h1></div></div>${setTabs()}<div class="panel" style="color:var(--muted)">بيحمّل…</div>`; bindSetTabs();
+    const { data, error } = await sb.from('shop_coupons').select('*').order('id', { ascending: false }); if (setTab !== 'coupons' || tab !== 'settings') return;
+    if (error) { $('#main').querySelector('.panel').textContent = 'جدول الأكواد مش متفعل في Supabase.'; return; } coupons = data || []; }
+  $('#main').innerHTML = `<div class="head"><div><h1>الإعدادات</h1><div class="sub">أكواد الخصم اللي العميل بيكتبها في السلة وصفحة الطلب</div></div><button type="button" class="btn btn-amber" id="cpAdd">+ كود جديد</button></div>
+    ${setTabs()}
+    ${coupons.length ? `<div class="cp-grid">${coupons.map(c => `<div class="panel cp-card ${c.active ? '' : 'off'}">
+      <div class="cp-top"><code class="en">${esc(c.code)}</code><b class="en">${c.pct}%</b></div>
+      <div class="cp-tags"><span>${CP_SCOPE[c.scope] || c.scope}</span><span>${CP_GEN[c.gender] || c.gender}</span><span>اتستخدم <b class="en">${c.uses}</b></span></div>
+      <div class="cp-acts"><button class="switch ${c.active ? 'on' : ''}" data-cpon="${c.id}" aria-label="تشغيل/إيقاف"></button><small>${c.active ? 'شغال' : 'متوقف'}</small><span style="flex:1"></span><button class="btn btn-sm btn-ghost" data-cped="${c.id}">تعديل</button><button class="btn btn-sm btn-ghost" data-cpdel="${c.id}">حذف</button></div></div>`).join('')}</div>`
+      : `<div class="panel empty" style="padding:40px 10px">لسه مفيش أكواد. دوس «+ كود جديد».</div>`}`;
+  bindSetTabs();
+  $('#cpAdd').onclick = () => cpBox();
+  $('#main').querySelectorAll('[data-cped]').forEach(b => b.onclick = () => cpBox(coupons.find(c => c.id === +b.dataset.cped)));
+  $('#main').querySelectorAll('[data-cpon]').forEach(b => b.onclick = () => once('cpon' + b.dataset.cpon, async () => { const c = coupons.find(x => x.id === +b.dataset.cpon);
+    const { error } = await sb.from('shop_coupons').update({ active: !c.active }).eq('id', c.id); if (error) return toast(error.message, 'err'); c.active = !c.active; toast(c.active ? 'الكود شغال' : 'الكود اتوقف'); renderCoupons(); }));
+  $('#main').querySelectorAll('[data-cpdel]').forEach(b => b.onclick = () => once('cpdel' + b.dataset.cpdel, async () => { const c = coupons.find(x => x.id === +b.dataset.cpdel);
+    if (!(await confirmBox(`تحذف الكود ${c.code}؟`, 'حذف'))) return; const { error } = await sb.from('shop_coupons').delete().eq('id', c.id); if (error) return toast(error.message, 'err');
+    coupons = coupons.filter(x => x.id !== c.id); toast('اتحذف'); renderCoupons(); }));
+}
+function cpBox(c) {
+  let scope = c ? c.scope : 'all', gender = c ? c.gender : 'all';
+  const m = document.createElement('div'); m.className = 'fin-m';
+  m.innerHTML = `<form class="fin-box" novalidate><h3>${c ? 'تعديل الكود' : 'كود خصم جديد'}</h3>
+    <div class="two"><div class="field"><label>الكود</label><input class="input en" name="code" dir="ltr" maxlength="30" placeholder="DAQQA10" value="${esc(c ? c.code : '')}" style="text-transform:uppercase;letter-spacing:.08em"></div>
+      <div class="field"><label>الخصم كام في الميه</label><input class="input en" name="pct" inputmode="numeric" placeholder="10" value="${c ? c.pct : ''}"></div></div>
+    <div class="field"><label>بيمشي على</label><div class="seg cp-seg" data-g="scope">${Object.entries(CP_SCOPE).map(([k, l]) => `<button type="button" data-v="${k}" class="${k === scope ? 'on' : ''}">${k === 'all' ? 'الاتنين' : l}</button>`).join('')}</div></div>
+    <div class="field"><label>للـ</label><div class="seg cp-seg" data-g="gender">${Object.entries(CP_GEN).map(([k, l]) => `<button type="button" data-v="${k}" class="${k === gender ? 'on' : ''}">${k === 'all' ? 'الاتنين' : l}</button>`).join('')}</div></div>
+    <p class="fsub" style="margin:0">الخصم بيتحسب على المنتجات اللي الكود بيمشي عليها بس، مش على الشحن. المنتجات «للجنسين» بتاخد الخصم في الحالتين.</p>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m);
+  const form = m.querySelector('form');
+  m.onclick = e => { const b = e.target.closest('.cp-seg [data-v]'); if (b) { const g = b.closest('.cp-seg'); g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); if (g.dataset.g === 'scope') scope = b.dataset.v; else gender = b.dataset.v; }
+    if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  form.onsubmit = async e => { e.preventDefault();
+    const code = form.code.value.trim().toUpperCase().replace(/\s+/g, ''), pct = Math.round(+String(form.pct.value).replace(/[^\d.]/g, ''));
+    if (code.length < 2) return toast('اكتب الكود (حرفين على الأقل)', 'err');
+    if (!(pct >= 1 && pct <= 90)) return toast('الخصم لازم يكون من 1 لـ 90%', 'err');
+    const row = { code, pct, scope, gender }, btn = form.querySelector('[type=submit]'); btn.disabled = true;
+    const { data, error } = c ? await sb.from('shop_coupons').update(row).eq('id', c.id).select().single() : await sb.from('shop_coupons').insert({ ...row, active: true }).select().single();
+    btn.disabled = false;
+    if (error) return toast(/duplicate|unique/.test(error.message) ? 'الكود ده موجود قبل كدا' : error.message, 'err');
+    if (c) Object.assign(c, data || row); else if (data) coupons.unshift(data); else coupons = null;   // null = reload the list
+    m.remove(); toast('اتحفظ ✓', 'ok'); renderCoupons(); };
+  setTimeout(() => form.code.focus(), 60);
+}
 function renderSettings() {
   const s = settings;
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
+  if (setTab === 'coupons') return renderCoupons();
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   govDraft = AV();
@@ -2041,7 +2100,7 @@ function finBox(o) {
     <h3>تكاليف الطلب <span class="en">${esc(o.code)}</span></h3>
     <p class="fsub">سجّل الأرقام دي مرة واحدة وصافي الربح بيتحسب لوحده في صفحة الحسابات والشيت. تكلفة كل منتج بتتحفظ للطلبات الجاية.</p>
     <div class="fin-items">${items.map(i => `<div class="fin-it"><img src="${esc(i.image || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.qty} × ${money(i.unit_price)}</small></div><label class="fin-pc"><span>تكلفة القطعة (اشتريتها بكام)</span><input class="input" inputmode="decimal" placeholder="مثلاً 1800" data-pc="${i.product_id ?? ''}" data-q="${i.qty}" value="${f.cost != null && items.length === 1 ? +f.cost / i.qty : (pcosts[i.product_id] ?? '')}" aria-label="تكلفة القطعة"></label></div>`).join('')}</div>
-    <div class="two"><div class="field"><label>سعر البيع (المنتجات)</label><input class="input" name="sale" inputmode="decimal" value="${f.sale != null ? +f.sale : +o.subtotal}"></div>
+    <div class="two"><div class="field"><label>سعر البيع (المنتجات)</label><input class="input" name="sale" inputmode="decimal" value="${f.sale != null ? +f.sale : +o.subtotal - (+o.coupon_off || 0)}"></div>
       <div class="field"><label>تكلفة الشحن (لشركة الشحن)</label><input class="input" name="ship" inputmode="decimal" value="${shipDef}"></div></div>
     <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button></div></div>
     <div class="field"><label>مين استلم الفلوس؟</label><input class="input" name="received_by" list="rcvList" autocomplete="off" placeholder="اختار أو اكتب" value="${esc(f.received_by || '')}"><datalist id="rcvList">${[...new Set([...PARTNERS, ...Object.values(fins).map(x => (x.received_by || '').trim()).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
@@ -2196,7 +2255,7 @@ function returnBox(o) {
   const form = m.querySelector('form');
   m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault();
-    const row = { order_id: o.id, sale: f.sale ?? +o.subtotal, cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, return_loss: Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0), updated_at: new Date().toISOString() };
+    const row = { order_id: o.id, sale: f.sale ?? (+o.subtotal - (+o.coupon_off || 0)), cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, return_loss: Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0), updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) return toast(error.message, 'err');
     fins[o.id] = row; m.remove(); toast('اتسجل المرتجع ✓', 'ok'); refreshOrderUI(o); sheetOrder(o); };
 }

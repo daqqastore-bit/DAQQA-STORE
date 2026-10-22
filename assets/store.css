@@ -998,3 +998,23 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .qty-pill b{font:800 15px/1 var(--f-ui)!important;color:inherit!important}.qty-pill small{font-size:11.5px;opacity:.85;color:inherit!important}
 .oc-it > div,.co-it > div{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
 .oc-it > div > *,.co-it > div > .ci-opts{align-self:stretch}.oc-it > div > .qty-pill,.co-it > div > .qty-pill{align-self:flex-start}
+/* discount code box (cart + checkout); a Luxury-only order gets the gold Privé version */
+.cp-box{display:flex;align-items:center;gap:10px;margin:0 0 12px;padding:6px 6px 6px 12px;padding-inline-start:12px;border:1.5px dashed rgb(var(--accent-rgb)/.55);border-radius:14px;background:rgb(var(--accent-rgb)/.06);transition:border-color .2s,background .2s}
+.cp-box:focus-within{border-style:solid;border-color:var(--accent);background:rgb(var(--accent-rgb)/.1)}
+.cp-box.bad{border-color:#B3261E}
+.cp-ic{flex:none;width:30px;height:30px;display:grid;place-items:center;color:var(--accent)}.cp-ic svg{width:19px;height:19px}
+.cp-in{flex:1;min-width:0;height:38px;border:0;background:none;outline:0;color:var(--ink);font:600 14px var(--f-ui);letter-spacing:.06em;text-transform:uppercase}
+.cp-in::placeholder{text-transform:none;letter-spacing:0;font:500 13.5px var(--f-ar);color:var(--muted)}
+.cp-go{flex:none;height:38px;padding:0 16px;border-radius:10px;background:var(--ink);color:var(--bg);font-weight:600;font-size:13.5px}.cp-go:disabled{opacity:.6}
+.cp-box.on{border-style:solid;border-color:color-mix(in srgb,#2E7D4F 60%,transparent);background:color-mix(in srgb,#2E7D4F 9%,transparent);padding:10px 10px 10px 12px}
+.cp-box.on .cp-ic{color:#2E7D4F}
+.cp-t{flex:1;min-width:0;display:grid;gap:1px}.cp-t b{font:800 15px var(--f-ui);letter-spacing:.1em;color:var(--ink)}.cp-t small{font-size:12.5px;color:var(--muted)}
+.cp-rm{flex:none;width:30px;height:30px;border-radius:50%;color:var(--muted);font-size:13px}.cp-rm:hover{background:rgb(var(--accent-rgb)/.12);color:var(--ink)}
+.cp-sum b.en{font-size:12px;letter-spacing:.06em;padding:1px 6px;border:1px dashed currentColor;border-radius:6px;margin-inline:4px}
+.cd-cp{display:inline-block;margin-top:6px;font-size:13.5px;color:#2E7D4F}
+/* Privé: dark velvet + gold for an all-Luxury order */
+.cp-box.cp-lx{position:relative;border:1px solid rgb(212 175 105/.6);background:linear-gradient(135deg,#17110A,#2A1E10 55%,#17110A);box-shadow:0 0 0 1px rgb(212 175 105/.12) inset,0 10px 28px -16px rgb(212 175 105/.6)}
+.cp-box.cp-lx .cp-ic{color:#D4AF69}.cp-box.cp-lx .cp-in{color:#F3E6C8}.cp-box.cp-lx .cp-in::placeholder{color:rgb(243 230 200/.55)}
+.cp-box.cp-lx .cp-go{background:linear-gradient(135deg,#E6C987,#B8904A);color:#17110A}
+.cp-box.cp-lx.on .cp-t b{color:#F3E6C8}.cp-box.cp-lx.on .cp-t small{color:#D4AF69}.cp-box.cp-lx .cp-rm{color:#D4AF69}
+.cp-box.shake{animation:fShake .4s ease}
