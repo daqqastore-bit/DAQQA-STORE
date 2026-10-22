@@ -419,8 +419,8 @@
       ${vs.length ? `<p class="qa-lead po-need">يجب اختيار الاختيارات الآتية</p>` : ''}
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
-      <div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
-      ${out ? `<div class="qv-out">نفدت الكمية</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}
+      <div class="qa-buy"><div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
+      ${out ? `<div class="qv-out">نفدت الكمية</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}</div>
       ${full ? `<a class="qv-more" href="${RC.productUrl(p)}">شوف صفحة المنتج كاملة ←</a></div>` : ''}</div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on')); DQ.optApply(m, p, sel, {});
     const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };
@@ -944,6 +944,8 @@
     DQ.user = u || null; DQ.isAdmin = false; if (changed) liveOrders(DQ.user);
     const dot = $('#accDot'); if (dot) dot.classList.toggle('on', !!u);
     if (u) { try { const r = await sb.rpc('shop_is_admin'); DQ.isAdmin = !!r.data; } catch (e) {} }
+    // orders made on this device before signing in move into the account (matched by code + phone), so the shop sees who ordered
+    if (u && changed && mine().length) { try { await sb.rpc('shop_claim_orders', { p_orders: mine().map(o => ({ code: o.code, phone: o.phone })) }); } catch (e) {} }
     if ($('#accSheet') && $('#accSheet').classList.contains('on')) renderAccount();
     if (changed && coState === 'form') keepAndRender();
   }

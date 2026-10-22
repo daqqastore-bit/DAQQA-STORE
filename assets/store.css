@@ -1047,3 +1047,9 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .cp-open i{margin-inline-start:auto;font-style:normal;font-size:18px;line-height:1;color:var(--accent)}
 .cp-open:hover{border-color:var(--accent);color:var(--ink)}
 .cp-open.cp-lx{border-color:rgb(201 169 110/.5);color:#cdbb98}
+
+/* quick add / quick view: quantity + «أضف للسلة» stay pinned at the bottom while the choices scroll */
+.qa-buy{position:sticky;bottom:0;z-index:3;display:grid;gap:10px;margin:0 -22px -22px;padding:12px 22px 22px;background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -14px 24px -18px rgb(0 0 0/.35)}
+.qv-info .qa-buy{margin:0 -26px;padding:12px 26px}
+.qa-buy .qa-ok{position:static}
+@media (max-width:760px){.qa-buy{margin:0 -16px calc(-16px - env(safe-area-inset-bottom));padding:10px 16px calc(14px + env(safe-area-inset-bottom))}.qv-info .qa-buy{margin:0 -16px;padding:10px 16px}}

@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022184010">
+<link rel="stylesheet" href="assets/base.css?v=20261022184427">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -28,7 +28,7 @@ body{font-size:14px}
 .login p{text-align:center;color:var(--muted);font-size:13px;margin-top:-8px}
 /* shell */
 .app{display:flex;min-height:100vh}
-.side{width:240px;flex:none;background:var(--bg-2);border-left:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:calc(100vh / var(--z));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.side{width:240px;flex:none;background:var(--bg-2);border-left:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;position:sticky;top:0;height:calc(100vh / var(--z));overflow-y:auto;overscroll-behavior:contain}
 .side::-webkit-scrollbar{width:6px}
 .side .brand{display:flex;align-items:center;gap:10px;padding:0 8px}
 /* theme switch sits next to the brand so it is always in view */
@@ -108,6 +108,10 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .cx-box{border-radius:12px;padding:10px 12px;background:var(--surface-2);display:grid;gap:3px;font-size:12.5px;color:var(--muted)}
 .cx-box b{color:var(--ink);font-size:13px}.cx-box.warn{background:color-mix(in srgb,var(--red) 10%,transparent);border:1px solid color-mix(in srgb,var(--red) 30%,transparent)}.cx-box.warn b{color:var(--red)}
 .o-top .who span{font:12px var(--f-ui);color:var(--muted);direction:ltr;display:inline-block}
+.o-top .who .o-mail{display:block;width:max-content;max-width:100%;margin-top:3px;padding:1px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-size:11.5px;overflow:hidden;text-overflow:ellipsis}
+.o-top .who .o-guest{display:block;width:max-content;margin-top:3px;font-size:11px;color:var(--muted);direction:rtl}
+.ch-mail{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}.ch-mail span{padding:3px 10px;border-radius:999px;background:var(--surface,var(--bg));border:1px solid var(--line);font-size:12px;color:var(--ink)}
+.cu-mail{font-size:12px;color:var(--accent);margin-top:2px}
 .o-top .total{font:700 14px var(--f-ui)}
 .o-top .chev{transition:transform .25s;color:var(--muted)}
 .order.open .chev{transform:rotate(180deg)}
@@ -709,7 +713,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022184010"></script>
+<script src="assets/config.js?v=20261022184427"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -885,7 +889,11 @@ $('#logoutBtn').onclick = async () => { $('#appView').classList.add('hidden'); a
 
 /* ---------- data ---------- */
 async function detectCols() { await Promise.all(Object.keys(COLS).map(async c => { const { error } = await sb.from('shop_products').select(c).limit(1); COLS[c] = !error; })); }
-async function loadAll() { await Promise.all([loadProducts(), loadOrders(), loadSettings(), detectCols(), loadFin()]); }
+async function loadAll() { await Promise.all([loadProducts(), loadOrders(), loadSettings(), detectCols(), loadFin(), loadUsers()]); }
+// the site's accounts: every order placed while signed in shows that account's email
+async function loadUsers() { try { const { data, error } = await sb.rpc('shop_admin_users'); if (!error) users = data || []; } catch (e) {} }
+const mailOf = id => { const u = id && (users || []).find(x => x.id === id); return u ? u.email || u.phone || '' : ''; };
+const custMails = o => [...new Set(custOrders(o).map(x => mailOf(x.user_id)).filter(Boolean))];
 async function loadProducts() { const {data, error} = await sb.from('shop_products').select('*').order('sort').order('id'); if (error) return toast(error.message, 'err'); products = data; }
 async function loadOrders() { const {data, error} = await sb.from('shop_orders').select('*, shop_order_items(*)').order('created_at', {ascending:false}).limit(1000); if (error) return toast(error.message, 'err'); orders = data; }
 async function loadSettings() { const {data} = await sb.from('shop_settings').select('*').eq('id',1).maybeSingle(); settings = data || {}; }
@@ -893,7 +901,7 @@ function listen() {
   if (channel) sb.removeChannel(channel);
   channel = sb.channel('rc-orders').on('postgres_changes', {event:'INSERT', schema:'public', table:'shop_orders'}, async payload => {
     freshIds.add(payload.new.id); beep(); toast(`طلب جديد ${payload.new.code}`, 'ok'); desktopNotify(payload.new);
-    await Promise.all([loadOrders(), loadProducts()]); renderTabs(); go(tab, true);
+    await Promise.all([loadOrders(), loadProducts(), payload.new && payload.new.user_id && !mailOf(payload.new.user_id) ? loadUsers() : null]); renderTabs(); go(tab, true);
     const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_orders'}, payload => {
     // a customer cancelled their order from the store
@@ -1116,12 +1124,12 @@ function custList() {
   return [...map.values()].map(c => { const l = c.orders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)), last = l[0], n = st => l.filter(x => x.status === st).length;
     return { ...c, name: last.customer_name, phone: last.phone, city: last.city, last: last.created_at, first: l[l.length - 1].created_at, count: l.length,
       done: n('delivered'), cx: n('cancelled'), cxMe: l.filter(x => x.status === 'cancelled' && x.cancelled_by === 'customer').length, ret: n('returned'),
-      spent: l.filter(x => COUNTED.includes(x.status)).reduce((a, x) => a + +x.total, 0) }; });
+      spent: l.filter(x => COUNTED.includes(x.status)).reduce((a, x) => a + +x.total, 0), mails: [...new Set(l.map(x => mailOf(x.user_id)).filter(Boolean))] }; });
 }
 async function renderCustomers() {
   const all = custList(), q = custQ.trim().toLowerCase();
   const sorters = { last: (a, b) => new Date(b.last) - new Date(a.last), count: (a, b) => b.count - a.count, spent: (a, b) => b.spent - a.spent, cx: (a, b) => b.cx - a.cx };
-  const list = all.filter(c => !q || [c.name, c.phone, c.city, ...c.orders.map(o => o.code)].join(' ').toLowerCase().includes(q)).sort(sorters[custSort]);
+  const list = all.filter(c => !q || [c.name, c.phone, c.city, ...c.mails, ...c.orders.map(o => o.code)].join(' ').toLowerCase().includes(q)).sort(sorters[custSort]);
   const rep = all.filter(c => c.count > 1).length, risky = all.filter(c => c.cx >= 2 || (c.cx && !c.done)).length;
   $('#main').innerHTML = `<div class="head"><div><h1>العملاء</h1><div class="sub">كل اللي طلب منك، وطلب كام مرة، ولغى كام</div></div></div>
     <div class="kpis"><div class="kpi"><span>عملاء طلبوا</span><b>${all.length}</b><small>برقم تليفون مختلف</small></div><div class="kpi"><span>رجعوا طلبوا تاني</span><b>${rep}</b><small>أكتر من طلب</small></div><div class="kpi"><span>عندهم إلغاء</span><b>${all.filter(c => c.cx).length}</b><small>${risky} محتاجين انتباه</small></div><div class="kpi"><span>حسابات مسجّلة</span><b id="usrN">${users ? users.length : '…'}</b><small>عاملين حساب في الموقع</small></div></div>
@@ -1131,7 +1139,7 @@ async function renderCustomers() {
     <div id="cuBody"></div>`;
   const body = $('#cuBody');
   if (custView === 'buyers') body.innerHTML = list.length ? `<div class="panel scroll-x" style="padding:6px 14px"><table class="atable cu-t"><thead><tr><th>العميل</th><th>الطلبات</th><th>اتسلّم</th><th>ملغي</th><th>مرتجع</th><th>اشترى بـ</th><th>آخر طلب</th><th>حساب</th></tr></thead><tbody>
-      ${list.map(c => `<tr class="rowlink" data-custq="${esc(c.phone)}"><td><b>${esc(c.name)}</b><div class="en" style="color:var(--muted);font-size:12px">${esc(c.phone)}${c.city ? ' · ' + esc(c.city) : ''}</div></td>
+      ${list.map(c => `<tr class="rowlink" data-custq="${esc(c.phone)}"><td><b>${esc(c.name)}</b><div class="en" style="color:var(--muted);font-size:12px">${esc(c.phone)}${c.city ? ' · ' + esc(c.city) : ''}</div>${c.mails.map(m => `<div class="en cu-mail">${esc(m)}</div>`).join('')}</td>
         <td class="n"><b>${c.count}</b></td><td class="n" style="color:var(--green)">${c.done || '—'}</td><td class="n">${c.cx ? `<span class="cu-cx">${c.cx}${c.cxMe ? ` <small>(${c.cxMe} منه)</small>` : ''}</span>` : '—'}</td><td class="n">${c.ret || '—'}</td>
         <td class="n">${c.spent ? money(c.spent) : '—'}</td><td style="font-size:12px">${fmtDate(c.last)}</td><td>${c.users.size ? '<span class="cu-acc">✓ عنده حساب</span>' : '<span style="color:var(--muted-2)">ضيف</span>'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="panel empty">مفيش عملاء بالبحث ده.</div>';
   else {
@@ -1219,7 +1227,7 @@ function renderOrders() {
   const PROD = {}; ORD0.forEach(o => new Set((o.shop_order_items || []).map(i => String(i.product_id))).forEach(id => { const it = o.shop_order_items.find(i => String(i.product_id) === id); PROD[id] = PROD[id] || { name: (products.find(p => String(p.id) === id) || it).name, n: 0 }; PROD[id].n++; }));
   const prodOpts = Object.entries(PROD).sort((a, b) => b[1].n - a[1].n);
   const q = orderQuery.trim().toLowerCase();
-  const list = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, o.customer_name, o.phone, o.city, ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
+  const list = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, o.customer_name, o.phone, o.city, mailOf(o.user_id), ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
   const counts = Object.fromEntries(STATUS_KEYS.map(k => [k, ORD.filter(o => o.status === k).length]));
   $('#main').innerHTML = `
     <div class="head"><div><h1 ${LUXT ? 'class="en lux-h"' : ''}>${LUXT ? 'Luxury Orders' : 'الطلبات'}</h1><div class="sub">${ORD.length} طلب · بيوصلك إشعار وصوت مع كل طلب جديد</div></div></div>
@@ -1255,8 +1263,10 @@ function custHist(o) {
   const all = custOrders(o); if (all.length < 2) return `<div class="ch-box new"><b>عميل جديد</b><span>ده أول طلب من الرقم ده</span></div>`;
   const n = st => all.filter(x => x.status === st).length, cx = all.filter(x => x.status === 'cancelled'), byMe = cx.filter(x => x.cancelled_by === 'customer').length;
   const spent = all.filter(x => COUNTED.includes(x.status)).reduce((a, x) => a + +x.total, 0);
+  const ms = custMails(o);
   return `<div class="ch-box"><div class="ch-h"><b>سجل العميل</b><button type="button" class="ch-all" data-custq="${esc(o.phone)}">كل طلباته</button></div>
     <div class="ch-n"><span><b class="en">${all.length}</b>طلبات</span><span class="ok"><b class="en">${n('delivered')}</b>اتسلّم</span><span class="bad"><b class="en">${cx.length}</b>ملغي${cx.length ? ` <small>(${byMe} منه)</small>` : ''}</span><span><b class="en">${n('returned')}</b>مرتجع</span></div>
+    ${ms.length ? `<div class="ch-mail">${ms.map(m => `<span class="en">${esc(m)}</span>`).join('')}</div>` : ''}
     <div class="ch-l">${all.map(x => `<span class="${x.id === o.id ? 'me' : ''}"><i class="st-${x.status}"></i><span class="en">${esc(x.code)}</span>${fmtDate(x.created_at)}<em>${statuses[x.status] || x.status}</em></span>`).join('')}</div>
     ${spent ? `<small class="ch-sp">اشترى بـ <b class="en">${money(spent)}</b> لحد دلوقتي</small>` : ''}</div>`;
 }
@@ -1272,7 +1282,7 @@ function orderHTML(o) {
   return `<div class="order ${openOrders.has(o.id)?'open':''} ${freshIds.has(o.id)?'fresh':''}" data-oid="${o.id}">
     <div class="o-top" data-toggle>
       <div><div class="code">${esc(o.code)}</div><div class="date">${fmtDate(o.created_at)}</div></div>
-      <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span>${custOrders(o).length > 1 ? `<em class="rep-chip">طلب ${custOrders(o).length} مرات</em>` : ''}${pastCancels(o).length ? `<em class="warn-chip" title="الرقم ده عليه طلبات اتلغت قبل كدا">⚠ اتلغى له قبل كدا (${pastCancels(o).length})</em>` : ''}</div>
+      <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span>${o.user_id ? `<span class="o-mail" title="طلب وهو مسجّل دخول بالحساب ده">${esc(mailOf(o.user_id) || 'حساب مسجّل')}</span>` : '<span class="o-guest" title="طلب من غير ما يسجّل دخول">من غير حساب</span>'}${custOrders(o).length > 1 ? `<em class="rep-chip">طلب ${custOrders(o).length} مرات</em>` : ''}${pastCancels(o).length ? `<em class="warn-chip" title="الرقم ده عليه طلبات اتلغت قبل كدا">⚠ اتلغى له قبل كدا (${pastCancels(o).length})</em>` : ''}</div>
       <div class="city" style="color:var(--muted)">${esc(o.city)}</div>
       <div class="total en">${money(o.total)}</div>
       <div><span class="badge st-${o.status}">${statuses[o.status]}</span></div>
