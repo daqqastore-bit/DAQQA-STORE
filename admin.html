@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022165827">
+<link rel="stylesheet" href="assets/base.css?v=20261022170048">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -623,6 +623,10 @@ html{--z:1}
 .pt-share b{font:700 24px/1.2 var(--f-ui);color:var(--green);direction:ltr;text-align:right}.pt-share.neg{background:color-mix(in srgb,var(--red) 10%,var(--surface-2))}.pt-share.neg b{color:var(--red)}
 .pt-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}.pt-row b{color:var(--ink);font-family:var(--f-ui)}
 @media (max-width:760px){.pt-grid{grid-template-columns:1fr;gap:10px}}
+.ovp .ovp-list{display:grid;gap:4px;max-height:52dvh;overflow:auto}
+.ovp-split{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ovp-split div{display:grid;gap:2px;padding:10px;border-radius:12px;background:var(--surface);text-align:center}.ovp-split small{color:var(--muted);font-size:12px}.ovp-split b{font:700 15px var(--f-ui);color:var(--green)}
+.ovp-st{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ovp-st .sd{justify-content:space-between;background:var(--surface);width:100%}.ovp-st .sd b{margin-inline-start:auto;font-family:var(--f-ui)}
+.ovp-t{width:100%;border-collapse:collapse;font-size:13.5px;text-align:center}.ovp-t th,.ovp-t td{padding:10px 6px;border-bottom:1px solid var(--line)}.ovp-t td:first-child{text-align:start;font-weight:600}.ovp-t thead th{color:var(--muted);font-weight:500;font-size:12px}.ovp-t td.en{font:700 16px var(--f-ui)}
 </style>
 </head>
 <body>
@@ -683,7 +687,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022165827"></script>
+<script src="assets/config.js?v=20261022170048"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -927,7 +931,7 @@ function go(t, keepScroll) {
 }
 
 /* ---------- overview: the whole shop at a glance ---------- */
-const LOW_STK = 5;   // «Low Stock» = this many pieces or fewer
+const LOW_STK = RC.LOW_STOCK || 10;   // «Low Stock» = this many pieces or fewer
 let ovStk = 'all', ovQ = '';
 const stkTimers = {};
 function renderOverview() {
@@ -948,11 +952,11 @@ function renderOverview() {
   $('#main').innerHTML = `
     <div class="head"><div><h1>نظرة عامة</h1><div class="sub">المتجر كله في صفحة واحدة</div></div></div>
     <div class="ov-kpis">
-      <button type="button" class="ov-k net ${net < 0 ? 'neg' : ''}" data-tab="accounts"><i>${IC('<path d="M3 17l6-6 4 4 8-8M14 7h7v7"/>')}</i><span>صافي الربح</span><b>${signMoney(net)}</b><small>${missing ? `<em>${missing} طلب من غير تكاليف</em>` : 'من الأول · بعد المصاريف'}</small></button>
-      <button type="button" class="ov-k" data-tab="orders"><i>${ICONS.orders}</i><span>الطلبات</span><b>${placed.length}</b><small>${newN ? `<em>${newN} جديد</em> · ` : ''}${delivered} اتسلم</small></button>
-      <button type="button" class="ov-k" data-tab="products"><i>${ICONS.products}</i><span>منتجات معروضة</span><b>${live.length}</b><small>${reg.length} عادي · ${lux.length} Luxury</small></button>
-      <button type="button" class="ov-k" data-tab="products"><i>${IC('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>')}</i><span>العروض</span><b>${offers.length}</b><small>${disc} عليهم خصم</small></button>
-      <button type="button" class="ov-k ${low.length ? 'warn' : ''}" id="ovLowK"><i>${IC('<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>')}</i><span>مخزون قليل</span><b>${low.length}</b><small>${low.filter(p => p.stock === 0).length} خلص خالص</small></button>
+      <button type="button" class="ov-k net ${net < 0 ? 'neg' : ''}" data-ovk="net"><i>${IC('<path d="M3 17l6-6 4 4 8-8M14 7h7v7"/>')}</i><span>صافي الربح</span><b>${signMoney(net)}</b><small>${missing ? `<em>${missing} طلب من غير تكاليف</em>` : 'من الأول · بعد المصاريف'}</small></button>
+      <button type="button" class="ov-k" data-ovk="orders"><i>${ICONS.orders}</i><span>الطلبات</span><b>${placed.length}</b><small>${newN ? `<em>${newN} جديد</em> · ` : ''}${delivered} اتسلم</small></button>
+      <button type="button" class="ov-k" data-ovk="prods"><i>${ICONS.products}</i><span>منتجات معروضة</span><b>${live.length}</b><small>${reg.length} عادي · ${lux.length} Luxury</small></button>
+      <button type="button" class="ov-k" data-ovk="offers"><i>${IC('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>')}</i><span>العروض</span><b>${offers.length}</b><small>${disc} عليهم خصم</small></button>
+      <button type="button" class="ov-k ${low.length ? 'warn' : ''}" data-ovk="low"><i>${IC('<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>')}</i><span>مخزون قليل</span><b>${low.length}</b><small>${low.filter(p => p.stock === 0).length} خلص خالص</small></button>
     </div>
     <div class="row2">
       <div class="panel"><h2>آخر الطلبات <button type="button" class="ov-more" data-tab="orders">كل الطلبات</button></h2>
@@ -978,7 +982,7 @@ function renderOverview() {
   ovStockList();
   $('#ovStkSeg').onclick = e => { const b = e.target.closest('[data-ovs]'); if (b) { ovStk = b.dataset.ovs; $('#ovStkSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); ovStockList(); } };
   $('#ovQ').oninput = e => { ovQ = e.target.value; ovStockList(); };
-  $('#ovLowK').onclick = () => $('#ovLow').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('#main').querySelectorAll('[data-ovk]').forEach(b => b.onclick = () => ovPop(b.dataset.ovk));
   $('#main').querySelectorAll('[data-ovo]').forEach(b => b.onclick = () => { const o = orders.find(x => x.id === +b.dataset.ovo); if (!o) return; orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(isLuxOrder(o) ? 'lux-orders' : 'orders'); });
   $('#main').querySelectorAll('[data-ovfind]').forEach(b => b.onclick = () => { ovStk = 'all'; ovQ = (products.find(x => x.id === +b.dataset.ovfind) || {}).name || ''; $('#ovQ').value = ovQ; $('#ovStkSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.ovs === 'all')); ovStockList(); $('#ovStock').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 }
@@ -1003,7 +1007,7 @@ function ovSetStock(row, v) {
     const { error } = await sb.from('shop_products').update({ stock: next }).eq('id', p.id);
     row.classList.remove('saving');
     if (error) { row.querySelector('input').value = p.stock == null ? '' : p.stock; return toast(error.message, 'err'); }
-    p.stock = next; row.classList.add('saved'); setTimeout(() => row.classList.remove('saved'), 900);
+    const prev = p.stock; p.stock = next; lowMail(p, prev); row.classList.add('saved'); setTimeout(() => row.classList.remove('saved'), 900);
     toast(`${p.name}: ${next == null ? 'كمية مفتوحة' : next === 0 ? 'Out of Stock' : 'المخزون ' + next}`, 'ok');
   }, 700);
 }
@@ -1015,6 +1019,58 @@ document.addEventListener('click', e => {
 document.addEventListener('change', e => { const i = e.target.closest('.ov-step input'); if (i) ovSetStock(i.closest('[data-ovp]'), i.value.replace(/[^\d٠-٩]/g, '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))); });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest('.ov-step input')) e.target.blur(); });
 
+// the overview cards open their details in a pop-up (the page stays where it is)
+function ovPop(k) {
+  const live = products.filter(p => p.active), row = (l, v, c = '') => `<div class="${c}"><span>${l}</span><b>${v}</b></div>`;
+  const img = p => `<img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'">`;
+  const plist = (l, tail) => l.length ? `<div class="ovp-list">${l.map(p => `<button type="button" class="ov-l" data-edit="${p.id}">${img(p)}<span>${esc(p.name)}<small>${RC.isLuxury(p) ? 'Luxury · ' : ''}${esc(categories[p.category] || p.category)}</small></span>${tail(p)}</button>`).join('')}</div>` : '<div class="empty" style="padding:18px">مفيش.</div>';
+  let h = '', body = '', go2 = '';
+  if (k === 'net') {
+    const sold = orders.filter(o => COUNTED.includes(o.status) && fins[o.id]), sum = (l, f) => l.reduce((a, x) => a + f(x), 0);
+    const sales = sum(sold, o => +fins[o.id].sale) + sum(offs, x => +x.price), cogs = sum(sold, o => +fins[o.id].cost) + sum(offs, x => +x.cost);
+    const ship = sum(sold, o => fins[o.id].ship_payer === 'me' ? +fins[o.id].ship_cost : 0) + sum(offs, x => x.ship_payer === 'me' ? +x.ship_cost : 0);
+    const ret = sum(orders.filter(o => o.status === 'returned'), o => fins[o.id] ? +fins[o.id].return_loss : 0), exp = sum(expenses, x => +x.amount);
+    const net = sales - cogs - ship - ret - exp, miss = orders.filter(o => COUNTED.includes(o.status) && !fins[o.id]).length;
+    h = 'صافي الربح'; go2 = 'accounts';
+    body = `<div class="fin-calc">${row('المبيعات', money(sales))}${row('− تكلفة البضاعة', money(cogs))}${row('− الشحن على حسابك', money(ship))}${row('− خسارة المرتجعات', money(ret))}${row('− المصاريف', money(exp))}${row('صافي الربح', signMoney(net), 'net')}</div>
+      <div class="ovp-split">${PARTNERS.map(n => `<div><small>${esc(n)}</small><b class="en">${signMoney(net / PARTNERS.length)}</b></div>`).join('')}</div>
+      ${miss ? `<div class="warn-box">${miss} طلب من غير تكاليف، فصافي الربح لسه ناقص.</div>` : ''}`;
+  } else if (k === 'orders') {
+    h = 'الطلبات'; go2 = 'orders';
+    body = `<div class="ovp-st">${STATUS_KEYS.map(s => { const n = orders.filter(o => o.status === s).length; return `<button type="button" class="sd st-${s}" data-ovst="${s}"><i style="background:var(--c)"></i>${statuses[s]}<b class="en">${n}</b></button>`; }).join('')}</div>
+      <div class="fin-calc">${row('كل الطلبات', orders.length)}${row('قيمة الطلبات (من غير الملغي)', money(orders.filter(o => !['cancelled', 'returned'].includes(o.status)).reduce((a, o) => a + +o.total, 0)))}</div>`;
+  } else if (k === 'prods') {
+    const g = (l, c) => l.filter(p => p.category === c).length, reg = live.filter(p => !RC.isLuxury(p)), lux = live.filter(p => RC.isLuxury(p));
+    h = 'المنتجات المعروضة'; go2 = 'products';
+    body = `<table class="ovp-t"><thead><tr><th></th><th>رجالي</th><th>حريمي</th><th>للجنسين</th><th>الكل</th></tr></thead><tbody>
+      <tr><td>المتجر العادي</td><td class="en">${g(reg, 'men')}</td><td class="en">${g(reg, 'women')}</td><td class="en">${g(reg, 'unisex')}</td><th class="en">${reg.length}</th></tr>
+      <tr><td class="en">Luxury</td><td class="en">${g(lux, 'men')}</td><td class="en">${g(lux, 'women')}</td><td class="en">${g(lux, 'unisex')}</td><th class="en">${lux.length}</th></tr></tbody></table>
+      <div class="fin-calc">${row('معروض', live.length)}${row('مخفي', products.length - live.length)}</div>`;
+  } else if (k === 'offers') {
+    const l = live.filter(p => RC.onOffer(p) || discountPct(p) > 0);
+    h = `العروض <span class="en">${l.length}</span>`; go2 = 'products';
+    body = plist(l, p => discountPct(p) ? `<b class="en" style="color:var(--red)">-${discountPct(p)}% · ${money(finalPrice(p))}</b>` : '<b>عرض</b>');
+  } else {
+    const l = products.filter(p => p.active && p.stock != null && p.stock <= LOW_STK).sort((a, b) => a.stock - b.stock);
+    h = `مخزون قليل <span class="en">${l.length}</span>`;
+    body = `<p class="fsub">${LOW_STK} قطع أو أقل · دوس على أي منتج تعدّله</p>` + plist(l, p => `<b class="${p.stock ? '' : 'out'}">${p.stock ? 'فاضل ' + p.stock : 'خلص'}</b>`);
+  }
+  const m = document.createElement('div'); m.className = 'fin-m';
+  m.innerHTML = `<div class="fin-box ovp" role="dialog" aria-modal="true"><h3>${h}</h3>${body}<div class="fin-acts">${go2 ? `<button class="btn btn-amber" type="button" data-ovgo="${go2}">افتح الصفحة كاملة</button>` : ''}<button class="btn btn-ghost" type="button" data-later>قفل</button></div></div>`;
+  document.body.appendChild(m);
+  m.onclick = e => {
+    const st = e.target.closest('[data-ovst]'); if (st) { m.remove(); orderFilter = st.dataset.ovst; orderQuery = ''; return go('orders'); }
+    const g2 = e.target.closest('[data-ovgo]'); if (g2) { m.remove(); return go(g2.dataset.ovgo); }
+    if (e.target.closest('[data-edit]')) return m.remove();
+    if (e.target === m || e.target.closest('[data-later]')) m.remove();
+  };
+}
+// stock set to 10 or fewer by hand → email too (the phone notification comes from the database)
+function lowMail(p, prev) {
+  if (!RC.notifyEmail || p.stock == null || p.stock > LOW_STK || (prev != null && prev <= LOW_STK && !(p.stock === 0 && prev > 0))) return;
+  try { fetch('https://formsubmit.co/ajax/' + RC.notifyEmail, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({ _subject: `⚠ مخزون قليل — ${p.name} — DAQQA`, _template: 'table', _captcha: 'false', 'المنتج': `${p.name} (${RC.sku(p)})`, 'المخزون': p.stock ? `فاضل ${p.stock} قطع` : 'خلص (Out of Stock)', 'زوّد المخزون من هنا': location.href.split('#')[0] + '#overview' }) }).catch(() => {}); } catch (e) {}
+}
 /* ---------- dashboard ---------- */
 function renderDash() {
   const ORD = orders.filter(o => dashScope === 'all' || isLuxOrder(o) === (dashScope === 'lux'));
@@ -1193,7 +1249,7 @@ document.addEventListener('click', async e => {
   if (sk) { e.stopPropagation(); const p = products.find(x => x.id === +sk.dataset.stk); if (!p) return; let mem = {}; try { mem = JSON.parse(localStorage.getItem('dq-stk-mem') || '{}') } catch (er) {}
     const goOut = p.stock !== 0; if (goOut && p.stock != null) mem[p.id] = p.stock; const next = goOut ? 0 : (mem[p.id] > 0 ? mem[p.id] : null);
     sk.disabled = true; const {error} = await sb.from('shop_products').update({ stock: next }).eq('id', p.id); sk.disabled = false; if (error) return toast(error.message, 'err');
-    try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} p.stock = next; toast(goOut ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
+    try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} const prev = p.stock; p.stock = next; lowMail(p, prev); toast(goOut ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
   const sw = e.target.closest('[data-active]');
   if (sw) { e.stopPropagation(); const p = products.find(x => x.id === +sw.dataset.active); const {error} = await sb.from('shop_products').update({active: !p.active}).eq('id', p.id); if (error) return toast(error.message, 'err'); p.active = !p.active; sw.classList.toggle('on', p.active); toast(p.active ? 'ظاهر في المتجر' : 'اتخفى من المتجر'); return; }
   const ed = e.target.closest('[data-edit]'); if (ed) openEditor(+ed.dataset.edit);

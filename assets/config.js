@@ -100,6 +100,7 @@ RC.googleOn = () => RC._g || (RC._g = fetch(RC.url + '/auth/v1/settings', { head
 RC.dmy = (d) => { const x = new Date(d); return `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}/${x.getFullYear()}`; };
 RC.when = (d) => RC.dmy(d) + ' · ' + new Date(d).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 RC.notifyEmail = 'daqqastore@gmail.com';
+RC.LOW_STOCK = 10;   // «Low Stock» = this many pieces or fewer (admin lists + alerts)
 
 // social accounts (admin → Settings → سوشيال). kind decides what the admin types: a number, an email, or a link/username.
 const SI = (d, fill) => `<svg viewBox="0 0 24 24" ${fill ? 'fill="currentColor"' : 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'} aria-hidden="true">${d}</svg>`;
@@ -148,7 +149,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022165827';
+RC.build = '20261022170048';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {
