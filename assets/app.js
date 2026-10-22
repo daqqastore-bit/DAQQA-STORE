@@ -551,7 +551,7 @@
             ${DQ.user ? `<div class="acc-note ok">الطلب من حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`}
             <form class="form-grid co-fields" id="coForm" autocomplete="on" novalidate>
             <div class="field"><label for="f-name">الاسم بالكامل *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name" dir="auto" placeholder="مثال: أحمد محمد"></div>
-            <div class="field"><label for="f-phone">رقم الموبايل * <small class="co-opt">هنكلمك عليه نأكد الطلب</small></label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="01XXXXXXXXX"><small class="ph-cnt" id="phCnt" aria-live="polite"></small></div>
+            <div class="field"><label for="f-phone">رقم الموبايل * <small class="co-opt">هنكلمك عليه نأكد الطلب</small></label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="مثال: 01012345678"><small class="ph-cnt" id="phCnt" aria-live="polite"></small></div>
             <div class="field"><label>حدّد موقعك بالـ GPS <small class="co-opt">اختياري · بيكتبلك العنوان لوحده</small></label>
               <div class="loc ${loc ? 'on' : ''}" id="locBox"><button type="button" class="loc-btn" id="locBtn"><span class="loc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
                 <span class="loc-t"><b>${loc ? 'اتحدد موقعك ✓' : 'حدّد موقعك على الخريطة'}</b><small>${loc ? (coAddr ? esc(coAddr) : 'المندوب هيوصلك على اللوكيشن ده بالظبط') : 'بالـ GPS أو حرّك الدبوس لأي مكان — بيوصلنا لينك المكان'}</small></span></button>
@@ -576,7 +576,9 @@
       // phone counter: red until the number has all its digits (11, or 12 when it starts with 20), then green
       const phCnt = () => { const d = RC.digits($('#f-phone').value), need = /^20/.test(d) && d.length > 11 ? 12 : 11, el = $('#phCnt'); if (!el) return;
         el.className = 'ph-cnt' + (d.length === need ? ' ok' : d.length ? ' bad' : '');
-        el.textContent = !d.length ? `${need} رقم` : d.length === need ? `✓ ${need} رقم، الرقم كامل` : d.length < need ? `${d.length} من ${need} · فاضل ${need - d.length}` : `${d.length} رقم · زيادة ${d.length - need}`; };
+        // a hint only (numbers from abroad still go through): an Egyptian mobile starts with 01
+        if (d.length >= 2 && !/^(01|20|00)/.test(d) && !/^\+/.test($('#f-phone').value.trim())) { el.className = 'ph-cnt bad'; el.textContent = 'رقم الموبايل المصري بيبدأ بـ 01، زي 01012345678'; return; }
+        el.textContent = !d.length ? `رقم موبايل بيبدأ بـ 01 (${need} رقم)` : d.length === need ? `✓ ${need} رقم، الرقم كامل` : d.length < need ? `${d.length} من ${need} · فاضل ${need - d.length}` : `${d.length} رقم · زيادة ${d.length - need}`; };
       $('#f-phone').addEventListener('input', phCnt); phCnt();
       // edit = the cart slides in over the checkout; closing it brings you back to the same spot with the summary updated
       $('#coEdit').onclick = () => { document.documentElement.classList.add('co-cart'); view = 'cart'; renderCart(); $('#drawer').classList.add('on'); $('#overlay').classList.add('on'); };
