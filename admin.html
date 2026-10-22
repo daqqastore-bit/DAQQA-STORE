@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022133011">
+<link rel="stylesheet" href="assets/base.css?v=20261022133643">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -517,6 +517,7 @@ html{--z:1}
 .tab-h.lux span{font:600 11px var(--f-ui);letter-spacing:.25em;background:linear-gradient(100deg,#9c7642,#f6e3b5 40%,#c9a96e 60%,#9c7642);-webkit-background-clip:text;background-clip:text;color:transparent}
 .tab.tab-lux svg{color:#C9A96E}
 .tab.tab-lux.on{background:linear-gradient(120deg,rgba(201,169,110,.18),rgba(201,169,110,.06));color:#F2E3C2;box-shadow:inset 0 0 0 1px rgba(201,169,110,.35)}
+:root[data-theme="light"] .tab.tab-lux.on{background:linear-gradient(120deg,rgba(150,110,45,.2),rgba(150,110,45,.08));color:#5A3E14;font-weight:600;box-shadow:inset 0 0 0 1px rgba(150,110,45,.45)}:root[data-theme="light"] .tab.tab-lux svg{color:#8A6424}
 .scope-seg button.on.en{background:linear-gradient(120deg,#9c7642,#C9A96E);color:#140E08}
 .mob-tabs .tab-h{display:none}
 /* phone: the full sidebar (all pages, theme, store link, logout) opens from «القائمة» in the bottom bar */
@@ -601,7 +602,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022133011"></script>
+<script src="assets/config.js?v=20261022133643"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -696,6 +697,7 @@ async function boot() {
   if (code) { const o = orders.find(x => x.code === code); orderQuery = code; orderFilter = 'all'; if (o) openOrders.add(o.id); go(o && isLuxOrder(o) ? 'lux-orders' : 'orders'); }
   else go(h0 || 'dash');
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
+  restoreDraft();
   listen(); askNotify();
   // orders that came in while the panel was closed reach the sheet when it opens (merged, older rows stay; at most every 20 min)
   try { if (Date.now() - (+localStorage.getItem('dq-sheet-merge') || 0) > 12e5) { localStorage.setItem('dq-sheet-merge', Date.now()); sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow), offline: offs.map(offRow) }); } } catch (e) {}
@@ -1070,7 +1072,17 @@ function openEditor(id, init) {
   $('#editor').innerHTML = ''; renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
 }
-function closeEditor() { $('#editor').classList.remove('on'); $('#overlay').classList.remove('on'); }
+function closeEditor() { $('#editor').classList.remove('on'); $('#overlay').classList.remove('on'); clearTimeout(keepT); try { localStorage.removeItem('dq-ed-draft'); } catch (e) {} }
+// the product being written is kept on this device while the editor is open, so a refresh never loses it
+let keepT = 0;
+const keepDraft = () => { clearTimeout(keepT); keepT = setTimeout(() => { if (!draft || !$('#editor').classList.contains('on')) return;
+  try { syncDraft(); localStorage.setItem('dq-ed-draft', JSON.stringify({ at: Date.now(), d: draft })); } catch (e) {} }, 500); };
+['input', 'change', 'click'].forEach(t => $('#editor').addEventListener(t, keepDraft));
+function restoreDraft() {
+  let s; try { s = JSON.parse(localStorage.getItem('dq-ed-draft') || 'null'); } catch (e) {}
+  if (!s || !s.d || Date.now() - s.at > 3 * 864e5) return;
+  draft = s.d; $('#editor').innerHTML = ''; renderEditor(); $('#editor').classList.add('on'); $('#overlay').classList.add('on');
+  toast(draft.id ? 'رجعتلك التعديلات اللي ماتحفظتش' : 'رجعتلك المنتج اللي كنت بتكتبه، كمّل واحفظ', 'ok'); }
 $('#overlay').onclick = closeEditor;
 addEventListener('keydown', e => { if (e.key === 'Escape') closeEditor(); });
 function curOff() { const pr = +draft.price, sp = draft.sale_price == null || draft.sale_price === '' ? null : +draft.sale_price; return pr && sp != null && sp < pr ? Math.round((1 - sp / pr) * 100) : 0; }
@@ -2056,7 +2068,7 @@ function renderAccounts() {
 let dirty = false;
 document.addEventListener('input', e => { if (e.target.closest('#main, .fin-m')) dirty = true; }, true);
 const _go = go; go = (t, k) => { dirty = false; _go(t, k); };
-const adminBusy = () => dirty || !!document.querySelector('.fin-m, .confirm, .crop') || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
+const adminBusy = () => dirty || $('#editor').classList.contains('on') || !!document.querySelector('.fin-m, .confirm, .crop') || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '');
 async function checkBuild() {
   if (!RC.build || $('#appView').classList.contains('hidden')) return;
   try {
