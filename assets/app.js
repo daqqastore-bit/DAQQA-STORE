@@ -863,7 +863,10 @@
       else if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status, r.data.cancelled_by);
     }
   }
-  setInterval(pollMine, 90000); document.addEventListener('visibilitychange', pollMine); setTimeout(pollMine, 4000);
+  // every 6s while a tracker is on screen (the order-done page, «حسابي»), otherwise every 90s
+  let lastPoll = 0;
+  setInterval(() => { const shown = !!document.querySelector('[data-trk] .trk'); if (Date.now() - lastPoll >= (shown ? 6000 : 90000)) { lastPoll = Date.now(); pollMine(); } }, 3000);
+  document.addEventListener('visibilitychange', pollMine); setTimeout(pollMine, 4000);
   const userName = u => (u && (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name))) || (u && u.email ? u.email.split('@')[0] : '');
   async function setUser(u) {
     const changed = ((DQ.user && DQ.user.id) || null) !== ((u && u.id) || null);
