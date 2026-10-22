@@ -924,3 +924,7 @@ html.lite:not(.vt-theme)::view-transition-new(root){animation:pgInL .5s cubic-be
 .cart-lx .ci-opts small{color:#BCA780}
 .cart-lx .ci-opts b{color:#F3E7CF}
 .cart-lx .ci-opts i{box-shadow:0 0 0 1px rgb(233 207 149/.6)}
+/* the cart opened from the checkout's «تعديل» sits on top of it */
+html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
+.ph-cnt{display:block;margin-top:6px;font:600 12px var(--f-ui);color:var(--muted);text-align:right;direction:rtl;transition:color .2s}
+.ph-cnt.bad{color:#C2513A}.ph-cnt.ok{color:#3E8E5A}

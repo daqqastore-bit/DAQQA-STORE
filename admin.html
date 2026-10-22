@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022150446">
+<link rel="stylesheet" href="assets/base.css?v=20261022151418">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -117,7 +117,10 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-item{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
 .o-item img{width:48px;height:48px;border-radius:10px;object-fit:cover;background:var(--surface-2)}
 .o-item .n{flex:1 1 220px;min-width:0;font:600 13px var(--f-ui)}
-.o-item .q{color:var(--muted);font:13px var(--f-ui)}
+.o-item .q{color:var(--muted);font:13px var(--f-ui);display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.o-qty{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;background:color-mix(in srgb,var(--amber) 16%,transparent);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);color:var(--ink);font-weight:600}.o-qty b{font-size:16px}
+.o-line{color:var(--ink);font-weight:600}
+@media (max-width:600px){.o-item .q{align-items:flex-start}}
 .o-sum{border-top:1px dashed var(--line-2);padding-top:10px;display:grid;gap:4px;font-size:13px;color:var(--muted)}
 .o-sum div{display:flex;justify-content:space-between}
 .o-sum b{color:var(--ink);font-family:var(--f-ui)}
@@ -611,7 +614,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022150446"></script>
+<script src="assets/config.js?v=20261022151418"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -661,7 +664,7 @@ const SCOPES = {
 let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { shipping_note: false, cover_only: false, on_offer: false, image_colors: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false, variants: false }; let pKind = 'all';
+const COLS = { show_colors: false, shipping_note: false, cover_only: false, on_offer: false, image_colors: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false, variants: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -972,7 +975,7 @@ function orderHTML(o) {
       <svg class="chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9l6 6 6-6"/></svg>
     </div>
     <div class="o-body">
-      <div class="o-items">${o.shop_order_items.map(i => `<div class="o-item"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><span class="n">${esc(i.name)}${optChips(i)}</span><span class="q">${i.qty} × ${money(i.unit_price)}${+i.original_price > +i.unit_price ? ` <s style="color:var(--muted-2)">${money(i.original_price)}</s>` : ''}</span></div>`).join('')}
+      <div class="o-items">${o.shop_order_items.map(i => `<div class="o-item"><img src="${esc(i.image)}" alt="" onerror="this.style.visibility='hidden'"><span class="n">${esc(i.name)}${optChips(i)}</span><span class="q"><span class="o-qty">الكمية <b>${i.qty}</b></span><span>${money(i.unit_price)} للقطعة${+i.original_price > +i.unit_price ? ` <s style="color:var(--muted-2)">${money(i.original_price)}</s>` : ''}</span>${i.qty > 1 ? `<span class="o-line">الإجمالي ${money(i.unit_price * i.qty)}</span>` : ''}</span></div>`).join('')}
         <div class="o-sum"><div><span>المنتجات</span><b>${money(o.subtotal)}</b></div>${+o.savings ? `<div><span>خصم</span><b style="color:var(--green)">− ${money(o.savings)}</b></div>` : ''}<div><span>الشحن</span><b>${+o.shipping ? money(o.shipping) : 'مجاني'}</b></div><div style="color:var(--ink);font-weight:700"><span>الإجمالي</span><b>${money(o.total)}</b></div></div>
         ${finPanel(o)}
       </div>
@@ -1185,6 +1188,7 @@ function renderEditor() {
       <div class="two">
         <label class="check"><input type="checkbox" id="f_feat" ${d.featured?'checked':''}> منتج مميز (BEST)</label>
         <label class="check"><input type="checkbox" id="f_active" ${d.active?'checked':''}> ظاهر في المتجر</label>
+        <label class="check" ${COLS.show_colors ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_dots" ${d.show_colors !== false ? 'checked' : ''}> ألوان المينا تظهر على الكارت</label>
       </div>
       <label class="check lux-check" ${COLS.luxury ? '' : 'title="محتاج تفعيل من Supabase (daqqa-pages.sql)" style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_lux" ${d.luxury?'checked':''}> <span>منتج Luxury <small>— يظهر في صفحة Luxury</small></span></label>
       <div class="field"><label>الترتيب (الأصغر يظهر الأول)</label><input class="input en" id="f_sort" inputmode="numeric" value="${esc(d.sort)}"></div></section>
@@ -1297,7 +1301,7 @@ const composeDesc = d => { const about = String(d._about || '').trim();
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, _about: $('#f_about').value, _ship: $('#f_ship').value, _specs: [...document.querySelectorAll('#specRows .spec-row')].map(r => [r.querySelector('[data-sk]').value, r.querySelector('[data-sv]').value]),
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, active: $('#f_active').checked, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 // a photo dropped off-target must not make the browser open it and lose the unsaved product
@@ -1408,7 +1412,7 @@ async function saveProduct() {
   if (COLS.on_offer) row.on_offer = !!d.on_offer;
   if (COLS.image_colors) { const m = {}, cl = (d.colors || []).map(c => c.toLowerCase()); Object.entries(d.image_colors || {}).forEach(([u, c]) => { if (d.images.includes(u) && cl.includes(String(c).toLowerCase())) m[u] = c; }); row.image_colors = Object.keys(m).length ? m : null; }
   if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
-  if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
+  if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_colors) row.show_colors = d.show_colors !== false; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
   const b = $('#saveP'); b.disabled = true; b.textContent = 'جاري الحفظ...';
   const res = d.id ? await sb.from('shop_products').update(row).eq('id', d.id).select().single() : await sb.from('shop_products').insert(row).select().single();
   b.disabled = false; b.textContent = 'حفظ';

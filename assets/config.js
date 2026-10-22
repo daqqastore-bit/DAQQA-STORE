@@ -47,6 +47,13 @@ RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g
   .map(g => { const V = RC.VARS.find(v => v.k === g.k); return { ...V, ar: String(g.ar || '').trim() || V.ar, en: String(g.en || '').trim() || V.en, o: g.o.filter(o => o && o.n).map(o => { const imgs = [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))]; return { ...o, imgs, img: imgs[0] || null }; }) }; })
   .sort((a, b) => RC.VARS.findIndex(v => v.k === a.k) - RC.VARS.findIndex(v => v.k === b.k));
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
+// colour dots on a product card: the dial colours (or the first group that has colours), else the old colour list; off when the admin hides them
+RC.cardDots = (p) => { if (!p || p.show_colors === false) return [];
+  const vs = RC.variants(p), g = vs.find(x => x.k === 'dial' && x.o.some(o => o.c)) || vs.find(x => x.o.filter(o => o.c).length > 1);
+  if (g) return g.o.filter(o => o.c).slice(0, 6).map(o => ({ c: o.c, n: o.n, img: RC.optImgs(p, o)[0] || null }));
+  return RC.colors(p).map(c => ({ c, n: c.toUpperCase(), img: RC.colorImg(p, c) })); };
+RC.dotsHTML = (p, cls = 'sw') => { const d = RC.cardDots(p); if (!d.length) return '';
+  return `<div class="${cls}">${d.map(x => x.img ? `<button type="button" class="swb" data-pick="${RC.esc(x.c)}" data-img="${RC.esc(x.img)}" style="--c:${RC.esc(x.c)};background:${RC.esc(x.c)}" title="${RC.esc(x.n)}" aria-label="شوف ${RC.esc(x.n)}"></button>` : `<i style="--c:${RC.esc(x.c)};background:${RC.esc(x.c)}" title="${RC.esc(x.n)}"></i>`).join('')}</div>`; };
 RC.optImgs = (p, o) => !o ? [] : o.imgs && o.imgs.length ? o.imgs : o.c && RC.colorImg(p, o.c) ? [RC.colorImg(p, o.c)] : [];
 RC.optPhoto = (p, sel, last) => {
   const vs = RC.variants(p), sets = vs.map(g => RC.optImgs(p, g.o.find(o => o.n === (sel || {})[g.k]))).filter(s => s.length);
@@ -141,7 +148,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022150446';
+RC.build = '20261022151418';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {

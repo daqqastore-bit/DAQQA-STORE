@@ -94,7 +94,7 @@
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
         <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="${RC.variants(p).length ? 'اختار مواصفات' : 'أضف'} ${esc(p.name)}${RC.variants(p).length ? '' : ' للـ Shopping Cart'}">${ICON.plus}</button>` : ''}</div>
-        ${cols.length ? `<div class="sw">${cols.map(c => RC.colorImg(p, c) ? `<button type="button" class="swb" data-pick="${c}" style="background:${c}" title="${c.toUpperCase()}" aria-label="شوف اللون ${c.toUpperCase()}"></button>` : `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
+        ${RC.dotsHTML(p)}
       </div></article>`;
   };
   // the order WhatsApp: the number in store settings, else the WhatsApp account added under Social
@@ -200,8 +200,8 @@
       const add = e.target.closest('[data-add]');
       if (add) { e.preventDefault(); pop(add); DQ.quickAdd(+add.dataset.add); }
       // colour swatch on a card: show that colour's photo (stays until another colour is picked)
-      const pk = e.target.closest('.card [data-pick]');
-      if (pk) { e.preventDefault(); const card = pk.closest('[data-pid]'), p = DQ.byId(+card.dataset.pid), u = p && RC.colorImg(p, pk.dataset.pick), img = card.querySelector('.ph img:not(.alt)');
+      const pk = e.target.closest('.card [data-pick], .lx-card [data-pick]');
+      if (pk) { e.preventDefault(); const card = pk.closest('[data-pid]'), p = DQ.byId(+card.dataset.pid), u = p && (pk.dataset.img || RC.colorImg(p, pk.dataset.pick)), img = card.querySelector('.ph img:not(.alt), .lc-pic img');
         if (u && img) { card.dataset.picked = u; img.style.transition = img.style.transform = ''; img.src = u; card.querySelectorAll('[data-pick]').forEach(b => b.classList.toggle('on', b === pk)); const k = p.images.indexOf(u); card.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === k)); } }
       const fv = e.target.closest('[data-fav]');
       if (fv) { e.preventDefault(); pop(fv); DQ.toggleFav(+fv.dataset.fav); }
@@ -475,7 +475,7 @@
         + regs.map(l => ci(l, false)).join('') +
         (t.fso != null && t.sub < t.fso ? `<div style="margin-top:16px"><div class="ship-note">ضيف ${money(t.fso - t.sub)} كمان والشحن يبقى مجاني</div><div class="ship-bar"><i style="width:${Math.min(100, t.sub / t.fso * 100)}%"></i></div></div>` : '');
       $('#drFoot').innerHTML = sum + `<button class="btn btn-amber" id="goCheckout">إتمام الطلب</button>`;
-      $('#goCheckout').onclick = () => DQ.openCheckout();
+      $('#goCheckout').onclick = () => document.documentElement.classList.contains('co-cart') ? DQ.closeAll() : DQ.openCheckout();
     }
   }
   /* ---------- checkout: a full page that opens over the store once the customer is ready to order ---------- */
@@ -498,7 +498,7 @@
             ${DQ.user ? `<div class="acc-note ok">الطلب من حسابك <b class="en">${esc(DQ.user.email || '')}</b></div>` : `<div class="acc-note">عندك حساب؟ <button type="button" class="acc-link" id="coLogin">سجّل دخول</button> عشان طلبك يتحفظ وتتابعه.</div>`}
             <form class="form-grid co-fields" id="coForm" autocomplete="on" novalidate>
             <div class="field"><label for="f-name">الاسم بالكامل *</label><input id="f-name" class="input" name="name" required value="${esc(saved.name || '')}" autocomplete="name" dir="auto" placeholder="مثال: أحمد محمد"></div>
-            <div class="field"><label for="f-phone">رقم الموبايل * <small class="co-opt">هنكلمك عليه نأكد الطلب</small></label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="01XXXXXXXXX"></div>
+            <div class="field"><label for="f-phone">رقم الموبايل * <small class="co-opt">هنكلمك عليه نأكد الطلب</small></label><input id="f-phone" class="input en" name="phone" required inputmode="tel" pattern="[0-9+ ]{10,15}" value="${esc(saved.phone || '')}" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="01XXXXXXXXX"><small class="ph-cnt" id="phCnt" aria-live="polite"></small></div>
             <div class="field"><label>حدّد موقعك بالـ GPS <small class="co-opt">اختياري · بيكتبلك العنوان لوحده</small></label>
               <div class="loc ${loc ? 'on' : ''}" id="locBox"><button type="button" class="loc-btn" id="locBtn"><span class="loc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
                 <span class="loc-t"><b>${loc ? 'اتحدد موقعك ✓' : 'حدّد موقعك على الخريطة'}</b><small>${loc ? (coAddr ? esc(coAddr) : 'المندوب هيوصلك على اللوكيشن ده بالظبط') : 'بالـ GPS أو حرّك الدبوس لأي مكان — بيوصلنا لينك المكان'}</small></span></button>
@@ -520,7 +520,13 @@
             <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن لكل مصر</span><span>استبدال خلال 14 يوم</span></p>
           </div></aside>
         </div>`;
-      $('#coEdit').onclick = () => DQ.closeCheckout(true);
+      // phone counter: red until the number has all its digits (11, or 12 when it starts with 20), then green
+      const phCnt = () => { const d = RC.digits($('#f-phone').value), need = /^20/.test(d) && d.length > 11 ? 12 : 11, el = $('#phCnt'); if (!el) return;
+        el.className = 'ph-cnt' + (d.length === need ? ' ok' : d.length ? ' bad' : '');
+        el.textContent = !d.length ? `${need} رقم` : d.length === need ? `✓ ${need} رقم، الرقم كامل` : d.length < need ? `${d.length} من ${need} · فاضل ${need - d.length}` : `${d.length} رقم · زيادة ${d.length - need}`; };
+      $('#f-phone').addEventListener('input', phCnt); phCnt();
+      // edit = the cart slides in over the checkout; closing it brings you back to the same spot with the summary updated
+      $('#coEdit').onclick = () => { document.documentElement.classList.add('co-cart'); view = 'cart'; renderCart(); $('#drawer').classList.add('on'); $('#overlay').classList.add('on'); };
       if ($('#coLogin')) $('#coLogin').onclick = () => DQ.openAccount('login');
       $('#place').onclick = placeOrder;
       // keep what the customer typed (survives any re-render or reload) — the map pin stays for this visit only
@@ -736,6 +742,10 @@
   };
   DQ.closeAll = () => {
     const mm = document.querySelector('.map-m'); if (mm && mm._close) return mm._close();
+    if (document.documentElement.classList.contains('co-cart')) { const pg = $('#coPage'), y = pg.scrollTop;
+      $('#drawer').classList.remove('on'); $('#overlay').classList.remove('on'); document.documentElement.classList.remove('co-cart');
+      if (!lines().length) return DQ.closeCheckout(true);
+      keepAndRender(); pg.scrollTop = y; return; }
     ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
     if (coState) DQ.closeCheckout(); else document.body.style.overflow = '';
   };
