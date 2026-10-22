@@ -1023,3 +1023,7 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .oc-sums{margin:12px 0 4px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
 .oc-sums .sum{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:3px 0}
 .oc-sums .sum.total{margin-top:6px;padding-top:9px;border-top:1px dashed var(--line);font-size:16px;font-weight:700}.oc-sums .sum.total b{font-size:19px}
+.oc-price{flex-direction:column;align-items:flex-start;gap:6px}
+.oc-price .op-r{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:8px}.oc-price .op-r small{font-size:12.5px;color:var(--muted)}.oc-price .op-r b{font:700 16px var(--f-ui);color:var(--ink)}
+.oc-price .op-r s{font-size:13px;color:var(--muted);text-decoration-color:#B3261E}.oc-price .op-r em{font:800 12px var(--f-ui);font-style:normal;color:#fff;background:#B3261E;padding:2px 7px;border-radius:7px}
+.oc-price .op-r.tot{padding-top:6px;border-top:1px dashed var(--line)}.oc-price .op-r.tot b{font-size:17px;color:#2E7D4F}
