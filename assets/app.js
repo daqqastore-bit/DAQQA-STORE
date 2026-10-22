@@ -366,7 +366,16 @@
     if (!silent) DQ.toast('اتضافت للـ Shopping Cart ✓', 'ok');
   };
   // an option card on the store: its photo (several linked photos show as small thumbs under it), colour dot, name and short description
-  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span></button>`;
+  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span></button>`;
+  // tapping a small photo on an option card: picks that option, and also the option of another group that photo belongs to
+  // (the green-dial photo on the steel strap picks the green dial) → returns {picks: {k: name}, u: photo}
+  DQ.optThumb = (p, el) => { const card = el.closest('.po-card'), gk = card.closest('.po-g').dataset.g, u = el.dataset.ti, picks = { [gk]: card.dataset.o };
+    RC.variants(p).forEach(g => { if (g.k === gk) return; const hit = g.o.filter(o => RC.optImgs(p, o).includes(u)); if (hit.length === 1) picks[g.k] = hit[0].n; });
+    return { picks, u }; };
+  // each multi-photo option card shows the photo that goes with what's picked in the other groups
+  DQ.optSync = (root, p, sel) => root.querySelectorAll('.po-card').forEach(c => { const th = c.querySelector('.po-th'); if (!th) return;
+    const gk = c.closest('.po-g').dataset.g, u = RC.optPhoto(p, { ...sel, [gk]: c.dataset.o }, gk), im = c.querySelector(':scope>img');
+    if (u && im && im.getAttribute('src') !== u) im.src = u; th.querySelectorAll('img').forEach(t => t.classList.toggle('on', t.dataset.ti === u)); });
   // quick add (card "+", favourites…): a pop-up to pick the quantity and every option before it goes in the cart
   DQ.quickAdd = id => {
     const p = DQ.byId(id); if (!p || p.stock <= 0) return;
@@ -389,8 +398,10 @@
     m.addEventListener('click', e => {
       if (e.target === m || e.target.closest('[data-no]')) return end();
       const c = e.target.closest('.po-card');
-      if (c) { const g = c.closest('.po-g'); sel[g.dataset.g] = c.dataset.o; g.classList.remove('err'); g.querySelector('.po-v').textContent = c.dataset.o;
-        g.querySelectorAll('.po-card').forEach(b => { b.classList.toggle('on', b === c); b.setAttribute('aria-pressed', b === c); }); showImg(g.dataset.g); return; }
+      if (c) { const t = e.target.closest('[data-ti]'), r = t ? DQ.optThumb(p, t) : { picks: { [c.closest('.po-g').dataset.g]: c.dataset.o } };
+        Object.entries(r.picks).forEach(([k, v]) => { const g = $m(`.po-g[data-g="${k}"]`); sel[k] = v; g.classList.remove('err'); g.querySelector('.po-v').textContent = v;
+          g.querySelectorAll('.po-card').forEach(b => { b.classList.toggle('on', b.dataset.o === v); b.setAttribute('aria-pressed', b.dataset.o === v); }); });
+        DQ.optSync(m, p, sel); if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }
       const d = e.target.closest('[data-qd]');
       if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; $m('#qaT').textContent = money(finalPrice(p) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
       if (e.target.closest('[data-ok]')) {
