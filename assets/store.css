@@ -919,3 +919,8 @@ html.lite:not(.vt-theme)::view-transition-new(root){animation:pgInL .5s cubic-be
 .ci-opts span{width:100%;padding:6px 10px;gap:8px}
 .ci-opts small{min-width:44px}
 .ci-opts b{flex:1;min-width:0;overflow-wrap:break-word}
+/* option rows inside the dark Privé box: light text on a soft gold tint, in both themes */
+.cart-lx .ci-opts span{background:rgb(201 169 110/.1);border-color:rgb(201 169 110/.38)}
+.cart-lx .ci-opts small{color:#BCA780}
+.cart-lx .ci-opts b{color:#F3E7CF}
+.cart-lx .ci-opts i{box-shadow:0 0 0 1px rgb(233 207 149/.6)}
