@@ -106,7 +106,7 @@ html,body{overflow-x:clip}
 
 /* footer */
 .site-foot{background:var(--nav);border-top:1px solid var(--line);margin-top:100px}
-.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding:56px 0 40px}
+.foot-grid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:40px;padding:56px 0 40px}
 .foot-grid h4{font:600 13px var(--f-ui);letter-spacing:.24em;color:var(--accent);margin-bottom:16px;text-align:right}
 .foot-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--muted)}
 .foot-grid a:hover{color:var(--ink)}
