@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022132809">
+<link rel="stylesheet" href="assets/base.css?v=20261022133011">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -601,7 +601,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022132809"></script>
+<script src="assets/config.js?v=20261022133011"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1022,7 +1022,9 @@ document.addEventListener('click', async e => {
 let draft = null;
 const nextSort = lux => Math.max(0, ...products.filter(x => RC.isLuxury(x) === lux).map(x => +x.sort || 0)) + 1;
 // product page texts the admin edits as sections; defaults open pre-filled so he only changes what differs
-const SPEC_DEF = { watches: ['الماكينة', 'قطر الإطار', 'الخامة', 'مقاومة المياه', 'المميزات'], glasses: ['الإطار', 'العدسات', 'الحماية', 'المقاس'], accessories: ['الخامة', 'المقاس', 'اللون'] };
+const SPEC_DEF = { watches: ['الماكينة', 'التصميم', 'الخامة', 'المميزات', 'مقاومة المياه'], glasses: ['الإطار', 'العدسات', 'الحماية', 'المقاس'], accessories: ['الخامة', 'المقاس', 'اللون'] };
+// example values shown greyed in empty spec lines (the watch defaults above)
+const SPEC_HINT = { 'الماكينة': 'مثلاً: كوارتز تعمل بالبطارية', 'التصميم': 'مثلاً: مشابه للأوتوماتيك الأصلي', 'الخامة': 'مثلاً: سوار وقفل استانلس ستيل', 'المميزات': 'مثلاً: عرض التاريخ وظهر شفاف بتفاصيل الماكينة', 'مقاومة المياه': 'مثلاً: 3 ATM ضد رذاذ المياه' };
 const aboutDef = k => `${(RC.kinds[k] || RC.kinds.watches).one} مختارة من كولكشن DAQQA، متفحوصة قبل الشحن.`;
 const shipDef = k => { const n = (RC.kinds[k] || RC.kinds.watches).one; return `الشحن لكل المحافظات خلال 2–5 أيام عمل.\nالدفع كاش عند الاستلام بعد ما تفحص ال${n}.\nتقدر تستبدل خلال 14 يوم لو ال${n} بحالتها.`; };
 function openTexts(d) {
@@ -1128,7 +1130,7 @@ function renderEditor() {
       <section class="ed-sec"><h4>عن ال${(RC.kinds[d.kind] || RC.kinds.watches).one}</h4>
         <textarea class="input ed-txt" id="f_about" rows="4" dir="rtl" placeholder="اكتب وصف قصير يشد العميل">${esc(d._about)}</textarea></section>
       <section class="ed-sec"><h4>المواصفات <small>بتظهر كبنود في صفحة المنتج · البند الفاضي مش بيظهر</small></h4>
-        <div class="spec-rows" id="specRows">${(d._specs || []).map(([k, v], i) => `<div class="spec-row"><i aria-hidden="true"></i><input class="input" data-sk="${i}" value="${esc(k)}" placeholder="البند" dir="auto"><input class="input" data-sv="${i}" value="${esc(v)}" placeholder="القيمة" dir="auto"><button type="button" class="spec-x" data-srm="${i}" aria-label="شيل البند">×</button></div>`).join('')}</div>
+        <div class="spec-rows" id="specRows">${(d._specs || []).map(([k, v], i) => `<div class="spec-row"><i aria-hidden="true"></i><input class="input" data-sk="${i}" value="${esc(k)}" placeholder="البند" dir="auto"><input class="input" data-sv="${i}" value="${esc(v)}" placeholder="${esc(SPEC_HINT[String(k).trim()] || 'القيمة')}" dir="auto"><button type="button" class="spec-x" data-srm="${i}" aria-label="شيل البند">×</button></div>`).join('')}</div>
         <button type="button" class="btn btn-ghost btn-sm spec-add" id="specAdd">+ إضافة بند</button></section>
       <section class="ed-sec"><h4>الشحن والاستبدال <small>لو سبته زي ما هو بيتكتب فيه سعر الشحن تلقائي</small></h4>
         <textarea class="input ed-txt" id="f_ship" rows="4" dir="rtl" ${COLS.shipping_note ? '' : 'disabled'}>${esc(d._ship)}</textarea></section>
