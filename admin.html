@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022184522">
+<link rel="stylesheet" href="assets/base.css?v=20261022201947">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -112,6 +112,16 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-top .who .o-guest{display:block;width:max-content;margin-top:3px;font-size:11px;color:var(--muted);direction:rtl}
 .ch-mail{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}.ch-mail span{padding:3px 10px;border-radius:999px;background:var(--surface,var(--bg));border:1px solid var(--line);font-size:12px;color:var(--ink)}
 .cu-mail{font-size:12px;color:var(--accent);margin-top:2px}
+.cu-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+.kpi-btn{text-align:start;font:inherit;color:inherit;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+.kpi-btn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 12px 26px -18px rgb(0 0 0/.4)}
+.cp-list{display:grid;gap:6px;max-height:min(56vh,520px);overflow:auto;margin-top:6px}
+.cp-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface,transparent);text-align:start;font:inherit;color:inherit;cursor:pointer;transition:border-color .2s}
+.cp-row:hover:not(:disabled){border-color:var(--accent)}.cp-row:disabled{cursor:default;opacity:.85}
+.cp-av{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);font-weight:700}
+.cp-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.cp-tx b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}.cp-tx small{font-size:12px;color:var(--muted)}
+.cp-n{font-style:normal;font-weight:700;color:var(--accent);font-size:13px}
+@media (max-width:900px){.cu-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .o-top .total{font:700 14px var(--f-ui)}
 .o-top .chev{transition:transform .25s;color:var(--muted)}
 .order.open .chev{transform:rotate(180deg)}
@@ -713,7 +723,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022184522"></script>
+<script src="assets/config.js?v=20261022201947"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1132,7 +1142,9 @@ async function renderCustomers() {
   const list = all.filter(c => !q || [c.name, c.phone, c.city, ...c.mails, ...c.orders.map(o => o.code)].join(' ').toLowerCase().includes(q)).sort(sorters[custSort]);
   const rep = all.filter(c => c.count > 1).length, risky = all.filter(c => c.cx >= 2 || (c.cx && !c.done)).length;
   $('#main').innerHTML = `<div class="head"><div><h1>العملاء</h1><div class="sub">كل اللي طلب منك، وطلب كام مرة، ولغى كام</div></div></div>
-    <div class="kpis"><div class="kpi"><span>عملاء طلبوا</span><b>${all.length}</b><small>برقم تليفون مختلف</small></div><div class="kpi"><span>رجعوا طلبوا تاني</span><b>${rep}</b><small>أكتر من طلب</small></div><div class="kpi"><span>عندهم إلغاء</span><b>${all.filter(c => c.cx).length}</b><small>${risky} محتاجين انتباه</small></div><div class="kpi"><span>حسابات مسجّلة</span><b id="usrN">${users ? users.length : '…'}</b><small>عاملين حساب في الموقع</small></div></div>
+    <div class="kpis cu-kpis">${[['all', 'عملاء طلبوا', all.length, 'برقم تليفون مختلف'], ['rep', 'رجعوا طلبوا تاني', rep, 'أكتر من طلب'], ['once', 'طلبوا مرة بس', all.filter(c => c.count === 1).length, 'ومرجعوش تاني'],
+      ['cx', 'عندهم إلغاء', all.filter(c => c.cx).length, `${risky} محتاجين انتباه`], ['users', 'حسابات مسجّلة', users ? users.length : '…', 'عاملين حساب في الموقع']]
+      .map(([k, l, n, sub]) => `<button type="button" class="kpi kpi-btn" data-cpop="${k}"><span>${l}</span><b ${k === 'users' ? 'id="usrN"' : ''}>${n}</b><small>${sub}</small></button>`).join('')}</div>
     <div class="toolbar cu-tools"><div class="seg" id="cuView"><button data-cv="buyers" class="${custView === 'buyers' ? 'on' : ''}">اللي طلبوا</button><button data-cv="users" class="${custView === 'users' ? 'on' : ''}">الحسابات المسجّلة</button></div>
       ${custView === 'buyers' ? `<div class="seg" id="cuSort">${[['last', 'الأحدث'], ['count', 'الأكتر طلبات'], ['spent', 'الأكتر شراء'], ['cx', 'الأكتر إلغاء']].map(([k, l]) => `<button data-cs="${k}" class="${k === custSort ? 'on' : ''}">${l}</button>`).join('')}</div>` : ''}
       <label class="search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="cuQ" placeholder="دوّر بالاسم أو الرقم أو كود الطلب" value="${esc(custQ)}"></label></div>
@@ -1150,12 +1162,31 @@ async function renderCustomers() {
       ${ul.map(u => { const uk = phoneKey(u.phone), mine = orders.filter(o => o.user_id === u.id || (uk.length >= 9 && phoneKey(o.phone) === uk)); return `<tr class="${mine.length ? 'rowlink' : ''}" ${mine.length ? `data-custq="${esc(mine[0].phone)}"` : ''}><td><b>${esc(u.name || '—')}</b><div class="en" style="color:var(--muted);font-size:12px">${esc(u.email || u.phone || '')}</div></td>
         <td style="font-size:12px">${fmtDate(u.created_at)}</td><td style="font-size:12px">${u.last_sign_in_at ? fmtDate(u.last_sign_in_at) : '—'}</td><td class="n"><b>${mine.length}</b></td><td class="n">${mine.filter(o => o.status === 'cancelled').length || '—'}</td></tr>`; }).join('')}</tbody></table></div>` : '<div class="panel empty">مفيش حسابات.</div>';
   }
+  $('.cu-kpis').onclick = e => { const b = e.target.closest('[data-cpop]'); if (b) custPop(b.dataset.cpop); };
   $('#cuView').onclick = e => { const b = e.target.closest('[data-cv]'); if (b) { custView = b.dataset.cv; renderCustomers(); } };
   if ($('#cuSort')) $('#cuSort').onclick = e => { const b = e.target.closest('[data-cs]'); if (b) { custSort = b.dataset.cs; renderCustomers(); } };
   $('#cuQ').oninput = e => { custQ = e.target.value; clearTimeout(renderCustomers.t); renderCustomers.t = setTimeout(() => { renderCustomers(); const i = $('#cuQ'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 250); };
 }
+// a customers card → a pop-up with the people behind the number: the account email when they have one, otherwise the phone
+async function custPop(k) {
+  if (k === 'users' && !users) await loadUsers();
+  const all = custList(), T = { all: 'كل العملاء اللي طلبوا', rep: 'رجعوا طلبوا تاني', once: 'طلبوا مرة واحدة بس', cx: 'عندهم إلغاء', users: 'الحسابات المسجّلة' };
+  const pick = { all: () => all, rep: () => all.filter(c => c.count > 1).sort((a, b) => b.count - a.count), once: () => all.filter(c => c.count === 1), cx: () => all.filter(c => c.cx).sort((a, b) => b.cx - a.cx) };
+  let rows;
+  if (k === 'users') rows = (users || []).map(u => { const uk = phoneKey(u.phone), mine = orders.filter(o => o.user_id === u.id || (uk.length >= 9 && phoneKey(o.phone) === uk));
+    return { main: u.email || u.phone || '—', sub: [u.name, mine.length ? `${mine.length} ${mine.length > 1 ? 'طلبات' : 'طلب'}` : 'لسه مطلبش'].filter(Boolean), q: mine.length ? mine[0].phone : '', mail: !!u.email }; });
+  else rows = pick[k]().sort((a, b) => k === 'all' || k === 'once' ? new Date(b.last) - new Date(a.last) : 0).map(c => ({ main: c.mails[0] || c.phone, mail: !!c.mails[0],
+    sub: [c.name, c.mails[0] ? c.phone : 'من غير حساب', `${c.count} ${c.count > 1 ? 'طلبات' : 'طلب'}`, c.done ? `اتسلّم ${c.done}` : '', c.cx ? `ملغي ${c.cx}` : '', c.spent ? money(c.spent) : ''].filter(Boolean), q: c.phone, n: c.count }));
+  const m = document.createElement('div'); m.className = 'fin-m';
+  m.innerHTML = `<div class="fin-box ovp" role="dialog" aria-modal="true"><h3>${T[k]} <span class="en">${rows.length}</span></h3>
+    ${rows.length ? `<div class="cp-list">${rows.map(r => `<button type="button" class="cp-row" ${r.q ? `data-custq="${esc(r.q)}"` : 'disabled'}><span class="cp-av">${r.mail ? '@' : '☎'}</span><span class="cp-tx"><b class="en">${esc(r.main)}</b><small>${r.sub.map(x => `<bdi>${esc(x)}</bdi>`).join(' · ')}</small></span>${r.n > 1 ? `<em class="cp-n">${r.n}×</em>` : ''}</button>`).join('')}</div>` : '<div class="empty" style="padding:20px">مفيش حد هنا لسه.</div>'}
+    <p class="fsub" style="margin-top:8px">دوس على أي حد تشوف كل طلباته.</p>
+    <div class="fin-acts"><button class="btn btn-ghost" type="button" data-later>قفل</button></div></div>`;
+  document.body.appendChild(m);
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+}
 // «كل طلباته» / a customer row → the orders page searched by their phone number
-document.addEventListener('click', e => { const b = e.target.closest('[data-custq]'); if (!b) return; e.stopPropagation(); orderQuery = b.dataset.custq; orderFilter = 'all'; go('orders'); });
+document.addEventListener('click', e => { const b = e.target.closest('[data-custq]'); if (!b) return; e.stopPropagation(); document.querySelectorAll('.fin-m').forEach(x => x.remove()); orderQuery = b.dataset.custq; orderFilter = 'all'; go('orders'); });
 /* ---------- dashboard ---------- */
 function renderDash() {
   const ORD = orders.filter(o => dashScope === 'all' || isLuxOrder(o) === (dashScope === 'lux'));
