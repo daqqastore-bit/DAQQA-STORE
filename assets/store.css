@@ -850,3 +850,22 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .oc-it img{width:52px;height:52px;border-radius:10px;object-fit:cover}
 .oc-it b small{color:var(--muted);font-weight:400}
 .oc-acts{display:grid;gap:8px}
+/* quick add pop-up: quantity + required options before a watch goes in the cart */
+.qa-card{position:relative;width:min(480px,100%);display:grid;gap:14px}
+.qa-x{position:absolute;top:12px;inset-inline-end:12px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);border:1px solid var(--line);font-size:13px}
+.qa-x:hover{color:var(--ink);border-color:var(--accent)}
+.qa-top{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;padding-inline-end:36px}
+.qa-im{width:96px;height:96px;border-radius:14px;object-fit:cover;background:var(--surface-2);transition:opacity .2s}
+.qa-top h3{font-size:17px;margin:0 0 4px;line-height:1.35}
+.qa-top .prices{margin:0}
+.qa-lead{margin:0;color:var(--muted);font-size:13px}
+.qa-q{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;font-weight:600}
+.qa-q .qty{margin:0;height:40px}.qa-q .qty button{width:40px;height:40px}
+.qa-ok{width:100%;height:50px;font-size:15px}
+@media (max-width:600px){
+  .qa-m{place-items:end stretch;padding:0}
+  .qa-m .qa-card{width:100%;max-height:88dvh;border-radius:22px 22px 0 0;border-bottom:0;padding:18px 16px calc(16px + env(safe-area-inset-bottom));transform:translateY(100%)}
+  .qa-m.on .qa-card{transform:none}
+  .qa-top{grid-template-columns:80px 1fr}.qa-im{width:80px;height:80px}
+  .qa-ok{position:sticky;bottom:0}
+}

@@ -77,7 +77,7 @@
         <a class="fv-ph" href="${url}"><img loading="lazy" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="fv-off en">-${off}%</span>` : ''}${p.stock > 0 ? '' : '<span class="fv-out">خلصت</span>'}</a>
         <button class="fv-rm" data-fav="${p.id}" aria-label="شيلها من المفضلة" title="شيلها من المفضلة">${ICON.heart}</button>
         <div class="fv-info"><small>${esc(RC.kinds[st].ar)}${p.style ? ` · <span class="en">${esc(p.style)}</span>` : ''}</small><a class="fv-name en" href="${url}">${esc(p.name)}</a>${DQ.priceHTML(p)}</div>
-        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>${RC.variants(p).length ? 'اختار المواصفات' : 'أضف للسلة'}</span></button>` : '<span class="fv-add off">مش متاحة دلوقتي</span>'}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
+        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>أضف للسلة</span></button>` : '<span class="fv-add off">مش متاحة دلوقتي</span>'}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
       </article>`; }).join('') : `<div class="fv-empty"><span class="fv-empty-ic">${ICON.heart}</span><b>المفضلة فاضية</b><p>دوس على القلب في أي منتج عشان تحفظه هنا وترجعله بعدين.</p><a class="btn btn-primary" href="./" data-close>تصفّح المنتجات</a></div>`;
     const all = $('#favAll'); if (all) { const ok = list.filter(p => p.stock > 0 && !RC.variants(p).length); all.hidden = ok.length < 2; all.dataset.ids = ok.map(p => p.id).join(','); }
     document.querySelectorAll('[data-fav]').forEach(b => { const on = DQ.favs.has(+b.dataset.fav); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
@@ -198,7 +198,7 @@
     document.addEventListener('click', e => {
       if (e.target.closest('[data-close]')) DQ.closeAll();
       const add = e.target.closest('[data-add]');
-      if (add) { e.preventDefault(); pop(add); DQ.addToCart(+add.dataset.add, 1); }
+      if (add) { e.preventDefault(); pop(add); DQ.quickAdd(+add.dataset.add); }
       // colour swatch on a card: show that colour's photo (stays until another colour is picked)
       const pk = e.target.closest('.card [data-pick]');
       if (pk) { e.preventDefault(); const card = pk.closest('[data-pid]'), p = DQ.byId(+card.dataset.pid), u = p && RC.colorImg(p, pk.dataset.pick), img = card.querySelector('.ph img:not(.alt)');
@@ -355,8 +355,8 @@
   DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]));
   DQ.addToCart = (id, qty, silent, opt) => {
     const p = DQ.byId(id); if (!p || p.stock <= 0) return;
-    // a product with options can't be added from a card: open it so the buyer picks them
-    if (!DQ.optsOk(p, opt)) { location.href = RC.productUrl(p) + '#opts'; return; }
+    // a product with options is never added without them: the buyer picks them in the quick-add pop-up
+    if (!DQ.optsOk(p, opt)) return DQ.quickAdd(id);
     opt = RC.variants(p).length ? opt : undefined;
     const line = DQ.cart.find(c => c.id === id && optKey(c.opt) === optKey(opt));
     const next = Math.min((line ? line.qty : 0) + qty, p.stock, 20);
@@ -364,6 +364,40 @@
     saveCart(); renderCart();
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
     if (!silent) DQ.toast('اتضافت للـ Shopping Cart ✓', 'ok');
+  };
+  // quick add (card "+", favourites…): a pop-up to pick the quantity and every option before it goes in the cart
+  DQ.quickAdd = id => {
+    const p = DQ.byId(id); if (!p || p.stock <= 0) return;
+    document.querySelectorAll('.qa-m').forEach(x => x.remove());
+    const vs = RC.variants(p), sel = {}, max = Math.min(p.stock, 20); let q = 1;
+    vs.forEach(g => { if (g.o.length === 1) sel[g.k] = g.o[0].n; });
+    const optImg = o => o && (o.img || (o.c && RC.colorImg(p, o.c)));
+    const m = document.createElement('div'); m.className = 'oc-m qa-m';
+    m.innerHTML = `<div class="oc-card qa-card" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
+      <div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>
+      ${vs.length ? `<p class="qa-lead">اختار المواصفات اللي تعجبك</p>` : ''}
+      ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
+        <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => `<button type="button" class="po-card ${sel[g.k] === o.n ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${sel[g.k] === o.n}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}<span>${esc(o.n)}</span></button>`).join('')}</div></div>`).join('')}
+      <div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
+      <button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button></div>`;
+    document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
+    const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };
+    const esc_ = e => { if (e.key === 'Escape') end(); }; addEventListener('keydown', esc_);
+    const showImg = () => { const u = vs.map(g => optImg(g.o.find(o => o.n === sel[g.k]))).find(Boolean); $m('.qa-im').src = u || (p.images && p.images[0]) || FALLBACK; };
+    showImg();
+    m.addEventListener('click', e => {
+      if (e.target === m || e.target.closest('[data-no]')) return end();
+      const c = e.target.closest('.po-card');
+      if (c) { const g = c.closest('.po-g'); sel[g.dataset.g] = c.dataset.o; g.classList.remove('err'); g.querySelector('.po-v').textContent = c.dataset.o;
+        g.querySelectorAll('.po-card').forEach(b => { b.classList.toggle('on', b === c); b.setAttribute('aria-pressed', b === c); }); showImg(); return; }
+      const d = e.target.closest('[data-qd]');
+      if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; $m('#qaT').textContent = money(finalPrice(p) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
+      if (e.target.closest('[data-ok]')) {
+        const miss = vs.find(g => !sel[g.k]);
+        if (miss) { const g = $m(`.po-g[data-g="${miss.k}"]`); g.classList.remove('err'); void g.offsetWidth; g.classList.add('err'); g.scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast(`اختار ${miss.ar} الأول`); return; }
+        end(); DQ.addToCart(p.id, q, false, vs.length ? { ...sel } : undefined);
+      }
+    });
   };
   // shipping by governorate: price groups set in the dashboard, anything not listed pays the default fee
   const zones = () => (Array.isArray(DQ.settings.shipping_zones) ? DQ.settings.shipping_zones : []).filter(z => z && Array.isArray(z.cities) && z.cities.length);
