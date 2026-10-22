@@ -875,3 +875,5 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .po-th{display:flex;gap:3px;width:100%}.po-th img{flex:1;min-width:0;aspect-ratio:1;object-fit:cover;border-radius:4px;opacity:.85}
 
 .po-th img{cursor:pointer;border:1.5px solid transparent;transition:opacity .2s,border-color .2s}.po-th img:hover{opacity:1}.po-th img.on{opacity:1;border-color:var(--accent)}
+/* an option that doesn't go with what's picked (e.g. a strap that doesn't come with this dial): dimmed, picking it clears the clash */
+.po-card.off{opacity:.38;filter:grayscale(.6)}.po-card.off:hover{opacity:.6}

@@ -179,6 +179,11 @@ begin
       if v_o is null then raise exception 'اختار % لـ %', coalesce(g->>'ar', g->>'k'), p.name; end if;
       v_opts := v_opts || jsonb_build_array(jsonb_build_object('k', g->>'k', 'g', coalesce(g->>'ar', g->>'k'), 'v', v_o->>'n', 'c', v_o->>'c', 'img', v_o->>'img'));
       v_img := coalesce(v_img, nullif(v_o->>'img', ''));  -- the order shows the photo of the picked option
+      -- a strap / case / movement limited to some dials can't be ordered with another dial
+      if g->>'k' <> 'dial' and jsonb_typeof(v_o->'dials') = 'array' and jsonb_array_length(v_o->'dials') > 0
+         and (it->'opt'->>'dial') is not null and not (v_o->'dials' ? (it->'opt'->>'dial')) then
+        raise exception '% مش متاح مع المينا %، اختار تاني', v_o->>'n', it->'opt'->>'dial';
+      end if;
     end loop;
     v_unit := case when p.sale_price is not null and p.sale_price < p.price then p.sale_price else p.price end;
     insert into public.shop_order_items (order_id, product_id, name, image, qty, unit_price, original_price, line_total, options)

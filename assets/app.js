@@ -352,7 +352,7 @@
   const lines = () => DQ.cart.map((c, i) => ({ ...c, i, p: DQ.byId(c.id) })).filter(c => c.p);
   // the same watch with different picked options (dial, strap…) is its own cart line
   const optKey = o => JSON.stringify(Object.entries(o || {}).sort());
-  DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]));
+  DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]) && RC.optFits(p, g.k, opt[g.k], opt || {}));
   DQ.addToCart = (id, qty, silent, opt) => {
     const p = DQ.byId(id); if (!p || p.stock <= 0) return;
     // a product with options is never added without them: the buyer picks them in the quick-add pop-up
@@ -372,6 +372,15 @@
   DQ.optThumb = (p, el) => { const card = el.closest('.po-card'), gk = card.closest('.po-g').dataset.g, u = el.dataset.ti, picks = { [gk]: card.dataset.o };
     RC.variants(p).forEach(g => { if (g.k === gk) return; const hit = g.o.filter(o => RC.optImgs(p, o).includes(u)); if (hit.length === 1) picks[g.k] = hit[0].n; });
     return { picks, u }; };
+  // pick an option: anything picked elsewhere that doesn't go with it is cleared, and cards that don't fit the picks are dimmed
+  DQ.optApply = (root, p, sel, picks) => {
+    Object.entries(picks).forEach(([k, v]) => { sel[k] = v; });
+    RC.variants(p).forEach(g => { if (sel[g.k] && !(g.k in picks) && !RC.optFits(p, g.k, sel[g.k], sel)) delete sel[g.k]; });
+    root.querySelectorAll('.po-g').forEach(box => { const k = box.dataset.g; if (k in picks) box.classList.remove('err');
+      box.querySelector('.po-v').textContent = sel[k] || 'لازم تختار';
+      box.querySelectorAll('.po-card').forEach(b => { const on = b.dataset.o === sel[k]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+        const ok = RC.optFits(p, k, b.dataset.o, sel); b.classList.toggle('off', !ok); b.title = ok ? '' : 'مش متاح مع اختيارك'; }); });
+    DQ.optSync(root, p, sel); };
   // each multi-photo option card shows the photo that goes with what's picked in the other groups
   DQ.optSync = (root, p, sel) => root.querySelectorAll('.po-card').forEach(c => { const th = c.querySelector('.po-th'); if (!th) return;
     const gk = c.closest('.po-g').dataset.g, u = RC.optPhoto(p, { ...sel, [gk]: c.dataset.o }, gk), im = c.querySelector(':scope>img');
@@ -390,7 +399,7 @@
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
       <div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
       <button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button></div>`;
-    document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
+    document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on')); DQ.optApply(m, p, sel, {});
     const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };
     const esc_ = e => { if (e.key === 'Escape') end(); }; addEventListener('keydown', esc_);
     const showImg = last => { $m('.qa-im').src = RC.optPhoto(p, sel, last) || (p.images && p.images[0]) || FALLBACK; };
@@ -399,9 +408,7 @@
       if (e.target === m || e.target.closest('[data-no]')) return end();
       const c = e.target.closest('.po-card');
       if (c) { const t = e.target.closest('[data-ti]'), r = t ? DQ.optThumb(p, t) : { picks: { [c.closest('.po-g').dataset.g]: c.dataset.o } };
-        Object.entries(r.picks).forEach(([k, v]) => { const g = $m(`.po-g[data-g="${k}"]`); sel[k] = v; g.classList.remove('err'); g.querySelector('.po-v').textContent = v;
-          g.querySelectorAll('.po-card').forEach(b => { b.classList.toggle('on', b.dataset.o === v); b.setAttribute('aria-pressed', b.dataset.o === v); }); });
-        DQ.optSync(m, p, sel); if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }
+        DQ.optApply(m, p, sel, r.picks); if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }
       const d = e.target.closest('[data-qd]');
       if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; $m('#qaT').textContent = money(finalPrice(p) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
       if (e.target.closest('[data-ok]')) {
