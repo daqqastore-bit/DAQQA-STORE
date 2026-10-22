@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022113649">
+<link rel="stylesheet" href="assets/base.css?v=20261022114145">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -286,7 +286,9 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-ph:hover{border-color:var(--amber)}
 .vo-ph{position:relative}.vo-ph em,.vo-pop div button em{position:absolute;top:5px;inset-inline-start:5px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--amber);color:#1a120b;font:600 11px/20px var(--f-ui,system-ui);font-style:normal;text-align:center}
 .vo-pop div button{position:relative}.vo-acts{display:flex;justify-content:flex-end;gap:8px;align-items:center;margin:0}
-.vo-n{height:38px!important;font-size:13px;text-align:center}
+.vo-n{height:38px!important;font-size:13px;text-align:center}.vo-d{height:34px!important;font-size:12px;color:var(--muted)}
+.vo-mos{position:absolute;inset:0;display:grid;gap:2px;grid-template-columns:1fr 1fr}.vo-mos img{width:100%;height:100%;object-fit:cover;min-height:0}
+.vo-mos.m2{grid-template-columns:1fr 1fr}.vo-mos.m3{grid-template-rows:1fr 1fr}.vo-mos.m3 img:first-child{grid-row:span 2}.vo-mos.m4{grid-template-rows:1fr 1fr}
 .vo-row{display:flex;align-items:center;gap:6px}
 .vo-c{position:relative;width:26px;height:26px;flex:none;cursor:pointer}.vo-c i{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-c input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .vo-mini{white-space:nowrap;font-size:11.5px;color:var(--muted);padding:4px 8px;border:1px dashed var(--line);border-radius:99px}.vo-mini:hover{color:var(--ink);border-color:var(--amber)}
@@ -587,7 +589,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022113649"></script>
+<script src="assets/config.js?v=20261022114145"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1085,8 +1087,9 @@ function renderEditor() {
         ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k); return `<div class="vg" data-vg="${g.k}">
           <div class="vg-h"><b>${V.ar} <small class="en">${V.en}</small></b><p>${V.hint}</p></div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo" data-vi="${i}">
-              <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">${o.imgs.length > 1 ? `<em class="en">${o.imgs.length}</em>` : ''}` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
+              <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length > 1 ? `<span class="vo-mos m${Math.min(o.imgs.length, 4)}">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="">`).join('')}</span><em class="en">${o.imgs.length}</em>` : o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
               <input class="input vo-n" data-vname value="${esc(o.n)}" placeholder="الاسم" dir="auto" maxlength="60">
+              <input class="input vo-n vo-d" data-vdesc value="${esc(o.d || '')}" placeholder="وصف (اختياري)" dir="auto" maxlength="120">
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
@@ -1181,6 +1184,7 @@ function renderEditor() {
   $('#varSec').addEventListener('input', e => { if (e.target.matches('[data-vnc]')) { e.target.dataset.on = 1; const l = e.target.closest('.vg-ac'); l.classList.add('on'); l.querySelector('i').style.background = e.target.value; return; }
     const { o } = vOpt(e.target); if (!o) return;
     if (e.target.matches('[data-vname]')) o.n = e.target.value;
+    if (e.target.matches('[data-vdesc]')) o.d = e.target.value;
     if (e.target.matches('[data-vclr]')) { o.c = e.target.value.toUpperCase(); e.target.previousElementSibling.style.background = o.c; const ph = e.target.closest('.vo').querySelector('.vo-ph:not(.has) i'); if (ph) ph.style.background = o.c; } });
   $('#varSec').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-vn]')) { e.preventDefault(); vAdd(e.target.closest('.vg'), e.target.value); } });
   $('#f_sort').oninput = () => { draft._autoSort = false; };
@@ -1328,7 +1332,7 @@ async function saveProduct() {
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
   if (COLS.cover_only) row.cover_only = !!d.cover_only;
   // options: names trimmed, empty names dropped, photo links only to photos still on the product
-  const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => { const imgs = (o.imgs || []).filter(u => d.images.includes(u)); return { n: String(o.n || '').trim().slice(0, 60), c: o.c || null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null }; }).filter(o => o.n) }));
+  const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => { const imgs = (o.imgs || []).filter(u => d.images.includes(u)); return { n: String(o.n || '').trim().slice(0, 60), d: String(o.d || '').trim().slice(0, 120) || null, c: o.c || null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null }; }).filter(o => o.n) }));
   const dup = vs.find(g => new Set(g.o.map(o => o.n)).size < g.o.length); if (dup) return toast(`فيه اختيارين بنفس الاسم في ${RC.VARS.find(v => v.k === dup.k).ar}`, 'err');
   if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: V.ar, en: V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
   // the store cards keep showing colour dots: they come from the options that have a colour (first 6), each with its photo

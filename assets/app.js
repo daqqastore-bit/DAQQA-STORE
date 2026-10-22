@@ -365,6 +365,8 @@
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
     if (!silent) DQ.toast('اتضافت للـ Shopping Cart ✓', 'ok');
   };
+  // an option card on the store: its photo (several linked photos show as small thumbs under it), colour dot, name and short description
+  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="" loading="lazy">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span></button>`;
   // quick add (card "+", favourites…): a pop-up to pick the quantity and every option before it goes in the cart
   DQ.quickAdd = id => {
     const p = DQ.byId(id); if (!p || p.stock <= 0) return;
@@ -376,7 +378,7 @@
       <div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>
       ${vs.length ? `<p class="qa-lead">اختار المواصفات اللي تعجبك</p>` : ''}
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
-        <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => `<button type="button" class="po-card ${sel[g.k] === o.n ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${sel[g.k] === o.n}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}<span>${esc(o.n)}</span></button>`).join('')}</div></div>`).join('')}
+        <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
       <div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
       <button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button></div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
