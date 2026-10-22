@@ -149,7 +149,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022181229';
+RC.build = '20261022181627';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -164,6 +164,8 @@ RC.FEAT_IC = {
   gift: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M5 12h22v5H5zM7 17h18v11H7zM16 12v16"/><path d="M16 12c-2-5-8-6-8-2 0 2 4 2 8 2zM16 12c2-5 8-6 8-2 0 2-4 2-8 2z"/></svg>',
   star: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M16 4l3.6 7.6 8.4 1-6.2 5.8 1.6 8.3L16 22.6l-7.4 4.1 1.6-8.3L4 12.6l8.4-1z"/></svg>'
 };
+// small copy of a product photo for cards and lists (uploaded next to it as name.sm.webp); anything else stays as is
+RC.thumb = u => /\/storage\/v1\/object\/public\/[^?]*\/products\/[^?]+(?<!\.sm)\.webp$/.test(u || '') ? u.replace(/\.webp$/, '.sm.webp') : u;
 // a section's feature strip: the admin's own wording (settings.bands[kind] = {en, ar, feats:[{i, t}]}) or the defaults above
 RC.band = (k, settings) => { const D = RC.kinds[k].band, o = ((settings && settings.bands) || {})[k] || {}, esc = RC.esc;
   const lines = v => esc(v).replace(/\n/g, '<br>');

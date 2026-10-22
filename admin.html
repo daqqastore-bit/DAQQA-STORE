@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022181229">
+<link rel="stylesheet" href="assets/base.css?v=20261022181627">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -709,7 +709,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022181229"></script>
+<script src="assets/config.js?v=20261022181627"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -802,7 +802,7 @@ async function boot() {
   const {data: ok, error} = await sb.rpc('shop_is_admin');
   if (error || !ok) { await sb.auth.signOut(); toast('الحساب ده مش أدمن', 'err'); return showLogin(); }
   $('#loginView').classList.add('hidden'); $('#appView').classList.remove('hidden');
-  await loadAll(); renderTabs();
+  await loadAll(); renderTabs(); setTimeout(backfillThumbs, 4000);
   const [h0, code] = decodeURIComponent(location.hash.slice(1)).split('/');
   if (code) { const o = orders.find(x => x.code === code); orderQuery = code; orderFilter = 'all'; if (o) openOrders.add(o.id); go(o && isLuxOrder(o) ? 'lux-orders' : 'orders'); }
   else go(h0 || 'overview');
@@ -1603,13 +1603,33 @@ function syncDraft() {
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 // a photo dropped off-target must not make the browser open it and lose the unsaved product
 ['dragover', 'drop'].forEach(t => addEventListener(t, e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) e.preventDefault(); }));
-async function compress(file, maxSide) {
+async function compress(file, maxSide, mark = true) {
   const bmp = await createImageBitmap(file);
   const max = maxSide || 1400, s = Math.min(1, max / Math.max(bmp.width, bmp.height));
   const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
   const g = c.getContext('2d'); g.drawImage(bmp, 0, 0, c.width, c.height);
-  await watermark(g, c.width, c.height);
+  if (mark) await watermark(g, c.width, c.height);
   return await new Promise(r => c.toBlob(r, 'image/webp', .86));
+}
+// cards and lists load a small copy (name.sm.webp, 720px): same look at card size, a fraction of the data on phones
+const THUMB_SIDE = 720;
+async function makeThumb(src, url) {
+  const t = RC.thumb(url); if (t === url) return;
+  try { const blob = await compress(src, THUMB_SIDE, false);   // the full photo already carries the mark
+    const path = decodeURIComponent(t.split('/object/public/' + RC.bucket + '/')[1] || ''); if (!path) return;
+    await sb.storage.from(RC.bucket).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000' });
+  } catch (e) {}   // the store falls back to the full photo
+}
+// photos uploaded before the small copies existed get theirs once, quietly, the next time the admin opens
+async function backfillThumbs() {
+  let done; try { done = new Set(JSON.parse(localStorage.getItem('dq-thumbs') || '[]')); } catch (e) { done = new Set(); }
+  const urls = [...new Set((products || []).flatMap(p => p.images || []))].filter(u => RC.thumb(u) !== u && !done.has(u));
+  for (const u of urls) {
+    try { const h = await fetch(RC.thumb(u), { method: 'HEAD', cache: 'no-store' });
+      if (!h.ok) { const r = await fetch(u); if (r.ok) await makeThumb(await r.blob(), u); }
+      done.add(u); localStorage.setItem('dq-thumbs', JSON.stringify([...done].slice(-2000)));
+    } catch (e) {}
+  }
 }
 // every uploaded photo gets our small Q-clock mark in the bottom corner
 let wmImg = null;
@@ -1682,7 +1702,9 @@ async function uploadFiles(files, direct = false) {
       const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}${slugName(f0.name)}.webp`;
       const {error} = await sb.storage.from(RC.bucket).upload(path, blob, {contentType: 'image/webp', cacheControl: '31536000'});
       if (error) throw error;
-      draft.images.push(sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl); n++;
+      const url = sb.storage.from(RC.bucket).getPublicUrl(path).data.publicUrl;
+      await makeThumb(blob, url);
+      draft.images.push(url); n++;
     } catch (err) { toast('فشل رفع ' + f0.name + ': ' + (err.message || err), 'err'); }
   }
   renderEditor(); if (n) toast('اترفعت الصور — متنساش تدوس حفظ', 'ok');
