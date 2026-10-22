@@ -993,3 +993,8 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 /* quick view: the details column scrolls on its own (desktop) so «أضف للسلة» is always reachable */
 @media (min-width:761px){.qv-card{height:min(88dvh,760px);grid-template-rows:minmax(0,1fr)}.qv-info{max-height:100%;min-height:0}.qv-gal{min-height:0;overflow-y:auto}}
 .ph-w{position:relative}
+/* clear quantity on the checkout summary and the confirm pop-up */
+.qty-pill{display:inline-flex;align-items:center;gap:6px;width:max-content;margin:6px 0 2px;padding:4px 12px;border-radius:999px;background:var(--accent);color:var(--bg);font-size:12.5px;font-weight:600}
+.qty-pill b{font:800 15px/1 var(--f-ui)!important;color:inherit!important}.qty-pill small{font-size:11.5px;opacity:.85;color:inherit!important}
+.oc-it > div,.co-it > div{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.oc-it > div > *,.co-it > div > .ci-opts{align-self:stretch}.oc-it > div > .qty-pill,.co-it > div > .qty-pill{align-self:flex-start}

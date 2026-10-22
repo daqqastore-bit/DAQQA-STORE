@@ -507,7 +507,7 @@
       if (saved.city && !govs().includes(saved.city)) saved.city = '';
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
       const loc = coLoc || '';
-      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}${optsHTML(l)}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
+      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}<span class="qty-pill">الكمية <b class="en">${l.qty}</b></span>${optsHTML(l)}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
       $('#coMain').innerHTML = `
         <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
         <div class="co-grid">
@@ -703,7 +703,7 @@
     return new Promise(done => {
       const m = document.createElement('div'); m.className = 'oc-m';
       m.innerHTML = `<div class="oc-card" role="dialog" aria-modal="true" aria-labelledby="ocH"><h3 id="ocH">متأكد من اختياراتك؟</h3><p>ده بالظبط اللي هيوصلك:</p>
-        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)} <small>× ${l.qty}</small></b>${optsHTML(l)}</div></div>`).join('')}</div>
+        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)}</b><span class="qty-pill">الكمية <b class="en">${l.qty}</b>${l.qty > 1 ? ` <small>قطع</small>` : ` <small>قطعة</small>`}</span>${optsHTML(l)}</div></div>`).join('')}</div>
         <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب</button><button type="button" class="btn btn-ghost" data-no>رجوع أعدّل</button></div></div>`;
       document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
       const end = v => { m.classList.remove('on'); setTimeout(() => m.remove(), 250); done(v); };

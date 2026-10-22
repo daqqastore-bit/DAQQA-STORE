@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022165329">
+<link rel="stylesheet" href="assets/base.css?v=20261022165533">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -616,6 +616,13 @@ html{--z:1}
 @media (max-width:1100px){.ov-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.ov-k.net{grid-column:span 3}}
 @media (max-width:600px){.ov-kpis{grid-template-columns:1fr 1fr;gap:10px}.ov-k.net{grid-column:span 2}.ov-k{padding:13px}.ov-k b{font-size:21px}.ov-k i{width:30px;height:30px;margin-bottom:2px}
   .ov-o{flex-wrap:wrap;gap:6px}.ov-o2{width:100%;justify-content:space-between}.ov-stk{max-height:none}}
+.pt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.pt-card{display:grid;gap:10px}.pt-h{display:flex;align-items:center;gap:10px}.pt-h b{font-size:17px;flex:1}.pt-h small{color:var(--muted);font:600 12px var(--f-ui)}
+.pt-av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--amber);color:var(--bg);font-weight:700}
+.pt-share{display:grid;gap:2px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--green) 10%,var(--surface-2))}.pt-share span{font-size:12.5px;color:var(--muted)}
+.pt-share b{font:700 24px/1.2 var(--f-ui);color:var(--green);direction:ltr;text-align:right}.pt-share.neg{background:color-mix(in srgb,var(--red) 10%,var(--surface-2))}.pt-share.neg b{color:var(--red)}
+.pt-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}.pt-row b{color:var(--ink);font-family:var(--f-ui)}
+@media (max-width:760px){.pt-grid{grid-template-columns:1fr;gap:10px}}
 </style>
 </head>
 <body>
@@ -676,7 +683,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022165329"></script>
+<script src="assets/config.js?v=20261022165533"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1926,6 +1933,7 @@ function finPanel(o) {
     <div><span>سعر البيع</span><b>${money(f.sale)}</b></div>
     <div><span>تكلفة المنتجات</span><b>− ${money(f.cost)}</b></div>
     <div><span>تكلفة الشحن · ${me ? 'على حسابك' : 'على المشتري'}</span><b>${me ? '− ' : ''}${money(f.ship_cost)}${me ? '' : ' <i>(مش بتتخصم)</i>'}</b></div>
+    ${f.received_by ? `<div><span>استلم الفلوس</span><b>${esc(f.received_by)}</b></div>` : ''}
     <div class="net"><span>صافي الربح</span><b class="${n < 0 ? 'neg' : ''}">${signMoney(n)}</b></div></div>`;
 }
 function finChip(o) {
@@ -1979,6 +1987,7 @@ function finBox(o) {
     <div class="two"><div class="field"><label>سعر البيع (المنتجات)</label><input class="input" name="sale" inputmode="decimal" value="${f.sale != null ? +f.sale : +o.subtotal}"></div>
       <div class="field"><label>تكلفة الشحن (لشركة الشحن)</label><input class="input" name="ship" inputmode="decimal" value="${shipDef}"></div></div>
     <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button></div></div>
+    <div class="field"><label>مين استلم الفلوس؟</label><input class="input" name="received_by" list="rcvList" autocomplete="off" placeholder="اختار أو اكتب" value="${esc(f.received_by || '')}"><datalist id="rcvList">${[...new Set([...PARTNERS, ...Object.values(fins).map(x => (x.received_by || '').trim()).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
     <div class="fin-calc" id="finCalc"></div>
     <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
   document.body.appendChild(m);
@@ -1990,7 +1999,7 @@ function finBox(o) {
   m.addEventListener('input', calc); calc();
   m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay; calc(); } if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault(); const v = vals(), btn = form.querySelector('[type=submit]'); btn.disabled = true;
-    const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: v.ship, ship_payer: payer, return_loss: f.return_loss || 0, updated_at: new Date().toISOString() };
+    const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: v.ship, ship_payer: payer, return_loss: f.return_loss || 0, received_by: form.received_by.value.trim().slice(0, 40) || null, updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
     const pc = [...m.querySelectorAll('[data-pc]')].filter(x => x.dataset.pc && x.value.trim() !== '').map(x => ({ product_id: +x.dataset.pc, cost: num(x.value), updated_at: row.updated_at }));
     if (pc.length) { await sb.from('shop_product_costs').upsert(pc); pc.forEach(r => pcosts[r.product_id] = r.cost); }
@@ -2130,7 +2139,7 @@ function returnBox(o) {
   const form = m.querySelector('form');
   m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault();
-    const row = { order_id: o.id, sale: f.sale ?? +o.subtotal, cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', return_loss: Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0), updated_at: new Date().toISOString() };
+    const row = { order_id: o.id, sale: f.sale ?? +o.subtotal, cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, return_loss: Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0), updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) return toast(error.message, 'err');
     fins[o.id] = row; m.remove(); toast('اتسجل المرتجع ✓', 'ok'); refreshOrderUI(o); sheetOrder(o); };
 }
@@ -2142,9 +2151,10 @@ function sheetSend(body) {
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
 const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
-  sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, net: orderNet(o), location: o.location || '' }; };
+  sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
 // who paid an expense: the partners first, then any other name typed before (you can always type a new one)
 const PAYERS = ['عليوه', 'حازم', 'مسعد'];
+const PARTNERS = ['مسعد', 'عليوه', 'حازم'];   // net profit is split equally between them
 const payers = () => [...new Set([...PAYERS, ...expenses.map(e => (e.paid_by || '').trim()).filter(Boolean)])];
 const payerList = id => `<datalist id="${id}">${payers().map(n => `<option value="${esc(n)}">`).join('')}</datalist>`;
 const expRow = x => ({ id: x.id, date: x.spent_on, category: x.category, amount: +x.amount, paid_by: x.paid_by || '', note: x.note || '' });
@@ -2179,7 +2189,7 @@ function renderAccounts() {
       <div class="seg" id="accRangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div>
       ${OFF_BTN}<button type="button" class="sheet-btn ${accTab === 'sheet' ? 'on' : ''}" id="sheetTab"><i class="${sheetOn() ? 'ok' : ''}"></i>Google Sheet</button></div>
     ${FIN_OK ? '' : '<div class="warn-box">جداول الحسابات مش متفعلة في Supabase.</div>'}
-    <div class="acc-tabs" id="accTabs">${[['sum','الملخص وصافي الربح'],['orders','ربح كل أوردر'],['off','بيع خارج الموقع'],['exp','المصاريف'],['ret','المرتجعات']].map(([k,l]) => `<button data-at="${k}" class="${k===accTab?'on':''}">${l}</button>`).join('')}</div>`;
+    <div class="acc-tabs" id="accTabs">${[['sum','الملخص وصافي الربح'],['orders','ربح كل أوردر'],['off','بيع خارج الموقع'],['exp','المصاريف'],['ret','المرتجعات'],['partners','الشركاء']].map(([k,l]) => `<button data-at="${k}" class="${k===accTab?'on':''}">${l}</button>`).join('')}</div>`;
   let body = '';
   if (accTab === 'sum') {
     const flow = [['مبيعات الموقع', sales, ''], ...(offSales ? [['مبيعات خارج الموقع', offSales, '']] : []), ['− تكلفة البضاعة', allCogs, 'minus'], ['− الشحن على حسابك', allShip, 'minus'], ['− خسارة المرتجعات', retLoss, 'minus'], ['− المصاريف', expSum, 'minus']];
@@ -2231,6 +2241,17 @@ function renderAccounts() {
       <div class="field"><label>ملاحظة</label><input class="input" name="note" placeholder="اختياري"></div>
       <button class="btn btn-amber" type="submit">+ إضافة</button></form>
     <div class="panel scroll-x" style="padding:6px 14px">${expIn.length || accScope !== 'all' ? (accScope !== 'all' ? '<div class="empty">المصاريف بتظهر في «الكل».</div>' : `<table class="atable" style="min-width:660px"><thead><tr><th>التاريخ</th><th>البند</th><th>المبلغ</th><th>مين دفع</th><th>ملاحظة</th><th></th></tr></thead><tbody>${expIn.map(x => `<tr><td class="n"><span class="en" dir="ltr">${dmy(x.spent_on + 'T00:00')}</span></td><td>${esc(x.category)}</td><td class="n neg">${money(x.amount)}</td><td>${x.paid_by ? `<span class="payer">${esc(x.paid_by)}</span>` : '<span style="color:var(--muted-2)">—</span>'}</td><td style="color:var(--muted)">${esc(x.note || '')}</td><td style="white-space:nowrap"><button class="btn btn-sm btn-ghost" data-xedit="${x.id}">تعديل</button> <button class="btn btn-sm btn-ghost" data-xdel="${x.id}">حذف</button></td></tr>`).join('')}</tbody></table>`) : '<div class="empty">مفيش مصاريف في الفترة دي.</div>'}</div>`;
+  } else if (accTab === 'partners') {
+    const share = net / PARTNERS.length, noRcv = sold.filter(o => !(fins[o.id] && fins[o.id].received_by)).length;
+    const got = n => sold.filter(o => fins[o.id] && (fins[o.id].received_by || '').trim() === n).reduce((s, o) => s + +o.total, 0) + OFF.filter(x => (x.seller || '').trim() === n).reduce((s, x) => s + +x.price, 0);
+    const paid = n => expIn.filter(x => (x.paid_by || '').trim() === n).reduce((s, x) => s + +x.amount, 0);
+    body = `${accScope !== 'all' ? '<div class="warn-box">التقسيم الصح على «الكل» عشان المصاريف بتتحسب فيه بس.</div>' : ''}
+    <div class="kpis"><div class="kpi net ${net < 0 ? 'neg' : ''}"><span>صافي الربح اللي هيتقسم</span><b>${signMoney(net)}</b><small>${range ? `آخر ${range} يوم` : 'من الأول'} · على ${PARTNERS.length} بالتساوي</small></div></div>
+    <div class="pt-grid">${PARTNERS.map(n => `<div class="panel pt-card"><div class="pt-h"><span class="pt-av">${esc(n.slice(0, 1))}</span><b>${esc(n)}</b><small>${(100 / PARTNERS.length).toFixed(1)}%</small></div>
+      <div class="pt-share ${share < 0 ? 'neg' : ''}"><span>نصيبه من صافي الربح</span><b>${signMoney(share)}</b></div>
+      <div class="pt-row"><span>استلم فلوس طلبات</span><b class="en">${money(got(n))}</b></div>
+      <div class="pt-row"><span>دفع مصاريف</span><b class="en">${money(paid(n))}</b></div></div>`).join('')}</div>
+    ${noRcv ? `<div class="warn-box" style="margin-top:14px"><span><b>${noRcv} طلب</b> مش متسجل مين استلم فلوسه.</span><button class="btn btn-sm btn-amber" data-at="orders">افتح ربح كل أوردر</button></div>` : ''}`;
   } else {
     body = `<div class="panel scroll-x" style="padding:6px 14px">${rets.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>المنتجات (رجعت للمخزون)</th><th>قيمة الطلب</th><th>خسارة المرتجع</th><th></th></tr></thead><tbody>
       ${rets.map(o => { const f = fins[o.id]; return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td style="font-size:12.5px">${(o.shop_order_items || []).map(i => `${esc(i.name)} × ${i.qty}`).join('<br>')}</td><td class="n">${money(o.subtotal)}</td><td class="n neg">${f ? money(f.return_loss) : '—'}</td><td><button class="btn btn-sm btn-ghost" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش مرتجعات في الفترة دي.</div>'}</div>`;
@@ -2251,6 +2272,7 @@ function renderAccounts() {
   { const st = $('#accTabs'), on = st.querySelector('.on'); if (tabX != null) st.scrollLeft = tabX;
     if (on) { const r = on.getBoundingClientRect(), sr = st.getBoundingClientRect(); if (r.left < sr.left || r.right > sr.right) st.scrollBy({ left: r.left < sr.left ? r.left - sr.left - 16 : r.right - sr.right + 16, behavior: 'smooth' }); } }
   $('#accTabs').onclick = e => { const b = e.target.closest('[data-at]'); if (b) { accTab = b.dataset.at; renderAccounts(); } };
+  $('#main').querySelectorAll('.warn-box [data-at]').forEach(b => b.onclick = () => { accTab = b.dataset.at; accMissing = false; renderAccounts(); });
   $('#accScopeSeg').onclick = e => { const b = e.target.closest('[data-as]'); if (b) { accScope = b.dataset.as; renderAccounts(); } };
   $('#accRangeSeg').onclick = e => { const b = e.target.closest('[data-range]'); if (b) { range = +b.dataset.range; renderAccounts(); } };
   if ($('#goMissing')) $('#goMissing').onclick = () => { accTab = 'orders'; accMissing = true; renderAccounts(); };
