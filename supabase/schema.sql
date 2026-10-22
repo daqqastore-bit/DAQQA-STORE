@@ -179,10 +179,12 @@ begin
       if v_o is null then raise exception 'اختار % لـ %', coalesce(g->>'ar', g->>'k'), p.name; end if;
       v_opts := v_opts || jsonb_build_array(jsonb_build_object('k', g->>'k', 'g', coalesce(g->>'ar', g->>'k'), 'v', v_o->>'n', 'c', v_o->>'c', 'img', v_o->>'img'));
       v_img := coalesce(v_img, nullif(v_o->>'img', ''));  -- the order shows the photo of the picked option
-      -- a strap / case / movement limited to some dials can't be ordered with another dial
-      if g->>'k' <> 'dial' and jsonb_typeof(v_o->'dials') = 'array' and jsonb_array_length(v_o->'dials') > 0
-         and (it->'opt'->>'dial') is not null and not (v_o->'dials' ? (it->'opt'->>'dial')) then
-        raise exception '% مش متاح مع المينا %، اختار تاني', v_o->>'n', it->'opt'->>'dial';
+      -- options linked to only some choices of another group (o.links = {group: [names]}, old o.dials = dial list) can't be ordered with the rest
+      if exists (select 1 from jsonb_each(coalesce(case when jsonb_typeof(v_o->'links') = 'object' then v_o->'links' end, '{}'::jsonb)
+                   || case when jsonb_typeof(v_o->'dials') = 'array' and not (coalesce(v_o->'links', '{}'::jsonb) ? 'dial') then jsonb_build_object('dial', v_o->'dials') else '{}'::jsonb end) l
+                 where jsonb_typeof(l.value) = 'array' and jsonb_array_length(l.value) > 0
+                   and (it->'opt'->>l.key) is not null and not (l.value ? (it->'opt'->>l.key))) then
+        raise exception '% مش متاح مع اختيارك التاني، اختار تركيبة تانية', v_o->>'n';
       end if;
     end loop;
     v_unit := case when p.sale_price is not null and p.sale_price < p.price then p.sale_price else p.price end;

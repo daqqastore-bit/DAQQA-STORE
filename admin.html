@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022120708">
+<link rel="stylesheet" href="assets/base.css?v=20261022120906">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -290,6 +290,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-mos{position:absolute;inset:0;display:grid;gap:2px;grid-template-columns:1fr 1fr}.vo-mos img{width:100%;height:100%;object-fit:cover;min-height:0}
 .vo-mos.m2{grid-template-columns:1fr 1fr}.vo-mos.m3{grid-template-rows:1fr 1fr}.vo-mos.m3 img:first-child{grid-row:span 2}.vo-mos.m4{grid-template-rows:1fr 1fr}
 .vo-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.vo-lk{justify-self:start}.vo-lk.on{border-style:solid;border-color:var(--amber);color:var(--ink)}
 .vo-dl{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:8px}.vo-dl b{font-size:11.5px;font-weight:500;color:var(--muted)}.vo-dl small{font-size:10.5px;color:var(--muted)}
 .vo-dl div{display:flex;flex-wrap:wrap;gap:5px}.vo-dl button{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:4px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
 .vo-dl button i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-dl button.on{border-color:var(--amber);color:var(--ink);background:color-mix(in srgb,var(--amber) 14%,transparent)}
@@ -595,7 +596,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022120708"></script>
+<script src="assets/config.js?v=20261022120906"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1069,7 +1070,7 @@ function renderEditor() {
   // re-drawing (delete a colour, move a photo…) keeps the page where it was
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
   // the four buyer options always exist in the draft (empty ones are simply not saved)
-  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))] })) : [] }; });
+  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
   if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
   $('#editor').innerHTML = `
@@ -1090,7 +1091,7 @@ function renderEditor() {
             <small class="st-on">الصورة الرئيسية هتظهر في كارت المنتج بس، ولما العميل يفتح المنتج مش هيشوفها.</small>
             <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
       <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>اكتب اسم الاختيار، ولو ليه لون اختاره من «لون»، واضغط إضافة، وبعدها اختار صورة الساعة بتاعته. كل اختيار كارت باسم ولون وصورة (اللون والصورة اختياري). أي خانة فيها اختيارات المشتري لازم يختار منها، ولما يختار بتظهرله الصورة، والاختيار بيوصلك مع الطلب</small></h4>
-        ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), DL = d.variants.find(x => x.k === 'dial').o.filter(x => String(x.n || '').trim()); return `<div class="vg" data-vg="${g.k}">
+        ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); return `<div class="vg" data-vg="${g.k}">
           <div class="vg-h"><b>${V.ar} <small class="en">${V.en}</small></b><p>${V.hint}</p></div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo" data-vi="${i}">
               <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length > 1 ? `<span class="vo-mos m${Math.min(o.imgs.length, 4)}">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="">`).join('')}</span><em class="en">${o.imgs.length}</em>` : o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
@@ -1098,7 +1099,8 @@ function renderEditor() {
               <input class="input vo-n vo-d" data-vdesc value="${esc(o.d || '')}" placeholder="وصف (اختياري)" dir="auto" maxlength="120">
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><input class="input vo-hex en" data-vhex value="${esc(o.c.toUpperCase())}" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
-              ${g.k !== 'dial' && DL.length ? `<div class="vo-dl"><b>ألوان المينا المتاحة معاه</b><div>${DL.map(x => `<button type="button" class="${(o.dials || []).includes(x.n) ? 'on' : ''}" data-vdial="${esc(x.n)}">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.n)}</button>`).join('')}</div><small>${(o.dials || []).length ? 'العميل مش هيقدر يختاره مع ألوان المينا التانية' : 'مفيش تحديد = متاح مع كل ألوان المينا'}</small></div>` : ''}
+              ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
+              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${V2.ar} المتاحة معاه</b><div>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
           <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
@@ -1180,11 +1182,16 @@ function renderEditor() {
     if (qk) return vAdd(box, qk.dataset.vq);
     if (!o) return;
     syncDraft();
-    if (e.target.closest('[data-vrm]')) { g.o.splice(i, 1); draft._pick = null; }
+    if (e.target.closest('[data-vrm]')) { g.o.splice(i, 1); draft._pick = draft._link = null; }
     else if (e.target.closest('[data-vpick]')) draft._pick = draft._pick === g.k + ':' + i ? null : g.k + ':' + i;
     else if (im) { const u = im.dataset.vimg; o.imgs = !u ? [] : o.imgs.includes(u) ? o.imgs.filter(x => x !== u) : [...o.imgs, u]; if (!u) draft._pick = null; }
     else if (e.target.closest('[data-vdone]')) draft._pick = null;
-    else if (e.target.closest('[data-vdial]')) { const n = e.target.closest('[data-vdial]').dataset.vdial, l = o.dials || []; o.dials = l.includes(n) ? l.filter(x => x !== n) : [...l, n]; }
+    else if (e.target.closest('[data-vlink]')) draft._link = draft._link === g.k + ':' + i ? null : g.k + ':' + i;
+    else if (e.target.closest('[data-vlk]')) { const b = e.target.closest('[data-vlk]'), k = b.dataset.vlk, n = b.dataset.vln; o.links = o.links || {}; const l = o.links[k] || [];
+      o.links[k] = l.includes(n) ? l.filter(x => x !== n) : [...l, n];
+      // the link works both ways: the other option gets this one too (if it was limited), so the two lists never contradict
+      const other = draft.variants.find(x => x.k === k).o.find(x => x.n === n), ol = other && other.links && other.links[g.k];
+      if (ol && ol.length) other.links[g.k] = o.links[k].includes(n) ? [...new Set([...ol, o.n])] : ol.filter(x => x !== o.n); }
     else if (e.target.closest('[data-vaddclr]')) o.c = '#1B1B1B';
     else if (e.target.closest('[data-vnoclr]')) delete o.c;
     else return;
@@ -1198,7 +1205,7 @@ function renderEditor() {
     const { g, o } = vOpt(e.target); if (!o) return;
     if (e.target.matches('[data-vname]')) { const was = o.n; o.n = e.target.value;
       // renaming a dial keeps the straps/cases that were limited to it pointing at it
-      if (g.k === 'dial') draft.variants.forEach(x => x.o.forEach(y => { if (Array.isArray(y.dials)) y.dials = y.dials.map(v => v === was ? o.n : v); })); }
+      draft.variants.forEach(x => x.o.forEach(y => { const l = y.links && y.links[g.k]; if (l) y.links[g.k] = l.map(v => v === was ? o.n : v); })); }
     if (e.target.matches('[data-vdesc]')) o.d = e.target.value;
     if (e.target.matches('[data-vclr], [data-vhex]')) { const v = e.target.closest('.vo'), ci = v.querySelector('[data-vclr]'), hi = v.querySelector('[data-vhex]');
       const c = e.target === ci ? ci.value.toUpperCase() : hex(hi.value); if (!c) return;
@@ -1349,8 +1356,9 @@ async function saveProduct() {
     stock: String(d.stock ?? '').trim() === '' ? null : Math.max(0, parseInt(d.stock, 10) || 0), featured: d.featured, active: d.active, sort: parseInt(d.sort) || 0, updated_at: new Date().toISOString() };
   if (COLS.cover_only) row.cover_only = !!d.cover_only;
   // options: names trimmed, empty names dropped, photo links only to photos still on the product
-  const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => { const imgs = (o.imgs || []).filter(u => d.images.includes(u)); const dn = d.variants.find(x => x.k === 'dial').o.map(x => String(x.n || '').trim()).filter(Boolean), dl = g.k === 'dial' ? [] : [...new Set((o.dials || []).map(x => String(x).trim()))].filter(x => dn.includes(x));
-      return { n: String(o.n || '').trim().slice(0, 60), d: String(o.d || '').trim().slice(0, 120) || null, c: o.c || null, dials: dl.length && dl.length < dn.length ? dl : null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null }; }).filter(o => o.n) }));
+  const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => { const imgs = (o.imgs || []).filter(u => d.images.includes(u)); // links: only to options that still exist; a list naming everything in a group means no limit there
+      const lk = Object.fromEntries(d.variants.filter(x => x.k !== g.k).map(x => { const all = x.o.map(y => String(y.n || '').trim()).filter(Boolean), l = [...new Set(((o.links || {})[x.k] || []).map(v => String(v).trim()))].filter(v => all.includes(v)); return [x.k, l.length && l.length < all.length ? l : null]; }).filter(([, l]) => l));
+      return { n: String(o.n || '').trim().slice(0, 60), d: String(o.d || '').trim().slice(0, 120) || null, c: o.c || null, links: Object.keys(lk).length ? lk : null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null }; }).filter(o => o.n) }));
   const dup = vs.find(g => new Set(g.o.map(o => o.n)).size < g.o.length); if (dup) return toast(`فيه اختيارين بنفس الاسم في ${RC.VARS.find(v => v.k === dup.k).ar}`, 'err');
   if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: V.ar, en: V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
   // the store cards keep showing colour dots: they come from the options that have a colour (first 6), each with its photo

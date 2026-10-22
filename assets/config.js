@@ -55,11 +55,12 @@ RC.optPhoto = (p, sel, last) => {
   if (both.length) return both[0];
   const lg = last && vs.find(g => g.k === last), ls = lg ? RC.optImgs(p, lg.o.find(o => o.n === (sel || {})[last])) : [];
   return ls[0] || sets[0][0]; };
-// a strap / case / movement option can be limited to some dials (o.dials = dial names); none = goes with every dial
-RC.optFits = (p, k, n, sel) => { const vs = RC.variants(p), dial = vs.find(g => g.k === 'dial'); if (!dial) return true;
-  const dl = (g, name) => { const o = g.o.find(o => o.n === name); return o && Array.isArray(o.dials) && o.dials.length ? o.dials : null; };
-  if (k === 'dial') return vs.every(g => g.k === 'dial' || !sel[g.k] || !dl(g, sel[g.k]) || dl(g, sel[g.k]).includes(n));
-  const g = vs.find(g => g.k === k), d = g && dl(g, n); return !d || !sel.dial || d.includes(sel.dial); };
+// options can be linked across groups: o.links = {dial: [...], strap: [...], movement: [...]} lists what it goes with in that group
+// (an empty or missing list = goes with everything there). Old products kept the dial list as o.dials.
+RC.optLinks = (o, k) => { const l = o && ((o.links && o.links[k]) || (k === 'dial' && o.dials)); return Array.isArray(l) && l.length ? l : null; };
+RC.optFits = (p, k, n, sel) => { const vs = RC.variants(p), me = (vs.find(g => g.k === k) || { o: [] }).o.find(o => o.n === n);
+  return vs.every(g => { if (g.k === k || !sel[g.k]) return true; const other = g.o.find(o => o.n === sel[g.k]);
+    const a = RC.optLinks(me, g.k), b = RC.optLinks(other, k); return (!a || a.includes(sel[g.k])) && (!b || b.includes(n)); }); };
 // the picked options as readable text: "المينا: أسود · الماكينة: Automatic"
 RC.optText = (opts, sep = ' · ') => (Array.isArray(opts) ? opts.map(o => `${o.g}: ${o.v}`) : Object.entries(opts || {}).map(([k, v]) => `${(RC.VARS.find(x => x.k === k) || { ar: k }).ar}: ${v}`)).join(sep);
 // product links: product.html?p=<id>-<name-slug>  (the id is what's used; the slug is for people and Google)
@@ -138,7 +139,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022120708';
+RC.build = '20261022120906';
 
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {
