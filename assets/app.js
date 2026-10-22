@@ -691,7 +691,7 @@
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
         <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
         <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام</p>
-        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}</div>
+        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
         <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
         <div class="cd-acts">${DQ.wa() ? `<a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}">${WA_ICON}استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
     $('#cdMore').onclick = () => DQ.closeCheckout();
