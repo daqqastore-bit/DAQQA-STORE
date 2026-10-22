@@ -461,7 +461,7 @@
   const setCoupon = cp => { DQ.coupon = cp; try { cp ? localStorage.setItem('dq-coupon', JSON.stringify(cp)) : localStorage.removeItem('dq-coupon') } catch (e) {}
     if ($('#drawer').classList.contains('on')) renderCart(); DQ.refreshCheckout && DQ.refreshCheckout(); };
   const cpHTML = t => { const lx = t.ls.length && t.ls.every(l => RC.isLuxury(l.p));
-    if (t.cp) return `<div class="cp-box on${lx ? ' cp-lx' : ''}"><span class="cp-ic">${CP_ICON}</span><span class="cp-t"><b class="en">${esc(t.cp.code)}</b><small>${t.cpOff ? `خصم ${t.cp.pct}% · وفّرت ${money(t.cpOff)}` : `الكود ده على ${esc(cpWho(t.cp))} بس، مفيش منها في طلبك`}</small></span><button type="button" class="cp-rm" data-cp-rm aria-label="شيل الكود">✕</button></div>`;
+    if (t.cp) return `<div class="cp-box on${lx ? ' cp-lx' : ''}"><span class="cp-ic">${CP_ICON}</span><span class="cp-t"><b class="en">${esc(t.cp.code)}</b><small>${t.cpOff ? `تم خصم ${money(t.cpOff)} (${t.cp.pct}%)` : `الكود ده على ${esc(cpWho(t.cp))} بس، مفيش منها في طلبك`}</small></span><button type="button" class="cp-rm" data-cp-rm aria-label="شيل الكود">✕</button></div>`;
     return `<form class="cp-box${lx ? ' cp-lx' : ''}" data-cp-form><span class="cp-ic">${CP_ICON}</span><input class="cp-in en" name="cp" placeholder="عندك كود خصم؟" aria-label="كود الخصم" autocomplete="off" autocapitalize="characters" dir="auto" maxlength="30"><button type="submit" class="cp-go">تطبيق</button></form>`; };
   const CP_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>';
   document.addEventListener('submit', async e => {
@@ -472,7 +472,7 @@
     b.disabled = false; b.textContent = 'تطبيق';
     if (!r || r.error || !r.data) { f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake', 'bad'); return DQ.toast((r && r.error && r.error.message) || 'معرفناش نتأكد من الكود، جرّب تاني', 'err'); }
     setCoupon(r.data); const t = totals();
-    DQ.toast(t.cpOff ? `اتطبق الكود ✓ وفّرت ${money(t.cpOff)}` : `الكود ده على ${cpWho(r.data)} بس`, t.cpOff ? 'ok' : 'err');
+    DQ.toast(t.cpOff ? `اتطبق الكود ✓ تم خصم ${money(t.cpOff)}` : `الكود ده على ${cpWho(r.data)} بس`, t.cpOff ? 'ok' : 'err');
   });
   document.addEventListener('click', e => { if (e.target.closest('[data-cp-rm]')) { setCoupon(null); DQ.toast('اتشال الكود'); } });
   // the admin can switch website orders off: checkout then hands the whole order to WhatsApp
@@ -714,7 +714,7 @@
       <div class="co-done"><div class="cd-ring"><span class="m">${RC.logo()}</span></div>
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
         <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
-        <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام${cpUsed ? `<br><span class="cd-cp">وفّرت <b class="en">${money(cpUsed.off)}</b> بكود <b class="en">${esc(cpUsed.code)}</b></span>` : ''}</p>
+        <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام${cpUsed ? `<br><span class="cd-cp">تم خصم <b class="en">${money(cpUsed.off)}</b> بكود <b class="en">${esc(cpUsed.code)}</b></span>` : ''}</p>
         <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
         <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
         <div class="cd-acts">${DQ.wa() ? `<a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}">${WA_ICON}استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
