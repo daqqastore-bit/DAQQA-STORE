@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022164831">
+<link rel="stylesheet" href="assets/base.css?v=20261022165054">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -569,6 +569,53 @@ html{--z:1}
 .g-or::before,.g-or::after{content:"";flex:1;height:1px;background:var(--line)}
 .g-btn{background:#fff;color:#1f1f1f;border:1px solid var(--line);gap:10px;display:inline-flex;align-items:center;justify-content:center}
 .g-btn:hover{background:#f3f3f3}
+/* overview */
+.ov-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:14px}
+.ov-k{position:relative;display:grid;gap:4px;text-align:start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 16px 14px;color:var(--ink);transition:border-color .2s,transform .2s}
+.ov-k:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.ov-k i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);color:var(--amber);margin-bottom:6px}
+.ov-k i svg{width:18px;height:18px}
+.ov-k span{font-size:13px;color:var(--muted)}
+.ov-k b{font:700 26px/1.25 var(--f-ui);direction:ltr;text-align:right}
+.ov-k small{font-size:12px;color:var(--muted-2)}.ov-k small em{font-style:normal;color:var(--amber);font-weight:600}
+.ov-k.net{border-color:color-mix(in srgb,var(--green) 55%,transparent);background:color-mix(in srgb,var(--green) 10%,var(--surface))}
+.ov-k.net b{color:var(--green)}.ov-k.net i{color:var(--green)}
+.ov-k.net.neg{border-color:color-mix(in srgb,var(--red) 55%,transparent);background:color-mix(in srgb,var(--red) 9%,var(--surface))}.ov-k.net.neg b,.ov-k.net.neg i{color:var(--red)}
+.ov-k.warn i,.ov-k.warn b{color:var(--red)}
+.ov-more{font-size:12.5px;color:var(--amber);font-weight:600}
+.ov-ord{display:grid}
+.ov-o{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 6px;border-bottom:1px solid var(--line);text-align:start;color:var(--ink);border-radius:10px}
+.ov-o:last-child{border-bottom:0}.ov-o:hover{background:var(--surface-2)}
+.ov-o1{display:grid;gap:2px;min-width:0}.ov-o1 b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ov-o1 small{font-size:12px;color:var(--muted)}
+.ov-o2{display:flex;align-items:center;gap:10px;flex-shrink:0}.ov-o2 b{font:700 14px var(--f-ui)}
+.ov-grid{display:grid;gap:10px}
+.ov-gh{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);font-weight:600;margin-top:4px}
+.ov-gh b{font:700 15px var(--f-ui);color:var(--ink)}.ov-gh.lx span{color:var(--amber);letter-spacing:.06em}
+.ov-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));grid-auto-flow:column;gap:8px}
+.ov-c{display:grid;gap:2px;justify-items:center;padding:12px 6px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);color:var(--ink)}
+.ov-c:hover{border-color:var(--amber)}.ov-c b{font:700 22px/1.1 var(--f-ui)}.ov-c span{font-size:12px;color:var(--muted)}
+.ov-offs{display:grid;gap:6px}.ov-offs > small,.ov-none{font-size:12px;color:var(--muted)}
+.ov-off{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;text-align:start;color:var(--ink)}.ov-off:hover{background:var(--surface-2)}
+.ov-off img,.ov-l img,.ov-s img{width:36px;height:36px;border-radius:9px;object-fit:cover;background:var(--surface-2);flex-shrink:0}
+.ov-off span{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-off b{font:700 12px var(--f-ui);color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);padding:3px 8px;border-radius:999px}
+.ov-tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;align-items:center}.ov-tools .input{flex:1 1 180px;height:38px;min-width:0}
+.ov-stk{display:grid;max-height:560px;overflow:auto;margin:0 -6px;padding:0 6px}
+.ov-s{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.ov-s:last-child{border-bottom:0}.ov-s.off{opacity:.55}
+.ov-sn{flex:1;min-width:0;display:grid;gap:1px}.ov-sn b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ov-sn small{font-size:11.5px;color:var(--muted)}
+.ov-step{display:flex;align-items:center;border:1px solid var(--line-2);border-radius:999px;overflow:hidden;flex-shrink:0;direction:ltr;transition:border-color .2s}
+.ov-step button{width:34px;height:34px;font-size:18px;color:var(--ink);display:grid;place-items:center}.ov-step button:hover{background:var(--surface-2)}
+.ov-step input{width:48px;height:34px;border:0;background:none;text-align:center;font:600 14px var(--f-ui);color:var(--ink);outline:0;padding:0}
+.ov-s.saving .ov-step{border-color:var(--amber)}.ov-s.saved .ov-step{border-color:var(--green)}
+.ov-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--green)}.ov-dot.low{background:var(--amber)}.ov-dot.out{background:var(--red)}
+.ov-low{display:grid;gap:4px}
+.ov-l{display:flex;align-items:center;gap:10px;padding:7px 6px;border-radius:10px;text-align:start;color:var(--ink)}.ov-l:hover{background:var(--surface-2)}
+.ov-l span{flex:1;min-width:0;display:grid;font-size:13px}.ov-l span small{font-size:11.5px;color:var(--muted)}
+.ov-l b{font-size:12px;color:var(--amber);white-space:nowrap}.ov-l b.out{color:var(--red)}
+@media (max-width:1100px){.ov-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.ov-k.net{grid-column:span 3}}
+@media (max-width:600px){.ov-kpis{grid-template-columns:1fr 1fr;gap:10px}.ov-k.net{grid-column:span 2}.ov-k{padding:13px}.ov-k b{font-size:21px}.ov-k i{width:30px;height:30px;margin-bottom:2px}
+  .ov-o{flex-wrap:wrap;gap:6px}.ov-o2{width:100%;justify-content:space-between}.ov-stk{max-height:none}}
 </style>
 </head>
 <body>
@@ -629,7 +676,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022164831"></script>
+<script src="assets/config.js?v=20261022165054"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -641,6 +688,7 @@ sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { RECOVERY = t
 const $ = s => document.querySelector(s);
 const STATUS_KEYS = Object.keys(statuses);
 const ICONS = {
+  overview: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
   stories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h12M8 7h6M8 11h4"/></svg>',
   accounts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18.5h2M14 18.5h2"/></svg>',
   dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
@@ -653,11 +701,11 @@ const ICONS = {
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['accounts','الحسابات'], ['dash','المبيعات'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات']];
-const MOB_TABS = ['accounts','dash','orders','products','lux-orders'];
+const MOB_TABS = ['overview','accounts','orders','products','lux-orders'];
 // an order counts as Luxury when any of its pieces is a Luxury product
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
 let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
@@ -723,7 +771,7 @@ async function boot() {
   await loadAll(); renderTabs();
   const [h0, code] = decodeURIComponent(location.hash.slice(1)).split('/');
   if (code) { const o = orders.find(x => x.code === code); orderQuery = code; orderFilter = 'all'; if (o) openOrders.add(o.id); go(o && isLuxOrder(o) ? 'lux-orders' : 'orders'); }
-  else go(h0 || 'dash');
+  else go(h0 || 'overview');
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   restoreDraft();
   listen(); askNotify();
@@ -865,11 +913,99 @@ document.addEventListener('click', e => { const t = e.target.closest('[data-tab]
 function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
-  ({accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, settings: renderSettings}[t] || renderDash)();
+  ({overview: renderOverview, accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, settings: renderSettings}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
 }
+
+/* ---------- overview: the whole shop at a glance ---------- */
+let ovStk = 'all', ovQ = '';
+const stkTimers = {};
+function renderOverview() {
+  const live = products.filter(p => p.active);
+  const lux = live.filter(p => RC.isLuxury(p)), reg = live.filter(p => !RC.isLuxury(p));
+  const cnt = (l, c) => l.filter(p => p.category === c).length;
+  const offers = live.filter(p => RC.onOffer(p) || discountPct(p) > 0), disc = live.filter(p => discountPct(p) > 0).length;
+  const low = products.filter(p => p.active && p.stock != null && p.stock <= 3).sort((a, b) => a.stock - b.stock);
+  // net profit since day one (same math as «الحسابات» › الكل)
+  const sold = orders.filter(o => COUNTED.includes(o.status)), missing = sold.filter(o => !fins[o.id]).length;
+  const net = orders.reduce((s, o) => s + orderNet(o), 0) + offs.reduce((s, x) => s + offNet(x), 0) - expenses.reduce((s, x) => s + +x.amount, 0);
+  const placed = orders.filter(o => o.status !== 'cancelled'), newN = orders.filter(o => o.status === 'new').length;
+  const delivered = orders.filter(o => o.status === 'delivered').length;
+  const recent = orders.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 7);
+  const uni = cnt(live, 'unisex');
+  const cell = (n, t, l) => `<button type="button" class="ov-c" data-tab="${t}"><b class="en">${n}</b><span>${l}</span></button>`;
+  const IC = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>نظرة عامة</h1><div class="sub">المتجر كله في صفحة واحدة</div></div></div>
+    <div class="ov-kpis">
+      <button type="button" class="ov-k net ${net < 0 ? 'neg' : ''}" data-tab="accounts"><i>${IC('<path d="M3 17l6-6 4 4 8-8M14 7h7v7"/>')}</i><span>صافي الربح</span><b>${signMoney(net)}</b><small>${missing ? `<em>${missing} طلب من غير تكاليف</em>` : 'من الأول · بعد المصاريف'}</small></button>
+      <button type="button" class="ov-k" data-tab="orders"><i>${ICONS.orders}</i><span>الطلبات</span><b>${placed.length}</b><small>${newN ? `<em>${newN} جديد</em> · ` : ''}${delivered} اتسلم</small></button>
+      <button type="button" class="ov-k" data-tab="products"><i>${ICONS.products}</i><span>منتجات معروضة</span><b>${live.length}</b><small>${reg.length} عادي · ${lux.length} Luxury</small></button>
+      <button type="button" class="ov-k" data-tab="products"><i>${IC('<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>')}</i><span>العروض</span><b>${offers.length}</b><small>${disc} عليهم خصم</small></button>
+      <button type="button" class="ov-k ${low.length ? 'warn' : ''}" id="ovLowK"><i>${IC('<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>')}</i><span>مخزون قليل</span><b>${low.length}</b><small>${low.filter(p => p.stock === 0).length} خلص خالص</small></button>
+    </div>
+    <div class="row2">
+      <div class="panel"><h2>آخر الطلبات <button type="button" class="ov-more" data-tab="orders">كل الطلبات</button></h2>
+        ${recent.length ? `<div class="ov-ord">${recent.map(o => { const n = (o.shop_order_items || []).reduce((a, i) => a + i.qty, 0); return `<button type="button" class="ov-o" data-ovo="${o.id}"><span class="ov-o1"><b>${esc(o.customer_name)}</b><small><span class="en">${esc(o.code)}</span> · ${fmtDate(o.created_at)} · ${n} قطعة</small></span><span class="ov-o2"><b class="en">${money(o.total)}</b><span class="badge st-${o.status}">${statuses[o.status] || o.status}</span></span></button>`; }).join('')}</div>` : '<div class="empty">لسه مفيش طلبات.</div>'}</div>
+      <div class="panel"><h2>المعروض في المتجر <small>${live.length} منتج</small></h2>
+        <div class="ov-grid">
+          <div class="ov-gh"><span>المتجر العادي</span><b class="en">${reg.length}</b></div>
+          <div class="ov-row">${cell(cnt(reg, 'men'), 'men', 'رجالي')}${cell(cnt(reg, 'women'), 'women', 'حريمي')}${uni ? cell(cnt(reg, 'unisex'), 'products', 'للجنسين') : ''}</div>
+          <div class="ov-gh lx"><span class="en">Luxury</span><b class="en">${lux.length}</b></div>
+          <div class="ov-row">${cell(cnt(lux, 'men'), 'lux-men', 'رجالي')}${cell(cnt(lux, 'women'), 'lux-women', 'حريمي')}${uni ? cell(cnt(lux, 'unisex'), 'lux', 'للجنسين') : ''}</div>
+          <div class="ov-gh"><span>العروض</span><b class="en">${offers.length}</b></div>
+          ${offers.length ? `<div class="ov-offs">${offers.slice(0, 6).map(p => `<button type="button" class="ov-off" data-edit="${p.id}"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><span>${esc(p.name)}</span>${discountPct(p) ? `<b class="en">-${discountPct(p)}%</b>` : ''}</button>`).join('')}${offers.length > 6 ? `<small>+ ${offers.length - 6} كمان</small>` : ''}</div>` : '<small class="ov-none">مفيش عروض دلوقتي.</small>'}
+        </div></div>
+    </div>
+    <div class="row2">
+      <div class="panel" id="ovStock"><h2>المخزون <small>زوّد أو قلّل براحتك · فاضي = مفتوح</small></h2>
+        <div class="ov-tools"><div class="seg" id="ovStkSeg">${[['all','الكل'],['reg','العادي'],['lux','Luxury'],['low','قليل']].map(([v, l]) => `<button data-ovs="${v}" class="${v === ovStk ? 'on' : ''} ${v === 'lux' ? 'en' : ''}">${l}</button>`).join('')}</div>
+          <input class="input" id="ovQ" type="search" placeholder="دوّر على منتج…" value="${esc(ovQ)}"></div>
+        <div class="ov-stk" id="ovStkList"></div></div>
+      <div class="panel" id="ovLow"><h2>Low Stock <small>3 قطع أو أقل</small></h2>
+        ${low.length ? `<div class="ov-low">${low.map(p => `<button type="button" class="ov-l" data-ovfind="${p.id}"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><span>${esc(p.name)}<small>${RC.isLuxury(p) ? 'Luxury · ' : ''}${esc(categories[p.category] || p.category)}</small></span><b class="${p.stock ? '' : 'out'}">${p.stock ? 'فاضل ' + p.stock : 'خلص'}</b></button>`).join('')}</div>` : '<div class="empty" style="padding:24px 10px">كل المنتجات متوفرة.</div>'}</div>
+    </div>`;
+  ovStockList();
+  $('#ovStkSeg').onclick = e => { const b = e.target.closest('[data-ovs]'); if (b) { ovStk = b.dataset.ovs; $('#ovStkSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); ovStockList(); } };
+  $('#ovQ').oninput = e => { ovQ = e.target.value; ovStockList(); };
+  $('#ovLowK').onclick = () => $('#ovLow').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  $('#main').querySelectorAll('[data-ovo]').forEach(b => b.onclick = () => { const o = orders.find(x => x.id === +b.dataset.ovo); if (!o) return; orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(isLuxOrder(o) ? 'lux-orders' : 'orders'); });
+  $('#main').querySelectorAll('[data-ovfind]').forEach(b => b.onclick = () => { ovStk = 'all'; ovQ = (products.find(x => x.id === +b.dataset.ovfind) || {}).name || ''; $('#ovQ').value = ovQ; $('#ovStkSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.ovs === 'all')); ovStockList(); $('#ovStock').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+}
+function ovStockList() {
+  const box = $('#ovStkList'); if (!box) return;
+  const q = ovQ.trim().toLowerCase();
+  const l = products.filter(p => (ovStk === 'all' || (ovStk === 'low' ? p.stock != null && p.stock <= 3 : RC.isLuxury(p) === (ovStk === 'lux'))) && (!q || (p.name || '').toLowerCase().includes(q)));
+  box.innerHTML = l.length ? l.map(p => `<div class="ov-s ${p.active ? '' : 'off'}" data-ovp="${p.id}"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'">
+      <span class="ov-sn"><b>${esc(p.name)}</b><small>${RC.isLuxury(p) ? 'Luxury · ' : ''}${esc(categories[p.category] || p.category)}${p.active ? '' : ' · مخفي'}</small></span>
+      <span class="ov-step"><button type="button" data-sd="-1" aria-label="قلّل">−</button><input class="en" inputmode="numeric" value="${p.stock == null ? '' : p.stock}" placeholder="∞" aria-label="الكمية"><button type="button" data-sd="1" aria-label="زوّد">+</button></span>
+      <i class="ov-dot ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= 3 ? 'low' : 'in'}"></i></div>`).join('') : '<div class="empty" style="padding:24px 10px">مفيش منتجات.</div>';
+}
+// stock edits save themselves a moment after the last tap (several taps = one save)
+function ovSetStock(row, v) {
+  const p = products.find(x => x.id === +row.dataset.ovp); if (!p) return;
+  const next = v === '' || v == null ? null : Math.max(0, Math.min(99999, Math.round(+v) || 0));
+  row.querySelector('input').value = next == null ? '' : next;
+  row.querySelector('.ov-dot').className = 'ov-dot ' + (next === 0 ? 'out' : next != null && next <= 3 ? 'low' : 'in');
+  row.classList.add('saving'); clearTimeout(stkTimers[p.id]);
+  stkTimers[p.id] = setTimeout(async () => {
+    if (next === p.stock) { row.classList.remove('saving'); return; }
+    const { error } = await sb.from('shop_products').update({ stock: next }).eq('id', p.id);
+    row.classList.remove('saving');
+    if (error) { row.querySelector('input').value = p.stock == null ? '' : p.stock; return toast(error.message, 'err'); }
+    p.stock = next; row.classList.add('saved'); setTimeout(() => row.classList.remove('saved'), 900);
+    toast(`${p.name}: ${next == null ? 'كمية مفتوحة' : next === 0 ? 'Out of Stock' : 'المخزون ' + next}`, 'ok');
+  }, 700);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.ov-step [data-sd]'); if (!b) return;
+  const row = b.closest('[data-ovp]'), cur = row.querySelector('input').value;
+  ovSetStock(row, cur === '' ? (+b.dataset.sd > 0 ? 1 : '') : Math.max(0, +cur + +b.dataset.sd));
+});
+document.addEventListener('change', e => { const i = e.target.closest('.ov-step input'); if (i) ovSetStock(i.closest('[data-ovp]'), i.value.replace(/[^\d٠-٩]/g, '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))); });
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest('.ov-step input')) e.target.blur(); });
 
 /* ---------- dashboard ---------- */
 function renderDash() {
