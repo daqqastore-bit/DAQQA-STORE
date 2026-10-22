@@ -1035,4 +1035,30 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) wake(); });
     addEventListener('pageshow', e => { if (e.persisted) wake(); }); addEventListener('online', wake);
   }
+
+  /* ---------- desktop wheel: calmer, eased scrolling ----------
+     a mouse wheel notch jumps ~100px at once; here it glides a shorter distance. Anything that scrolls on its own
+     (cart, sheets, pop-ups, lists, zoom viewer) and pinch-zoom keep the browser's own behaviour. */
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let target = 0, cur = 0, raf = 0;
+    // 'scroll' = inside something that scrolls by itself, 'fixed' = inside a pop-up/overlay, '' = the page
+    const own = el => { let fx = ''; for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) {
+      const cs = getComputedStyle(el); if (/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 1) return 'scroll'; if (cs.position === 'fixed') fx = 'fixed'; } return fx; };
+    const step = () => { cur += (target - cur) * .14;
+      if (Math.abs(target - cur) < .6) { cur = target; raf = 0; } else raf = requestAnimationFrame(step);
+      const y = scrollY; scrollTo({ top: cur, behavior: 'instant' });
+      if (raf && scrollY === y && Math.abs(scrollY - cur) > 2) { cancelAnimationFrame(raf); raf = 0; target = cur = scrollY; } };   // hit the top/bottom
+    addEventListener('wheel', e => {
+      if (e.ctrlKey || e.defaultPrevented || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const o = own(e.target); if (o === 'scroll') return;
+      if (document.body.style.overflow === 'hidden' || (o && e.target.closest('.oc-m, [aria-modal="true"]'))) return e.preventDefault();   // cart / sheet / pop-up open: the page behind stays put
+      e.preventDefault();
+      const dy = e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? innerHeight : 1);
+      if (!raf) target = cur = scrollY;
+      target = Math.max(0, Math.min(document.documentElement.scrollHeight - innerHeight, target + dy * .7));
+      if (!raf) raf = requestAnimationFrame(step);
+    }, { passive: false });
+    // a jump by other means (keys, scrollbar, links) mid-glide cancels it
+    ['keydown', 'mousedown'].forEach(t => addEventListener(t, () => { if (raf) { cancelAnimationFrame(raf); raf = 0; } }, { passive: true }));
+  }
 })();
