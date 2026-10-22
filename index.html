@@ -6,7 +6,7 @@
 <script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>DAQQA STORE - دقّة ستور | ساعات رجالي وحريمي أونلاين في مصر</title>
-<meta name="description" content="DAQQA STORE (دقّة ستور) — ساعات رجالي وحريمي أونلاين في مصر، ونضارات شمس واكسسوارات رجالي وحريمي: خواتم وحظاظات وبريسليت. أسعار واضحة وخصومات حقيقية، الدفع عند الاستلام وشحن لكل مصر.">
+<meta name="description" content="DAQQA STORE (دقّة ستور) — ساعات رجالي وحريمي أونلاين في مصر، ونضارات شمس واكسسوارات رجالي وحريمي: خواتم وحظاظات وبريسليت. أسعار واضحة وخصومات حقيقية، الدفع عند الاستلام وشحن سريع.">
 <meta name="keywords" content="DAQQA, DAQQA STORE, daqqastore, daqqa store, دقة, دقة ستور, دقه ستور, ساعات, ساعات رجالي, ساعات حريمي, ساعات اونلاين, ساعات في مصر, شراء ساعة, ساعة يد رجالي, ساعة يد حريمي, ساعات كلاسيك, ساعات سبور, ساعات هدايا, ساعة هدية, ساعات الدفع عند الاستلام, DAQQA Accessories, DAQQA Watches, ساعة كرونوغراف, نضارات, نضارات شمس, نضارات رجالي, نضارات حريمي, نضارة بولارايزد, اكسسوارات رجالي, خواتم رجالي, حظاظات, اساور رجالي, بريسليت جلد, هدايا رجالي, الدفع عند الاستلام, watches Egypt, sunglasses Egypt, men accessories Egypt">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#20160E">
@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="DAQQA STORE - دقّة ستور">
 <meta property="og:locale" content="ar_EG">
 <meta property="og:title" content="DAQQA STORE - دقّة ستور">
-<meta property="og:description" content="أسعار واضحة وخصومات حقيقية. الدفع عند الاستلام وشحن لكل مصر.">
+<meta property="og:description" content="أسعار واضحة وخصومات حقيقية. الدفع عند الاستلام وشحن سريع.">
 <meta property="og:url" content="https://daqqastore-bit.github.io/DAQQA-STORE/">
 <meta property="og:image" content="https://daqqastore-bit.github.io/DAQQA-STORE/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022175738">
-<link rel="stylesheet" href="assets/store.css?v=20261022175738">
+<link rel="stylesheet" href="assets/base.css?v=20261022181229">
+<link rel="stylesheet" href="assets/store.css?v=20261022181229">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -187,7 +187,7 @@
 .band .lbl{font:500 14px var(--f-display);letter-spacing:.3em;color:var(--accent)}
 .band h2{font:400 clamp(36px,4.6vw,60px)/1.05 var(--f-display);color:var(--ink);margin-top:12px}
 .band .ar{font:700 22px 'Amiri',var(--f-ar);color:var(--muted);margin-top:8px}
-.feats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:40px;border-top:1px solid rgb(var(--accent-rgb)/.22)}
+.feats{display:grid;grid-template-columns:repeat(var(--n,4),1fr);margin-top:40px;border-top:1px solid rgb(var(--accent-rgb)/.22)}
 .feats div{display:flex;flex-direction:column;align-items:center;gap:12px;padding:26px 10px 34px;text-align:center;font-size:13px;color:var(--muted);border-inline-start:1px solid rgb(var(--accent-rgb)/.22)}
 .feats div:first-child{border-inline-start:0}
 .feats svg{width:34px;height:34px;color:var(--ink)}
@@ -287,14 +287,15 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="hdr"></div>
 <section class="landing" id="landing" aria-label="DAQQA"><div class="ld-stick"><div class="ld-bg"></div><div class="ld-grid"></div>
   <span class="ld-side l en ld-fade">PRECISION IN EVERY TICK</span><span class="ld-side r en ld-fade">EST. 2026 · CAIRO</span>
-  <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><h1 class="ld-word en" id="ldWord" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></h1><div class="ld-sep ld-fade"><span aria-hidden="true"></span><button type="button" class="ld-rail" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b class="rl-brand" lang="ar">دقّة</b><span class="rl-sc">اسكرول لتحت</span><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17"/><path d="m5 13 7 7 7-7"/></svg></span></button><span aria-hidden="true"></span></div><div class="ld-ar ld-fade" lang="ar">دقّة تصنع الفرق</div><div class="ld-beats ld-fade"><nav aria-label="الأقسام"><a href="#watches" data-kind="watches">ساعات</a><a href="#glasses" data-kind="glasses">نضارات</a><a href="#accessories" data-kind="accessories">اكسسوارات</a></nav></div></div>
+  <div class="ld-c"><div class="ld-slot"><div class="ld-dial" id="ldDial"></div></div><div class="ld-time en ld-fade" aria-live="off"><span id="ldClock">--:--:--</span><b id="ldAP">PM</b><i>CAIRO</i></div><div class="ld-word en" id="ldWord" role="img" aria-label="DAQQA"><span>D</span><span>A</span><span>Q</span><span>Q</span><span>A</span></div><div class="ld-sep ld-fade"><span aria-hidden="true"></span><button type="button" class="ld-rail" id="ldRail" aria-label="انزل لتحت"><span class="mouse"><i></i></span><b class="rl-brand" lang="ar">دقّة</b><span class="rl-sc">اسكرول لتحت</span><span class="tr" aria-hidden="true"><i></i><i></i></span><small class="en">SCROLL</small><span class="arw" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17"/><path d="m5 13 7 7 7-7"/></svg></span></button><span aria-hidden="true"></span></div><div class="ld-ar ld-fade" lang="ar">دقّة تصنع الفرق</div><div class="ld-beats ld-fade"><nav aria-label="الأقسام"><a href="#watches" data-kind="watches">ساعات</a><a href="#glasses" data-kind="glasses">نضارات</a><a href="#accessories" data-kind="accessories">اكسسوارات</a></nav></div></div>
   </div><div class="ld-ring" id="ldRing"></div></section>
+<h1 class="sr-h1">DAQQA STORE — دقّة ستور | ساعات رجالي وحريمي أونلاين في مصر</h1>
 <main id="sections"><div class="none"><div class="m skeleton" style="border-radius:50%"></div>جاري التحميل…</div></main>
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022175738"></script>
-<script src="assets/app.js?v=20261022175738"></script>
+<script src="assets/config.js?v=20261022181229"></script>
+<script src="assets/app.js?v=20261022181229"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -476,7 +477,7 @@ function build() {
   const live = DQ.liveKinds();
   if (!live.length) { $('#sections').innerHTML = `<div class="none"><div class="m">${RC.logo()}</div>${DQ.loadError ? 'حصلت مشكلة في التحميل. جرّب تعمل ريفريش.' : 'المنتجات جاية قريب.'}</div>`; return; }
   $('#sections').innerHTML = live.map((k, i) => {
-    const K = RC.kinds[k], all = DQ.products.filter(p => RC.kindOf(p) === k && !RC.isLuxury(p)), img = pick(k, all);
+    const K = RC.kinds[k], B = RC.band(k, DQ.settings), all = DQ.products.filter(p => RC.kindOf(p) === k && !RC.isLuxury(p)), img = pick(k, all);
     const rank = s => { const i = K.styles.indexOf(s); return i < 0 ? 99 : i; };
     const styles = [...new Set(all.map(p => p.style).filter(Boolean))].sort((a, b) => rank(a) - rank(b));
     const sale = all.some(RC.onOffer);
@@ -500,8 +501,8 @@ function build() {
         <div class="grid clip"></div>
       </div></div>
       <div data-glow class="band op op-drop ${img.life ? 'has-photo op-zoom' : 'plain'}" ${img.life ? 'data-parallax' : ''}>${img.life ? `<div class="bg" style="--img:url('${esc(img.life)}')"></div>` : `<div class="wm" aria-hidden="true">${RC.logo()}</div>`}
-        <div class="wrap"><div class="op op-stagger"><div class="lbl en">DAQQA</div><h2 class="en" dir="ltr" style="text-align:right">${K.band.en}</h2><div class="ar">${K.band.ar}</div></div>
-          <div class="feats op op-stagger">${K.band.feats.map(([ic, t]) => `<div>${DQ.ICON[ic]}<span>${t}</span></div>`).join('')}</div></div></div>
+        <div class="wrap"><div class="op op-stagger"><div class="lbl en">DAQQA</div><h2 class="en" dir="ltr" style="text-align:right">${B.en}</h2><div class="ar">${B.ar}</div></div>
+          <div class="feats op op-stagger" style="--n:${B.feats.length}">${B.feats.map(([ic, t]) => `<div>${RC.featIcon(ic)}<span>${t}</span></div>`).join('')}</div></div></div>
       ${storyHTML(k)}
     </section>`;
   }).join('') + MOTTO();

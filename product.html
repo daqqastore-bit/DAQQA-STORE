@@ -6,7 +6,7 @@
 <script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>DAQQA STORE - دقّة ستور</title>
-<meta name="description" content="منتج من DAQQA — الدفع عند الاستلام وشحن لكل مصر.">
+<meta name="description" content="منتج من DAQQA — الدفع عند الاستلام وشحن سريع.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#20160E">
 <link rel="canonical" id="canon" href="https://daqqastore-bit.github.io/DAQQA-STORE/product.html">
@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022175738">
-<link rel="stylesheet" href="assets/store.css?v=20261022175738">
+<link rel="stylesheet" href="assets/base.css?v=20261022181229">
+<link rel="stylesheet" href="assets/store.css?v=20261022181229">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -187,8 +187,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261022175738"></script>
-<script src="assets/app.js?v=20261022175738"></script>
+<script src="assets/config.js?v=20261022181229"></script>
+<script src="assets/app.js?v=20261022181229"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -261,7 +261,7 @@ function render() {
   document.title = `${p.name} | DAQQA STORE - دقّة ستور`;
   const LUX = RC.isLuxury(p);
   if (LUX) document.documentElement.classList.add('lux-mode');
-  const desc = `${p.name} من DAQQA بـ ${money(finalPrice(p))}${off ? ` بدل ${money(p.price)} (خصم ${off}%)` : ''}. ${body ? body.slice(0, 110) + ' — ' : ''}الدفع عند الاستلام وشحن لكل مصر.`;
+  const desc = `${p.name} من DAQQA بـ ${money(finalPrice(p))}${off ? ` بدل ${money(p.price)} (خصم ${off}%)` : ''}. ${body ? body.slice(0, 110) + ' — ' : ''}الدفع عند الاستلام وشحن سريع.`;
   document.querySelector('meta[name=description]').content = desc;
   $('#canon').href = url; $('#ogTitle').content = `${p.name} | DAQQA`; $('#ogDesc').content = desc;
   if (p.images && p.images[0]) $('#ogImg').content = p.images[0].startsWith('http') ? p.images[0] : new URL(p.images[0], location.href).href;
@@ -305,7 +305,7 @@ function render() {
         ${optsBox}
         ${p.stock > 0 ? `<div class="buy" id="buy">
           <div class="qty"><button id="qm" aria-label="تقليل">−</button><span id="qv">1</span><button id="qp" aria-label="زيادة">+</button></div>
-          <button class="btn btn-primary" id="addBtn">أضف للـ Shopping Cart</button>
+          <button class="btn btn-primary" id="addBtn">أضف للسلة</button>
           <button class="btn btn-amber full" id="buyBtn">اطلب دلوقتي · الدفع عند الاستلام</button>
         </div>` : `<a class="btn btn-ghost" href="./#${kind}">شوف ${K.ar} تانية</a>`}
         <div class="side-acts">
@@ -349,7 +349,7 @@ function render() {
         ${p.stock > 0 ? `<div class="lxp-buy" id="buy">
           <div class="lxp-qty"><button id="qm" aria-label="تقليل">−</button><span id="qv" class="en">1</span><button id="qp" aria-label="زيادة">+</button></div>
           <button class="lxb solid" id="buyBtn">اطلب دلوقتي</button>
-          <button class="lxb line" id="addBtn">أضف للـ Shopping Cart ${DQ.ICON.bag}</button>
+          <button class="lxb line" id="addBtn">أضف للسلة ${DQ.ICON.bag}</button>
           <button class="lxb line ico fav-btn ${DQ.favs.has(p.id) ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${DQ.favs.has(p.id)}" aria-label="المفضلة">${DQ.ICON.heart}</button>
         </div>` : `<a class="lxb line" href="luxury.html">شوف باقي المجموعة</a>`}
         <div class="lxp-links">${DQ.wa() ? `<a target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${waMsg}">${ICONS.wa} خدمة خاصة على واتساب</a>` : ''}<button id="shareBtn">${ICONS.share} شارك</button></div>

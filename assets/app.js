@@ -15,18 +15,18 @@
     plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
     heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
     arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
-    gem: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 6h14l5 7-12 14L4 13z"/><path d="M4 13h24M12 6l-3 7 7 14 7-14-3-7"/></svg>',
-    gear: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="16" cy="16" r="4.5"/><path d="M16 4v4M16 24v4M4 16h4M24 16h4M7.5 7.5l2.8 2.8M21.7 21.7l2.8 2.8M7.5 24.5l2.8-2.8M21.7 10.3l2.8-2.8"/></svg>',
-    shield: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M16 4l10 4v8c0 6-4.5 10-10 12-5.5-2-10-6-10-12V8z"/><path d="M11.5 16l3 3 6-6"/></svg>',
-    truck: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h16v12H3zM19 13h6l4 5v3H19"/><circle cx="9" cy="23" r="2.5"/><circle cx="23" cy="23" r="2.5"/></svg>',
-    sun: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="5.5"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M6.8 25.2l2.8-2.8M22.4 9.6l2.8-2.8"/></svg>',
-    leaf: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M26 5C12 5 6 12 6 20c0 3 1 5 2 7 9 0 18-6 18-22z"/><path d="M8 27c4-8 9-12 13-15"/></svg>',
-    eye: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 16s5-8 13-8 13 8 13 8-5 8-13 8S3 16 3 16z"/><circle cx="16" cy="16" r="4"/></svg>',
-    link: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M13 19l6-6M11 15l-3 3a4.2 4.2 0 0 0 6 6l3-3M21 17l3-3a4.2 4.2 0 0 0-6-6l-3 3"/></svg>',
-    gift: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M5 12h22v5H5zM7 17h18v11H7zM16 12v16"/><path d="M16 12c-2-5-8-6-8-2 0 2 4 2 8 2zM16 12c2-5 8-6 8-2 0 2-4 2-8 2z"/></svg>',
+    gem: RC.FEAT_IC.gem,
+    gear: RC.FEAT_IC.gear,
+    shield: RC.FEAT_IC.shield,
+    truck: RC.FEAT_IC.truck,
+    uv: RC.FEAT_IC.uv,
+    leaf: RC.FEAT_IC.leaf,
+    eye: RC.FEAT_IC.eye,
+    link: RC.FEAT_IC.link,
+    gift: RC.FEAT_IC.gift,
     sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>',
     moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.5 13.6A8.5 8.5 0 1 1 10.4 3.5a6.7 6.7 0 0 0 10.1 10.1z"/></svg>',
-    star: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M16 4l3.6 7.6 8.4 1-6.2 5.8 1.6 8.3L16 22.6l-7.4 4.1 1.6-8.3L4 12.6l8.4-1z"/></svg>'
+    star: RC.FEAT_IC.star,
   };
   const GOV = ['القاهرة','الجيزة','القليوبية','الإسكندرية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
 
@@ -96,12 +96,13 @@
       <button type="button" class="qv-eye" data-qv="${p.id}" aria-label="عرض سريع لـ ${esc(p.name)}" title="عرض سريع">${QV_EYE}</button></div>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="${RC.variants(p).length ? 'اختار مواصفات' : 'أضف'} ${esc(p.name)}${RC.variants(p).length ? '' : ' للـ Shopping Cart'}">${ICON.plus}</button>` : ''}</div>
+        <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="${RC.variants(p).length ? 'اختار مواصفات' : 'أضف'} ${esc(p.name)}${RC.variants(p).length ? '' : ' للسلة'}">${ICON.plus}</button>` : ''}</div>
         ${RC.dotsHTML(p)}
       </div></article>`;
   };
   // the order WhatsApp: the number in store settings, else the WhatsApp account added under Social
-  DQ.wa = () => { const d = RC.digits(DQ.settings.whatsapp); if (d) return d; const w = RC.socials(DQ.settings).find(s => s.type === 'whatsapp'); return w ? RC.digits(w.value).replace(/^0/, '20') : ''; };
+  DQ.wa = () => { const d = RC.digits(DQ.settings.whatsapp); if (d) return d.replace(/^0(?=1\d{9}$)/, '20');   // 01xxxxxxxxx typed without the country code still opens the chat
+    const w = RC.socials(DQ.settings).find(s => s.type === 'whatsapp'); return w ? RC.digits(w.value).replace(/^0/, '20') : ''; };
 
   /* ---------- hover: a product with several photos flips through them ---------- */
   function imageFlip() {
@@ -177,7 +178,7 @@
       <div class="overlay" id="overlay"></div>
       <aside class="drawer" id="drawer" aria-label="Shopping Cart"><div class="dr-head"><h3 id="drTitle">Shopping Cart</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
       <section class="co-page" id="coPage" role="dialog" aria-modal="true" aria-label="إتمام الطلب" hidden><div class="co-veil"></div>
-        <div class="co-shell"><header class="co-top"><button type="button" class="co-back" id="coBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span>رجوع للـ Shopping Cart</span></button>
+        <div class="co-shell"><header class="co-top"><button type="button" class="co-back" id="coBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg><span>رجوع للسلة</span></button>
           <a href="./" class="co-brand" aria-label="DAQQA"><span class="m">${RC.logo()}</span><b class="en">DAQQA</b></a>
           <button type="button" class="icon-btn" id="coClose" aria-label="إغلاق">${ICON.close}</button></header>
           <div class="co-main" id="coMain"></div></div></section>
@@ -345,11 +346,13 @@
       // the top bar keeps it short: WhatsApp, call and Instagram only (the first of each)
       const quick = ['whatsapp', 'phone', 'instagram'].map(k => list.find(x => x.type === k)).filter(Boolean);
       top.hidden = !quick.length && !ann;
+      top.classList.toggle('no-ann', !ann);   // phones: the icons are in the menu already, so the bar only shows for an announcement
       top.innerHTML = `<div class="wrap tb-in"><span class="tb-ann">${esc(ann)}</span>${quick.length ? `<span class="tb-soc">${quick.map(x => socLink(x, 'tb-ic')).join('')}</span>` : ''}</div>`; }
     const ft = $('#ftContact'); if (ft) { ft.hidden = !list.length; $('#ftSoc').innerHTML = list.map(x => `<li>${socLink(x, 'ft-ic')}</li>`).join(''); }
     const pk = RC.perks(DQ.settings), ab = $('#ftAbout'), hb = $('#ftHelpBox');
     if (ab) { ab.hidden = !pk.about.trim(); ab.textContent = pk.about; }
-    if (hb) { hb.hidden = !pk.help.length; $('#ftHelp').innerHTML = pk.help.map(x => `<li>${esc(x)}</li>`).join(''); }
+    if (hb) { hb.hidden = !pk.help.length; const at = x => /دفع|كاش/.test(x) ? 'payment' : /شحن|توصيل/.test(x) ? 'shipping' : /استبدال|استرجاع|ضمان/.test(x) ? 'exchange' : /إلغاء|الغاء/.test(x) ? 'cancel' : '';
+      $('#ftHelp').innerHTML = pk.help.map(x => `<li><a href="policy.html${at(x) ? '#' + at(x) : ''}">${esc(x)}</a></li>`).join('') + '<li><a href="policy.html#privacy">الخصوصية</a></li>'; }
     const all = $('#ftAll'); if (all) { all.hidden = !list.length; const seen = new Set(); $('#ftAllIc').innerHTML = list.filter(x => !seen.has(x.type) && seen.add(x.type)).slice(0, 6).map(x => RC.SOCIAL[x.type].icon).join(''); }
   }
 
@@ -370,7 +373,7 @@
     if (line) line.qty = next; else DQ.cart.push(opt ? { id, qty: next, opt } : { id, qty: next });
     saveCart(); renderCart();
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
-    if (!silent) DQ.toast('اتضافت للـ Shopping Cart ✓', 'ok');
+    if (!silent) DQ.toast('اتضافت للسلة ✓', 'ok');
   };
   // an option card on the store: its photo (several linked photos show as small thumbs under it), colour dot, name and short description
   DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span></button>`;
@@ -496,7 +499,7 @@
     const t = totals();
     if (!t.ls.length) {
       $('#drTitle').textContent = 'Shopping Cart';
-      $('#drBody').innerHTML = `<div class="empty" style="padding:80px 10px"><div style="width:72px;height:74px;margin:0 auto 16px;opacity:.5">${RC.logo()}</div>الـ Shopping Cart فاضية.</div>`;
+      $('#drBody').innerHTML = `<div class="empty" style="padding:80px 10px"><div style="width:72px;height:74px;margin:0 auto 16px;opacity:.5">${RC.logo()}</div>السلة فاضية.</div>`;
       $('#drFoot').innerHTML = `<a class="btn btn-primary" href="./" data-close>تسوّق دلوقتي</a>`; return;
     }
     const sum = sumsHTML(t);
@@ -505,7 +508,7 @@
       // Luxury pieces get their own glowing Privé block with their value, regular items follow
       const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"></a>
         <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${optsHTML(l)}${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.i}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.i}" data-d="1" aria-label="زيادة">+</button></div></div>
-        <button class="rm" data-rm="${l.i}" aria-label="حذف ${esc(l.p.name)} من الـ Shopping Cart" title="حذف من الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
+        <button class="rm" data-rm="${l.i}" aria-label="حذف ${esc(l.p.name)} من السلة" title="حذف من السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
       const lxs = t.ls.filter(l => RC.isLuxury(l.p)), regs = t.ls.filter(l => !RC.isLuxury(l.p));
       const lxVal = lxs.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0), lxN = lxs.reduce((s, l) => s + l.qty, 0);
       $('#drBody').innerHTML = (lxs.length ? `<section class="cart-lx"><div class="cl-in">
@@ -555,11 +558,11 @@
             <div class="field"><label for="f-notes">ملاحظات</label><textarea id="f-notes" class="input" name="notes" rows="2" dir="auto" placeholder="اختياري">${esc(saved.notes || '')}</textarea></div></form>
           </div>
           <aside class="co-side"><div class="co-card">
-            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit" aria-label="تعديل الـ Shopping Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>تعديل</button></div>
+            <div class="co-card-h"><h2>طلبك</h2><button type="button" class="co-edit" id="coEdit" aria-label="تعديل السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/></svg>تعديل</button></div>
             <div class="co-items">${items}</div>
             <div class="co-sums" id="coSums">${sumsHTML(t)}</div>
             <button class="btn ${viaWA() ? 'wa-btn' : 'btn-amber'} co-place" id="place">${placeLbl(t.total)}</button>
-            <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن لكل مصر</span><span>استبدال خلال 14 يوم</span></p>
+            <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن سريع</span><span>استبدال خلال 14 يوم</span></p>
           </div></aside>
         </div>`;
       // phone counter: red until the number has all its digits (11, or 12 when it starts with 20), then green

@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022175738">
+<link rel="stylesheet" href="assets/base.css?v=20261022181229">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -381,7 +381,7 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .pk-row{display:flex;align-items:flex-end;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);flex-wrap:wrap}
 .pk-ics{display:flex;flex-wrap:wrap;gap:4px;max-width:190px;align-self:center}
 .pk-ics button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center}
-.pk-ics button svg{width:18px;height:18px}.pk-ics button.on{border-color:var(--amber);background:var(--amber);color:#fff}
+.pk-ics button svg{width:18px;height:18px}.bd-ics{max-width:260px}#bdK{margin:4px 0 14px}.pk-ics button.on{border-color:var(--amber);background:var(--amber);color:#fff}
 .pk-tx{flex:1;min-width:240px}
 .pk-hrow{display:flex;align-items:center;gap:10px;padding:6px 0}.pk-hrow .input{flex:1}.pk-hrow .soc-del{width:40px;height:40px}
 .soc-del{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center;margin-bottom:2px}
@@ -709,7 +709,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022175738"></script>
+<script src="assets/config.js?v=20261022181229"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1826,7 +1826,7 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; try { localStorage.setItem('dq-set-tab', setTab); } catch (er) {} renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
 const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
@@ -1895,7 +1895,7 @@ function renderPerks(s) {
   const cardRow = (c, i) => `<div class="pk-row" data-ci="${i}">
     <span class="soc-mv"><button type="button" data-cmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-cmv="${i}" data-to="${i + 1}" ${i < cards.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
     <div class="pk-ics">${Object.entries(RC.PERK_IC).map(([k, ic]) => `<button type="button" class="${c.icon === k ? 'on' : ''}" data-cic="${i}" data-k="${k}" aria-label="${k}">${ic}</button>`).join('')}</div>
-    <div class="two pk-tx"><div class="field"><label>العنوان</label><input class="input" data-ct="${i}" value="${esc(c.t || '')}" placeholder="مثلاً: شحن لكل مصر"></div>
+    <div class="two pk-tx"><div class="field"><label>العنوان</label><input class="input" data-ct="${i}" value="${esc(c.t || '')}" placeholder="مثلاً: شحن سريع"></div>
       <div class="field"><label>السطر الصغير</label><input class="input" data-cs="${i}" value="${esc(c.s || '')}" placeholder="مثلاً: خلال 2–5 أيام"></div></div>
     <button type="button" class="soc-del" data-cdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`;
   const helpRow = (h, i) => `<div class="pk-hrow"><span class="soc-mv"><button type="button" data-hmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-hmv="${i}" data-to="${i + 1}" ${i < help.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
@@ -1936,6 +1936,52 @@ function renderPerks(s) {
     const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
     settings.perks = perks; toast('اتحفظ ✓', 'ok'); renderPerks(settings); };
+}
+/* ---------- settings › السكاشن: the feature strip under each section (title + icons + words) ---------- */
+let bandK = 'watches';
+function renderBands(s) {
+  const B = JSON.parse(JSON.stringify((s.bands && typeof s.bands === 'object') ? s.bands : {}));
+  const IC = { ...RC.FEAT_IC, ...Object.fromEntries(Object.entries(RC.PERK_IC).filter(([k]) => !RC.FEAT_IC[k] && k !== 'ship')) }, MAXF = 4;
+  const plain = v => String(v || '').replace(/<br\s*\/?>/gi, '\n');
+  const cur = () => { const D = RC.kinds[bandK].band, o = B[bandK] || {};
+    return B[bandK] = { en: o.en != null ? o.en : plain(D.en), ar: o.ar != null ? o.ar : D.ar, feats: Array.isArray(o.feats) ? o.feats : D.feats.map(([i, t]) => ({ i, t })) }; };
+  const ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18M8 15v5M13 15v5"/></svg>';
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">الكلام والأيقونات اللي في آخر كل سكشن في الصفحة الرئيسية</div></div></div>
+    ${setTabs()}
+    <form class="panel set-card" id="bdForm" novalidate>
+      <div class="set-h"><span class="set-ic">${ic}</span><div><h2>شريط المميزات</h2><small>بيظهر تحت منتجات كل سكشن: عنوان بالإنجليزي وجملة بالعربي و${MAXF} مميزات بأيقونة.</small></div></div>
+      <div class="seg" id="bdK">${Object.entries(RC.kinds).map(([k, K]) => `<button type="button" data-bk="${k}" class="${k === bandK ? 'on' : ''}">${K.ar}</button>`).join('')}</div>
+      <div id="bdBody"></div>
+      <div class="set-acts"><button type="button" class="btn btn-ghost" id="bdReset">رجّع كلام السكشن ده الأصلي</button><button class="btn btn-primary" type="submit">حفظ</button></div>
+    </form>`;
+  bindSetTabs();
+  const draw = () => { const c = cur();
+    $('#bdBody').innerHTML = `<div class="two"><div class="field"><label>العنوان بالإنجليزي <small style="color:var(--muted)">(Enter = سطر جديد)</small></label><textarea class="input en" id="bdEn" rows="2" dir="ltr">${esc(c.en)}</textarea></div>
+      <div class="field"><label>الجملة بالعربي</label><input class="input" id="bdAr" value="${esc(c.ar)}" placeholder="مثلاً: معمولة لكل لحظة."></div></div>
+      <div class="bd-fs">${c.feats.map((f, i) => `<div class="pk-row">
+        <span class="soc-mv"><button type="button" data-fmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-fmv="${i}" data-to="${i + 1}" ${i < c.feats.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
+        <div class="pk-ics bd-ics">${Object.entries(IC).map(([k, svg]) => `<button type="button" class="${f.i === k ? 'on' : ''}" data-fic="${i}" data-k="${k}" aria-label="${k}">${svg}</button>`).join('')}</div>
+        <div class="field" style="flex:1;min-width:160px"><label>الكلام</label><input class="input" data-ft="${i}" value="${esc(f.t || '')}" placeholder="مثلاً: ضمان على الماكينة"></div>
+        <button type="button" class="soc-del" data-fdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('') || '<div class="empty" style="padding:14px">مفيش مميزات، الشريط هيظهر بالعنوان بس.</div>'}</div>
+      <div><button type="button" class="btn btn-ghost btn-sm" id="bdAdd" ${c.feats.length >= MAXF ? 'disabled' : ''}>+ ميزة</button></div>`; };
+  draw();
+  const f = $('#bdForm');
+  f.oninput = e => { const c = cur(), t = e.target;
+    if (t.id === 'bdEn') c.en = t.value; else if (t.id === 'bdAr') c.ar = t.value; else if (t.dataset.ft != null) c.feats[+t.dataset.ft].t = t.value; };
+  f.onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset, c = cur();
+    if (d.bk) { bandK = d.bk; document.querySelectorAll('#bdK button').forEach(x => x.classList.toggle('on', x === b)); draw(); }
+    else if (d.fic != null) { c.feats[+d.fic].i = d.k; draw(); }
+    else if (d.fmv != null) { const t = +d.to; if (t >= 0 && t < c.feats.length) { c.feats.splice(t, 0, c.feats.splice(+d.fmv, 1)[0]); draw(); } }
+    else if (d.fdel != null) { c.feats.splice(+d.fdel, 1); draw(); }
+    else if (b.id === 'bdAdd' && c.feats.length < MAXF) { c.feats.push({ i: 'star', t: '' }); draw(); $(`[data-ft="${c.feats.length - 1}"]`).focus(); }
+    else if (b.id === 'bdReset') { delete B[bandK]; draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
+  f.onsubmit = async e => { e.preventDefault();
+    const out = {}; Object.entries(B).forEach(([k, o]) => { if (!RC.kinds[k] || !o) return;
+      out[k] = { en: String(o.en || '').trim().slice(0, 80), ar: String(o.ar || '').trim().slice(0, 80), feats: (o.feats || []).map(x => ({ i: IC[x.i] ? x.i : 'star', t: String(x.t || '').trim().slice(0, 40) })).filter(x => x.t).slice(0, MAXF) }; });
+    const { error } = await sb.from('shop_settings').update({ bands: out, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/bands/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
+    settings.bands = out; toast('اتحفظ ✓', 'ok'); renderBands(settings); };
 }
 /* ---------- discount codes (settings › أكواد خصم) ---------- */
 let coupons = null;
@@ -1991,6 +2037,7 @@ function renderSettings() {
   const s = settings;
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
   if (setTab === 'coupons') return renderCoupons();
+  if (setTab === 'bands') return renderBands(s);
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   govDraft = AV();

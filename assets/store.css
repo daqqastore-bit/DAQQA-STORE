@@ -4,6 +4,7 @@ html,body{overflow-x:clip}
 #hdr{display:contents}
 .topbar{background:var(--nav);border-bottom:1px solid var(--line);font-size:12.5px}
 .topbar[hidden]{display:none}
+@media (max-width:900px){.topbar .tb-soc{display:none}.topbar.no-ann{display:none}}
 .tb-in{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:36px}
 .tb-ann{color:var(--accent);font-weight:600;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:calc(100% - 260px)}
 .tb-in{position:relative}
@@ -1027,3 +1028,6 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .oc-price .op-r{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:8px}.oc-price .op-r small{font-size:12.5px;color:var(--muted)}.oc-price .op-r b{font:700 16px var(--f-ui);color:var(--ink)}
 .oc-price .op-r s{font-size:13px;color:var(--muted);text-decoration-color:#B3261E}.oc-price .op-r em{font:800 12px var(--f-ui);font-style:normal;color:#fff;background:#B3261E;padding:2px 7px;border-radius:7px}
 .oc-price .op-r.tot{padding-top:6px;border-top:1px dashed var(--line)}.oc-price .op-r.tot b{font-size:17px;color:#2E7D4F}
+
+/* the page's main heading for search engines and screen readers, kept off screen */
+.sr-h1{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

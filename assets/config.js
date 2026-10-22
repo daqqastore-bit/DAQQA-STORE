@@ -19,11 +19,11 @@ RC.kinds = {
   watches: { ar: 'ساعات', en: 'Watches', one: 'ساعة', code: 'DQ',
     styles: ['Classic', 'Chronograph', 'Automatic', 'Sport', 'Limited Edition'],
     banner: { en: 'Time Completes<br>Your Story.', ar: 'ساعة بتكمّل حكايتك.', sub: 'ساعات مختارة بعناية لكل يوم ولكل مناسبة.', cta: 'تسوّق الساعات' },
-    band: { en: 'Crafted for<br>Every Moment.', ar: 'معمولة لكل لحظة.', feats: [['gem', 'خامات فاخرة'], ['gear', 'ماكينة مضبوطة'], ['shield', 'ضمان على الماكينة'], ['truck', 'شحن لكل مصر']] } },
+    band: { en: 'Crafted for<br>Every Moment.', ar: 'معمولة لكل لحظة.', feats: [['gem', 'خامات فاخرة'], ['gear', 'ماكينة مضبوطة'], ['shield', 'ضمان على الماكينة'], ['truck', 'شحن سريع']] } },
   glasses: { ar: 'نضارات', en: 'Sunglasses', one: 'نضارة', code: 'DA',
     styles: ['Classic', 'Aviator', 'Square', 'Round', 'Sport'],
     banner: { en: 'See The World<br>Different.', ar: 'شوف الدنيا بشكل مختلف.', sub: 'نضارات شمس لكل لحظة.', cta: 'تسوّق النضارات' },
-    band: { en: 'More Than<br>a View.', ar: 'أكتر من مجرد منظر.', feats: [['sun', 'حماية UV400'], ['leaf', 'خفيفة على الوش'], ['eye', 'عدسات بولارايزد'], ['gem', 'فريمات فاخرة']] } },
+    band: { en: 'More Than<br>a View.', ar: 'أكتر من مجرد منظر.', feats: [['uv', 'حماية UV400'], ['leaf', 'خفيفة على الوش'], ['eye', 'عدسات بولارايزد'], ['gem', 'فريمات فاخرة']] } },
   accessories: { ar: 'اكسسوارات', en: 'Accessories', one: 'قطعة', code: 'DA-B',
     styles: ['Rings', 'Bracelets', 'Leather', 'Beads', 'Sets'],
     banner: { en: 'Details Make<br>the Difference.', ar: 'التفاصيل هي اللي بتفرق.', sub: 'خواتم وحظاظات واكسسوارات تكمّل لبسك.', cta: 'تسوّق الاكسسوارات' },
@@ -149,8 +149,27 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022175738';
+RC.build = '20261022181229';
 
+// icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
+RC.FEAT_IC = {
+  gem: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9 6h14l5 7-12 14L4 13z"/><path d="M4 13h24M12 6l-3 7 7 14 7-14-3-7"/></svg>',
+  gear: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="16" cy="16" r="4.5"/><path d="M16 4v4M16 24v4M4 16h4M24 16h4M7.5 7.5l2.8 2.8M21.7 21.7l2.8 2.8M7.5 24.5l2.8-2.8M21.7 10.3l2.8-2.8"/></svg>',
+  shield: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M16 4l10 4v8c0 6-4.5 10-10 12-5.5-2-10-6-10-12V8z"/><path d="M11.5 16l3 3 6-6"/></svg>',
+  truck: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M3 9h16v12H3zM19 13h6l4 5v3H19"/><circle cx="9" cy="23" r="2.5"/><circle cx="23" cy="23" r="2.5"/></svg>',
+  uv: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="16" cy="16" r="5.5"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M6.8 25.2l2.8-2.8M22.4 9.6l2.8-2.8"/></svg>',
+  leaf: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M26 5C12 5 6 12 6 20c0 3 1 5 2 7 9 0 18-6 18-22z"/><path d="M8 27c4-8 9-12 13-15"/></svg>',
+  eye: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 16s5-8 13-8 13 8 13 8-5 8-13 8S3 16 3 16z"/><circle cx="16" cy="16" r="4"/></svg>',
+  link: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M13 19l6-6M11 15l-3 3a4.2 4.2 0 0 0 6 6l3-3M21 17l3-3a4.2 4.2 0 0 0-6-6l-3 3"/></svg>',
+  gift: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M5 12h22v5H5zM7 17h18v11H7zM16 12v16"/><path d="M16 12c-2-5-8-6-8-2 0 2 4 2 8 2zM16 12c2-5 8-6 8-2 0 2-4 2-8 2z"/></svg>',
+  star: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M16 4l3.6 7.6 8.4 1-6.2 5.8 1.6 8.3L16 22.6l-7.4 4.1 1.6-8.3L4 12.6l8.4-1z"/></svg>'
+};
+// a section's feature strip: the admin's own wording (settings.bands[kind] = {en, ar, feats:[{i, t}]}) or the defaults above
+RC.band = (k, settings) => { const D = RC.kinds[k].band, o = ((settings && settings.bands) || {})[k] || {}, esc = RC.esc;
+  const lines = v => esc(v).replace(/\n/g, '<br>');
+  return { en: o.en ? lines(o.en) : D.en, ar: o.ar ? esc(o.ar) : D.ar,
+    feats: Array.isArray(o.feats) && o.feats.length ? o.feats.filter(f => f && f.t).map(f => [f.i, esc(f.t)]) : D.feats }; };
+RC.featIcon = k => RC.FEAT_IC[k] || RC.PERK_IC[k] || RC.FEAT_IC.gem;
 // product-page perk cards + footer HELP list + footer about text (Admin → Settings → كروت ونصوص); settings.perks = {cards, help, about}
 RC.PERK_IC = {
   cash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>',
@@ -163,8 +182,8 @@ RC.PERK_IC = {
   box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/></svg>',
   chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>'
 };
-RC.PERKS_DEF = { cards: [{ icon: 'cash', t: 'كاش عند الاستلام', s: 'افحص وادفع' }, { icon: 'ship', t: 'شحن لكل مصر', s: 'خلال 2–5 أيام' }, { icon: 'swap', t: 'استبدال', s: 'خلال 14 يوم' }],
+RC.PERKS_DEF = { cards: [{ icon: 'cash', t: 'كاش عند الاستلام', s: 'افحص وادفع' }, { icon: 'ship', t: 'شحن سريع', s: 'خلال 2–5 أيام' }, { icon: 'swap', t: 'استبدال', s: 'خلال 14 يوم' }],
   help: ['الدفع عند الاستلام', 'شحن 2–5 أيام', 'استبدال خلال 14 يوم', 'ضمان على الماكينة'],
-  about: 'DAQQA STORE — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام والشحن لكل مصر.' };
+  about: 'DAQQA STORE — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام بعد ما تفحص طلبك.' };
 RC.perks = (settings) => { const p = (settings && settings.perks) || {}, D = RC.PERKS_DEF;
   return { cards: Array.isArray(p.cards) ? p.cards.filter(c => c && (c.t || c.s)) : D.cards, help: Array.isArray(p.help) ? p.help.filter(Boolean) : D.help, about: typeof p.about === 'string' ? p.about : D.about }; };
