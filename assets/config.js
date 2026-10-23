@@ -6,7 +6,7 @@ window.RC = {
   bucket: 'shop-images',
   currency: 'ج.م',
   categories: { men: 'رجالي', women: 'حريمي', unisex: 'للجنسين' },
-  statuses: { new: 'جديد', confirmed: 'تم الاستلام', shipped: 'في التوصيل', delivered: 'تم التسليم', cancelled: 'ملغي', returned: 'مرتجع' }
+  statuses: { new: 'جديد', confirmed: 'تم الاستلام', shipped: 'في التوصيل', delivered: 'تم التسليم', cancelled: 'ملغي', returned: 'مرتجع (تم الشحن ولم يستلم)' }
 };
 RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' ' + RC.currency;
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
@@ -149,7 +149,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261022201947';
+RC.build = '20261023235239';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
