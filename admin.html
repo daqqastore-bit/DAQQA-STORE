@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261022201947">
+<link rel="stylesheet" href="assets/base.css?v=20261023235239">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -663,6 +663,93 @@ html{--z:1}
 .ch-sp{color:var(--muted)}.ch-sp b{color:var(--green)}
 .cu-tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
 .cu-t td{vertical-align:middle}.cu-cx{color:var(--red);font-weight:700}.cu-cx small{font-weight:400;color:var(--muted)}.cu-acc{font-size:12px;color:var(--green);font-weight:600;white-space:nowrap}
+
+/* ---- invoices page ---- */
+.inv-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:12px}
+.inv-all i{font-style:normal}.inv-all{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;cursor:pointer}
+.inv-n{font-size:12.5px;color:var(--muted)}.inv-n b{color:var(--ink)}
+.inv-acts{display:flex;gap:8px;margin-inline-start:auto}
+.inv-acts .btn svg{width:17px;height:17px}.inv-acts .btn[disabled]{opacity:.45;pointer-events:none}
+.inv-list{display:flex;flex-direction:column;gap:8px}
+.inv-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;transition:border-color .2s,background .2s}
+.inv-row:hover{border-color:var(--line-2)}
+.inv-row.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 8%,var(--surface))}
+.inv-row input,.inv-all input{width:20px;height:20px;accent-color:var(--amber);flex:none;cursor:pointer}
+.inv-m{display:flex;flex-direction:column;gap:3px;min-width:0}
+.inv-c{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.inv-c b{font-size:14px;letter-spacing:.04em}
+.inv-who{font-size:13px}
+.inv-m small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inv-r{display:flex;flex-direction:column;align-items:flex-end;gap:3px;text-align:left}.inv-r b{font-size:14px}.inv-r small{font-size:11px;color:var(--muted-2)}
+.inv-p,.inv-lux{font-style:normal;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid var(--green);color:var(--green)}
+.inv-lux{border-color:var(--amber);color:var(--amber)}
+@media (max-width:900px){
+  .inv-bar{position:fixed;top:auto;bottom:calc(68px + env(safe-area-inset-bottom));left:10px;right:10px;margin:0;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:8px 10px;gap:8px}
+  .inv-list{padding-bottom:70px}
+  .inv-n{display:none}
+  .inv-bar{flex-wrap:nowrap}.inv-all span{font-size:0}.inv-all i{font-size:13px;font-style:normal}
+  .inv-acts{gap:6px}.inv-acts .btn{height:40px;padding:0 12px;font-size:13px}
+  .inv-row{grid-template-columns:auto 1fr;padding:12px}
+  .inv-r{grid-column:2;flex-direction:row;justify-content:space-between;align-items:center}
+}
+
+/* ---- the printed invoice (fixed light paper colours, whatever the admin theme) ---- */
+#printArea{display:none}
+@media print{
+  @page{size:A4;margin:0}
+  html{zoom:1 !important}
+  body.printing{background:#fff !important}
+  body.printing > *:not(#printArea){display:none !important}
+  body.printing #printArea{display:block}
+  .inv{break-after:page;page-break-after:always}
+  .inv:last-child{break-after:auto;page-break-after:auto}
+}
+.inv{--ink:#18110A;--gold:#A8794F;--gold-2:#D0B48C;--muted:#6f5c49;--line:#e6dccd;--paper:#fffdf9;
+  width:210mm;height:296mm;box-sizing:border-box;padding:16mm 15mm 13mm;background:var(--paper);color:var(--ink);direction:rtl;
+  font:400 11.5pt/1.6 'Noto Kufi Arabic',sans-serif;display:flex;flex-direction:column;position:relative;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.inv::before{content:"";position:absolute;inset:7mm;border:.6pt solid var(--gold-2);border-radius:3mm;pointer-events:none}
+.inv .en{font-family:'Archivo',sans-serif}
+.inv-h{display:flex;justify-content:space-between;align-items:center;padding-bottom:7mm;border-bottom:1.4pt solid var(--ink)}
+.inv-brand{display:flex;align-items:center;gap:4mm}
+.inv-logo{width:17mm;height:17mm;border-radius:4mm;background:var(--ink);display:grid;place-items:center;padding:2.2mm;box-sizing:border-box}
+.inv-logo .rc-mark{color:var(--gold-2);--accent-2:var(--gold)}
+.inv-brand b{display:block;font:500 24pt/1 'Bodoni Moda',serif;letter-spacing:.28em;direction:ltr}
+.inv-brand small{display:block;margin-top:2mm;font-size:7.5pt;letter-spacing:.62em;color:var(--gold);direction:ltr}
+.inv-tt{text-align:left}.inv-tt b{display:block;font-size:20pt;font-weight:700;line-height:1.2}
+.inv-tt span{font-size:8pt;letter-spacing:.5em;color:var(--gold)}
+.inv-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin:6mm 0}
+.inv-meta div{border:.6pt solid var(--line);border-radius:2.5mm;padding:3mm 4mm;background:#fff}
+.inv small{display:block;font-size:8pt;color:var(--muted);letter-spacing:.02em}
+.inv-meta b{font-size:11.5pt;font-weight:700}
+.inv-to{background:#f7f1e8;border-radius:3mm;padding:4mm 5mm;margin-bottom:6mm}
+.inv-to > small{color:var(--gold);font-weight:700;margin-bottom:1.5mm}
+.inv-to-g{display:grid;grid-template-columns:1fr 1.5fr;gap:6mm}
+.inv-to-g b{display:block;font-size:12pt}.inv-to-g span{display:block;font-size:10.5pt;color:#3d3024}
+.inv-note{margin:2.5mm 0 0;font-size:9.5pt;color:#7a4f22}
+.inv-t{width:100%;border-collapse:collapse}
+.inv-t th{white-space:nowrap;font-size:8.5pt;font-weight:600;color:var(--muted);text-align:right;padding:0 2mm 2.5mm;border-bottom:.8pt solid var(--ink)}
+.inv-t td{padding:3mm 2mm;border-bottom:.6pt solid var(--line);vertical-align:middle;font-size:10.5pt}
+.inv-t .n{text-align:left;white-space:nowrap;width:1%}
+.inv-t th:not(:first-child){text-align:left}
+.inv-t s{display:block;font-size:8.5pt;color:#a4927e}
+.inv-it{display:flex;align-items:center;gap:3.5mm}
+.inv-it img{width:15mm;height:15mm;object-fit:cover;border-radius:2mm;border:.6pt solid var(--line);flex:none;background:#f3ece2}
+.inv-it b{font-size:11pt;font-weight:700}
+.inv-it small{font-size:7.5pt;letter-spacing:.08em}
+.inv-it span{display:block;font-size:8.5pt;color:var(--muted);margin-top:.5mm}.inv-it span b{font-size:8.5pt;font-weight:600;color:var(--ink)}
+.inv-sum{width:78mm;margin:5mm auto 0 0;display:flex;flex-direction:column;gap:1.5mm}
+.inv-sum > div{display:flex;justify-content:space-between;font-size:10.5pt}.inv-sum > div b{font-weight:600}
+.inv-sum .tot{margin-top:1.5mm;padding:3mm 4mm;background:var(--ink);color:#F5F0E8;border-radius:2.5mm;font-size:11.5pt}
+.inv-sum .tot b{font-size:14pt;font-weight:700;color:var(--gold-2)}
+.inv-save{margin:0;font-size:8.5pt;color:#4f6b3a;text-align:left}
+.inv-f{margin-top:auto;text-align:center;padding-top:6mm;border-top:.6pt solid var(--line)}
+.inv-thx b{display:block;font-size:15pt;font-weight:700;color:var(--ink)}
+.inv-thx p{margin:2mm auto 0;max-width:150mm;font-size:9.5pt;line-height:1.75;color:#4a3b2c}
+.inv-help{margin-top:3mm;font-size:9pt;color:var(--muted)}
+.inv-soc{display:flex;justify-content:center;flex-wrap:wrap;gap:3mm 7mm;margin-top:3mm}
+.inv-soc span{display:inline-flex;align-items:center;gap:1.8mm;font-size:9.5pt}
+.inv-soc i{width:4mm;height:4mm;color:var(--gold);display:inline-grid}.inv-soc i svg{width:100%;height:100%}
+.inv-sign{display:flex;align-items:center;justify-content:center;gap:4mm;margin-top:5mm;font-size:7.5pt;letter-spacing:.35em;color:var(--gold);direction:ltr}
+.inv-sign i{width:14mm;height:.6pt;background:var(--gold-2)}
 </style>
 </head>
 <body>
@@ -723,7 +810,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261022201947"></script>
+<script src="assets/config.js?v=20261023235239"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -733,8 +820,12 @@ sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { RECOVERY = t
   // signed out here or in another tab of the site: don't leave a dashboard that can't save anything
   if (ev === 'SIGNED_OUT' && !$('#appView').classList.contains('hidden')) { if (channel) sb.removeChannel(channel); toast('اتعمل تسجيل خروج — ادخل تاني عشان تكمل', 'err'); showLogin(); } });
 const $ = s => document.querySelector(s);
-const STATUS_KEYS = Object.keys(statuses);
+// «ملغي» isn't something the admin sets any more (a shipped order that comes back is «مرتجع»); customers can still cancel from the store,
+// so the cancelled status only shows in lists when there are such orders
+const ALL_ST = Object.keys(statuses), STATUS_KEYS = ALL_ST.filter(k => k !== 'cancelled');
+const stShown = l => ALL_ST.filter(k => k !== 'cancelled' || l.some(o => o.status === k));
 const ICONS = {
+  invoices: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/><path d="M17 11.5h.01"/></svg>',
   customers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></svg>',
   overview: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
   stories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h12M8 7h6M8 11h4"/></svg>',
@@ -749,7 +840,7 @@ const ICONS = {
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['customers','العملاء'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['customers','العملاء'], ['invoices','طباعة الفواتير'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات']];
@@ -811,8 +902,8 @@ async function once(key, fn) { if (_busy.has(key)) return; _busy.add(key); try {
 /* ---------- a refresh comes back to the same place: every tab, sub-tab, filter and sort the admin picked, plus the scroll ---------- */
 const UI_KEYS = { dashScope: v => dashScope = v, orderKind: v => orderKind = v, orderGen: v => orderGen = v, orderProd: v => orderProd = v, dashSt: v => dashSt = v,
   range: v => range = v, orderFilter: v => orderFilter = v, ovStk: v => ovStk = v, custSort: v => custSort = v, custView: v => custView = v,
-  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v };
-function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope }; }
+  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v, invScope: v => invScope = v, invSel: v => invSel = v.filter(Number.isFinite) };
+function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope, invScope, invSel }; }
 function saveUI() { try { localStorage.setItem('dq-ui', JSON.stringify(uiNow())); if (tab) sessionStorage.setItem('dq-admin-y', scrollY); } catch (e) {} }
 function restoreUI() {
   try { const o = JSON.parse(localStorage.getItem('dq-ui') || '{}'), now = uiNow();
@@ -979,7 +1070,7 @@ document.addEventListener('click', e => { const t = e.target.closest('[data-tab]
 function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, settings: renderSettings}[t] || renderDash)();
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
@@ -1092,7 +1183,7 @@ function ovPop(k) {
       ${miss ? `<div class="warn-box">${miss} طلب من غير تكاليف، فصافي الربح لسه ناقص.</div>` : ''}`;
   } else if (k === 'orders') {
     h = 'الطلبات'; go2 = 'orders';
-    body = `<div class="ovp-st">${STATUS_KEYS.map(s => { const n = orders.filter(o => o.status === s).length; return `<button type="button" class="sd st-${s}" data-ovst="${s}"><i style="background:var(--c)"></i>${statuses[s]}<b class="en">${n}</b></button>`; }).join('')}</div>
+    body = `<div class="ovp-st">${stShown(orders).map(s => { const n = orders.filter(o => o.status === s).length; return `<button type="button" class="sd st-${s}" data-ovst="${s}"><i style="background:var(--c)"></i>${statuses[s]}<b class="en">${n}</b></button>`; }).join('')}</div>
       <div class="fin-calc">${row('كل الطلبات', orders.length)}${row('قيمة الطلبات (من غير الملغي)', money(orders.filter(o => !['cancelled', 'returned'].includes(o.status)).reduce((a, o) => a + +o.total, 0)))}</div>`;
   } else if (k === 'prods') {
     const g = (l, c) => l.filter(p => p.category === c).length, reg = live.filter(p => !RC.isLuxury(p)), lux = live.filter(p => RC.isLuxury(p));
@@ -1213,7 +1304,7 @@ function renderDash() {
   const tp = {}; valid.forEach(o => o.shop_order_items.forEach(i => { const k = i.name; tp[k] = tp[k] || {name:k, units:0, rev:0}; tp[k].units += i.qty; tp[k].rev += +i.line_total; }));
   OFF.forEach(x => { const k = x.name; tp[k] = tp[k] || {name:k, units:0, rev:0}; tp[k].units += +x.qty; tp[k].rev += +x.price; });
   const top = Object.values(tp).sort((a, b) => b.rev - a.rev).slice(0, 6); const topMax = top[0] ? top[0].rev : 1;
-  const byStatus = STATUS_KEYS.map(k => [k, inRange.filter(o => o.status === k).length]);
+  const byStatus = stShown(inRange).map(k => [k, inRange.filter(o => o.status === k).length]);
   const lowStock = products.filter(p => p.active && p.stock != null && p.stock <= LOW_STK && (dashScope === 'all' || RC.isLuxury(p) === (dashScope === 'lux')));
   $('#main').innerHTML = `
     <div class="head"><div><h1>المبيعات</h1><div class="sub">الأرقام بتتحدّث لحظياً مع كل طلب جديد</div></div>
@@ -1259,14 +1350,14 @@ function renderOrders() {
   const prodOpts = Object.entries(PROD).sort((a, b) => b[1].n - a[1].n);
   const q = orderQuery.trim().toLowerCase();
   const list = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, o.customer_name, o.phone, o.city, mailOf(o.user_id), ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
-  const counts = Object.fromEntries(STATUS_KEYS.map(k => [k, ORD.filter(o => o.status === k).length]));
+  const counts = Object.fromEntries(ALL_ST.map(k => [k, ORD.filter(o => o.status === k).length]));
   $('#main').innerHTML = `
     <div class="head"><div><h1 ${LUXT ? 'class="en lux-h"' : ''}>${LUXT ? 'Luxury Orders' : 'الطلبات'}</h1><div class="sub">${ORD.length} طلب · بيوصلك إشعار وصوت مع كل طلب جديد</div></div></div>
     <div class="toolbar ord-scope"><div class="seg" id="okSeg"><button data-ok="all" class="${orderKind==='all'?'on':''}">كل الأقسام <span class="en">${ORD0.length}</span></button>${Object.entries(RC.kinds).map(([k, v]) => `<button data-ok="${k}" class="${orderKind===k?'on':''}">${v.ar} <span class="en">${ORD0.filter(o => orderHasKind(o, k)).length}</span></button>`).join('')}</div>
       <select class="input ord-prod" id="opSel" aria-label="فلتر بالمنتج"><option value="all">كل المنتجات</option>${prodOpts.map(([id, v]) => `<option value="${id}" ${orderProd === id ? 'selected' : ''}>${esc(v.name)} (${v.n})</option>`).join('')}</select>
       <div class="seg" id="ogSeg">${[['all','الكل'],['men','رجالي'],['women','حريمي']].map(([g, l]) => `<button data-og="${g}" class="${orderGen===g?'on':''}">${l}${g === 'all' ? '' : ` <span class="en">${ORD0.filter(o => orderHasGen(o, g)).length}</span>`}</button>`).join('')}</div></div>
     <div class="toolbar">
-      <div class="seg" id="ordSeg"><button data-of="all" class="${orderFilter==='all'?'on':''}">الكل</button>${STATUS_KEYS.map(k => `<button data-of="${k}" class="${orderFilter===k?'on':''}">${statuses[k]} <span class="en">${counts[k]}</span></button>`).join('')}</div>
+      <div class="seg" id="ordSeg"><button data-of="all" class="${orderFilter==='all'?'on':''}">الكل</button>${stShown(ORD).map(k => `<button data-of="${k}" class="${orderFilter===k?'on':''}">${statuses[k]} <span class="en">${counts[k]}</span></button>`).join('')}</div>
       <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="oq" placeholder="بحث بالاسم أو الرقم أو الكود أو المنتج" value="${esc(orderQuery)}"></label>
     </div>
     <div class="orders">${list.length ? list.map(orderHTML).join('') : '<div class="panel empty">مفيش طلبات هنا.</div>'}</div>`;
@@ -1276,6 +1367,102 @@ function renderOrders() {
   $('#ordSeg').onclick = e => { const b = e.target.closest('[data-of]'); if (b) { orderFilter = b.dataset.of; renderOrders(); } };
   const oq = $('#oq'); oq.oninput = () => { orderQuery = oq.value; clearTimeout(oq._t); oq._t = setTimeout(() => { renderOrders(); const n = $('#oq'); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 250); };
   freshIds.clear();
+}
+/* ---------- invoices: orders in «تم الاستلام» (packed, about to go to the courier) → tick → print, one invoice per page ---------- */
+let invScope = 'all', invSel = [];
+const PRINTED_K = 'dq-printed';
+const invPrinted = () => { try { return new Set(JSON.parse(localStorage.getItem(PRINTED_K) || '[]')); } catch (e) { return new Set(); } };
+function markPrinted(ids) { try { const s = invPrinted(); ids.forEach(i => s.add(i)); localStorage.setItem(PRINTED_K, JSON.stringify([...s].slice(-600))); } catch (e) {} }
+function renderInvoices() {
+  const ready = orders.filter(o => o.status === 'confirmed').sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  const nLux = ready.filter(isLuxOrder).length;
+  const list = ready.filter(o => invScope === 'all' || isLuxOrder(o) === (invScope === 'lux'));
+  invSel = invSel.filter(id => ready.some(o => o.id === id));
+  const sel = new Set(invSel), printed = invPrinted(), allOn = list.length && list.every(o => sel.has(o.id));
+  const pcs = o => (o.shop_order_items || []).reduce((a, i) => a + i.qty, 0);
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>طباعة الفواتير</h1><div class="sub">الطلبات اللي حالتها «${statuses.confirmed}» وجاهزة تخرج للشحن · علّم على اللي عاوزه واطبع، كل فاتورة في صفحة</div></div></div>
+    <div class="toolbar"><div class="seg" id="invSeg">${[['all', 'الكل', ready.length], ['reg', 'المتجر العادي', ready.length - nLux], ['lux', 'Luxury', nLux]].map(([k, l, n]) => `<button data-iv="${k}" class="${invScope === k ? 'on' : ''}">${l} <span class="en">${n}</span></button>`).join('')}</div></div>
+    ${list.length ? `<div class="inv-bar">
+      <label class="inv-all"><input type="checkbox" id="invAll" ${allOn ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
+      <span class="inv-n">${sel.size ? `<b class="en">${sel.size}</b> متحدد` : 'محددتش حاجة'}</span>
+      <div class="inv-acts"><button type="button" class="btn btn-ghost btn-sm" id="invShip" ${sel.size ? '' : 'disabled'}>نقل لـ «${statuses.shipped}»</button>
+        <button type="button" class="btn btn-amber" id="invPrint" ${sel.size ? '' : 'disabled'}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/></svg>طباعة${sel.size ? ` <span class="en">(${sel.size})</span>` : ''}</button></div></div>
+    <div class="inv-list">${list.map(o => `<label class="inv-row ${sel.has(o.id) ? 'on' : ''}">
+      <input type="checkbox" data-inv="${o.id}" ${sel.has(o.id) ? 'checked' : ''}>
+      <div class="inv-m"><div class="inv-c"><b class="en">${esc(o.code)}</b>${isLuxOrder(o) ? '<em class="inv-lux en">Luxury</em>' : ''}${printed.has(o.id) ? '<em class="inv-p">اتطبعت</em>' : ''}</div>
+        <span class="inv-who">${esc(o.customer_name)} · <span class="en" dir="ltr">${esc(o.phone)}</span></span>
+        <small>${esc(o.city || '')} · ${pcs(o)} ${pcs(o) > 1 ? 'قطع' : 'قطعة'}: ${(o.shop_order_items || []).map(i => esc(i.name)).join('، ')}</small></div>
+      <div class="inv-r"><b class="en">${money(o.total)}</b><small>${fmtDate(o.created_at)}</small></div></label>`).join('')}</div>`
+    : `<div class="panel empty">مفيش طلبات «${statuses.confirmed}» ${invScope === 'all' ? '' : 'هنا '}دلوقتي. أول ما تخلي حالة طلب «${statuses.confirmed}» هيظهر هنا.</div>`}`;
+  $('#invSeg').onclick = e => { const b = e.target.closest('[data-iv]'); if (b) { invScope = b.dataset.iv; renderInvoices(); } };
+  const m = $('#main');
+  m.querySelectorAll('[data-inv]').forEach(c => c.onchange = () => { const id = +c.dataset.inv; invSel = c.checked ? [...new Set([...invSel, id])] : invSel.filter(x => x !== id); renderInvoices(); });
+  if (!list.length) return;
+  $('#invAll').onchange = e => { const ids = list.map(o => o.id); invSel = e.target.checked ? [...new Set([...invSel, ...ids])] : invSel.filter(x => !ids.includes(x)); renderInvoices(); };
+  // printed in the order they came in (oldest first), whatever order they were ticked in
+  const picked = () => ready.filter(o => sel.has(o.id));
+  $('#invPrint').onclick = () => printInvoices(picked());
+  $('#invShip').onclick = () => once('invShip', async () => { const l = picked(); if (!l.length) return;
+    if (!(await confirmBox(`تنقل ${l.length === 1 ? 'الطلب ده' : l.length + ' طلبات'} لـ «${statuses.shipped}»؟`, 'نقل'))) return;
+    for (const o of l) await setStatus(o.id, 'shipped');
+    invSel = invSel.filter(id => !l.some(o => o.id === id)); if (tab === 'invoices') renderInvoices(); });
+}
+// one A4 page per order: brand, customer, pieces (with what they picked), totals to collect, thank-you
+function invoiceHTML(o) {
+  const items = o.shop_order_items || [], lux = isLuxOrder(o);
+  const soc = RC.socials(settings).filter(x => ['whatsapp', 'phone', 'instagram', 'tiktok', 'facebook', 'website'].includes(x.type)).slice(0, 4);
+  const line = (l, v, cls = '') => `<div class="${cls}"><span>${l}</span><b>${v}</b></div>`;
+  return `<section class="inv${lux ? ' lux' : ''}">
+    <header class="inv-h">
+      <div class="inv-brand"><span class="inv-logo">${RC.logo()}</span><div><b class="en">DAQQA</b><small class="en">${lux ? 'PRIVÉ' : 'STORE'}</small></div></div>
+      <div class="inv-tt"><b>فاتورة</b><span class="en">INVOICE</span></div>
+    </header>
+    <div class="inv-meta">
+      <div><small>رقم الطلب</small><b class="en">${esc(o.code)}</b></div>
+      <div><small>تاريخ الطلب</small><b class="en" dir="ltr">${esc(dmy(o.created_at))}</b></div>
+      <div><small>طريقة الدفع</small><b>كاش عند الاستلام</b></div>
+    </div>
+    <div class="inv-to"><small>بيانات الشحن</small>
+      <div class="inv-to-g"><div><b>${esc(o.customer_name)}</b><span class="en" dir="ltr">${esc(o.phone)}</span></div>
+        <div><b>${esc(o.city || '')}</b><span>${esc(o.address || '')}</span></div></div>
+      ${o.notes ? `<p class="inv-note">ملاحظة العميل: ${esc(o.notes)}</p>` : ''}</div>
+    <table class="inv-t"><thead><tr><th>المنتج</th><th>الكمية</th><th>سعر القطعة</th><th>الإجمالي</th></tr></thead><tbody>
+      ${items.map(i => { const p = products.find(x => x.id === i.product_id); return `<tr><td><div class="inv-it">${i.image ? `<img src="${esc(i.image)}" alt="" onerror="this.remove()">` : ''}<div><b>${esc(i.name)}</b>${p ? `<small class="en">${esc(RC.sku(p))}</small>` : ''}${(i.options || []).length ? `<span>${i.options.map(x => `${esc(x.g)}: <b>${esc(x.v)}</b>`).join(' · ')}</span>` : ''}</div></div></td>
+        <td class="n en">${i.qty}</td><td class="n en">${money(i.unit_price)}${+i.original_price > +i.unit_price ? `<s>${money(i.original_price)}</s>` : ''}</td><td class="n en">${money(i.unit_price * i.qty)}</td></tr>`; }).join('')}
+    </tbody></table>
+    <div class="inv-sum">
+      ${line('المنتجات', `<span class="en">${money(o.subtotal)}</span>`)}
+      ${+o.coupon_off ? line(`كود خصم <span class="en">${esc(o.coupon || '')}</span>`, `<span class="en">− ${money(o.coupon_off)}</span>`) : ''}
+      ${line('الشحن', +o.shipping ? `<span class="en">${money(o.shipping)}</span>` : 'مجاني')}
+      ${line('المطلوب عند الاستلام', `<span class="en">${money(o.total)}</span>`, 'tot')}
+      ${+o.savings ? `<p class="inv-save">وفّرت <span class="en">${money(o.savings)}</span> في الطلب ده</p>` : ''}
+    </div>
+    <footer class="inv-f">
+      <div class="inv-thx"><b>شكراً إنك اشتريت من دقّة</b><p>اخترتنا وده يفرق معانا جداً. كل قطعة بنختارها بعناية وبنجهّزها بإيدينا عشان توصلك بالشكل اللي يليق بيك. نتمنى تعجبك ومستنيينك تاني.</p></div>
+      <div class="inv-help">لو محتاج أي حاجة بخصوص طلبك كلّمنا وإحنا معاك.</div>
+      ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i><b class="en" dir="ltr">${esc(RC.socialLabel(x))}</b></span>`).join('')}</div>` : ''}
+      <div class="inv-sign en"><span>DAQQA STORE</span><i></i><span>Every detail, on time.</span></div>
+    </footer>
+  </section>`;
+}
+let printBusy = false;
+async function printInvoices(l) {
+  if (!l.length || printBusy) return; printBusy = true;
+  try {
+    const old = $('#printArea'); if (old) old.remove();
+    const pa = document.createElement('div'); pa.id = 'printArea'; pa.innerHTML = l.map(invoiceHTML).join('');
+    document.body.appendChild(pa); document.body.classList.add('printing');
+    toast('بنجهّز الفواتير…');
+    // product photos and fonts have to be in before the print dialog takes its snapshot
+    await Promise.race([Promise.all([...pa.querySelectorAll('img')].map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))), new Promise(r => setTimeout(r, 5000))]);
+    try { await document.fonts.ready; } catch (e) {}
+    const done = () => { removeEventListener('afterprint', done); setTimeout(() => { if (!document.body.classList.contains('printing')) return; document.body.classList.remove('printing'); pa.remove(); }, 600); };
+    addEventListener('afterprint', done);
+    window.print();
+    markPrinted(l.map(o => o.id));
+    if (tab === 'invoices') renderInvoices();
+  } finally { printBusy = false; }
 }
 // customer cancellations: shown on the cancelled order and warned about on the same customer's next orders
 const digits = v => String(v || '').replace(/\D/g, '');
@@ -1344,7 +1531,7 @@ document.addEventListener('click', async e => {
   const tg = e.target.closest('[data-toggle]');
   if (tg) { const el = tg.closest('.order'), id = +el.dataset.oid; el.classList.toggle('open'); openOrders.has(id) ? openOrders.delete(id) : openOrders.add(id); }
   const del = e.target.closest('[data-del-order]');
-  if (del) await once('delo' + del.dataset.delOrder, async () => { const id = +del.dataset.delOrder; if (!(await confirmBox('تحذف الطلب ده نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالته لـ "ملغي" الأول)', 'حذف'))) return;
+  if (del) await once('delo' + del.dataset.delOrder, async () => { const id = +del.dataset.delOrder; if (!(await confirmBox('تحذف الطلب ده نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالته لـ "مرتجع" الأول)', 'حذف'))) return;
     const {error} = await sb.from('shop_orders').delete().eq('id', id); if (error) return toast(error.message, 'err');
     const gone = orders.find(o => o.id === id); if (gone) sheetSend({ action: 'delete', sheet: 'orders', id: gone.code });
     orders = orders.filter(o => o.id !== id); toast('اتحذف'); renderTabs(); renderOrders(); });
@@ -2230,12 +2417,12 @@ const orderNet = o => { const f = fins[o.id]; if (o.status === 'returned') retur
 const signMoney = n => (n < 0 ? '− ' : '') + money(Math.abs(n));
 function stPicker(o) {
   return `<div class="stp" data-stp="${o.id}"><button type="button" class="stp-btn st-${o.status}" aria-haspopup="listbox"><i></i><span>${statuses[o.status] || o.status}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
-    <div class="stp-pop" role="listbox">${STATUS_KEYS.map(k => `<button type="button" role="option" data-st="${k}" class="st-${k} ${k === o.status ? 'on' : ''}"><i></i>${statuses[k]}${CHECK}</button>`).join('')}</div></div>`;
+    <div class="stp-pop" role="listbox">${(o.status === 'cancelled' ? ALL_ST : STATUS_KEYS).map(k => `<button type="button" role="option" data-st="${k}" class="st-${k} ${k === o.status ? 'on' : ''}"><i></i>${statuses[k]}${CHECK}</button>`).join('')}</div></div>`;
 }
 // the order's money in full, shown under its totals
 function finPanel(o) {
   const f = fins[o.id];
-  if (o.status === 'returned') return `<div class="o-fin"><h4>ربح الأوردر ده</h4>${f ? `<div><span>خسارة المرتجع</span><b class="neg">− ${money(f.return_loss)}</b></div>` : ''}<div class="net"><span>صافي الربح</span><b class="${f && +f.return_loss ? 'neg' : ''}">${signMoney(orderNet(o))}</b></div><small>المنتجات رجعت للمخزون.</small></div>`;
+  if (o.status === 'returned') { const r = f && f.return_loss != null; return `<div class="o-fin"><h4>ربح الأوردر ده</h4>${r ? `<div><span>خسارة المرتجع</span><b class="${+f.return_loss ? 'neg' : ''}">${+f.return_loss ? '− ' : ''}${money(f.return_loss)}</b></div>` : ''}<div class="net"><span>صافي الربح</span><b class="${r && +f.return_loss ? 'neg' : ''}">${signMoney(orderNet(o))}</b></div><small>${!r ? 'لسه متسجلش مين اتحمّل الشحن.' : +f.return_loss ? 'الشحن علينا · المنتجات رجعت للمخزون.' : 'الشحن على العميل · المنتجات رجعت للمخزون من غير خسارة.'}</small>${r ? '' : `<button class="btn btn-sm btn-amber" data-fin="${o.id}">مين اتحمّل الشحن؟</button>`}</div>`; }
   if (!COUNTED.includes(o.status)) return o.status === 'new' ? `<div class="o-fin muted"><h4>ربح الأوردر ده</h4><small>بتتسجّل لما تخلي الحالة «تم الاستلام».</small></div>` : '';
   if (!f) return `<div class="o-fin warn"><h4>ربح الأوردر ده</h4><small>لسه مسجّلتش تكلفة الأوردر ده (اشتريت الساعة بكام والشحن عليك بكام)، فمش محسوب كسبت منه كام.</small><button class="btn btn-sm btn-amber" data-fin="${o.id}">احسب ربح الأوردر</button></div>`;
   const n = orderNet(o), me = f.ship_payer === 'me';
@@ -2435,23 +2622,33 @@ function expEditBox(x) {
     m.remove(); toast('اتعدل المصروف ✓', 'ok'); renderAccounts(); };
   setTimeout(() => form.amount.focus(), 60);
 }
-// returned order: the pieces already went back to stock; log what the trip cost
+// returned order (shipped, never received): the pieces already went back to stock; ask who carried the shipping.
+// the customer → nothing lost, the piece just came back · us → what we paid the courier is a loss off the net profit
 function returnBox(o) {
   if (!needFinTable()) return;
   const f = fins[o.id] || {};
+  let payer = f.return_loss == null ? '' : +f.return_loss > 0 ? 'me' : 'buyer';
+  const lossDef = f.return_loss != null && +f.return_loss > 0 ? +f.return_loss : (f.ship_cost != null && +f.ship_cost ? +f.ship_cost * 2 : (+o.shipping || +settings.shipping_fee || 0) * 2);
   const m = document.createElement('div'); m.className = 'fin-m';
-  m.innerHTML = `<form class="fin-box" novalidate><h3>مرتجع <span class="en">${esc(o.code)}</span></h3>
-    <p class="fsub">المنتجات رجعت للمخزون تلقائياً (المخزون بتاعك واللي بيظهر للعميل). سجّل لو المرتجع كلّفك حاجة عشان تتخصم من صافي الربح.</p>
+  m.innerHTML = `<form class="fin-box" novalidate><h3>${statuses.returned} <span class="en">${esc(o.code)}</span></h3>
+    <p class="fsub"> المنتجات رجعت للمخزون تلقائياً (المخزون بتاعك واللي بيظهر للعميل).</p>
     <div class="fin-items">${(o.shop_order_items || []).map(i => `<div class="fin-it" style="grid-template-columns:40px 1fr"><img src="${esc(i.image || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>رجع للمخزون: ${i.qty}</small></div></div>`).join('')}</div>
-    <div class="field"><label>خسارة المرتجع (شحن رايح وجاي، تغليف…)</label><input class="input" name="loss" inputmode="decimal" value="${f.return_loss != null ? +f.return_loss : (f.ship_cost != null ? +f.ship_cost * 2 : (+settings.shipping_fee || 0) * 2)}"></div>
-    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+    <div class="field"><label>مين اللي اتحمّل مصاريف الشحن؟</label><div class="who-pays"><button type="button" data-rpay="buyer"><b>العميل</b><small>رجّعنا المنتج بس · مفيش خسارة</small></button><button type="button" data-rpay="me"><b>إحنا</b><small>الشحن يتخصم من صافي الربح</small></button></div></div>
+    <div class="field" data-rloss hidden><label>دفعنا شحن قد إيه؟ (رايح وجاي، تغليف…)</label><input class="input" name="loss" inputmode="decimal" value="${lossDef}"></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>بعدين</button></div></form>`;
   document.body.appendChild(m);
   const form = m.querySelector('form');
-  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  const paint = () => { m.querySelectorAll('[data-rpay]').forEach(b => b.classList.toggle('on', b.dataset.rpay === payer)); m.querySelector('[data-rloss]').hidden = payer !== 'me'; };
+  paint();
+  m.onclick = e => { const pb = e.target.closest('[data-rpay]'); if (pb) { payer = pb.dataset.rpay; paint(); if (payer === 'me') { form.loss.focus(); form.loss.select(); } return; }
+    if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault();
-    const row = { order_id: o.id, sale: f.sale ?? (+o.subtotal - (+o.coupon_off || 0)), cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, return_loss: Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0), updated_at: new Date().toISOString() };
+    if (!payer) return toast('اختار مين اللي اتحمّل الشحن', 'err');
+    const loss = payer === 'me' ? Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0) : 0;
+    if (payer === 'me' && !loss) return toast('اكتب مبلغ الشحن اللي دفعناه', 'err');
+    const row = { order_id: o.id, sale: f.sale ?? (+o.subtotal - (+o.coupon_off || 0)), cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, return_loss: loss, updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) return toast(error.message, 'err');
-    fins[o.id] = row; m.remove(); toast('اتسجل المرتجع ✓', 'ok'); refreshOrderUI(o); sheetOrder(o); };
+    fins[o.id] = row; m.remove(); toast(loss ? `اتسجل المرتجع · خسارة ${money(loss)} اتخصمت من الربح` : 'اتسجل المرتجع · من غير خسارة ✓', 'ok'); refreshOrderUI(o); sheetOrder(o); };
 }
 
 /* Google Sheet mirror (Apps Script web app) — fire-and-forget, the database stays the source of truth */
@@ -2460,7 +2657,7 @@ function sheetSend(body) {
   if (!sheetOn()) return Promise.resolve(false);
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
-const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: statuses[o.status] || o.status,
+const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: o.status === 'returned' ? 'مرتجع' : statuses[o.status] || o.status,
   sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
 // who paid an expense: the partners first, then any other name typed before (you can always type a new one)
 const PAYERS = ['عليوه', 'حازم', 'مسعد'];
