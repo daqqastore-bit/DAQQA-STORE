@@ -20,8 +20,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024161429">
-<link rel="stylesheet" href="assets/store.css?v=20261024161429">
+<link rel="stylesheet" href="assets/base.css?v=20261024162341">
+<link rel="stylesheet" href="assets/store.css?v=20261024162341">
 <style>
 /* DAQQA PRIVÉ — the luxury room: near-black, champagne gold, slow light */
 :root{--lx-bg:var(--L-bg);--lx-bg2:var(--L-bg2);--lx-gold:var(--L-gold);--lx-gold-2:var(--L-gold2);--lx-gold-3:var(--L-gold3);--lx-ink:var(--L-ink);--lx-mute:var(--L-mute);--lx-line:rgb(var(--L-rgb)/.22);
@@ -266,8 +266,8 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024161429"></script>
-<script src="assets/app.js?v=20261024161429"></script>
+<script src="assets/config.js?v=20261024162341"></script>
+<script src="assets/app.js?v=20261024162341"></script>
 <script>
 const { esc, money, finalPrice, discountPct } = RC;
 const ORDER = Object.keys(RC.kinds); // watches first
@@ -289,7 +289,7 @@ DQ.start('luxury', () => {
       <a class="lc-pic" href="${url}" aria-label="${esc(p.name)}"><img ${DQ.thumb(p)} alt="${esc(p.name)}" loading="${i < 4 ? 'eager' : 'lazy'}">
         ${n > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(n, 6))}</span>` : ''}
         ${p.featured ? '<span class="lc-tag en">SIGNATURE</span>' : ''}${off ? `<span class="lc-off en">-${off}%</span>` : ''}
-        ${p.soon ? '<span class="lc-out en">COMING SOON</span>' : p.stock > 0 ? '' : '<span class="lc-out">نفدت الكمية</span>'}</a>
+        ${p.soon ? '<span class="lc-out en">COMING SOON</span>' : p.stock > 0 ? '' : '<span class="lc-out en">OUT OF STOCK</span>'}</a>
       <button class="lc-fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-label="المفضلة" aria-pressed="${fav}">${DQ.ICON.heart}</button><button type="button" class="lc-fav lc-eye" data-qv="${p.id}" aria-label="عرض سريع" title="عرض سريع">${DQ.QV_EYE}</button>
       <div class="lc-txt">
         <span class="lc-cap en">N° ${String(i + 1).padStart(2, '0')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
