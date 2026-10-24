@@ -450,8 +450,9 @@
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
       <div class="qa-buy"><div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
-      ${out ? `<div class="qv-out">${p.soon ? 'Coming Soon · قريبًا' : 'Out of Stock'}</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}</div>
-      ${full ? `<a class="qv-more" href="${RC.productUrl(p)}">شوف صفحة المنتج كاملة ←</a></div>` : ''}</div>`;
+      ${out ? `<div class="qv-out">${p.soon ? 'Coming Soon · قريبًا' : 'Out of Stock'}</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}
+      ${full ? `<a class="qv-more" href="${RC.productUrl(p)}"><span>صفحة المنتج كاملة</span><small class="en">FULL DETAILS</small><i>${ICON.arrow}</i></a>` : ''}</div>
+      ${full ? '</div>' : ''}</div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on')); DQ.optApply(m, p, sel, {});
     // phones: the sheet itself scrolls, so the ✕ rides along with it and stays in reach
     { const card = m.querySelector('.qa-card'), xb = m.querySelector('.qa-x'); if (card && xb) card.addEventListener('scroll', () => { xb.style.transform = card.scrollTop > 0 ? `translateY(${card.scrollTop}px)` : ''; }, { passive: true }); }
