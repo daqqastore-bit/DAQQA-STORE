@@ -347,8 +347,8 @@
   function renderSocial() {
     const list = RC.socials(DQ.settings), ann = (DQ.settings.announcement || '').trim(), top = $('#topbar');
     if (top) {
-      // the top bar keeps it short: WhatsApp, call and Instagram only (the first of each)
-      const quick = ['whatsapp', 'phone', 'instagram'].map(k => list.find(x => x.type === k)).filter(Boolean);
+      // the top bar keeps it short: WhatsApp, call, Instagram and TikTok only (the first of each)
+      const quick = ['whatsapp', 'phone', 'instagram', 'tiktok'].map(k => list.find(x => x.type === k)).filter(Boolean);
       top.hidden = !quick.length && !ann;
       top.classList.toggle('no-ann', !ann);   // phones: the icons are in the menu already, so the bar only shows for an announcement
       top.innerHTML = `<div class="wrap tb-in"><span class="tb-ann">${esc(ann)}</span>${quick.length ? `<span class="tb-soc">${quick.map(x => socLink(x, 'tb-ic')).join('')}</span>` : ''}</div>`; }
