@@ -960,17 +960,18 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .qv-th{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}.qv-th::-webkit-scrollbar{display:none}
 .qv-th button{flex:none;width:62px;height:62px;border-radius:10px;overflow:hidden;border:2px solid transparent;opacity:.7;transition:opacity .2s,border-color .2s}
 .qv-th button.on{border-color:var(--accent);opacity:1}.qv-th img{width:100%;height:100%;object-fit:cover}
-.qv-info{display:grid;align-content:start;gap:12px;padding:28px 26px 24px;overflow-y:auto;overscroll-behavior:contain}
+/* flex column + no shrinking: in a fixed-height grid the clamped description (overflow:hidden) collapsed and the specs sat on top of it */
+.qv-info{display:flex;flex-direction:column;gap:12px;padding:28px 26px 24px;overflow-y:auto;overscroll-behavior:contain}
 .qv-cap{font:600 11px var(--f-ui);letter-spacing:.28em;color:var(--accent);text-transform:uppercase}
 .qv-h{font:500 28px/1.15 var(--f-display);margin:0;padding-inline-end:40px}
-.qv-info .prices{margin:0}.qv-info .price-new{font-size:22px}
+.qv-info>*{flex-shrink:0}.qv-info .prices{margin:0}.qv-info .price-new{font-size:22px}
 .qv-d{margin:0;color:var(--muted);font-size:14px;line-height:1.8;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
 .qv-sp{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .qv-sp li{display:grid;gap:3px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
 .qv-sp span{font-size:11.5px;color:var(--accent);font-weight:600}.qv-sp b{font-size:13.5px;font-weight:600;color:var(--ink);unicode-bidi:plaintext}
 .qv-more{justify-self:center;font-size:13.5px;color:var(--muted);text-decoration:underline;text-underline-offset:4px}.qv-more:hover{color:var(--ink)}
 .qv-out{text-align:center;padding:14px;border-radius:14px;border:1px dashed var(--line);color:var(--muted);font-weight:600}
-.qa-card.is-out .qa-q{display:none}
+.qa-card.is-out .qa-q,.qa-card.is-out .po-need,.qa-card.is-out .po-v:not(.set){display:none}
 @media (max-width:760px){
   .qv-card{grid-template-columns:1fr;max-height:92dvh;overflow-y:auto}
   .qv-gal{padding:14px 14px 0;background:none}.qv-main{aspect-ratio:4/3}.qv-th button{width:52px;height:52px}
