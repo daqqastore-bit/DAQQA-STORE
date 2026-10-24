@@ -1,7 +1,8 @@
 html,body{overflow-x:clip}
 /* DAQQA Watches — storefront shared styles (header, footer, cards, cart) */
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
-#hdr{display:contents}
+#hdr{display:block;position:sticky;top:0;z-index:50}
+#hdr .nav-bar{position:relative}
 .topbar{background:var(--nav);border-bottom:1px solid var(--line);font-size:12.5px}
 .topbar[hidden]{display:none}
 @media (max-width:900px){.topbar .tb-soc{display:none}.topbar.no-ann{display:none}}
@@ -551,7 +552,7 @@ html.pg-fx body{animation:pgIn .6s cubic-bezier(.2,.7,.2,1) both}
 html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;filter:blur(4px);transform:scale(.99)}
 @media (prefers-reduced-motion:reduce){html:not(.vt-theme)::view-transition-old(root),html:not(.vt-theme)::view-transition-new(root),html.pg-fx body{animation:none}}
 
-.foot-motto{font:700 18px 'Amiri',var(--f-ar);background:linear-gradient(100deg,#8C6A3A,#E9D3A3 40%,#C9A96E 60%,#8C6A3A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.foot-motto{font:700 16px var(--f-ar);background:linear-gradient(100deg,#8C6A3A,#E9D3A3 40%,#C9A96E 60%,#8C6A3A);-webkit-background-clip:text;background-clip:text;color:transparent}
 :root[data-theme="light"] .foot-motto{background:linear-gradient(100deg,#5a3b25,#8A6438 50%,#5a3b25);-webkit-background-clip:text;background-clip:text}
 
 /* ---------- Luxury product page (Privé editorial layout) ---------- */

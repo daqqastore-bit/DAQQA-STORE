@@ -177,7 +177,7 @@
         <div id="ftHelpBox" hidden><h4 class="en">POLICY</h4><ul id="ftHelp"></ul></div>
         <div id="ftContact" hidden><h4 class="en">CONTACT</h4><ul class="ft-soc" id="ftSoc"></ul></div>
       </div>
-      <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">دقّت ساعة العمل.</span></div>
+      <div class="foot-bottom"><span class="en">© ${new Date().getFullYear()} DAQQA</span><span class="foot-motto">متبقاش دقّة قديمة.</span></div>
 </div></footer>
       <div class="overlay" id="overlay"></div>
       <aside class="drawer" id="drawer" aria-label="Shopping Cart"><div class="dr-head"><h3 id="drTitle">Shopping Cart</h3><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="dr-body" id="drBody"></div><div class="dr-foot" id="drFoot"></div></aside>
