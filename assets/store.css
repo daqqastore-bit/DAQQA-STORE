@@ -1073,3 +1073,13 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .price-box .price-new.price-soon{font-size:clamp(18px,2vw,24px);letter-spacing:.18em}
 .card .ph .out{font:600 13px var(--f-ui);letter-spacing:.22em}
 html.dq-lock{overflow:hidden;overscroll-behavior:none}html.dq-lock body{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+/* our dropdown (replaces the browser's select look) */
+.sdd{position:relative;display:inline-block;min-width:200px}.sdd select{display:none}
+.sdd-btn{width:100%;height:40px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-radius:999px;border:1px solid var(--s-line,var(--line));background:var(--surface,#fff);color:var(--strip-ink,var(--ink));font-size:14px;font-weight:600;transition:border-color .2s,box-shadow .2s}
+.sdd-btn svg{width:16px;height:16px;flex:none;opacity:.7;transition:transform .25s}.sdd.open .sdd-btn{border-color:var(--accent);box-shadow:0 0 0 3px rgb(var(--accent-rgb)/.15)}.sdd.open .sdd-btn svg{transform:rotate(180deg)}
+.sdd-pop{position:absolute;top:calc(100% + 8px);inset-inline:0;z-index:40;padding:6px;border-radius:16px;border:1px solid var(--line);background:var(--surface,#fff);box-shadow:0 20px 44px -16px rgba(0,0,0,.35);display:grid;gap:2px;opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;transition:opacity .2s,transform .2s}
+.sdd.open .sdd-pop{opacity:1;transform:none;pointer-events:auto}
+.sdd-pop button{min-height:40px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;border-radius:10px;font-size:14px;color:var(--ink);text-align:start}
+.sdd-pop button:hover{background:var(--surface-2)}.sdd-pop button.on{background:rgb(var(--accent-rgb)/.12);color:var(--accent);font-weight:700}.sdd-pop button svg{width:16px;height:16px;flex:none}
+@media (max-width:640px){.c-bar .sdd{width:100%}}
+.strip .sdd-btn,.strip .sdd-pop{background:#fff;color:var(--strip-ink);border-color:var(--s-line)}.strip .sdd-pop button{color:var(--strip-ink)}.strip .sdd-pop button:hover{background:var(--s-tile)}.strip .sdd-pop button.on{color:#8a5a2b}

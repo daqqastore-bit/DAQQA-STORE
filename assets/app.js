@@ -306,6 +306,23 @@
     DQ._wakeCursor = () => { if (!looping) { looping = true; requestAnimationFrame(loop); } };
     addEventListener('pointermove', DQ._wakeCursor, { passive: true });
   }
+  // every <select> on the store gets our own dropdown (button + popup list); the real select stays hidden and keeps the value / change event
+  { const VAL = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value'), CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>', TICK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>';
+    const enhance = sel => { sel.dataset.dd = 1; const box = document.createElement('div'); box.className = 'sdd';
+      box.innerHTML = `<button type="button" class="sdd-btn" aria-haspopup="listbox" aria-expanded="false" ${sel.getAttribute('aria-label') ? `aria-label="${esc(sel.getAttribute('aria-label'))}"` : ''}><span></span>${CHEV}</button><div class="sdd-pop" role="listbox"></div>`;
+      sel.parentNode.insertBefore(box, sel); box.appendChild(sel);
+      const btn = box.querySelector('.sdd-btn'), pop = box.querySelector('.sdd-pop');
+      const sync = () => { const o = sel.options[sel.selectedIndex]; btn.querySelector('span').textContent = o ? o.text : ''; };
+      const open = v => { if (v) pop.innerHTML = [...sel.options].map((o, i) => `<button type="button" role="option" data-i="${i}" class="${o.selected ? 'on' : ''}" aria-selected="${o.selected}"><span>${esc(o.text)}</span>${o.selected ? TICK : ''}</button>`).join('');
+        box.classList.toggle('open', v); btn.setAttribute('aria-expanded', v); };
+      btn.onclick = () => open(!box.classList.contains('open'));
+      pop.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; const o = sel.options[+b.dataset.i]; open(false); if (o.value !== VAL.get.call(sel)) { VAL.set.call(sel, o.value); sync(); sel.dispatchEvent(new Event('change', { bubbles: true })); } btn.focus(); };
+      box.addEventListener('keydown', e => { if (e.key === 'Escape') { open(false); btn.focus(); } });
+      Object.defineProperty(sel, 'value', { configurable: true, get() { return VAL.get.call(this); }, set(v) { VAL.set.call(this, v); sync(); } });
+      sel.addEventListener('change', sync); box._close = () => open(false); sync(); };
+    const scan = () => document.querySelectorAll('select:not([data-dd])').forEach(enhance);
+    document.addEventListener('pointerdown', e => document.querySelectorAll('.sdd.open').forEach(b => { if (!b.contains(e.target)) b._close(); }), true);
+    scan(); new MutationObserver(scan).observe(document.body, { childList: true, subtree: true }); }
   // menus, cart and pop-ups set body overflow:hidden; iPhone Safari ignores that, so the page behind is pinned in place while one is open
   { let y = 0, locked = false; const sync = () => { const want = document.body.style.overflow === 'hidden'; if (want === locked) return; locked = want; const d = document.documentElement;
       if (want) { y = scrollY; d.classList.add('dq-lock'); document.body.style.top = -y + 'px'; }
