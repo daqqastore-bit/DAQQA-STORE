@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024141052">
-<link rel="stylesheet" href="assets/store.css?v=20261024141052">
+<link rel="stylesheet" href="assets/base.css?v=20261024141441">
+<link rel="stylesheet" href="assets/store.css?v=20261024141441">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -195,10 +195,10 @@
 /* the photo card sits on the strip's colour with little air around it, so it doesn't read as a separate empty zone */
 .kind:has(.band.has-photo){background:var(--strip-bg)}
 .strip:has(+ .band.has-photo) .strip-in{padding-bottom:24px}
-.band.has-photo{width:calc(100% - 32px);min-height:340px;margin:0 auto;margin-bottom:28px;border-radius:24px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
+.band.has-photo{width:calc(100% - 32px);min-height:280px;margin:0 auto;margin-bottom:28px;border-radius:24px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
 .band.has-photo .wrap{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
-.band.has-photo h2{font-size:clamp(30px,3.3vw,46px)}.band.has-photo .ar{font-size:17px}
-.band.has-photo .feats{margin-top:26px}.band.has-photo .feats>*{padding:18px 10px 22px}.band.has-photo .feats svg{width:28px;height:28px}
+.band.has-photo h2{font-size:clamp(26px,2.6vw,36px);margin-top:8px}.band.has-photo .ar{font-size:15px;margin-top:6px}.band.has-photo .lbl{font-size:12px}
+.band.has-photo .feats{margin-top:18px}.band.has-photo .feats>*{gap:8px;padding:12px 8px 14px;font-size:12px}.band.has-photo .feats svg{width:22px;height:22px}
 .band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 24px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 24px)}
 .band .wrap{position:relative;width:100%}
 .band .lbl{display:flex;align-items:center;justify-content:flex-end;gap:12px;direction:ltr;text-align:right;font:600 15px var(--f-display);letter-spacing:.34em;color:var(--accent)}
@@ -236,10 +236,10 @@
   .strip .grid.clip>.card:nth-child(4){display:flex}
   .band{min-height:440px}
   .band.has-photo{width:calc(100% - 20px);min-height:0;border-radius:20px}.band.has-photo .wrap{padding-left:18px;padding-right:18px}
-  .band.has-photo .feats{grid-template-columns:repeat(var(--n,3),1fr)}.band.has-photo .feats>*{border-top:0;border-inline-start:1px solid rgb(var(--accent-rgb)/.22);padding:16px 4px 18px;font-size:12px}.band.has-photo .feats>:first-child{border-inline-start:0}.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 20px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 20px)}
+  .band.has-photo .feats{grid-template-columns:repeat(var(--n,3),1fr)}.band.has-photo .feats>*{border-top:0;border-inline-start:1px solid rgb(var(--accent-rgb)/.22);padding:12px 4px 14px;font-size:11.5px}.band.has-photo .feats>:first-child{border-inline-start:0}.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 20px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 20px)}
   /* phones: the photo sits clear on top, the words under it (no text over the picture) */
   .band.has-photo{justify-content:flex-start;padding-top:0}
-  .band.has-photo .bg{position:relative;inset:auto;height:230px;flex:none}
+  .band.has-photo .bg{position:relative;inset:auto;height:190px;flex:none}
   .band.has-photo .bg::after{background:linear-gradient(0deg,var(--bg) 0%,rgb(var(--bg-rgb)/0) 38%)}
   .band.has-photo .wrap{margin-top:-14px;padding-top:0}
   .feats{grid-template-columns:repeat(2,1fr)}
@@ -322,8 +322,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024141052"></script>
-<script src="assets/app.js?v=20261024141052"></script>
+<script src="assets/config.js?v=20261024141441"></script>
+<script src="assets/app.js?v=20261024141441"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
