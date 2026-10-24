@@ -2,7 +2,7 @@ html,body{overflow-x:clip}
 /* DAQQA Watches — storefront shared styles (header, footer, cards, cart) */
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
 #hdr{display:block;position:sticky;top:0;z-index:50}
-#hdr .nav-bar{position:relative}
+#hdr .nav-bar{position:relative;background:var(--nav)}
 .topbar{background:var(--nav);border-bottom:1px solid var(--line);font-size:12.5px}
 .topbar[hidden]{display:none}
 @media (max-width:900px){.topbar .tb-soc{display:none}.topbar.no-ann{display:none}}
