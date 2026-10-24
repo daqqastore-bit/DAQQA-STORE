@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024140030">
-<link rel="stylesheet" href="assets/store.css?v=20261024140030">
+<link rel="stylesheet" href="assets/base.css?v=20261024140617">
+<link rel="stylesheet" href="assets/store.css?v=20261024140617">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -192,7 +192,10 @@
 /* the photo stays clear: only the text side (right) and the feature row (bottom) get a soft veil */
 .band .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgb(var(--bg-rgb)/.92) 0%,rgb(var(--bg-rgb)/.5) 22%,transparent 46%),linear-gradient(270deg,rgb(var(--bg-rgb)/.82) 0%,rgb(var(--bg-rgb)/.45) 32%,transparent 58%)}
 /* photo band = a rounded card inset from the screen edges */
-.band.has-photo{width:calc(100% - 48px);max-width:1192px;min-height:360px;margin:8px auto 36px;border-radius:24px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
+/* the photo card sits on the strip's colour with little air around it, so it doesn't read as a separate empty zone */
+.kind:has(.band.has-photo){background:var(--strip-bg)}
+.strip:has(+ .band.has-photo) .strip-in{padding-bottom:24px}
+.band.has-photo{width:calc(100% - 48px);max-width:1192px;min-height:360px;margin:0 auto;margin-bottom:28px;border-radius:24px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
 .band.has-photo .wrap{padding-left:44px;padding-right:44px}
 .band.has-photo h2{font-size:clamp(30px,3.3vw,46px)}.band.has-photo .ar{font-size:17px}
 .band.has-photo .feats{margin-top:26px}.band.has-photo .feats>*{padding:18px 10px 22px}.band.has-photo .feats svg{width:28px;height:28px}
@@ -315,8 +318,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024140030"></script>
-<script src="assets/app.js?v=20261024140030"></script>
+<script src="assets/config.js?v=20261024140617"></script>
+<script src="assets/app.js?v=20261024140617"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
