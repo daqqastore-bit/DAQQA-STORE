@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024143832">
+<link rel="stylesheet" href="assets/base.css?v=20261024144550">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -247,6 +247,10 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .cat-pop button{min-height:38px;display:flex;align-items:center;gap:6px;padding:0 12px;border-radius:9px;font-size:14px;color:var(--ink);text-align:right}
 .cat-pop button:hover{background:var(--surface-2)}.cat-pop button.on{background:var(--surface-2);font-weight:700}
 .cat-pop button.new{color:var(--amber)}.cat-pop button.new b{color:var(--ink)}
+.dd .cat-pop button{justify-content:space-between}.dd .cat-pop button small{color:var(--muted);font-size:12.5px;font-weight:400}
+.dd .cat-pop button.hi{background:var(--surface-2)}.dd-sel select{display:none}.dd-none{padding:10px 12px;font-size:13px;color:var(--muted)}
+.dd-sel:has(.ord-prod){display:inline-block;max-width:280px}.dd-sel:has(.ord-prod) .cat-pop{min-width:240px}
+.fin-box:has(.dd.open),.modal:has(.dd.open) .field,.field:has(.dd.open){position:relative;z-index:30}
 .rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
 .exp-form{position:relative;z-index:30}
 .panel:has(.cat.open),.fin-box:has(.cat.open){position:relative;z-index:30}
@@ -870,7 +874,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024143832"></script>
+<script src="assets/config.js?v=20261024144550"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1494,7 +1498,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024143832" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024144550" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1528,7 +1532,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024143832" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024144550" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1569,7 +1573,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024143832'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024143832')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024144550'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024144550')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1828,7 +1832,7 @@ function renderEditor() {
       <section class="ed-sec"><h4>بيانات المنتج</h4>
       <div class="two">
         <div class="field"><label>القسم</label><select class="input" id="f_kind" ${COLS.kind ? '' : 'disabled title="محتاج تفعيل من Supabase"'}>${Object.entries(RC.kinds).map(([k,v]) => `<option value="${k}" ${k===d.kind?'selected':''}>${v.ar} — ${v.en}</option>`).join('')}</select></div>
-        <div class="field"><label>النوع (بيظهر كتاب)</label><select class="input" id="f_style" ${COLS.style ? '' : 'disabled'}><option value="">— من غير نوع —</option>${[...RC.kinds[d.kind].styles, ...(d.style && !RC.kinds[d.kind].styles.includes(d.style) ? [d.style] : [])].map(x => `<option value="${esc(x)}" ${x === d.style ? 'selected' : ''}>${esc(x)}${(RC.kinds[d.kind].stylesAr || {})[x] ? ' — ' + RC.kinds[d.kind].stylesAr[x] : ''}</option>`).join('')}</select></div>
+        <div class="field"><label>النوع (بيظهر كتاب)</label><input class="input en" id="f_style" list="styleList" autocomplete="off" value="${esc(d.style || '')}" placeholder="اختار أو اكتب" ${COLS.style ? '' : 'disabled'}><datalist id="styleList">${RC.kinds[d.kind].styles.map(x => `<option value="${esc(x)}" label="${esc((RC.kinds[d.kind].stylesAr || {})[x] || '')}">`).join('')}</datalist></div>
       </div>
       <div class="field"><label>اسم المنتج *</label><input class="input en" id="f_name" value="${esc(d.name)}" dir="ltr" style="text-align:right"></div>
       <div class="two">
@@ -3053,6 +3057,61 @@ boot();
   }
   function scan(){ document.querySelectorAll('input[type=password]:not([data-eye])').forEach(add); }
   scan(); new MutationObserver(scan).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<script>
+// our dropdown everywhere: every <select class="input"> and every <input list> gets the .cat popup, and you can type to filter
+(() => {
+  const TG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  const ESC = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const VAL = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+  function build(inp, getOpts, onPick, isSel) {
+    const box = document.createElement('div'); box.className = 'cat dd' + (isSel ? ' dd-sel' : '');
+    inp.parentNode.insertBefore(box, inp); box.appendChild(inp);
+    box.insertAdjacentHTML('beforeend', `<button type="button" class="cat-tg" tabindex="-1" aria-label="عرض الاختيارات">${TG}</button><div class="cat-pop" role="listbox"></div>`);
+    const pop = box.querySelector('.cat-pop'); let hi = -1, typed = false;
+    const fill = () => { const q = typed ? inp.value.trim().toLowerCase() : '', all = getOpts();
+      const list = all.filter(o => !q || (o.v + ' ' + o.l).toLowerCase().includes(q));
+      box._list = list; hi = list.length ? Math.max(0, list.findIndex(o => o.on)) : -1;
+      pop.innerHTML = list.map((o, i) => `<button type="button" data-i="${i}" class="${o.on ? 'on' : ''} ${i === hi ? 'hi' : ''}"><span>${ESC(o.t)}</span>${o.l && o.l !== o.t ? `<small>${ESC(o.l)}</small>` : ''}</button>`).join('') || (isSel && q ? '<div class="dd-none">مفيش اختيار بالاسم ده</div>' : ''); };
+    const open = v => { if (inp.disabled) v = false; if (v) fill(); box.classList.toggle('open', v); if (!v) { typed = false; if (isSel) box._sync(); } };
+    const pick = o => { onPick(o); typed = false; open(false); };
+    const mark = () => pop.querySelectorAll('button').forEach((b, i) => { b.classList.toggle('hi', i === hi); if (i === hi) b.scrollIntoView({ block: 'nearest' }); });
+    inp.addEventListener('focus', () => open(true));
+    inp.addEventListener('beforeinput', e => { if (isSel && !typed && /^insert/.test(e.inputType)) inp.value = ''; });   // typing in a select starts a fresh search
+    inp.addEventListener('click', () => { if (!box.classList.contains('open')) open(true); });
+    inp.addEventListener('input', () => { typed = true; open(true); });
+    inp.addEventListener('keydown', e => { const L = box._list || [];
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); if (!box.classList.contains('open')) return open(true); if (L.length) { hi = (hi + (e.key === 'ArrowDown' ? 1 : -1) + L.length) % L.length; mark(); } }
+      else if (e.key === 'Enter' && box.classList.contains('open') && hi >= 0 && L[hi] && (isSel || typed || e.altKey)) { e.preventDefault(); pick(L[hi]); }
+      else if (e.key === 'Escape' && box.classList.contains('open')) { e.stopPropagation(); open(false); }
+      else if (e.key === 'Tab') open(false); });
+    box.querySelector('.cat-tg').addEventListener('click', () => { const v = !box.classList.contains('open'); typed = false; open(v); if (v) inp.focus(); });
+    pop.addEventListener('mousedown', e => e.preventDefault());
+    pop.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) pick(box._list[+b.dataset.i]); });
+    box._close = () => open(false);
+    return box;
+  }
+  function selDD(sel) { sel.dataset.dd = 1;
+    const inp = document.createElement('input'); inp.type = 'text'; inp.className = sel.className; inp.autocomplete = 'off'; inp.spellcheck = false;
+    if (sel.id) inp.dataset.for = sel.id; if (sel.getAttribute('aria-label')) inp.setAttribute('aria-label', sel.getAttribute('aria-label'));
+    sel.parentNode.insertBefore(inp, sel);
+    const box = build(inp, () => [...sel.options].filter(o => !o.hidden).map(o => ({ v: o.value, t: o.text, l: '', on: o.selected, o })),
+      o => { if (sel.value !== o.v) { VAL.set.call(sel, o.v); box._sync(); sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true })); } else box._sync(); }, true);
+    box.appendChild(sel);
+    box._sync = () => { const o = sel.options[sel.selectedIndex]; inp.value = o ? o.text : ''; inp.disabled = sel.disabled; inp.title = sel.title || ''; };
+    Object.defineProperty(sel, 'value', { configurable: true, get() { return VAL.get.call(this); }, set(v) { VAL.set.call(this, v); box._sync(); } });
+    sel.addEventListener('change', () => box._sync());
+    box._sync();
+  }
+  function listDD(inp) { const id = inp.getAttribute('list'); inp.dataset.dd = id; inp.removeAttribute('list'); inp.autocomplete = 'off';
+    build(inp, () => { const dl = document.getElementById(id); const cur = inp.value.trim();
+      return dl ? [...dl.options].map(o => ({ v: o.value, t: o.value, l: o.label && o.label !== o.value ? o.label : (o.textContent.trim() !== o.value ? o.textContent.trim() : ''), on: o.value === cur })) : []; },
+      o => { inp.value = o.v; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.dispatchEvent(new Event('change', { bubbles: true })); }, false);
+  }
+  function scan() { document.querySelectorAll('select.input:not([data-dd])').forEach(selDD); document.querySelectorAll('input[list]:not([data-dd])').forEach(listDD); }
+  document.addEventListener('mousedown', e => document.querySelectorAll('.dd.open').forEach(b => { if (!b.contains(e.target)) b._close(); }), true);
+  scan(); new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
 </body>
