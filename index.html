@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024181101">
-<link rel="stylesheet" href="assets/store.css?v=20261024181101">
+<link rel="stylesheet" href="assets/base.css?v=20261024181432">
+<link rel="stylesheet" href="assets/store.css?v=20261024181432">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -181,10 +181,14 @@
 .tabs{display:flex;gap:26px;border-bottom:1px solid var(--s-line);margin-bottom:28px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tabs-row{display:flex;align-items:flex-end;gap:18px;border-bottom:1px solid var(--s-line);margin-bottom:28px}.tabs-row .tabs{flex:1;min-width:0;border-bottom:0;margin-bottom:0}
-.gseg{order:2;flex:none;display:flex;gap:2px;padding:3px;margin-bottom:7px;border:1px solid var(--s-line);border-radius:999px}
-.gseg button{height:32px;padding:0 16px;border-radius:999px;font-size:13px;color:var(--s-muted);transition:background .2s,color .2s}
-.gseg button:hover{color:var(--strip-ink)}.gseg button.on{background:var(--strip-ink);color:var(--strip-bg);font-weight:600}
-@media (max-width:640px){.tabs-row{flex-direction:column;align-items:stretch;gap:4px}.tabs-row .tabs{order:2}.gseg{order:1;align-self:flex-start;margin-bottom:6px}.gseg button{height:30px;padding:0 14px}}
+.gseg{order:2;flex:none;position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;margin-bottom:8px;border-radius:999px;background:rgb(var(--accent-rgb)/.08);box-shadow:inset 0 0 0 1px rgb(var(--accent-rgb)/.22)}
+.gs-thumb{position:absolute;top:4px;bottom:4px;right:4px;width:calc((100% - 8px) / 3);border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent-2,var(--accent)));box-shadow:0 6px 16px -6px rgb(var(--accent-rgb)/.7);transform:translateX(calc(var(--i,0) * -100%));transition:transform .38s cubic-bezier(.3,1.3,.5,1)}
+.gseg button{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;min-width:92px;padding:0 14px;border-radius:999px;font-size:13.5px;color:var(--s-muted);transition:color .25s}
+.gseg button svg{width:15px;height:15px;flex:none;opacity:.8}
+.gseg button:hover{color:var(--strip-ink)}.gseg button.on{color:#fff;font-weight:700}.gseg button.on svg{opacity:1}
+.grid.quick .card.reveal{transform:translateY(12px) scale(.985);transition-duration:.32s,.32s,.36s!important;transition-delay:0s!important}
+.grid.quick .card.reveal.in{transform:none}
+@media (max-width:640px){.tabs-row{flex-direction:column;align-items:stretch;gap:4px}.tabs-row .tabs{order:2}.gseg{order:1;align-self:stretch;margin-bottom:6px}.gseg button{height:36px;min-width:0;padding:0 8px}}
 .tabs button{height:46px;font-size:14px;color:var(--s-muted);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s,border-color .2s}
 .tabs button:hover{color:var(--strip-ink)}
 .tabs button.on{color:var(--strip-ink);border-color:var(--strip-ink);font-weight:600}
@@ -327,12 +331,15 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024181101"></script>
-<script src="assets/app.js?v=20261024181101"></script>
+<script src="assets/config.js?v=20261024181432"></script>
+<script src="assets/app.js?v=20261024181432"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
 const state = {}; // per section: { tab, all, g } · g = men | women | all (unisex shows in both)
+const G_SVG = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const G_OPTS = [['all', 'الكل', G_SVG('<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M3 19c.6-2.8 2.6-4.5 5-4.5s4.4 1.7 5 4.5M11 19c.6-2.8 2.6-4.5 5-4.5s4.4 1.7 5 4.5"/>')],
+  ['men', 'رجالي', G_SVG('<circle cx="10" cy="14" r="5"/><path d="M14 10l6-6M15 4h5v5"/>')], ['women', 'حريمي', G_SVG('<circle cx="12" cy="9" r="5"/><path d="M12 14v7M9 18h6"/>')]];
 const G_KEY = 'dq-strip-g'; let gMem = {}; try { gMem = JSON.parse(sessionStorage.getItem(G_KEY) || '{}') || {}; } catch (e) {}
 
 // ---------- desktop landing: scroll-driven ----------
@@ -493,7 +500,9 @@ function renderStrip(k) {
   grid.classList.toggle('clip', !st.all);
   grid.innerHTML = list.length ? list.map(DQ.card).join('') : `<div class="empty">مفيش منتجات هنا.</div>`;
   document.querySelectorAll(`#${k} .tabs button`).forEach(b => b.classList.toggle('on', b.dataset.tab === st.tab));
-  document.querySelectorAll(`#${k} .gseg button`).forEach(b => { const on = b.dataset.g === st.g; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  document.querySelectorAll(`#${k} .gseg button`).forEach((b, i) => { const on = b.dataset.g === st.g; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); if (on) b.parentNode.style.setProperty('--i', i); });
+  // after the first paint, switching a filter swaps the cards in quickly instead of the slow scroll reveal
+  if (grid.dataset.drawn) grid.classList.add('quick'); grid.dataset.drawn = 1;
   const va = document.querySelector(`#${k} .view-all`);
   va.hidden = list.length <= 4;
   va.querySelector('span').textContent = st.all ? 'عرض أقل' : `عرض الكل (${list.length})`;
@@ -529,7 +538,7 @@ function build() {
         </div>${img.hero ? '' : `<a class="frame op op-arch" href="${RC.productUrl(img.product)}" aria-label="${esc(img.product.name)}"><span class="fr-card"><span class="fr-tag en">FEATURED</span><img src="${esc(img.product.images[0])}" alt="${esc(img.product.name)}"></span><span class="fr-cap"><span><b>${esc(img.product.name)}</b><small>${DQ.priceTxt(img.product)}</small></span><i>${DQ.ICON.arrow}</i></span></a>`}</div></div>
       <div class="strip" data-glow id="${k}-shop"><div class="wrap strip-in">
         <div class="strip-head op op-stagger"><h3 class="en">${K.en}<small>${K.ar}</small></h3><button class="view-all" data-va="${k}"><span>عرض الكل</span> ${DQ.ICON.arrow}</button></div>
-        <div class="tabs-row"><div class="gseg op op-stagger" role="group" aria-label="الفئة">${[['all', 'الكل'], ['men', 'رجالي'], ['women', 'حريمي']].map(([g, l]) => `<button type="button" data-g="${g}" data-k="${k}">${l}</button>`).join('')}</div>
+        <div class="tabs-row"><div class="gseg" role="group" aria-label="الفئة"><i class="gs-thumb" aria-hidden="true"></i>${G_OPTS.map(([g, l, ic]) => `<button type="button" data-g="${g}" data-k="${k}">${ic}<span>${l}</span></button>`).join('')}</div>
         <div class="tabs op op-stagger" role="tablist">
           <button data-tab="all" data-k="${k}" class="on">الكل</button>
           ${styles.map(s => `<button class="en" data-tab="${esc(s)}" data-k="${k}">${esc(s)}</button>`).join('')}
