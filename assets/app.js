@@ -64,7 +64,8 @@
         const t = (r.top + r.height / 2 - vh / 2) / vh; el.style.setProperty('--py', (t * -60).toFixed(1) + 'px'); });
     }); }, { passive: true });
   }
-  DQ.priceHTML = (p) => { const off = discountPct(p); return `<div class="prices"><span class="price-new">${money(finalPrice(p))}</span>${off ? `<span class="price-old">${money(p.price)}</span>` : ''}</div>`; };
+  DQ.priceTxt = (p) => p.soon ? 'Coming Soon' : money(finalPrice(p));
+  DQ.priceHTML = (p) => { if (p.soon) return '<div class="prices"><span class="price-soon en">Coming Soon</span></div>'; const off = discountPct(p); return `<div class="prices"><span class="price-new">${money(finalPrice(p))}</span>${off ? `<span class="price-old">${money(p.price)}</span>` : ''}</div>`; };
   DQ.img = (p, i = 0) => esc((p.images && p.images[i]) || FALLBACK);
   // <img> attributes for a card-sized photo: the small copy first, the full photo if the small one isn't there yet
   DQ.thumb = (p, i = 0) => { const u = (p.images && p.images[i]) || FALLBACK, t = RC.thumb(u); return t === u ? `src="${esc(u)}" onerror="this.onerror=null;this.src=DQ.FALLBACK"` : `src="${esc(t)}" data-full="${esc(u)}" onerror="DQ.imgFail(this)"`; };
@@ -77,10 +78,10 @@
     if (sub) sub.textContent = list.length ? `${list.length} ${list.length === 1 ? 'قطعة' : list.length === 2 ? 'قطعتين' : list.length <= 10 ? 'قطع' : 'قطعة'} محفوظة · ${money(total)}` : 'القطع اللي بتعجبك بتتحفظ هنا';
     $('#favRes').innerHTML = list.length ? list.map((p, i) => { const off = discountPct(p), url = RC.productUrl(p), st = RC.kindOf(p);
       return `<article class="fv-card" style="animation-delay:${Math.min(i, 8) * 60}ms">
-        <a class="fv-ph" href="${url}"><img loading="lazy" ${DQ.thumb(p)} alt="${esc(p.name)}">${off ? `<span class="fv-off en">-${off}%</span>` : ''}${p.stock > 0 ? '' : '<span class="fv-out">خلصت</span>'}</a>
+        <a class="fv-ph" href="${url}"><img loading="lazy" ${DQ.thumb(p)} alt="${esc(p.name)}">${off ? `<span class="fv-off en">-${off}%</span>` : ''}${p.soon ? '<span class="fv-out en">SOON</span>' : p.stock > 0 ? '' : '<span class="fv-out">خلصت</span>'}</a>
         <button class="fv-rm" data-fav="${p.id}" aria-label="شيلها من المفضلة" title="شيلها من المفضلة">${ICON.heart}</button>
         <div class="fv-info"><small>${esc(RC.kinds[st].ar)}${p.style ? ` · <span class="en">${esc(p.style)}</span>` : ''}</small><a class="fv-name en" href="${url}">${esc(p.name)}</a>${DQ.priceHTML(p)}</div>
-        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>أضف للسلة</span></button>` : '<span class="fv-add off">مش متاحة دلوقتي</span>'}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
+        <div class="fv-acts">${p.stock > 0 ? `<button class="fv-add" data-add="${p.id}">${ICON.plus}<span>أضف للسلة</span></button>` : `<span class="fv-add off">${p.soon ? 'قريبًا' : 'مش متاحة دلوقتي'}</span>`}<a class="fv-view" href="${url}" aria-label="افتح ${esc(p.name)}">${ICON.arrow}</a></div>
       </article>`; }).join('') : `<div class="fv-empty"><span class="fv-empty-ic">${ICON.heart}</span><b>المفضلة فاضية</b><p>دوس على القلب في أي منتج عشان تحفظه هنا وترجعله بعدين.</p><a class="btn btn-primary" href="./" data-close>تصفّح المنتجات</a></div>`;
     const all = $('#favAll'); if (all) { const ok = list.filter(p => p.stock > 0 && !RC.variants(p).length); all.hidden = ok.length < 2; all.dataset.ids = ok.map(p => p.id).join(','); }
     document.querySelectorAll('[data-fav]').forEach(b => { const on = DQ.favs.has(+b.dataset.fav); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
@@ -94,7 +95,7 @@
     const nImg = (p.images || []).length;
     return `<article class="card reveal" data-pid="${p.id}" style="transition-delay:${Math.min(i, 8) * 50}ms">
       <div class="ph-w"><a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" ${DQ.thumb(p)} alt="">
-        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.stock <= 0 ? `<div class="out">نفدت الكمية</div>` : ''}</a>
+        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.soon ? '<span class="soon-tag en">COMING SOON</span>' : p.stock <= 0 ? `<div class="out">نفدت الكمية</div>` : ''}</a>
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <button type="button" class="qv-eye" data-qv="${p.id}" aria-label="عرض سريع لـ ${esc(p.name)}" title="عرض سريع">${QV_EYE}</button></div>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
@@ -323,7 +324,7 @@
   DQ.readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c && Date.now() - c.t < 7 * 864e5 && Array.isArray(c.p) ? c : null; } catch (e) { return null; } };
   const apply = (prods, sets) => {
     // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
-    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x); DQ.settings = sets || {};
+    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x).map(x => RC.soon(x) ? { ...x, stock: 0, soon: true } : x); DQ.settings = sets || {};
     renderSocial(); renderClosed();
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };
@@ -428,7 +429,7 @@
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
       <div class="qa-buy"><div class="qa-q"><span>الكمية</span><div class="qty"><button type="button" data-qd="-1" aria-label="تقليل">−</button><span class="en" id="qaN">1</span><button type="button" data-qd="1" aria-label="زيادة">+</button></div></div>
-      ${out ? `<div class="qv-out">نفدت الكمية</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}</div>
+      ${out ? `<div class="qv-out">${p.soon ? 'Coming Soon · قريبًا' : 'نفدت الكمية'}</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}</div>
       ${full ? `<a class="qv-more" href="${RC.productUrl(p)}">شوف صفحة المنتج كاملة ←</a></div>` : ''}</div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on')); DQ.optApply(m, p, sel, {});
     const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };

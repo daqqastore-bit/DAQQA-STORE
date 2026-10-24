@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024145314">
+<link rel="stylesheet" href="assets/base.css?v=20261024155320">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -874,7 +874,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024145314"></script>
+<script src="assets/config.js?v=20261024155320"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1498,7 +1498,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024145314" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024155320" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1532,7 +1532,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024145314" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024155320" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1573,7 +1573,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024145314'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024145314')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024155320'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024155320')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1701,7 +1701,7 @@ function renderProducts() {
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${list.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th></tr></thead><tbody>
       ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = discountPct(p); return `<tr data-edit="${p.id}">
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
-        <td class="en"><b>${money(finalPrice(p))}</b>${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
+        <td class="en"><b>${+p.price > 0 ? money(finalPrice(p)) : '<span style="color:var(--amber);font-size:12px;letter-spacing:.1em">COMING SOON</span>'}</b>${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
         <td><button type="button" class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
         <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td></tr>`; }).join('')}
@@ -1848,7 +1848,7 @@ function renderEditor() {
         <textarea class="input ed-txt" id="f_ship" rows="4" dir="rtl" ${COLS.shipping_note ? '' : 'disabled'}>${esc(d._ship)}</textarea></section>
     </div><div class="ed-col ed-side">
       <section class="ed-sec"><h4>السعر</h4>
-      <div class="field"><label>السعر الأصلي *</label><input class="input en" id="f_price" inputmode="decimal" value="${esc(d.price)}"></div>
+      <div class="field"><label>السعر الأصلي <small style="color:var(--muted);font-weight:400">(سيبه فاضي = يظهر Coming Soon)</small></label><input class="input en" id="f_price" inputmode="decimal" value="${esc(d.price)}"></div>
       <div class="disc-box">
         <label style="font-size:13px;color:var(--muted)">الخصم</label>
         <div class="presets" id="presets">${[0,10,15,20,25,30,40,50].map(v => `<button type="button" data-pre="${v}" class="${off===v?'on':''}">${v ? v + '%' : 'بدون'}</button>`).join('')}</div>
@@ -1982,6 +1982,7 @@ function updatePreview() {
   const pr = +$('#f_price').value || 0, spv = $('#f_sale').value, sp = spv === '' ? null : +spv;
   const has = sp != null && sp < pr, off = has ? Math.round((1 - sp/pr) * 100) : 0;
   document.querySelectorAll('#presets [data-pre]').forEach(b => b.classList.toggle('on', +b.dataset.pre === off));
+  if (!pr) return $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new en" style="letter-spacing:.14em">COMING SOON</span></div>`;
   $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new">${money(has ? sp : pr)}</span>${has ? `<span class="price-old">${money(pr)}</span><span class="badge-off">-${off}%</span>` : ''}</div>`;
 }
 // about + filled spec lines → the one description field the store reads ("البند: القيمة" lines become the specs list)
@@ -2105,7 +2106,7 @@ async function saveProduct() {
   const sbtn = $('#saveP'); if (!sbtn || sbtn.disabled || sbtn.dataset.busy) return;
   syncDraft(); const d = draft;
   if (!d.name) return toast('اكتب اسم المنتج', 'err');
-  const price = +d.price; if (!(price >= 0) || d.price === '') return toast('اكتب سعر صحيح', 'err');
+  const price = String(d.price).trim() === '' ? 0 : +d.price; if (!(price >= 0)) return toast('اكتب سعر صحيح', 'err');
   let sale = d.sale_price == null ? null : +d.sale_price;
   if (sale != null && (isNaN(sale) || sale >= price || sale < 0)) sale = null;
   const row = { name: d.name, brand: d.brand, category: d.category, description: composeDesc(d), price, sale_price: sale, images: d.images,

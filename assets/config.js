@@ -9,6 +9,8 @@ window.RC = {
   statuses: { new: 'جديد', confirmed: 'تم الاستلام', shipped: 'في التوصيل', delivered: 'تم التسليم', cancelled: 'ملغي', returned: 'مرتجع (تم الشحن ولم يستلم)' }
 };
 RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' ' + RC.currency;
+// no price saved (0 / empty) = shown as Coming Soon and can't be bought
+RC.soon = (p) => !(Number(p && p.price) > 0);
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
 RC.onOffer = (p) => !!(p && p.on_offer);
 RC.discountPct = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Math.round((1 - p.sale_price / p.price) * 100) : 0;
@@ -150,7 +152,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261024145314';
+RC.build = '20261024155320';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
