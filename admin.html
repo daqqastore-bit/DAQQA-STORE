@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024144550">
+<link rel="stylesheet" href="assets/base.css?v=20261024145314">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -238,7 +238,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .atable td.n{font-family:var(--f-ui);white-space:nowrap}
 .atable .pos{color:var(--green);font-weight:700}.atable .neg{color:var(--red);font-weight:700}
 .atable .miss{color:var(--amber);font-size:12.5px}
-.cat{position:relative}.cat .input{padding-inline-end:40px}
+.cat{position:relative}.cat .input{padding-left:42px}
 .cat-tg{position:absolute;inset-inline-end:6px;top:50%;translate:0 -50%;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}
 .cat-tg svg{width:16px;height:16px;transition:transform .25s}.cat.open .cat-tg svg{transform:rotate(180deg)}
 .cat.open .input{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}
@@ -874,7 +874,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024144550"></script>
+<script src="assets/config.js?v=20261024145314"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1498,7 +1498,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024144550" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024145314" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1532,7 +1532,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024144550" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024145314" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1573,7 +1573,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024144550'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024144550')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024145314'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024145314')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
