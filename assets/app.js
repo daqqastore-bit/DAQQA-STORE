@@ -331,7 +331,7 @@
   function openSheet(id) { DQ.closeAll(); $(id).classList.add('on'); document.body.style.overflow = 'hidden'; }
   function renderSearch(q) {
     q = q.trim().toLowerCase();
-    const list = q ? DQ.products.filter(p => (p.name + ' ' + (p.brand || '') + ' ' + (categories[p.category] || '') + ' ' + RC.kinds[RC.kindOf(p)].ar + ' ' + RC.kinds[RC.kindOf(p)].en + ' ' + (p.description || '')).toLowerCase().includes(q)) : DQ.products.slice(0, 6);
+    const list = q ? DQ.products.filter(p => (p.name + ' ' + (p.brand || '') + ' ' + (categories[p.category] || '') + ' ' + RC.kinds[RC.kindOf(p)].ar + ' ' + RC.kinds[RC.kindOf(p)].en + ' ' + (p.description || '') + ' ' + (p.style || '') + ' ' + RC.sku(p)).toLowerCase().includes(q)) : DQ.products.slice(0, 6);
     $('#searchRes').innerHTML = list.length ? list.slice(0, 12).map(p => `<a href="${RC.productUrl(p)}"><img ${DQ.thumb(p)} alt=""><span><b class="en">${esc(p.name)}</b><br><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || '')}</small></span>${DQ.priceHTML(p)}</a>`).join('') : `<div class="empty">مفيش منتج بالاسم ده.</div>`;
   }
 

@@ -1082,4 +1082,4 @@ html.dq-lock{overflow:hidden;overscroll-behavior:none}html.dq-lock body{position
 .sdd-pop button{min-height:40px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 12px;border-radius:10px;font-size:14px;color:var(--ink);text-align:start}
 .sdd-pop button:hover{background:var(--surface-2)}.sdd-pop button.on{background:rgb(var(--accent-rgb)/.12);color:var(--accent);font-weight:700}.sdd-pop button svg{width:16px;height:16px;flex:none}
 @media (max-width:640px){.c-bar .sdd{width:100%}}
-.strip .sdd-btn,.strip .sdd-pop{background:#fff;color:var(--strip-ink);border-color:var(--s-line)}.strip .sdd-pop button{color:var(--strip-ink)}.strip .sdd-pop button:hover{background:var(--s-tile)}.strip .sdd-pop button.on{color:#8a5a2b}
+.strip .sdd-btn{background:rgb(var(--accent-rgb)/.08);color:var(--strip-ink);border-color:rgb(var(--accent-rgb)/.22)}.strip .sdd-pop{background:var(--strip-bg);color:var(--strip-ink);border-color:rgb(var(--accent-rgb)/.22)}.strip .sdd-pop button{color:var(--strip-ink)}.strip .sdd-pop button:hover{background:var(--s-tile)}.strip .sdd-pop button.on{color:#8a5a2b}

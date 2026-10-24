@@ -19,8 +19,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024193421">
-<link rel="stylesheet" href="assets/store.css?v=20261024193421">
+<link rel="stylesheet" href="assets/base.css?v=20261024193941">
+<link rel="stylesheet" href="assets/store.css?v=20261024193941">
 <style>
 .c-hero{position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 0%,rgb(var(--accent-rgb)/.16),transparent 60%),var(--hero);border-bottom:1px solid var(--line)}
 .c-hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;min-height:360px;padding-top:56px;padding-bottom:56px}
@@ -107,8 +107,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024193421"></script>
-<script src="assets/app.js?v=20261024193421"></script>
+<script src="assets/config.js?v=20261024193941"></script>
+<script src="assets/app.js?v=20261024193941"></script>
 <script>
 const { esc, finalPrice, discountPct } = RC;
 const C = new URLSearchParams(location.search).get('c');
@@ -142,7 +142,7 @@ DQ.start(PAGE, () => {
   <section class="strip" data-glow><div class="wrap">
     <div class="c-bar">
       <div class="tabs" role="tablist">${[['all', 'الكل', all.length], ...kinds.map(k => [k, RC.kinds[k].ar, all.filter(p => RC.kindOf(p) === k).length])].map(([k, l, n]) => `<button role="tab" data-tab="${k}" class="${k === tab ? 'on' : ''}">${l}<small>${n}</small></button>`).join('')}${all.some(RC.onOffer) ? `<button role="tab" data-tab="sale">العروض</button>` : ''}</div>
-      <select id="sort" aria-label="ترتيب"><option value="default">الترتيب: المميز</option><option value="low">السعر: من الأقل</option><option value="high">السعر: من الأعلى</option><option value="off">أعلى خصم</option></select>
+      <select id="sort" aria-label="ترتيب"><option value="default">الترتيب: المميز</option><option value="low">السعر: من الأقل</option><option value="high">السعر: من الأعلى</option><option value="off">أعلى خصم</option><option value="az">أبجدي ⁦A-Z⁩</option><option value="za">أبجدي ⁦Z-A⁩</option></select>
     </div>
     <div class="c-grid"><div class="grid" id="grid"></div></div>
   </div></section>`;
@@ -151,6 +151,7 @@ DQ.start(PAGE, () => {
     if (sort === 'low') list = [...list].sort((a, b) => finalPrice(a) - finalPrice(b));
     if (sort === 'high') list = [...list].sort((a, b) => finalPrice(b) - finalPrice(a));
     if (sort === 'off') list = [...list].sort((a, b) => discountPct(b) - discountPct(a));
+    if (sort === 'az' || sort === 'za') { const by = (a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'en', { sensitivity: 'base', numeric: true }); list = [...list].sort(sort === 'az' ? by : (a, b) => by(b, a)); }
     document.getElementById('grid').innerHTML = list.length ? list.map(DQ.card).join('') : `<div class="c-empty">مفيش منتجات هنا دلوقتي.</div>`;
     DQ.renderFavs && DQ.renderFavs(); DQ.reveal();
   };
