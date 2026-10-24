@@ -1072,3 +1072,4 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .card .ph .soon-tag{position:absolute;inset-inline-start:10px;bottom:10px;z-index:2;padding:6px 12px;border-radius:999px;background:rgb(var(--bg-rgb)/.82);backdrop-filter:blur(6px);color:var(--accent);font:600 10.5px var(--f-ui);letter-spacing:.2em;border:1px solid rgb(var(--accent-rgb)/.35)}
 .price-box .price-new.price-soon{font-size:clamp(18px,2vw,24px);letter-spacing:.18em}
 .card .ph .out{font:600 13px var(--f-ui);letter-spacing:.22em}
+html.dq-lock{overflow:hidden;overscroll-behavior:none}html.dq-lock body{position:fixed;left:0;right:0;width:100%;overflow:hidden}

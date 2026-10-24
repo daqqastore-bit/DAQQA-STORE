@@ -306,6 +306,11 @@
     DQ._wakeCursor = () => { if (!looping) { looping = true; requestAnimationFrame(loop); } };
     addEventListener('pointermove', DQ._wakeCursor, { passive: true });
   }
+  // menus, cart and pop-ups set body overflow:hidden; iPhone Safari ignores that, so the page behind is pinned in place while one is open
+  { let y = 0, locked = false; const sync = () => { const want = document.body.style.overflow === 'hidden'; if (want === locked) return; locked = want; const d = document.documentElement;
+      if (want) { y = scrollY; d.classList.add('dq-lock'); document.body.style.top = -y + 'px'; }
+      else { d.classList.remove('dq-lock'); document.body.style.top = ''; d.style.scrollBehavior = 'auto'; scrollTo(0, y); d.style.scrollBehavior = ''; } };
+    new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['style'] }); }
   function openSheet(id) { DQ.closeAll(); $(id).classList.add('on'); document.body.style.overflow = 'hidden'; }
   function renderSearch(q) {
     q = q.trim().toLowerCase();
