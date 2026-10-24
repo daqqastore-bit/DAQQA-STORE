@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024141924">
+<link rel="stylesheet" href="assets/base.css?v=20261024143832">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -870,7 +870,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024141924"></script>
+<script src="assets/config.js?v=20261024143832"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1494,7 +1494,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024141924" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024143832" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1528,7 +1528,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024141924" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024143832" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1569,7 +1569,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024141924'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024141924')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024143832'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024143832')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1828,7 +1828,7 @@ function renderEditor() {
       <section class="ed-sec"><h4>بيانات المنتج</h4>
       <div class="two">
         <div class="field"><label>القسم</label><select class="input" id="f_kind" ${COLS.kind ? '' : 'disabled title="محتاج تفعيل من Supabase"'}>${Object.entries(RC.kinds).map(([k,v]) => `<option value="${k}" ${k===d.kind?'selected':''}>${v.ar} — ${v.en}</option>`).join('')}</select></div>
-        <div class="field"><label>النوع (بيظهر كتاب)</label><input class="input en" id="f_style" list="styleList" value="${esc(d.style || '')}" placeholder="${RC.kinds[d.kind].styles.slice(0,2).join(' / ')}" ${COLS.style ? '' : 'disabled'}><datalist id="styleList">${RC.kinds[d.kind].styles.map(x => `<option value="${x}">`).join('')}</datalist></div>
+        <div class="field"><label>النوع (بيظهر كتاب)</label><select class="input" id="f_style" ${COLS.style ? '' : 'disabled'}><option value="">— من غير نوع —</option>${[...RC.kinds[d.kind].styles, ...(d.style && !RC.kinds[d.kind].styles.includes(d.style) ? [d.style] : [])].map(x => `<option value="${esc(x)}" ${x === d.style ? 'selected' : ''}>${esc(x)}${(RC.kinds[d.kind].stylesAr || {})[x] ? ' — ' + RC.kinds[d.kind].stylesAr[x] : ''}</option>`).join('')}</select></div>
       </div>
       <div class="field"><label>اسم المنتج *</label><input class="input en" id="f_name" value="${esc(d.name)}" dir="ltr" style="text-align:right"></div>
       <div class="two">
@@ -1881,6 +1881,7 @@ function renderEditor() {
   updatePreview();
   $('#edClose').onclick = closeEditor;
   $('#f_kind').onchange = () => { const k0 = draft.kind; syncDraft(); const k = draft.kind;
+    if (draft.style && RC.kinds[k0].styles.includes(draft.style) && !RC.kinds[k].styles.includes(draft.style)) draft.style = '';
     if (draft._about === aboutDef(k0)) draft._about = aboutDef(k);
     if (draft._ship === shipDef(k0)) draft._ship = shipDef(k);
     if (draft._specs.every(([, v]) => !v)) draft._specs = (SPEC_DEF[k] || []).map(x => [x, '']);

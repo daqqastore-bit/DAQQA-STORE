@@ -17,7 +17,8 @@ RC.esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '
 // p.style: sub-type shown as tabs (e.g. Classic, Chronograph) · p.colors: ['#hex', ...] shown as swatches
 RC.kinds = {
   watches: { ar: 'ساعات', en: 'Watches', one: 'ساعة', code: 'DQ',
-    styles: ['Classic', 'Chronograph', 'Automatic', 'Sport', 'Limited Edition'],
+    styles: ['Classic', 'Skeleton', 'Luxury', 'Chronograph', 'Sport', "Women's", 'Digital', 'Smartwatch'],
+    stylesAr: { Classic: 'ساعات كلاسيك', Skeleton: 'ساعات ميكانيزم مكشوف', Luxury: 'ساعات فاخرة', Chronograph: 'ساعات كرونوغراف', Sport: 'ساعات رياضية', "Women's": 'ساعات حريمي', Digital: 'ساعات رقمية', Smartwatch: 'ساعات ذكية' },
     banner: { en: 'Time Completes<br>Your Story.', ar: 'ساعة بتكمّل حكايتك.', sub: 'ساعات مختارة بعناية لكل يوم ولكل مناسبة.', cta: 'تسوّق الساعات' },
     band: { en: 'Crafted for<br>Every Moment.', ar: 'معمولة لكل لحظة.', feats: [['gem', 'خامات فاخرة'], ['gear', 'ماكينة مضبوطة'], ['shield', 'ضمان على الماكينة'], ['truck', 'شحن سريع']] } },
   glasses: { ar: 'نضارات', en: 'Sunglasses', one: 'نضارة', code: 'DA',
@@ -149,7 +150,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261024141924';
+RC.build = '20261024143832';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
