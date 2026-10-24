@@ -95,6 +95,12 @@ RC.pages = {
   women:  { ar: 'حريمي', en: 'Women',  href: 'collection.html?c=women', test: p => !RC.isLuxury(p) && (p.category === 'women' || p.category === 'unisex') }
 };
 
+// men / women page texts + on/off from Admin → Settings → «رجالي وحريمي» (shop_settings.page_cfg); empty fields use these
+RC.PAGE_DEF = { men: { en: 'For Him', ar: 'لِـه.', tail: 'رجالي مختارة بعناية.' }, women: { en: 'For Her', ar: 'لِـها.', tail: 'حريمي بتفاصيل ناعمة.' } };
+RC.pageCfg = (k, s) => ({ ...(RC.PAGE_DEF[k] || {}), ...Object.fromEntries(Object.entries(((s && s.page_cfg) || {})[k] || {}).filter(([, v]) => v !== '' && v != null)) });
+// «ساعات ونضارات واكسسوارات» built from the sections that really have products
+RC.arJoin = l => l.length < 2 ? (l[0] || '') : l.slice(0, -1).join('، ') + ' و' + l[l.length - 1];
+
 // is Google sign-in switched on in Supabase? (Google buttons stay hidden until it is)
 RC.googleOn = () => RC._g || (RC._g = fetch(RC.url + '/auth/v1/settings', { headers: { apikey: RC.key } }).then(r => r.json()).then(j => !!(j.external && j.external.google)).catch(() => false));
 
@@ -152,7 +158,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261024181432';
+RC.build = '20261024192031';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {

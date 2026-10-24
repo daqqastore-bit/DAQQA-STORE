@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024181432">
+<link rel="stylesheet" href="assets/base.css?v=20261024192031">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -257,6 +257,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .fx-del{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);color:var(--muted);font-size:20px;line-height:1}.fx-del:hover{color:var(--red);border-color:var(--red)}
 .fx-add{margin-top:8px;height:42px;width:100%;border:1px dashed var(--line);border-radius:12px;color:var(--amber);font-weight:700;font-size:14px}.fx-add:hover{border-color:var(--amber);background:var(--surface-2)}
 @media (max-width:520px){.fx-row{grid-template-columns:1fr 92px 40px}}
+.pg-card{margin-bottom:14px}.pg-card .set-h{align-items:center}.pg-card .set-h .switch{margin-inline-start:auto}.pg-card.is-off .two,.pg-card.is-off>.field{opacity:.55}
 .rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
 .exp-form{position:relative;z-index:30}
 .panel:has(.cat.open),.fin-box:has(.cat.open){position:relative;z-index:30}
@@ -880,7 +881,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024181432"></script>
+<script src="assets/config.js?v=20261024192031"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1504,7 +1505,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024181432" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024192031" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1538,7 +1539,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024181432" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024192031" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1579,7 +1580,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024181432'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024181432')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024192031'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024192031')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2250,7 +2251,32 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="pages" class="${setTab === 'pages' ? 'on' : ''}">رجالي وحريمي</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
+/* ---------- settings → men / women pages: show or hide each page + its texts (empty = the default) ---------- */
+function renderPagesCfg(s) {
+  const C = JSON.parse(JSON.stringify(s.page_cfg || {}));
+  const kindsOf = k => Object.keys(RC.kinds).filter(kk => products.some(p => RC.pages[k].test(p) && RC.kindOf(p) === kk && p.images && p.images.length)).map(kk => RC.kinds[kk].ar);
+  const card = k => { const D = RC.PAGE_DEF[k], c = C[k] || {}, n = products.filter(p => RC.pages[k].test(p) && p.images && p.images.length).length, auto = `${RC.arJoin(kindsOf(k)) || 'ساعات'} ${D.tail}`;
+    return `<div class="panel set-card pg-card ${c.off ? 'is-off' : ''}" data-pg="${k}">
+      <div class="set-h"><span class="set-ic en" style="font-weight:700">${k === 'men' ? '♂' : '♀'}</span><div><h2>صفحة ${RC.pages[k].ar} <span class="en" style="color:var(--muted);font-weight:500;font-size:.8em;margin-inline-start:6px">${RC.pages[k].en}</span></h2><small>${c.off ? 'مخفية من الموقع' : n ? `ظاهرة · فيها ${n} منتج` : 'مش هتظهر غير لما يبقى فيها منتجات بصور'}</small></div>
+        <button type="button" class="switch ${c.off ? '' : 'on'}" data-pgsw="${k}" aria-label="إظهار/إخفاء صفحة ${RC.pages[k].ar}"></button></div>
+      <div class="two"><div class="field"><label>العنوان بالإنجليزي</label><input class="input en" data-pf="en" maxlength="40" placeholder="${esc(D.en)}" value="${esc(c.en || '')}"></div>
+        <div class="field"><label>الجملة بالعربي <small style="color:var(--muted);font-weight:400">(بتظهر بعد «${RC.pages[k].ar} —»)</small></label><input class="input" data-pf="ar" maxlength="40" placeholder="${esc(D.ar)}" value="${esc(c.ar || '')}"></div></div>
+      <div class="field"><label>الوصف <small style="color:var(--muted);font-weight:400">(سيبه فاضي = بيتكتب لوحده من الأقسام اللي فيها منتجات)</small></label><input class="input" data-pf="sub" maxlength="140" placeholder="${esc(auto)}" value="${esc(c.sub || '')}"></div></div>`; };
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">صفحتين رجالي وحريمي: تظهر ولا لأ، والكلام اللي أولها</div></div></div>
+    ${setTabs()}
+    <div id="pgWrap">${card('men')}${card('women')}</div>
+    <div class="set-acts" style="margin-top:4px"><button class="btn btn-primary" type="button" id="pgSave">حفظ</button></div>`;
+  bindSetTabs();
+  $('#pgWrap').onclick = e => { const sw = e.target.closest('[data-pgsw]'); if (!sw) return; const k = sw.dataset.pgsw; C[k] = C[k] || {}; C[k].off = !C[k].off;
+    sw.classList.toggle('on', !C[k].off); sw.closest('.pg-card').classList.toggle('is-off', !!C[k].off); sw.closest('.pg-card').querySelector('.set-h small').textContent = C[k].off ? 'مخفية من الموقع (اضغط حفظ)' : 'ظاهرة (اضغط حفظ)'; };
+  $('#pgSave').onclick = () => once('pgSave', async () => {
+    document.querySelectorAll('[data-pg]').forEach(el => { const k = el.dataset.pg; C[k] = C[k] || {}; el.querySelectorAll('[data-pf]').forEach(i => { C[k][i.dataset.pf] = i.value.trim(); }); C[k].off = !!C[k].off; });
+    const { error } = await sb.from('shop_settings').update({ page_cfg: C, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/page_cfg/.test(error.message) ? 'الخاصية دي محتاجة تحديث في Supabase' : error.message, 'err');
+    settings.page_cfg = C; toast('اتحفظ ✓', 'ok'); renderPagesCfg(settings); });
+}
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; try { localStorage.setItem('dq-set-tab', setTab); } catch (er) {} renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
 const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
@@ -2480,6 +2506,7 @@ function renderSettings() {
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
   if (setTab === 'coupons') return renderCoupons();
   if (setTab === 'bands') return renderBands(s);
+  if (setTab === 'pages') return renderPagesCfg(s);
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   govDraft = AV();

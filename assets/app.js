@@ -141,7 +141,7 @@
     return `<div class="pg-menu" data-pages hidden><button type="button" class="pg-btn ${on}" aria-haspopup="true" aria-expanded="false">الصفحات <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
       <div class="pg-drop" role="menu">${Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a role="menuitem" href="${v.href}" data-page="${k}" hidden class="${k === 'luxury' ? 'lux' : ''} ${k === active ? 'on' : ''}"><b>${v.ar}</b><small class="en">${k === 'luxury' ? 'DAQQA PRIVÉ' : v.en.toUpperCase()}</small></a>`).join('')}</div></div>`;
   }
-  DQ.livePages = () => Object.keys(RC.pages).filter(k => DQ.products.some(p => RC.pages[k].test(p) && p.images && p.images.length));
+  DQ.livePages = () => Object.keys(RC.pages).filter(k => !RC.pageCfg(k, DQ.settings).off && DQ.products.some(p => RC.pages[k].test(p) && p.images && p.images.length));
   DQ.pageItems = k => DQ.products.filter(p => RC.pages[k].test(p) && p.images && p.images.length);
 
   /* ---------- chrome: header, sheets, footer, drawer ---------- */
@@ -432,6 +432,8 @@
       ${out ? `<div class="qv-out">${p.soon ? 'Coming Soon · قريبًا' : 'Out of Stock'}</div>` : `<button type="button" class="btn btn-amber qa-ok" data-ok>أضف للسلة · <span class="en" id="qaT">${money(finalPrice(p))}</span></button>`}</div>
       ${full ? `<a class="qv-more" href="${RC.productUrl(p)}">شوف صفحة المنتج كاملة ←</a></div>` : ''}</div>`;
     document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on')); DQ.optApply(m, p, sel, {});
+    // phones: the sheet itself scrolls, so the ✕ rides along with it and stays in reach
+    { const card = m.querySelector('.qa-card'), xb = m.querySelector('.qa-x'); if (card && xb) card.addEventListener('scroll', () => { xb.style.transform = card.scrollTop > 0 ? `translateY(${card.scrollTop}px)` : ''; }, { passive: true }); }
     const $m = s => m.querySelector(s), end = () => { m.classList.remove('on'); removeEventListener('keydown', esc_); setTimeout(() => m.remove(), 250); };
     const esc_ = e => { if (e.key === 'Escape') end(); }; addEventListener('keydown', esc_);
     const showImg = last => { $m('.qa-im').src = RC.optPhoto(p, sel, last) || (p.images && p.images[0]) || FALLBACK; };
