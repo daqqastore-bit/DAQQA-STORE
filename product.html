@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024201351">
-<link rel="stylesheet" href="assets/store.css?v=20261024201351">
+<link rel="stylesheet" href="assets/base.css?v=20261024201617">
+<link rel="stylesheet" href="assets/store.css?v=20261024201617">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -110,6 +110,15 @@ details .body{padding:0 0 20px;color:var(--ink-2,var(--ink));opacity:.86;font:40
 .specs li>span{color:var(--muted);font-size:14px;font-weight:500}
 .specs li>b{color:var(--ink);font-size:15px;font-weight:500;unicode-bidi:plaintext;text-align:start}
 .related{padding-top:96px}
+.rel-more{position:relative;display:flex;flex-direction:column;gap:10px;min-height:320px;padding:26px 24px;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,rgb(var(--accent-rgb)/.16),rgb(var(--accent-rgb)/.04));border:1px solid rgb(var(--accent-rgb)/.28);color:var(--ink);transition:border-color .25s,transform .25s}
+.rel-more::after{content:"";position:absolute;inset-inline-end:-60px;bottom:-60px;width:200px;height:200px;border-radius:50%;border:1px solid rgb(var(--accent-rgb)/.25);box-shadow:0 0 0 26px rgb(var(--accent-rgb)/.05),0 0 0 52px rgb(var(--accent-rgb)/.03);pointer-events:none}
+.rel-more .rm-cap{font-size:10.5px;letter-spacing:.24em;color:var(--accent);font-weight:600}
+.rel-more>b{font:400 clamp(30px,3vw,40px)/1.05 var(--f-display);text-align:left;direction:ltr;margin-top:auto}.rel-more>b em{color:var(--accent)}
+.rel-more .rm-ar{font-size:15px;font-weight:600;color:var(--muted)}
+.rel-more .rm-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid rgb(var(--accent-rgb)/.22)}
+.rel-more .rm-foot small{font-size:13px;color:var(--muted)}.rel-more .rm-foot small b{font-size:16px;color:var(--ink)}
+.rel-more i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;transition:transform .3s}.rel-more i svg{width:20px;height:20px}
+.rel-more:hover{border-color:var(--accent);transform:translateY(-3px)}.rel-more:hover i{transform:translateX(-6px)}
 /* sticky bar (mobile) */
 .sbar{position:fixed;inset:auto 0 0 0;z-index:60;background:color-mix(in srgb,var(--nav) 96%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px max(10px,env(safe-area-inset-bottom));display:none;align-items:center;gap:12px;transform:translateY(110%);transition:transform .35s}
 .sbar.on{transform:none}
@@ -132,7 +141,7 @@ details .body{padding:0 0 20px;color:var(--ink-2,var(--ink));opacity:.86;font:40
   .mini-trust{grid-template-columns:1fr 1fr 1fr;gap:6px}
   .mini-trust div{padding:10px 8px}
   .price-box .price-new{font-size:28px}
-  .related{padding-top:64px}
+  .related{padding-top:64px}.rel-more{min-height:240px;padding:18px 16px}.rel-more>b{font-size:26px}.rel-more .rm-ar{font-size:13px}.rel-more i{width:38px;height:38px}
 }
 </style>
 <link rel="preconnect" href="https://iyxgiukausajvxpkwaaw.supabase.co" crossorigin><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -187,8 +196,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024201351"></script>
-<script src="assets/app.js?v=20261024201351"></script>
+<script src="assets/config.js?v=20261024201617"></script>
+<script src="assets/app.js?v=20261024201617"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -429,7 +438,12 @@ function render() {
   // related
   const rel = DQ.products.filter(x => x.id !== p.id && RC.isLuxury(x) === RC.isLuxury(p)).sort((a, b) => ((RC.kindOf(b) === kind) - (RC.kindOf(a) === kind)) || ((b.category === p.category) - (a.category === p.category)) || (b.featured - a.featured)).slice(0, 4);
   if (rel.length && LUX) $('#related').innerHTML = `<div class="lxp-rel-h"><span class="en">FROM THE PRIVÉ COLLECTION</span><h2 class="en">More <em>Pieces</em></h2><a href="luxury.html">كل المجموعة ←</a></div><div class="grid">${rel.map(DQ.card).join('')}</div>`;
-  else if (rel.length) $('#related').innerHTML = `<div class="sec-head"><h2 class="en">You may <em>also like</em><span class="ar">ممكن تعجبك كمان</span></h2><a class="sec-link" href="./#${kind}">كل ال${K.ar} ←</a></div><div class="grid">${rel.map(DQ.card).join('')}</div>`;
+  else if (rel.length) {
+    // the last tile of the grid leads to the whole section instead of a small text link in the header
+    const n = DQ.products.filter(x => RC.kindOf(x) === kind && !RC.isLuxury(x)).length;
+    const more = `<a class="rel-more" href="./#${kind}"><span class="rm-cap en">DAQQA · ${K.en.toUpperCase()}</span><b class="en">Explore all<br><em>${K.en}</em></b><span class="rm-ar">اكتشف كل ال${K.ar}</span><span class="rm-foot"><small><b class="en">${n}</b> ${n === 1 ? 'قطعة' : 'قطع'}</small><i>${DQ.ICON.arrow}</i></span></a>`;
+    $('#related').innerHTML = `<div class="sec-head"><h2 class="en">You may <em>also like</em><span class="ar">ممكن تعجبك كمان</span></h2></div><div class="grid">${rel.slice(0, 3).map(DQ.card).join('')}${more}</div>`;
+  }
   DQ.renderFavs(); DQ.reveal();
 }
 DQ.onRefresh = () => {};
