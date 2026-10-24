@@ -148,6 +148,7 @@
     const nav = [['./', 'الرئيسية', 'home'], ['./#watches', 'الساعات', 'watches'], ['./#glasses', 'النضارات', 'glasses'], ['./#accessories', 'الاكسسوارات', 'accessories']];
     $('#hdr').innerHTML = `
       <div class="topbar" id="topbar" hidden></div>
+      <div class="closed-bar" id="closedBar" role="status" hidden></div>
       <header class="nav-bar"><div class="wrap nav">
         <a href="./" class="brand" aria-label="DAQQA — الرئيسية"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
         <nav class="links" aria-label="القائمة">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" class="${k === active ? 'on' : ''}" ${RC.kinds[k] ? 'hidden' : ''}>${l}</a>`).join('')}${pagesMenu(active)}</nav>
@@ -323,7 +324,7 @@
   const apply = (prods, sets) => {
     // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
     DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x); DQ.settings = sets || {};
-    renderSocial();
+    renderSocial(); renderClosed();
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };
   DQ.useCache = c => { DQ.dataSig = c.sig; apply(c.p, c.s); };
@@ -366,7 +367,14 @@
   // the same watch with different picked options (dial, strap…) is its own cart line
   const optKey = o => JSON.stringify(Object.entries(o || {}).sort());
   DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]) && RC.optFits(p, g.k, opt[g.k], opt || {}));
+  // ordering closed from the admin (Settings → «استقبال الطلبات»): nothing goes into the cart or out as an order
+  DQ.closed = () => !!(DQ.settings && DQ.settings.orders_closed);
+  DQ.closedMsg = () => ((DQ.settings && DQ.settings.orders_closed_msg) || '').trim() || 'الطلبات مقفولة دلوقتي، جرّب تاني بعدين';
+  let closedT = 0;
+  DQ.closedNote = () => { if (Date.now() - closedT < 1500) return; closedT = Date.now(); DQ.toast(DQ.closedMsg(), 'err'); };
+  function renderClosed() { const b = $('#closedBar'); if (!b) return; b.hidden = !DQ.closed(); b.innerHTML = DQ.closed() ? `<div class="wrap cb-in"><i aria-hidden="true"></i><span>${esc(DQ.closedMsg())}</span></div>` : ''; }
   DQ.addToCart = (id, qty, silent, opt) => {
+    if (DQ.closed()) return DQ.closedNote();
     const p = DQ.byId(id); if (!p || p.stock <= 0) return;
     // a product with options is never added without them: the buyer picks them in the quick-add pop-up
     if (!DQ.optsOk(p, opt)) return DQ.quickAdd(id);
@@ -527,7 +535,7 @@
         + (lxs.length && regs.length ? '<div class="cart-reg-h">باقي المنتجات</div>' : '')
         + regs.map(l => ci(l, false)).join('') +
         (t.fso != null && t.sub < t.fso ? `<div style="margin-top:16px"><div class="ship-note">ضيف ${money(t.fso - t.sub)} كمان والشحن يبقى مجاني</div><div class="ship-bar"><i style="width:${Math.min(100, t.sub / t.fso * 100)}%"></i></div></div>` : '');
-      $('#drFoot').innerHTML = sum + `<button class="btn btn-amber" id="goCheckout">إتمام الطلب</button>`;
+      $('#drFoot').innerHTML = sum + (DQ.closed() ? `<div class="cart-closed">${esc(DQ.closedMsg())}</div><button class="btn btn-amber" id="goCheckout" disabled>الطلبات مقفولة</button>` : `<button class="btn btn-amber" id="goCheckout">إتمام الطلب</button>`);
       $('#goCheckout').onclick = () => document.documentElement.classList.contains('co-cart') ? DQ.closeAll() : DQ.openCheckout();
     }
   }
@@ -704,6 +712,7 @@
     return false;
   }
   async function placeOrder() {
+    if (DQ.closed()) return DQ.closedNote();
     const f = $('#coForm'); if (!checkForm()) return;
     const d = Object.fromEntries(new FormData(f));
     try { localStorage.setItem('dq-cust', JSON.stringify({ name: d.name, phone: d.phone, city: d.city, address: d.address })) } catch (e) {} /* notes are not kept for the next order */
@@ -790,6 +799,7 @@
   }
   DQ.openCart = (v = 'cart') => { if (v === 'checkout') return DQ.openCheckout(); DQ.closeAll(); view = 'cart'; renderCart(); $('#drawer').classList.add('on'); $('#overlay').classList.add('on'); document.body.style.overflow = 'hidden'; };
   DQ.openCheckout = () => {
+    if (DQ.closed()) { DQ.closedNote(); return DQ.openCart(); }
     if (!lines().length) return DQ.openCart();
     const pg = $('#coPage'); ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
     coState = 'form'; pg.classList.remove('shown'); renderCheckout(); pg.hidden = false; pg.scrollTop = 0; document.body.style.overflow = 'hidden';

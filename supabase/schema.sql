@@ -294,3 +294,17 @@ end $$;
 create trigger shop_orders_push after insert on public.shop_orders for each row execute function private.shop_push_on_order();
 create or replace function public.shop_push_test() returns void language plpgsql security definer set search_path = public as $$
 begin if not public.shop_is_admin() then raise exception 'not allowed'; end if; perform private.shop_push_send('{"test":true}'::jsonb); end $$;
+
+-- admin switch that closes ordering on the site (Settings → «استقبال الطلبات»); the guard also blocks direct calls
+alter table public.shop_settings add column if not exists orders_closed boolean not null default false;
+alter table public.shop_settings add column if not exists orders_closed_msg text;
+create or replace function public.shop_orders_closed_guard() returns trigger language plpgsql security definer set search_path = public as $$
+declare s public.shop_settings;
+begin
+  select * into s from public.shop_settings where id = 1;
+  if coalesce(s.orders_closed, false) and not coalesce(public.shop_is_admin(), false) then
+    raise exception '%', coalesce(nullif(trim(s.orders_closed_msg), ''), 'الطلبات مقفولة دلوقتي، جرّب تاني بعدين');
+  end if;
+  return new;
+end $$;
+create or replace trigger shop_orders_closed_guard before insert on public.shop_orders for each row execute function public.shop_orders_closed_guard();
