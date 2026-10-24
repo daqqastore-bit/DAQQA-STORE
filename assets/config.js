@@ -149,7 +149,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261024131249';
+RC.build = '20261024131650';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -191,6 +191,6 @@ RC.PERK_IC = {
 };
 RC.PERKS_DEF = { cards: [{ icon: 'cash', t: 'كاش عند الاستلام', s: 'افحص وادفع' }, { icon: 'ship', t: 'شحن سريع', s: 'خلال 2–5 أيام' }, { icon: 'swap', t: 'استبدال', s: 'خلال 14 يوم' }],
   help: ['الدفع عند الاستلام', 'شحن 2–5 أيام', 'استبدال خلال 14 يوم', 'ضمان على الماكينة'],
-  about: 'DAQQA - دقّة — متجر أونلاين بيجمعلك منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام بعد ما تفحص طلبك.' };
+  about: 'DAQQA - دقّة — منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام بعد ما تفحص طلبك.' };
 RC.perks = (settings) => { const p = (settings && settings.perks) || {}, D = RC.PERKS_DEF;
   return { cards: Array.isArray(p.cards) ? p.cards.filter(c => c && (c.t || c.s)) : D.cards, help: Array.isArray(p.help) ? p.help.filter(Boolean) : D.help, about: typeof p.about === 'string' ? p.about : D.about }; };

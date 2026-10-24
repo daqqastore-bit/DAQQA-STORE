@@ -52,6 +52,11 @@ html,body{overflow-x:clip}
 .brand .wm{display:flex;flex-direction:column;line-height:1.05;text-align:left;direction:ltr}
 .brand .wm b{font:500 21px var(--f-display);letter-spacing:.34em;color:var(--ink);padding-left:.34em}
 .brand .wm small{font:600 9px var(--f-ui);letter-spacing:.62em;color:var(--accent);padding-left:.62em;margin-top:3px}
+.brand .wm2{flex-direction:row;align-items:center;gap:10px}
+.brand .wm2 i{width:12px;height:1.5px;background:var(--accent);opacity:.75}
+.brand .wm2 em{font:700 21px/1 var(--f-ar);font-style:normal;color:var(--accent);direction:rtl;padding-bottom:3px}
+@media (max-width:900px){.brand .wm2{gap:7px}.brand .wm2 em{font-size:18px}.brand .wm2 i{width:9px}}
+@media (max-width:400px){.brand .wm2{gap:5px}.brand .wm2 em{font-size:15px}.brand .wm2 i{width:7px}}
 .links{display:flex;gap:32px;font-size:15.5px;color:var(--muted)}
 .links a{position:relative;padding:6px 0;transition:color .2s}
 .links a::after{content:"";position:absolute;inset:auto 0 0 0;height:1px;background:var(--accent);transform:scaleX(0);transition:transform .3s}

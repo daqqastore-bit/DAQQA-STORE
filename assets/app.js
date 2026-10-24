@@ -150,7 +150,7 @@
       <div class="topbar" id="topbar" hidden></div>
       <div class="closed-bar" id="closedBar" role="status" hidden></div>
       <header class="nav-bar"><div class="wrap nav">
-        <a href="./" class="brand" aria-label="DAQQA — الرئيسية"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
+        <a href="./" class="brand" aria-label="DAQQA — الرئيسية"><span class="m">${RC.logo()}</span><span class="wm wm2"><b>DAQQA</b><i aria-hidden="true"></i><em lang="ar">دقّة</em></span></a>
         <nav class="links" aria-label="القائمة">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" class="${k === active ? 'on' : ''}" ${RC.kinds[k] ? 'hidden' : ''}>${l}</a>`).join('')}${pagesMenu(active)}</nav>
         <a href="luxury.html" class="lux-btn ${active === 'luxury' ? 'on' : ''}" data-page="luxury" hidden aria-label="DAQQA Privé — Luxury"><i aria-hidden="true"></i><span class="en">LUXURY</span></a>
         <div class="actions">
@@ -161,7 +161,7 @@
           <button class="icon-btn" id="cartBtn" aria-label="Shopping Cart">${ICON.bag}<span class="cart-count" id="cartCount">0</span></button>
           <button class="icon-btn menu-btn" id="menuBtn" aria-label="القائمة">${ICON.menu}</button>
         </div></div></header>
-      <div class="sheet" id="menuSheet" role="dialog" aria-label="القائمة"><div class="wrap sheet-head"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
+      <div class="sheet" id="menuSheet" role="dialog" aria-label="القائمة"><div class="wrap sheet-head"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm wm2"><b>DAQQA</b><i aria-hidden="true"></i><em lang="ar">دقّة</em></span></a><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div>
         <div class="wrap sheet-body"><a href="luxury.html" class="lux-row" data-page="luxury" hidden data-close><span class="en">LUXURY</span><small class="en">DAQQA PRIVÉ COLLECTION</small></a><nav class="menu-list">${nav.map(([h, l, k]) => `<a href="${h}" data-kind="${k}" data-close ${RC.kinds[k] ? 'hidden' : ''}>${l}<span class="en">${RC.kinds[k] ? RC.kinds[k].en.toUpperCase() : '→'}</span></a>`).join('')}<div class="menu-pages" data-pages hidden><small class="en">PAGES</small>${Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a href="${v.href}" data-page="${k}" hidden class="${k === 'luxury' ? 'lux' : ''}" data-close>${v.ar}<span class="en">${v.en.toUpperCase()}</span></a>`).join('')}</div><div class="menu-tools"><button type="button" id="mFav">${ICON.heart}<span>المفضلة</span></button><button type="button" id="mTheme"><span class="i-sun">${ICON.sun}</span><span class="i-moon">${ICON.moon}</span><span>تغيير الوضع</span></button><button type="button" id="mSearch">${ICON.search}<span>بحث</span></button><button type="button" id="mAcc">${ICON.user}<span>حسابي</span></button></div></nav></div></div>
       <div class="sheet fv-sheet" id="favSheet" role="dialog" aria-label="المفضلة"><div class="wrap sheet-head fv-head"><div class="fv-title"><span class="en">WISHLIST</span><h2>المفضلة</h2><small id="favSub"></small></div><div class="fv-tools"><button class="fv-all" id="favAll" hidden>${ICON.bag || ''}<span>أضف الكل للسلة</span></button><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div></div><div class="sheet-body"><div class="wrap"><div class="fv-grid" id="favRes"></div></div></div></div>
       <div class="sheet" id="accSheet" role="dialog" aria-label="حسابي"><div class="wrap sheet-head"><b style="font-size:18px" id="accTitle">حسابي</b><button class="icon-btn" data-close aria-label="إغلاق">${ICON.close}</button></div><div class="wrap sheet-body"><div class="acc" id="accBody"></div></div></div>
@@ -170,7 +170,7 @@
     $('#ftr').innerHTML = `<footer class="site-foot"><div class="wrap">
       <a class="ft-all" id="ftAll" href="social.html" hidden><span class="ft-all-ic" id="ftAllIc" aria-hidden="true"></span><span class="ft-all-t"><b>كل حساباتنا على السوشيال</b><small>تابعنا وكلّمنا من أي مكان يريحك</small></span><span class="ft-all-go" aria-hidden="true">←</span></a>
       <div class="foot-grid">
-        <div class="foot-brand"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm"><b>DAQQA</b></span></a>
+        <div class="foot-brand"><a href="./" class="brand"><span class="m">${RC.logo()}</span><span class="wm wm2"><b>DAQQA</b><i aria-hidden="true"></i><em lang="ar">دقّة</em></span></a>
           <p id="ftAbout" hidden></p></div>
         <div><h4 class="en">EXPLORE</h4><ul><li><a href="./">الرئيسية</a></li>${Object.entries(RC.pages).map(([k, v]) => `<li data-page="${k}" hidden><a href="${v.href}">${v.ar}</a></li>`).join('')}<li><a href="social.html">تواصل معانا</a></li></ul></div>
         <div><h4 class="en">SHOP</h4><ul>${Object.entries(RC.kinds).map(([k, v]) => `<li data-kind="${k}" hidden><a href="./#${k}">${v.ar}</a></li>`).join('')}</ul></div>
