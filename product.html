@@ -21,19 +21,19 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024201750">
-<link rel="stylesheet" href="assets/store.css?v=20261024201750">
+<link rel="stylesheet" href="assets/base.css?v=20261024202131">
+<link rel="stylesheet" href="assets/store.css?v=20261024202131">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
 .crumbs .en{color:var(--muted)}
-.pd-crumbs{padding:0 0 2px;position:relative;z-index:2}
+.pd-crumbs{grid-column:1/-1;padding:0;margin-bottom:-34px;position:relative;z-index:2}
 .pd-back{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px 0 12px;margin-inline-end:6px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.3);background:rgb(var(--accent-rgb)/.07);color:var(--ink);font-size:13px;font-weight:600;transition:background .2s,border-color .2s}
 .pd-back svg{width:16px;height:16px;transition:transform .25s}.pd-back:hover{background:rgb(var(--accent-rgb)/.14);border-color:var(--accent)}.pd-back:hover svg{transform:translateX(3px)}
 .pd{margin-top:22px}
 .pd{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:start}
 /* gallery */
-.gal{position:sticky;top:96px;display:flex;flex-direction:column;gap:12px;width:min(100%,calc((100svh / var(--z,1) - 280px) * var(--ar,1)));min-width:min(100%,380px);justify-self:center}
+.gal{position:sticky;top:calc(var(--hdr,80px) + 16px);display:flex;flex-direction:column;gap:12px;width:min(100%,calc((100svh / var(--z,1) - 280px) * var(--ar,1)));min-width:min(100%,380px);justify-self:center}
 .slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;border-radius:22px;border:1px solid var(--line);background:radial-gradient(circle at 50% 35%,var(--hero),var(--bg) 78%);scrollbar-width:none}
 .slides::-webkit-scrollbar{display:none}
 .slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:var(--ar,1);overflow:hidden;position:relative;cursor:zoom-in}
@@ -132,7 +132,7 @@ details .body{padding:0 0 20px;color:var(--ink-2,var(--ink));opacity:.86;font:40
 .nf .m{width:90px;height:93px;opacity:.6}
 .sk{border-radius:22px}
 @media (max-width:900px){
-  .pd{grid-template-columns:1fr;gap:28px}
+  .pd{grid-template-columns:1fr;gap:28px}.pd-crumbs{margin-bottom:-14px}
   .gal{position:static;width:100%;min-width:0}
   .thumbs{display:none}
   .dots{display:flex}
@@ -198,8 +198,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024201750"></script>
-<script src="assets/app.js?v=20261024201750"></script>
+<script src="assets/config.js?v=20261024202131"></script>
+<script src="assets/app.js?v=20261024202131"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -296,8 +296,8 @@ function render() {
 
   $('#page').innerHTML = `
     <div class="pd">
-      <div class="gal">
       <nav class="crumbs pd-crumbs" aria-label="مسار الصفحة"><button type="button" class="pd-back" data-back aria-label="رجوع"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>رجوع</span></button><a href="./">الرئيسية</a><span>/</span>${LUX ? `<a href="luxury.html" class="en" style="color:#C9A96E;letter-spacing:.2em">LUXURY</a><span>/</span>` : ''}<a href="${LUX ? 'luxury.html' : './#' + kind}">${K.ar}</a><span>/</span>${RC.pages[p.category] ? `<a href="${RC.pages[p.category].href}">${esc(cat)}</a>` : `<span>${esc(cat)}</span>`}<span>/</span><span class="en">${esc(p.name)}</span></nav>
+      <div class="gal">
         <div style="position:relative" class="op op-curtain">
           ${off ? `<span class="badge-off">-${off}%</span>` : ''}
           <div class="slides" id="slides">${imgs.map((u, i) => `<div class="slide"><img src="${esc(u)}" alt="${esc(p.name)} — صورة ${i + 1}" ${i ? 'loading="lazy"' : ''} onerror="this.src='${DQ.FALLBACK}'"></div>`).join('')}</div>
@@ -437,6 +437,8 @@ function render() {
     try { await navigator.clipboard.writeText(url); DQ.toast('اتنسخ اللينك ✓', 'ok'); } catch (e) { DQ.toast('انسخ اللينك من شريط العنوان', 'err'); }
   };
 
+  // the sticky gallery sits just under the (sticky) header, whatever its height
+  { const h = document.getElementById('hdr'); if (h && window.ResizeObserver) new ResizeObserver(() => document.documentElement.style.setProperty('--hdr', h.offsetHeight + 'px')).observe(h); }
   // «رجوع»: one step back in the history when the visitor came from this site, otherwise to the product's section
   document.querySelectorAll('[data-back]').forEach(b => b.onclick = () => {
     let same = false; try { same = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
