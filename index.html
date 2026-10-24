@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024155320">
-<link rel="stylesheet" href="assets/store.css?v=20261024155320">
+<link rel="stylesheet" href="assets/base.css?v=20261024160822">
+<link rel="stylesheet" href="assets/store.css?v=20261024160822">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -239,7 +239,7 @@
   .band.has-photo .feats{grid-template-columns:repeat(var(--n,3),1fr)}.band.has-photo .feats>*{border-top:0;border-inline-start:1px solid rgb(var(--accent-rgb)/.22);padding:12px 4px 14px;font-size:11.5px}.band.has-photo .feats>:first-child{border-inline-start:0}.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 20px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 20px)}
   /* phones: the photo sits clear on top, the words under it (no text over the picture) */
   .band.has-photo{justify-content:flex-start;padding-top:0}
-  .band.has-photo .bg{position:relative;inset:auto;height:190px;flex:none}
+  .band.has-photo .bg{position:relative;inset:auto;height:auto;aspect-ratio:var(--ar,16/9);min-height:0;max-height:340px;flex:none;background-position:center;transform:none!important}
   .band.has-photo .bg::after{background:linear-gradient(0deg,var(--bg) 0%,rgb(var(--bg-rgb)/0) 38%)}
   .band.has-photo .wrap{margin-top:-14px;padding-top:0}
   .feats{grid-template-columns:repeat(2,1fr)}
@@ -322,8 +322,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024155320"></script>
-<script src="assets/app.js?v=20261024155320"></script>
+<script src="assets/config.js?v=20261024160822"></script>
+<script src="assets/app.js?v=20261024160822"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -528,7 +528,7 @@ function build() {
         </div>
         <div class="grid clip"></div>
       </div></div>
-      <div data-glow class="band op op-drop ${img.life ? 'has-photo op-zoom' : 'plain'}" ${img.life ? 'data-parallax' : ''}>${img.life ? `<div class="bg" style="--img:url('${esc(img.life)}')"></div>` : `<div class="wm" aria-hidden="true">${RC.logo()}</div>`}
+      <div data-glow class="band op op-drop ${img.life ? 'has-photo op-zoom' : 'plain'}" ${img.life ? 'data-parallax' : ''}>${img.life ? `<div class="bg" data-ar="${esc(img.life)}" style="--img:url('${esc(img.life)}')"></div>` : `<div class="wm" aria-hidden="true">${RC.logo()}</div>`}
         <div class="wrap"><div class="op op-stagger"><div class="lbl en">DAQQA</div><h2 class="en" dir="ltr" style="text-align:right">${B.en}</h2><div class="ar">${B.ar}</div></div>
           <div class="feats op op-stagger" style="--n:${B.feats.length}">${B.feats.map(([ic, t, l]) => l ? `<a href="${RC.esc(l)}" ${/^https:/.test(l) ? 'target="_blank" rel="noopener"' : ''}>${RC.featIcon(ic)}<span>${t}</span></a>` : `<div>${RC.featIcon(ic)}<span>${t}</span></div>`).join('')}</div></div></div>
       ${storyHTML(k)}
@@ -551,6 +551,12 @@ document.addEventListener('click', e => {
 });
 DQ.onRefresh = build;
 DQ.start(RC.kinds[location.hash.slice(1)] ? location.hash.slice(1) : 'home', build);
+</script>
+<script>
+// phones show the strip photo whole: give each photo box the picture's own shape
+(() => { const fit = () => document.querySelectorAll('.band .bg[data-ar]:not([data-ar-ok])').forEach(el => { el.dataset.arOk = 1; const im = new Image();
+  im.onload = () => { if (im.naturalWidth && im.naturalHeight) el.style.setProperty('--ar', im.naturalWidth + ' / ' + im.naturalHeight); }; im.src = el.dataset.ar; });
+  fit(); new MutationObserver(fit).observe(document.body, { childList: true, subtree: true }); })();
 </script>
 </body>
 </html>
