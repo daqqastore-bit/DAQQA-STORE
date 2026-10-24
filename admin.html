@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024131650">
+<link rel="stylesheet" href="assets/base.css?v=20261024131859">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -869,7 +869,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024131650"></script>
+<script src="assets/config.js?v=20261024131859"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1493,7 +1493,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024131650" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024131859" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1527,7 +1527,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024131650" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024131859" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1568,7 +1568,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024131650'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024131650')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024131859'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024131859')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2237,7 +2237,7 @@ let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'genera
 const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; try { localStorage.setItem('dq-set-tab', setTab); } catch (er) {} renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
-const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}" draggable="true"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
+const socRow = (x, i) => { const t = RC.SOCIAL[x.type], n = socDraft.length; return `<div class="soc-row" data-si="${i}"><span class="soc-drag" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
     <span class="soc-mv"><button type="button" data-smv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-smv="${i}" data-to="${i + 1}" ${i < n - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
     <span class="soc-ic" style="--sc:${t.color}">${t.icon}</span>
     <div class="field"><label>${esc(t.name)}${t.kind === 'phone' ? ' <small>رقم</small>' : t.kind === 'email' ? ' <small>إيميل</small>' : ' <small>لينك أو اسم الحساب</small>'}${x.type === 'whatsapp' ? `<button type="button" class="soc-main ${x.main ? 'on' : ''}" data-smain="${i}">${x.main ? '★ الأساسي — الطلبات بتتبعت عليه' : 'خليه الأساسي'}</button>` : ''}</label>
@@ -2283,7 +2283,10 @@ function renderSocial() {
   const moveSoc = (from, to) => { if (to < 0 || to >= socDraft.length || from === to) return; socDraft.splice(to, 0, socDraft.splice(from, 1)[0]); draw(); };
   let sDrag = null; const list = $('#socList');
   list.addEventListener('dragstart', e => { const r = e.target.closest('[data-si]'); if (!r || /^(INPUT|BUTTON)$/.test(e.target.tagName)) return; sDrag = +r.dataset.si; r.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', ''); });
-  list.addEventListener('dragend', () => { sDrag = null; list.querySelectorAll('.soc-row').forEach(x => x.classList.remove('dragging', 'over')); });
+  // only the ⠿ handle makes a row draggable, so text in the inputs can be selected with the mouse
+  list.addEventListener('pointerdown', e => { const g = e.target.closest('.soc-drag'); if (g) g.closest('.soc-row').draggable = true; });
+  addEventListener('pointerup', () => list.querySelectorAll('.soc-row[draggable]').forEach(x => x.removeAttribute('draggable')));
+  list.addEventListener('dragend', () => { list.querySelectorAll('.soc-row[draggable]').forEach(x => x.removeAttribute('draggable')); sDrag = null; list.querySelectorAll('.soc-row').forEach(x => x.classList.remove('dragging', 'over')); });
   list.addEventListener('dragover', e => { if (sDrag == null) return; e.preventDefault(); const r = e.target.closest('[data-si]'); list.querySelectorAll('.soc-row.over').forEach(x => x !== r && x.classList.remove('over')); if (r && +r.dataset.si !== sDrag) r.classList.add('over'); });
   list.addEventListener('drop', e => { if (sDrag == null) return; e.preventDefault(); const r = e.target.closest('[data-si]'), from = sDrag; sDrag = null; if (r) moveSoc(from, +r.dataset.si); });
   $('#socForm').onsubmit = async e => { e.preventDefault(); let bad = null;
