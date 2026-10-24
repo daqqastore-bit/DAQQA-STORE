@@ -136,10 +136,9 @@
   }
 
   /* ---------- pages menu (Luxury / Men / Women) ---------- */
+  // desktop nav: رجالي / حريمي sit as plain links next to the sections (each shows only while its page has products)
   function pagesMenu(active) {
-    const on = RC.pages[active] ? 'on' : '';
-    return `<div class="pg-menu" data-pages hidden><button type="button" class="pg-btn ${on}" aria-haspopup="true" aria-expanded="false">الصفحات <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-      <div class="pg-drop" role="menu">${Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a role="menuitem" href="${v.href}" data-page="${k}" hidden class="${k === 'luxury' ? 'lux' : ''} ${k === active ? 'on' : ''}"><b>${v.ar}</b><small class="en">${k === 'luxury' ? 'DAQQA PRIVÉ' : v.en.toUpperCase()}</small></a>`).join('')}</div></div>`;
+    return Object.entries(RC.pages).filter(([k]) => k !== 'luxury').map(([k, v]) => `<a href="${v.href}" data-page="${k}" hidden class="${k === active ? 'on' : ''}">${v.ar}</a>`).join('');
   }
   DQ.livePages = () => Object.keys(RC.pages).filter(k => !RC.pageCfg(k, DQ.settings).off && DQ.products.some(p => RC.pages[k].test(p) && p.images && p.images.length));
   DQ.pageItems = k => DQ.products.filter(p => RC.pages[k].test(p) && p.images && p.images.length);
