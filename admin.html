@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024162341">
+<link rel="stylesheet" href="assets/base.css?v=20261024162608">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -143,6 +143,8 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @media (max-width:760px){.st-grid{grid-template-columns:1fr}.st-stats{grid-template-columns:1fr 1fr}}
 .stk{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font:600 12.5px var(--f-ui);border:1px solid;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
 .stk:active{transform:scale(.96)}.stk i{width:7px;height:7px;border-radius:50%;background:currentColor}.stk b{font-weight:700;padding-inline-start:7px;border-inline-start:1px solid currentColor;opacity:.85}
+.stk.soon{color:var(--amber);background:rgb(180 130 70/.12);border-color:rgb(180 130 70/.4);cursor:default;letter-spacing:.04em}
+.p-del{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);color:var(--muted);transition:color .2s,border-color .2s,background .2s}.p-del svg{width:17px;height:17px}.p-del:hover{color:var(--red);border-color:var(--red);background:rgb(194 69 58/.08)}
 .stk.in{color:#2f8a55;background:rgb(47 138 85/.12);border-color:rgb(47 138 85/.35)}
 .stk.low{color:#b7791f;background:rgb(183 121 31/.12);border-color:rgb(183 121 31/.4)}
 .stk.out{color:#c2453a;background:rgb(194 69 58/.12);border-color:rgb(194 69 58/.38)}
@@ -878,7 +880,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024162341"></script>
+<script src="assets/config.js?v=20261024162608"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1502,7 +1504,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024162341" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024162608" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1536,7 +1538,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024162341" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024162608" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1577,7 +1579,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024162341'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024162341')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024162608'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024162608')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1702,13 +1704,14 @@ function renderProducts() {
       <button class="btn btn-amber" id="newP">+ منتج جديد</button></div>
     <div class="seg" id="kindSeg" style="margin-bottom:14px;width:max-content;max-width:100%"><button data-pk="all" class="${pKind==='all'?'on':''}">الكل <span class="en">${list.length}</span></button>${Object.entries(RC.kinds).map(([k,v]) => `<button data-pk="${k}" class="${pKind===k?'on':''}">${v.ar} <span class="en">${list.filter(p => RC.kindOf(p)===k).length}</span></button>`).join('')}</div>
     ${COLS.kind ? '' : `<div class="panel" style="margin-bottom:14px;border-color:var(--accent-2);color:var(--muted);font-size:13px">الأقسام (ساعات / نضارات / اكسسوارات) والأنواع والألوان محتاجين تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor. لحد ما تعمل كده كل المنتجات بتظهر في قسم الساعات.</div>`}
-    <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${list.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th></tr></thead><tbody>
+    <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${list.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
       ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = discountPct(p); return `<tr data-edit="${p.id}">
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
-        <td class="en"><b>${+p.price > 0 ? money(finalPrice(p)) : '<span style="color:var(--amber);font-size:12px;letter-spacing:.1em">COMING SOON</span>'}</b>${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
+        <td class="en">${+p.price > 0 ? `<b>${money(finalPrice(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
-        <td><button type="button" class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
-        <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td></tr>`; }).join('')}
+        <td>${+p.price > 0 ? '' : '<span class="stk soon" title="من غير سعر · حط سعر عشان يتعرض للبيع"><i></i><span class="en">Coming Soon</span></span>'}<button type="button" ${+p.price > 0 ? '' : 'hidden'} class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
+        <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td>
+        <td><button type="button" class="p-del" data-pdel="${p.id}" aria-label="حذف ${esc(p.name)}" title="حذف المنتج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg></button></td></tr>`; }).join('')}
       </tbody></table>` : `<div class="empty">مفيش منتجات هنا لسه. دوس «+ منتج جديد».</div>`}</div>`;
   $('#newP').onclick = () => openEditor(null, SC.init);
   $('#kindSeg').onclick = e => { const b = e.target.closest('[data-pk]'); if (b) { pKind = b.dataset.pk; renderProducts(); } };
@@ -1720,6 +1723,8 @@ document.addEventListener('click', async e => {
     const goOut = p.stock !== 0; if (goOut && p.stock != null) mem[p.id] = p.stock; const next = goOut ? 0 : (mem[p.id] > 0 ? mem[p.id] : null);
     sk.disabled = true; const {error} = await sb.from('shop_products').update({ stock: next }).eq('id', p.id); sk.disabled = false; if (error) return toast(error.message, 'err');
     try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} const prev = p.stock; p.stock = next; lowMail(p, prev); toast(goOut ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
+  const pd = e.target.closest('[data-pdel]');
+  if (pd) { e.stopPropagation(); const p = products.find(x => x.id === +pd.dataset.pdel); if (p) once('delprod', () => deleteProduct_(p)); return; }
   const sw = e.target.closest('[data-active]');
   if (sw) { e.stopPropagation(); const p = products.find(x => x.id === +sw.dataset.active); const {error} = await sb.from('shop_products').update({active: !p.active}).eq('id', p.id); if (error) return toast(error.message, 'err'); p.active = !p.active; sw.classList.toggle('on', p.active); toast(p.active ? 'ظاهر في المتجر' : 'اتخفى من المتجر'); return; }
   const ed = e.target.closest('[data-edit]'); if (ed) openEditor(+ed.dataset.edit);
@@ -2136,12 +2141,12 @@ async function saveProduct() {
   await loadProducts(); closeEditor(); renderProducts(); toast('اتحفظ ✓', 'ok');
 }
 function deleteProduct() { return once('delprod', deleteProduct_); }
-async function deleteProduct_() {
-  if (!(await confirmBox(`تحذف "${draft.name}" نهائياً؟ لو عاوز تخفيه بس اقفل "ظاهر في المتجر".`, 'حذف'))) return;
-  const {error} = await sb.from('shop_products').delete().eq('id', draft.id); if (error) return toast(error.message, 'err');
-  const paths = draft.images.map(u => u.split(`/object/public/${RC.bucket}/`)[1]).filter(Boolean);
+async function deleteProduct_(p = draft) {
+  if (!(await confirmBox(`تحذف "${p.name}" نهائياً؟ لو عاوز تخفيه بس اقفل "ظاهر في المتجر".`, 'حذف'))) return;
+  const {error} = await sb.from('shop_products').delete().eq('id', p.id); if (error) return toast(error.message, 'err');
+  const paths = (p.images || []).map(u => u.split(`/object/public/${RC.bucket}/`)[1]).filter(Boolean);
   if (paths.length) sb.storage.from(RC.bucket).remove(paths);
-  await loadProducts(); closeEditor(); renderProducts(); toast('اتحذف');
+  await loadProducts(); if (draft) closeEditor(); renderProducts(); toast('اتحذف');
 }
 
 /* ---------- settings ---------- */
