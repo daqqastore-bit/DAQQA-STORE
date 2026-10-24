@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024160822">
+<link rel="stylesheet" href="assets/base.css?v=20261024161429">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -251,6 +251,10 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .dd .cat-pop button.hi{background:var(--surface-2)}.dd-sel select{display:none}.dd-none{padding:10px 12px;font-size:13px;color:var(--muted)}
 .dd-sel:has(.ord-prod){display:inline-block;max-width:280px}.dd-sel:has(.ord-prod) .cat-pop{min-width:240px}
 .fin-box:has(.dd.open),.modal:has(.dd.open) .field,.field:has(.dd.open){position:relative;z-index:30}
+.fx-list{display:grid;gap:8px}.fx-list:empty{display:none}.fx-row{display:grid;grid-template-columns:1fr 120px 40px;gap:8px;align-items:center}.fx-row .input{height:44px;font-family:var(--f-ui)}
+.fx-del{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);color:var(--muted);font-size:20px;line-height:1}.fx-del:hover{color:var(--red);border-color:var(--red)}
+.fx-add{margin-top:8px;height:42px;width:100%;border:1px dashed var(--line);border-radius:12px;color:var(--amber);font-weight:700;font-size:14px}.fx-add:hover{border-color:var(--amber);background:var(--surface-2)}
+@media (max-width:520px){.fx-row{grid-template-columns:1fr 92px 40px}}
 .rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
 .exp-form{position:relative;z-index:30}
 .panel:has(.cat.open),.fin-box:has(.cat.open){position:relative;z-index:30}
@@ -874,7 +878,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024160822"></script>
+<script src="assets/config.js?v=20261024161429"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1238,11 +1242,11 @@ function ovPop(k) {
   if (k === 'net') {
     const sold = orders.filter(o => COUNTED.includes(o.status) && fins[o.id]), sum = (l, f) => l.reduce((a, x) => a + f(x), 0);
     const sales = sum(sold, o => +fins[o.id].sale) + sum(offs, x => +x.price), cogs = sum(sold, o => +fins[o.id].cost) + sum(offs, x => +x.cost);
-    const ship = sum(sold, o => fins[o.id].ship_payer === 'me' ? +fins[o.id].ship_cost : 0) + sum(offs, x => x.ship_payer === 'me' ? +x.ship_cost : 0);
+    const ship = sum(sold, o => fins[o.id].ship_payer === 'me' ? +fins[o.id].ship_cost : 0) + sum(offs, x => x.ship_payer === 'me' ? +x.ship_cost : 0), xtra = sum(sold, o => finX(fins[o.id]));
     const ret = sum(orders.filter(o => o.status === 'returned'), o => fins[o.id] ? +fins[o.id].return_loss : 0), exp = sum(expenses, x => +x.amount);
-    const net = sales - cogs - ship - ret - exp, miss = orders.filter(o => COUNTED.includes(o.status) && !fins[o.id]).length;
+    const net = sales - cogs - ship - xtra - ret - exp, miss = orders.filter(o => COUNTED.includes(o.status) && !fins[o.id]).length;
     h = 'صافي الربح'; go2 = 'accounts';
-    body = `<div class="fin-calc">${row('المبيعات', money(sales))}${row('− تكلفة البضاعة', money(cogs))}${row('− الشحن على حسابك', money(ship))}${row('− خسارة المرتجعات', money(ret))}${row('− المصاريف', money(exp))}${row('صافي الربح', signMoney(net), 'net')}</div>
+    body = `<div class="fin-calc">${row('المبيعات', money(sales))}${row('− تكلفة البضاعة', money(cogs))}${row('− الشحن على حسابك', money(ship))}${xtra ? row('− مصاريف إضافية للطلبات', money(xtra)) : ''}${row('− خسارة المرتجعات', money(ret))}${row('− المصاريف', money(exp))}${row('صافي الربح', signMoney(net), 'net')}</div>
       <div class="ovp-split">${PARTNERS.map(n => `<div><small>${esc(n)}</small><b class="en">${signMoney(net / PARTNERS.length)}</b></div>`).join('')}</div>
       ${miss ? `<div class="warn-box">${miss} طلب من غير تكاليف، فصافي الربح لسه ناقص.</div>` : ''}`;
   } else if (k === 'orders') {
@@ -1498,7 +1502,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024160822" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024161429" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1532,7 +1536,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024160822" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024161429" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1573,7 +1577,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024160822'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024160822')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024161429'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024161429')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2598,7 +2602,10 @@ const offIn = (since, scope) => offs.filter(x => new Date(x.sold_on + 'T23:59').
 const offNet = x => +x.price - +x.cost - (x.ship_payer === 'me' ? +x.ship_cost : 0);
 const OFF_BTN = '<button type="button" class="btn btn-amber off-btn" data-offsale><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/></svg>بيع خارج الموقع</button>';
 // net of one order: sold → sale − cost − shipping you paid · returned → − what the return cost you
-const orderNet = o => { const f = fins[o.id]; if (o.status === 'returned') return -(f ? +f.return_loss : 0); if (!COUNTED.includes(o.status) || !f) return 0; return +f.sale - +f.cost - (f.ship_payer === 'me' ? +f.ship_cost : 0); };
+// extra costs written on an order (packing, transport, a fix…): [{label, amount}]
+const finXs = f => (f && Array.isArray(f.extras) ? f.extras : []).filter(x => +x.amount > 0);
+const finX = f => finXs(f).reduce((s, x) => s + +x.amount, 0);
+const orderNet = o => { const f = fins[o.id]; if (o.status === 'returned') return -(f ? +f.return_loss : 0); if (!COUNTED.includes(o.status) || !f) return 0; return +f.sale - +f.cost - (f.ship_payer === 'me' ? +f.ship_cost : 0) - finX(f); };
 const signMoney = n => (n < 0 ? '− ' : '') + money(Math.abs(n));
 function stPicker(o) {
   return `<div class="stp" data-stp="${o.id}"><button type="button" class="stp-btn st-${o.status}" aria-haspopup="listbox"><i></i><span>${statuses[o.status] || o.status}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -2615,6 +2622,7 @@ function finPanel(o) {
     <div><span>سعر البيع</span><b>${money(f.sale)}</b></div>
     <div><span>تكلفة المنتجات</span><b>− ${money(f.cost)}</b></div>
     <div><span>تكلفة الشحن · ${me ? 'على حسابك' : 'على المشتري'}</span><b>${me ? '− ' : ''}${money(f.ship_cost)}${me ? '' : ' <i>(مش بتتخصم)</i>'}</b></div>
+    ${finXs(f).map(x => `<div><span>${esc(x.label || 'مصروف إضافي')}</span><b>− ${money(x.amount)}</b></div>`).join('')}
     ${f.received_by ? `<div><span>استلم الفلوس</span><b>${esc(f.received_by)}</b></div>` : ''}
     <div class="net"><span>صافي الربح</span><b class="${n < 0 ? 'neg' : ''}">${signMoney(n)}</b></div></div>`;
 }
@@ -2669,19 +2677,24 @@ function finBox(o) {
     <div class="two"><div class="field"><label>سعر البيع (المنتجات)</label><input class="input" name="sale" inputmode="decimal" value="${f.sale != null ? +f.sale : +o.subtotal - (+o.coupon_off || 0)}"></div>
       <div class="field"><label>تكلفة الشحن (لشركة الشحن)</label><input class="input" name="ship" inputmode="decimal" value="${shipDef}"></div></div>
     <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button></div></div>
+    <div class="field"><label>مصاريف إضافية <small style="color:var(--muted);font-weight:400">(تغليف، مواصلات، تصليح… بتتخصم من الربح)</small></label><div class="fx-list" id="fxList"></div><button type="button" class="fx-add" id="fxAdd">+ إضافة مصروف</button></div>
     <div class="field"><label>مين استلم الفلوس؟</label><input class="input" name="received_by" list="rcvList" autocomplete="off" placeholder="اختار أو اكتب" value="${esc(f.received_by || '')}"><datalist id="rcvList">${[...new Set([...PARTNERS, ...Object.values(fins).map(x => (x.received_by || '').trim()).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
     <div class="fin-calc" id="finCalc"></div>
     <div class="fin-acts"><button class="btn btn-amber" type="submit">حفظ</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
   document.body.appendChild(m);
   const form = m.querySelector('form'), num = v => Math.max(0, +String(v).replace(/[^\d.]/g, '') || 0);
-  const vals = () => { const cost = [...m.querySelectorAll('[data-pc]')].reduce((s, x) => s + num(x.value) * +x.dataset.q, 0); return { sale: num(form.sale.value), cost, ship: num(form.ship.value) }; };
-  const calc = () => { const v = vals(), net = v.sale - v.cost - (payer === 'me' ? v.ship : 0);
+  const fxRow = (x = {}) => `<div class="fx-row"><input class="input" data-fxl placeholder="البيان (مثلاً: علبة هدية)" value="${esc(x.label || '')}" maxlength="60"><input class="input" data-fxa inputmode="decimal" placeholder="المبلغ" value="${x.amount != null && x.amount !== '' ? +x.amount : ''}"><button type="button" class="fx-del" data-fxdel aria-label="حذف المصروف">×</button></div>`;
+  $('#fxList').innerHTML = finXs(f).map(fxRow).join('');
+  const extras = () => [...m.querySelectorAll('.fx-row')].map(r => ({ label: r.querySelector('[data-fxl]').value.trim().slice(0, 60), amount: num(r.querySelector('[data-fxa]').value) })).filter(x => x.amount > 0);
+  $('#fxAdd').onclick = () => { $('#fxList').insertAdjacentHTML('beforeend', fxRow()); const ls = $('#fxList').querySelectorAll('[data-fxl]'); ls[ls.length - 1].focus(); };
+  const vals = () => { const cost = [...m.querySelectorAll('[data-pc]')].reduce((s, x) => s + num(x.value) * +x.dataset.q, 0), xs = extras(); return { sale: num(form.sale.value), cost, ship: num(form.ship.value), xs, xt: xs.reduce((s, x) => s + x.amount, 0) }; };
+  const calc = () => { const v = vals(), net = v.sale - v.cost - (payer === 'me' ? v.ship : 0) - v.xt;
     m.querySelectorAll('[data-pay]').forEach(b => b.classList.toggle('on', b.dataset.pay === payer));
-    $('#finCalc').innerHTML = `<div><span>سعر البيع</span><b>${money(v.sale)}</b></div><div><span>− تكلفة المنتجات</span><b>${money(v.cost)}</b></div><div><span>− الشحن ${payer === 'me' ? '(على حسابك)' : '(على المشتري، مش بيتخصم)'}</span><b>${money(payer === 'me' ? v.ship : 0)}</b></div><div class="net"><span>صافي الربح</span><b class="${net < 0 ? 'neg' : ''}">${signMoney(net)}</b></div>`; };
+    $('#finCalc').innerHTML = `<div><span>سعر البيع</span><b>${money(v.sale)}</b></div><div><span>− تكلفة المنتجات</span><b>${money(v.cost)}</b></div><div><span>− الشحن ${payer === 'me' ? '(على حسابك)' : '(على المشتري، مش بيتخصم)'}</span><b>${money(payer === 'me' ? v.ship : 0)}</b></div>${v.xs.map(x => `<div><span>− ${esc(x.label || 'مصروف إضافي')}</span><b>${money(x.amount)}</b></div>`).join('')}<div class="net"><span>صافي الربح</span><b class="${net < 0 ? 'neg' : ''}">${signMoney(net)}</b></div>`; };
   m.addEventListener('input', calc); calc();
-  m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay; calc(); } if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay; calc(); } const fd = e.target.closest('[data-fxdel]'); if (fd) { fd.parentNode.remove(); calc(); } if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault(); const v = vals(), btn = form.querySelector('[type=submit]'); btn.disabled = true;
-    const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: v.ship, ship_payer: payer, return_loss: f.return_loss || 0, received_by: form.received_by.value.trim().slice(0, 40) || null, updated_at: new Date().toISOString() };
+    const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: v.ship, ship_payer: payer, extras: v.xs, return_loss: f.return_loss || 0, received_by: form.received_by.value.trim().slice(0, 40) || null, updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
     const pc = [...m.querySelectorAll('[data-pc]')].filter(x => x.dataset.pc && x.value.trim() !== '').map(x => ({ product_id: +x.dataset.pc, cost: num(x.value), updated_at: row.updated_at }));
     if (pc.length) { await sb.from('shop_product_costs').upsert(pc); pc.forEach(r => pcosts[r.product_id] = r.cost); }
@@ -2831,7 +2844,7 @@ function returnBox(o) {
     if (!payer) return toast('اختار مين اللي اتحمّل الشحن', 'err');
     const loss = payer === 'me' ? Math.max(0, +String(form.loss.value).replace(/[^\d.]/g, '') || 0) : 0;
     if (payer === 'me' && !loss) return toast('اكتب مبلغ الشحن اللي دفعناه', 'err');
-    const row = { order_id: o.id, sale: f.sale ?? (+o.subtotal - (+o.coupon_off || 0)), cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, return_loss: loss, updated_at: new Date().toISOString() };
+    const row = { order_id: o.id, sale: f.sale ?? (+o.subtotal - (+o.coupon_off || 0)), cost: f.cost ?? 0, ship_cost: f.ship_cost ?? 0, ship_payer: f.ship_payer || 'buyer', received_by: f.received_by || null, extras: f.extras || [], return_loss: loss, updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) return toast(error.message, 'err');
     fins[o.id] = row; m.remove(); toast(loss ? `اتسجل المرتجع · خسارة ${money(loss)} اتخصمت من الربح` : 'اتسجل المرتجع · من غير خسارة ✓', 'ok'); refreshOrderUI(o); sheetOrder(o); };
 }
@@ -2843,7 +2856,7 @@ function sheetSend(body) {
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
 const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: o.status === 'returned' ? 'مرتجع' : statuses[o.status] || o.status,
-  sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
+  sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, extras: finX(f), extras_note: finXs(f).map(x => `${x.label || 'مصروف'}: ${+x.amount}`).join(' | '), received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
 // who paid an expense: the partners first, then any other name typed before (you can always type a new one)
 const PAYERS = ['عليوه', 'حازم', 'مسعد'];
 const PARTNERS = ['مسعد', 'عليوه', 'حازم'];   // net profit is split equally between them
@@ -2869,13 +2882,13 @@ function renderAccounts() {
   const rets = ORD.filter(o => o.status === 'returned');
   const sum = (l, fn) => l.reduce((s, o) => s + fn(o), 0);
   const sales = sum(withFin, o => +fins[o.id].sale), cogs = sum(withFin, o => +fins[o.id].cost);
-  const shipMe = sum(withFin, o => fins[o.id].ship_payer === 'me' ? +fins[o.id].ship_cost : 0);
+  const shipMe = sum(withFin, o => fins[o.id].ship_payer === 'me' ? +fins[o.id].ship_cost : 0), ordX = sum(withFin, o => finX(fins[o.id]));
   const retLoss = sum(rets, o => fins[o.id] ? +fins[o.id].return_loss : 0);
   const OFF = offIn(since, accScope), offSales = OFF.reduce((s, x) => s + +x.price, 0), offCost = OFF.reduce((s, x) => s + +x.cost, 0), offShip = OFF.reduce((s, x) => s + (x.ship_payer === 'me' ? +x.ship_cost : 0), 0);
   const expIn = accScope === 'all' ? expenses.filter(x => new Date(x.spent_on).getTime() >= since - 864e5) : [];
   const expSum = expIn.reduce((s, x) => s + +x.amount, 0);
   const allSales = sales + offSales, allCogs = cogs + offCost, allShip = shipMe + offShip;
-  const net = allSales - allCogs - allShip - retLoss - expSum, margin = allSales ? net / allSales * 100 : 0;
+  const net = allSales - allCogs - allShip - ordX - retLoss - expSum, margin = allSales ? net / allSales * 100 : 0;
   const head = `<div class="head"><div><h1>الحسابات</h1><div class="sub">كل جنيه داخل وخارج — والنتيجة صافي ربح حقيقي</div></div>
       <div class="seg" id="accScopeSeg">${[['all','الكل'],['reg','المتجر العادي'],['lux','Luxury']].map(([v,l]) => `<button data-as="${v}" class="${v===accScope?'on':''} ${v==='lux'?'en':''}">${l}</button>`).join('')}</div>
       <div class="seg" id="accRangeSeg">${[[7,'7 أيام'],[30,'30 يوم'],[90,'90 يوم'],[0,'الكل']].map(([v,l]) => `<button data-range="${v}" class="${v===range?'on':''}">${l}</button>`).join('')}</div>
@@ -2884,7 +2897,7 @@ function renderAccounts() {
     <div class="acc-tabs" id="accTabs">${[['sum','الملخص وصافي الربح'],['orders','ربح كل أوردر'],['off','بيع خارج الموقع'],['exp','المصاريف'],['ret','المرتجعات'],['partners','الشركاء']].map(([k,l]) => `<button data-at="${k}" class="${k===accTab?'on':''}">${l}</button>`).join('')}</div>`;
   let body = '';
   if (accTab === 'sum') {
-    const flow = [['مبيعات الموقع', sales, ''], ...(offSales ? [['مبيعات خارج الموقع', offSales, '']] : []), ['− تكلفة البضاعة', allCogs, 'minus'], ['− الشحن على حسابك', allShip, 'minus'], ['− خسارة المرتجعات', retLoss, 'minus'], ['− المصاريف', expSum, 'minus']];
+    const flow = [['مبيعات الموقع', sales, ''], ...(offSales ? [['مبيعات خارج الموقع', offSales, '']] : []), ['− تكلفة البضاعة', allCogs, 'minus'], ['− الشحن على حسابك', allShip, 'minus'], ...(ordX ? [['− مصاريف إضافية للطلبات', ordX, 'minus']] : []), ['− خسارة المرتجعات', retLoss, 'minus'], ['− المصاريف', expSum, 'minus']];
     const mx = Math.max(1, allSales, ...flow.map(x => x[1]));
     const byCat = [...new Set([...EXP_CATS, ...expIn.map(x => x.category)])].map(c => [c, expIn.filter(x => x.category === c).reduce((s, x) => s + +x.amount, 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
     const cmx = byCat[0] ? byCat[0][1] : 1;
@@ -2915,7 +2928,7 @@ function renderAccounts() {
     body = `<div class="toolbar"><div class="seg" id="missSeg"><button data-miss="0" class="${!accMissing ? 'on' : ''}">كل الطلبات <span class="en">${sold.length + rets.length}</span></button><button data-miss="1" class="${accMissing ? 'on' : ''}">من غير تكاليف <span class="en">${missing.length}</span></button></div></div>
     <div class="panel scroll-x" style="padding:6px 14px">${list.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>الحالة</th><th>البيع</th><th>تكلفة المنتجات</th><th>الشحن</th><th>صافي الربح</th><th></th></tr></thead><tbody>
       ${list.map(o => { const f = fins[o.id], n = orderNet(o); return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td><span class="badge st-${o.status}">${statuses[o.status]}</span></td>
-        <td class="n">${f ? money(f.sale) : '—'}</td><td class="n">${f ? money(f.cost) : '—'}</td><td class="n">${f ? `${money(f.ship_cost)} <small style="color:var(--muted)">${f.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small>` : '—'}</td>
+        <td class="n">${f ? money(f.sale) : '—'}</td><td class="n">${f ? money(f.cost) : '—'}${finX(f) ? `<div style="color:var(--muted);font-size:11px">+ ${money(finX(f))} إضافي</div>` : ''}</td><td class="n">${f ? `${money(f.ship_cost)} <small style="color:var(--muted)">${f.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small>` : '—'}</td>
         <td class="n">${o.status === 'returned' ? `<span class="neg">${signMoney(n)}</span>` : f ? `<span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span>` : '<span class="miss">مش متسجل</span>'}</td>
         <td><button class="btn btn-sm ${f ? 'btn-ghost' : 'btn-amber'}" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل التكاليف'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش طلبات متأكدة في الفترة دي.</div>'}</div>`;
   } else if (accTab === 'off') {
