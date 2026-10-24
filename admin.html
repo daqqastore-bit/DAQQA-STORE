@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024132941">
+<link rel="stylesheet" href="assets/base.css?v=20261024135107">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -545,7 +545,7 @@ html{--z:1}
 .bslot .x{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff}
 .bslot small{font-size:11.5px;color:var(--muted);line-height:1.6}.bslot small b{color:var(--ink);font-weight:600}
 .bslot .up em{font-style:normal;font-size:11px;color:var(--muted-2)}
-.bd-photo .bslot{max-width:520px}.bd-photo .bslot img,.bd-photo .bslot .up{height:160px}.bd-photo{margin-bottom:16px}
+.bd-photo .bslot{max-width:520px}.bd-photo .bslot img,.bd-photo .bslot .up{height:160px}.bd-photo{margin-bottom:16px}.bd-acts{display:flex;gap:8px;flex-wrap:wrap}.bd-acts .btn{display:inline-flex;align-items:center;gap:6px}.bd-acts svg{width:15px;height:15px}
 .bslot.drop .up,.bslot.drop img{outline:2px dashed var(--amber);outline-offset:3px;background:rgb(201 169 122/.1)}
 @media (max-width:700px){.sec-img-row{grid-template-columns:1fr 1fr}.sec-img-row>b{grid-column:1/-1}}
 .link-btn{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:4px;align-self:center}
@@ -870,7 +870,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024132941"></script>
+<script src="assets/config.js?v=20261024135107"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1494,7 +1494,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024132941" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024135107" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1528,7 +1528,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024132941" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024135107" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1569,7 +1569,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024132941'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024132941')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024135107'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024135107')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2371,7 +2371,7 @@ function renderBands(s) {
   // the strip's background photo lives with the strip (stored in banners[kind].life)
   const photo = () => { const u = ((settings.banners || {})[bandK] || {}).life, sp = slotSpec(bandK, 'life');
     return `<div class="field bd-photo"><label>صورة الشريط <small style="color:var(--muted)">(خلفية الشريط · <span class="en">${sp[0]}</span> · <span class="en" dir="ltr">${sp[2]}</span> · لو مفيش، بيظهر من غير صورة)</small></label>
-      <div class="bslot" data-slot="${bandK}:life">${u ? `<img src="${esc(u)}" alt=""><button type="button" class="x" data-bdel="${bandK}:life" aria-label="حذف">×</button><button type="button" class="re" data-bup="${bandK}:life">تغيير</button>` : `<button type="button" class="up" data-bup="${bandK}:life"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>+ صورة<em>اسحب صورة هنا أو دوس</em></button>`}</div></div>`; };
+      <div class="bslot" data-slot="${bandK}:life">${u ? `<img src="${esc(u)}" alt=""><div class="bd-acts"><button type="button" class="btn btn-sm btn-ghost" data-bup="${bandK}:life"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>تغيير الصورة</button><button type="button" class="btn btn-sm btn-danger" data-bdel="${bandK}:life"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>حذف الصورة</button></div>` : `<button type="button" class="up" data-bup="${bandK}:life"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>+ صورة<em>اسحب صورة هنا أو دوس</em></button>`}</div></div>`; };
   const draw = () => { const c = cur();
     $('#bdBody').innerHTML = photo() + `<div class="two"><div class="field"><label>العنوان بالإنجليزي <small style="color:var(--muted)">(Enter = سطر جديد)</small></label><textarea class="input en" id="bdEn" rows="2" dir="ltr">${esc(c.en)}</textarea></div>
       <div class="field"><label>الجملة بالعربي</label><input class="input" id="bdAr" value="${esc(c.ar)}" placeholder="مثلاً: معمولة لكل لحظة."></div></div>

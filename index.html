@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024132941">
-<link rel="stylesheet" href="assets/store.css?v=20261024132941">
+<link rel="stylesheet" href="assets/base.css?v=20261024135107">
+<link rel="stylesheet" href="assets/store.css?v=20261024135107">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -188,8 +188,12 @@
 .strip .empty{color:var(--s-muted)}
 /* lifestyle band (dark) */
 .band{position:relative;min-height:460px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--bg)}
-.band .bg{position:absolute;inset:0;background:var(--bg) var(--img) no-repeat;background-size:cover;background-position:center 30%;filter:saturate(.85)}
-.band .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 8%,rgb(var(--bg-rgb)/.55) 55%,rgb(var(--bg-rgb)/.25)),linear-gradient(270deg,rgb(var(--bg-rgb)/.75),transparent 60%)}
+.band .bg{position:absolute;inset:0;background:var(--bg) var(--img) no-repeat;background-size:cover;background-position:center 30%}
+/* the photo stays clear: only the text side (right) and the feature row (bottom) get a soft veil */
+.band .bg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgb(var(--bg-rgb)/.92) 0%,rgb(var(--bg-rgb)/.5) 22%,transparent 46%),linear-gradient(270deg,rgb(var(--bg-rgb)/.82) 0%,rgb(var(--bg-rgb)/.45) 32%,transparent 58%)}
+/* photo band = a rounded card inset from the screen edges */
+.band.has-photo{margin:8px clamp(12px,2.6vw,40px) 28px;border-radius:28px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
+.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 28px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 28px)}
 .band .wrap{position:relative;width:100%}
 .band .lbl{font:500 14px var(--f-display);letter-spacing:.3em;color:var(--accent)}
 .band h2{font:400 clamp(36px,4.6vw,60px)/1.05 var(--f-display);color:var(--ink);margin-top:12px}
@@ -224,6 +228,8 @@
   .strip .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
   .strip .grid.clip>.card:nth-child(4){display:flex}
   .band{min-height:440px}
+  .band.has-photo{border-radius:20px}.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 20px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 20px)}
+  .band .bg::after{background:linear-gradient(0deg,rgb(var(--bg-rgb)/.94) 0%,rgb(var(--bg-rgb)/.6) 38%,rgb(var(--bg-rgb)/.1) 70%)}
   .feats{grid-template-columns:repeat(2,1fr)}
   .feats>:nth-child(3){border-inline-start:0}
   .feats>:nth-child(n+3){border-top:1px solid rgb(var(--accent-rgb)/.22)}
@@ -304,8 +310,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024132941"></script>
-<script src="assets/app.js?v=20261024132941"></script>
+<script src="assets/config.js?v=20261024135107"></script>
+<script src="assets/app.js?v=20261024135107"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -517,7 +523,8 @@ function build() {
     </section>`;
   }).join('') + MOTTO();
   live.forEach(renderStrip);
-  const h = location.hash.slice(1);
+  // jump to the #section only on the first paint: live refreshes re-render this, and the scroll-spy keeps the hash updated, so jumping again would yank the visitor up to the section's top
+  const h = DQ._hashDone ? '' : location.hash.slice(1); DQ._hashDone = true;
   if (h && !DQ.restoreY && document.getElementById(h)) { const go = () => { if (!(window.DQ_goto && DQ_goto(h, false))) document.getElementById(h).scrollIntoView(); }; setTimeout(go, 80); setTimeout(go, 700); }
   // product list for Google
   const base = location.origin + location.pathname.replace(/index\.html$/, '');
