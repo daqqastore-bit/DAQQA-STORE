@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024131859">
+<link rel="stylesheet" href="assets/base.css?v=20261024132941">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -545,6 +545,7 @@ html{--z:1}
 .bslot .x{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff}
 .bslot small{font-size:11.5px;color:var(--muted);line-height:1.6}.bslot small b{color:var(--ink);font-weight:600}
 .bslot .up em{font-style:normal;font-size:11px;color:var(--muted-2)}
+.bd-photo .bslot{max-width:520px}.bd-photo .bslot img,.bd-photo .bslot .up{height:160px}.bd-photo{margin-bottom:16px}
 .bslot.drop .up,.bslot.drop img{outline:2px dashed var(--amber);outline-offset:3px;background:rgb(201 169 122/.1)}
 @media (max-width:700px){.sec-img-row{grid-template-columns:1fr 1fr}.sec-img-row>b{grid-column:1/-1}}
 .link-btn{background:none;border:0;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:4px;align-self:center}
@@ -869,7 +870,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024131859"></script>
+<script src="assets/config.js?v=20261024132941"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1493,7 +1494,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024131859" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024132941" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1527,7 +1528,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024131859" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024132941" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1568,7 +1569,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024131859'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024131859')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024132941'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024132941')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2141,7 +2142,7 @@ async function saveBanner(k, slot, url) {
 }
 /* ---------- section photos: every section & page has its own cover, separate from products ---------- */
 const COVER_GROUPS = () => [
-  ['أقسام المتجر', 'البانر العريض فوق كل قسم + صورة اللايف ستايل تحت المنتجات', Object.entries(RC.kinds).map(([k, v]) => [k, v.ar, v.en, [['hero', 'البانر'], ['life', 'لايف ستايل']]])],
+  ['أقسام المتجر', 'البانر العريض فوق كل قسم (صورة الشريط اللي تحت المنتجات في الإعدادات ← السكاشن)', Object.entries(RC.kinds).map(([k, v]) => [k, v.ar, v.en, [['hero', 'البانر']]])],
   ['صفحات رجالي وحريمي', 'صورة الغلاف أول الصفحة', [['men', 'رجالي', 'Men', [['hero', 'الغلاف']]], ['women', 'حريمي', 'Women', [['hero', 'الغلاف']]]]],
   ['Luxury — DAQQA Privé', 'صورة أول الصفحة (جوه الدايرة) + غلاف لكل سكشن جوه Luxury', [['luxury', 'الصفحة', 'Privé', [['hero', 'الصورة الرئيسية']]], ...Object.entries(RC.kinds).map(([k, v]) => ['lux-' + k, v.ar, v.en, [['hero', 'غلاف السكشن']]])]]
 ];
@@ -2349,9 +2350,9 @@ function renderPerks(s) {
     settings.perks = perks; toast('اتحفظ ✓', 'ok'); renderPerks(settings); };
 }
 /* ---------- settings › السكاشن: the feature strip under each section (title + icons + words) ---------- */
-let bandK = 'watches';
+let bandK = 'watches', bandDraft = null;   // the draft survives the re-render after a photo upload
 function renderBands(s) {
-  const B = JSON.parse(JSON.stringify((s.bands && typeof s.bands === 'object') ? s.bands : {}));
+  const B = bandDraft = bandDraft || JSON.parse(JSON.stringify((s.bands && typeof s.bands === 'object') ? s.bands : {}));
   const IC = { ...RC.FEAT_IC, ...Object.fromEntries(Object.entries(RC.PERK_IC).filter(([k]) => !RC.FEAT_IC[k] && k !== 'ship')) }, MAXF = 4;
   const plain = v => String(v || '').replace(/<br\s*\/?>/gi, '\n');
   const cur = () => { const D = RC.kinds[bandK].band, o = B[bandK] || {};
@@ -2367,8 +2368,12 @@ function renderBands(s) {
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="bdReset">رجّع كلام السكشن ده الأصلي</button><button class="btn btn-primary" type="submit">حفظ</button></div>
     </form>`;
   bindSetTabs();
+  // the strip's background photo lives with the strip (stored in banners[kind].life)
+  const photo = () => { const u = ((settings.banners || {})[bandK] || {}).life, sp = slotSpec(bandK, 'life');
+    return `<div class="field bd-photo"><label>صورة الشريط <small style="color:var(--muted)">(خلفية الشريط · <span class="en">${sp[0]}</span> · <span class="en" dir="ltr">${sp[2]}</span> · لو مفيش، بيظهر من غير صورة)</small></label>
+      <div class="bslot" data-slot="${bandK}:life">${u ? `<img src="${esc(u)}" alt=""><button type="button" class="x" data-bdel="${bandK}:life" aria-label="حذف">×</button><button type="button" class="re" data-bup="${bandK}:life">تغيير</button>` : `<button type="button" class="up" data-bup="${bandK}:life"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>+ صورة<em>اسحب صورة هنا أو دوس</em></button>`}</div></div>`; };
   const draw = () => { const c = cur();
-    $('#bdBody').innerHTML = `<div class="two"><div class="field"><label>العنوان بالإنجليزي <small style="color:var(--muted)">(Enter = سطر جديد)</small></label><textarea class="input en" id="bdEn" rows="2" dir="ltr">${esc(c.en)}</textarea></div>
+    $('#bdBody').innerHTML = photo() + `<div class="two"><div class="field"><label>العنوان بالإنجليزي <small style="color:var(--muted)">(Enter = سطر جديد)</small></label><textarea class="input en" id="bdEn" rows="2" dir="ltr">${esc(c.en)}</textarea></div>
       <div class="field"><label>الجملة بالعربي</label><input class="input" id="bdAr" value="${esc(c.ar)}" placeholder="مثلاً: معمولة لكل لحظة."></div></div>
       <div class="bd-fs">${c.feats.map((f, i) => `<div class="pk-row">
         <span class="soc-mv"><button type="button" data-fmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-fmv="${i}" data-to="${i + 1}" ${i < c.feats.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
@@ -2382,8 +2387,10 @@ function renderBands(s) {
   const f = $('#bdForm');
   f.oninput = e => { const c = cur(), t = e.target;
     if (t.id === 'bdEn') c.en = t.value; else if (t.id === 'bdAr') c.ar = t.value; else if (t.dataset.ft != null) c.feats[+t.dataset.ft].t = t.value; else if (t.dataset.fl != null) c.feats[+t.dataset.fl].l = t.value; };
-  f.onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset, c = cur();
-    if (d.bk) { bandK = d.bk; document.querySelectorAll('#bdK button').forEach(x => x.classList.toggle('on', x === b)); draw(); }
+  f.onclick = async e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset, c = cur();
+    if (d.bup) { const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.onchange = () => upBanner(bandK, 'life', inp.files[0], b); inp.click(); }
+    else if (d.bdel) { if (await confirmBox('تشيل صورة الشريط؟', 'شيل')) saveBanner(bandK, 'life', null); }
+    else if (d.bk) { bandK = d.bk; document.querySelectorAll('#bdK button').forEach(x => x.classList.toggle('on', x === b)); draw(); }
     else if (d.fic != null) { c.feats[+d.fic].i = d.k; draw(); }
     else if (d.fmv != null) { const t = +d.to; if (t >= 0 && t < c.feats.length) { c.feats.splice(t, 0, c.feats.splice(+d.fmv, 1)[0]); draw(); } }
     else if (d.fdel != null) { c.feats.splice(+d.fdel, 1); draw(); }
@@ -2395,7 +2402,12 @@ function renderBands(s) {
     const bad = Object.values(B).flatMap(o => (o && o.feats) || []).find(x => String(x.l || '').trim() && !RC.safeLink(x.l)); if (bad) return toast(`اللينك بتاع «${bad.t}» مش مظبوط، لازم يبدأ بـ https:// أو يكون من صفحات الموقع`, 'err');
     const { error } = await sb.from('shop_settings').update({ bands: out, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/bands/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
-    settings.bands = out; toast('اتحفظ ✓', 'ok'); renderBands(settings); };
+    settings.bands = out; bandDraft = null; toast('اتحفظ ✓', 'ok'); renderBands(settings); };
+  // drop a photo straight on the strip's slot
+  const slotOf = e => e.target.closest && e.target.closest('.bd-photo .bslot'), hasF = e => [...(e.dataTransfer?.types || [])].includes('Files');
+  f.ondragover = e => { const b = slotOf(e); if (!b || !hasF(e)) return; e.preventDefault(); b.classList.add('drop'); };
+  f.ondragleave = e => { const b = slotOf(e); if (b && !b.contains(e.relatedTarget)) b.classList.remove('drop'); };
+  f.ondrop = e => { const b = slotOf(e); if (!b) return; e.preventDefault(); b.classList.remove('drop'); upBanner(bandK, 'life', e.dataTransfer.files[0], b.querySelector('[data-bup]')); };
 }
 /* ---------- discount codes (settings › أكواد خصم) ---------- */
 let coupons = null;
