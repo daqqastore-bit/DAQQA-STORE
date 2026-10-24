@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024140617">
-<link rel="stylesheet" href="assets/store.css?v=20261024140617">
+<link rel="stylesheet" href="assets/base.css?v=20261024140945">
+<link rel="stylesheet" href="assets/store.css?v=20261024140945">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -195,8 +195,8 @@
 /* the photo card sits on the strip's colour with little air around it, so it doesn't read as a separate empty zone */
 .kind:has(.band.has-photo){background:var(--strip-bg)}
 .strip:has(+ .band.has-photo) .strip-in{padding-bottom:24px}
-.band.has-photo{width:calc(100% - 48px);max-width:1192px;min-height:360px;margin:0 auto;margin-bottom:28px;border-radius:24px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
-.band.has-photo .wrap{padding-left:44px;padding-right:44px}
+.band.has-photo{width:calc(100% - 32px);min-height:340px;margin:0 auto;margin-bottom:28px;border-radius:24px;box-shadow:0 30px 60px -40px rgba(0,0,0,.45);isolation:isolate}
+.band.has-photo .wrap{padding-left:max(24px,env(safe-area-inset-left));padding-right:max(24px,env(safe-area-inset-right))}
 .band.has-photo h2{font-size:clamp(30px,3.3vw,46px)}.band.has-photo .ar{font-size:17px}
 .band.has-photo .feats{margin-top:26px}.band.has-photo .feats>*{padding:18px 10px 22px}.band.has-photo .feats svg{width:28px;height:28px}
 .band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 24px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 24px)}
@@ -235,7 +235,7 @@
   .strip .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
   .strip .grid.clip>.card:nth-child(4){display:flex}
   .band{min-height:440px}
-  .band.has-photo{width:calc(100% - 32px);min-height:0;border-radius:20px;padding-top:36px}.band.has-photo .wrap{padding-left:18px;padding-right:18px}
+  .band.has-photo{width:calc(100% - 20px);min-height:0;border-radius:20px;padding-top:36px}.band.has-photo .wrap{padding-left:18px;padding-right:18px}
   .band.has-photo .feats{grid-template-columns:repeat(var(--n,3),1fr)}.band.has-photo .feats>*{border-top:0;border-inline-start:1px solid rgb(var(--accent-rgb)/.22);padding:16px 4px 18px;font-size:12px}.band.has-photo .feats>:first-child{border-inline-start:0}.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 20px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 20px)}
   .band .bg::after{background:linear-gradient(0deg,rgb(var(--bg-rgb)/.95) 0%,rgb(var(--bg-rgb)/.78) 45%,rgb(var(--bg-rgb)/.6) 100%)}
   .feats{grid-template-columns:repeat(2,1fr)}
@@ -318,8 +318,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024140617"></script>
-<script src="assets/app.js?v=20261024140617"></script>
+<script src="assets/config.js?v=20261024140945"></script>
+<script src="assets/app.js?v=20261024140945"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
