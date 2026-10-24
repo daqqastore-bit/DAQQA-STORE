@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024000122">
+<link rel="stylesheet" href="assets/base.css?v=20261024000822">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -645,7 +645,7 @@ html{--z:1}
 .cp-card{display:grid;gap:12px}.cp-card.off{opacity:.6}
 .cp-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .cp-top code{font:700 20px var(--f-ui);letter-spacing:.1em;padding:6px 12px;border:1.5px dashed var(--amber);border-radius:10px;color:var(--amber)}
-.cp-top b{font:800 28px var(--f-ui);color:var(--green)}
+.cp-top b{font:700 28px var(--f-ui);color:var(--green)}
 .cp-tags{display:flex;flex-wrap:wrap;gap:6px}.cp-tags span{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}.cp-tags b{color:var(--ink)}
 .cp-acts{display:flex;align-items:center;gap:8px}.cp-acts small{font-size:12px;color:var(--muted)}
 .cp-seg{width:100%}.cp-seg button{flex:1}
@@ -700,7 +700,7 @@ html{--z:1}
 .inv-pv-th button.on{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
 .inv-pv-pg{position:relative;overflow:hidden;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.4);flex:none}
 .inv-pv-sc{transform-origin:top right;position:absolute;top:0;right:0}
-/* ---- the printed invoice: fixed paper colours whatever the admin theme · 3 looks (t-royal / t-noir / t-mini) on one markup ---- */
+/* ---- the printed invoice (A4, fixed paper colours whatever the admin theme) ---- */
 #printArea{display:none}
 @media print{
   @page{size:A4;margin:0}
@@ -712,116 +712,103 @@ html{--z:1}
   .inv:last-child{break-after:auto;page-break-after:auto}
 }
 .inv-stage{position:fixed;top:0;left:-10000px;pointer-events:none}
-.inv{--ink:#18110A;--gold:#A8794F;--gold-2:#D0B48C;--muted:#7a6650;--line:#e9dfd0;--paper:#fffdf9;--card:#f8f2e9;--soft:#3d3024;
+.inv{--dk:#15100B;--ink:#1d150d;--gold:#A8794F;--gold-2:#D0B48C;--muted:#86725d;--line:#e4d8c6;--paper:#FBF8F3;--card:#F3ECE1;--card-2:#EAE0D1;
   width:210mm;height:297mm;box-sizing:border-box;background:var(--paper);color:var(--ink);direction:rtl;
-  font:400 11pt/1.6 'Noto Kufi Arabic',sans-serif;display:flex;flex-direction:column;position:relative;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  font:400 10.5pt/1.55 'Noto Kufi Arabic',sans-serif;display:flex;flex-direction:column;position:relative;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .inv *{box-sizing:border-box}
 .inv .en{font-family:'Archivo',sans-serif}
-.inv small{display:block;font-size:7.5pt;color:var(--muted);letter-spacing:.02em}
-.inv-logo{display:grid;place-items:center}
+.inv svg{display:block}
+/* header: logo · INVOICE · a gold-toned watch fading in from the edge */
+.inv-h{position:relative;height:47mm;background:var(--dk);color:#F5EEE2;direction:ltr;display:flex;align-items:center;padding:0 12mm;overflow:hidden}
+.inv-ph{position:absolute;top:0;bottom:0;right:0;width:60mm;overflow:hidden}
+.inv-ph img{width:100%;height:100%;object-fit:cover;object-position:62% 40%}
+.inv-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--dk) 0%,rgba(21,16,11,.7) 30%,rgba(21,16,11,.1) 80%)}
+.inv-brand{display:flex;flex-direction:column;gap:4mm;position:relative}
+.inv-brand > div{display:flex;align-items:center;gap:4.5mm}
+.inv-logo{width:21mm;height:21mm;color:var(--gold-2);flex:none}
 .inv-logo .rc-mark{width:100%;height:100%;color:var(--gold-2);--accent-2:var(--gold)}
-.inv-wm b{display:block;font:500 25pt/1 'Bodoni Moda',serif;letter-spacing:.3em;direction:ltr;margin-inline-end:-.3em}
-.inv-wm small{margin-top:2.2mm;font:600 7pt/1 'Archivo',sans-serif;letter-spacing:.7em;color:var(--gold);direction:ltr;margin-inline-end:-.7em}
-.inv-tt b{display:block;font-size:17pt;font-weight:700;line-height:1.2}
-.inv-tt span{display:block;font:600 7pt/1.4 'Archivo',sans-serif;letter-spacing:.55em;color:var(--gold)}
-.inv-body{flex:1;display:flex;flex-direction:column;padding:0 16mm}
-.inv-meta{display:grid;grid-template-columns:repeat(3,1fr)}
-.inv-meta > div{padding:0 5mm;border-inline-start:.6pt solid var(--line)}.inv-meta > div:first-child{border:0;padding-inline-start:0}
-.inv-meta b{font-size:11pt;font-weight:700}
-.inv-to > small{color:var(--gold);font-weight:700;margin-bottom:1.5mm;letter-spacing:.06em}
-.inv-to-g{display:grid;grid-template-columns:1fr 1.6fr;gap:6mm}
-.inv-to-g b{display:block;font-size:12pt}.inv-to-g span{display:block;font-size:10pt;color:var(--soft)}
-.inv-note{margin:2mm 0 0;font-size:9pt;color:var(--gold)}
-.inv-t{width:100%;border-collapse:collapse}
-.inv-t th{white-space:nowrap;font-size:8pt;font-weight:600;color:var(--muted);text-align:right;padding:0 2mm 2.5mm;border-bottom:.8pt solid var(--ink)}
-.inv-t th:not(:first-child){text-align:left}
-.inv-t td{padding:3.2mm 2mm;border-bottom:.6pt solid var(--line);vertical-align:middle;font-size:10.5pt}
-.inv-t .n{text-align:left;white-space:nowrap;width:1%}
-.inv-t s{display:block;font-size:8pt;color:var(--muted);opacity:.7}
-.inv-it{display:flex;align-items:center;gap:3.5mm}
-.inv-it img{width:16mm;height:16mm;object-fit:cover;border-radius:2mm;flex:none;background:var(--card)}
-.inv-it b{font-size:11pt;font-weight:700}
-.inv-it small{font-size:7pt;letter-spacing:.1em}
-.inv-it span{display:block;font-size:8.5pt;color:var(--muted);margin-top:.5mm}.inv-it span b{font-size:8.5pt;font-weight:600;color:var(--ink)}
-.inv-sum{width:80mm;margin:6mm auto 0 0;display:flex;flex-direction:column;gap:1.6mm}
-.inv-sum > div{display:flex;justify-content:space-between;font-size:10.5pt}.inv-sum > div b{font-weight:600}
-.inv-sum .tot{margin-top:2mm;padding:3.5mm 4.5mm;border-radius:2.5mm;font-size:11pt;align-items:center}
-.inv-sum .tot b{font-size:15pt;font-weight:700}
-.inv-save{margin:0;font-size:8.5pt;color:#4f6b3a;text-align:left}
-.inv-f{text-align:center}
-.inv-orn{display:flex;align-items:center;justify-content:center;gap:3mm;color:var(--gold-2);font-size:9pt}
-.inv-orn i{width:18mm;height:.6pt;background:currentColor}
-.inv-thx b{display:block;font-size:16pt;font-weight:700}
-.inv-thx p{margin:2mm auto 0;max-width:140mm;font-size:9.5pt;line-height:1.8;color:var(--soft)}
-.inv-help{margin-top:2.5mm;font-size:8.5pt;color:var(--muted)}
-.inv-soc{display:flex;justify-content:center;flex-wrap:wrap;gap:2mm 7mm}
-.inv-soc span{display:inline-flex;align-items:center;gap:1.8mm;font-size:9pt}
-.inv-soc i{width:4mm;height:4mm;color:var(--gold);display:inline-grid}.inv-soc i svg{width:100%;height:100%}
-.inv-sign{font:600 6.5pt/1 'Archivo',sans-serif;letter-spacing:.5em;color:var(--gold);direction:ltr}
-
-/* 1 · ملكي — espresso band on top, cream paper, gold details */
-.t-royal .inv-h{background:var(--ink);color:#F5F0E8;padding:12mm 16mm 9mm;display:flex;flex-direction:column;align-items:center;gap:5mm;position:relative}
-.t-royal .inv-h::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.2mm;background:linear-gradient(90deg,var(--gold),var(--gold-2),var(--gold))}
-.t-royal .inv-brand{display:flex;flex-direction:column;align-items:center;gap:3.5mm}
-.t-royal .inv-logo{width:19mm;height:19mm}
-.t-royal .inv-wm{text-align:center}.t-royal .inv-wm small{color:var(--gold-2)}
-.t-royal .inv-tt{display:flex;align-items:center;gap:4mm;color:var(--gold-2)}
-.t-royal .inv-tt b{font-size:11pt;font-weight:600;color:#F5F0E8}.t-royal .inv-tt span{color:var(--gold-2)}
-.t-royal .inv-tt::before,.t-royal .inv-tt::after{content:"";width:16mm;height:.6pt;background:var(--gold)}
-.t-royal .inv-meta{margin:8mm 0 6mm}
-.t-royal .inv-to{background:var(--card);border-radius:3mm;padding:4.5mm 5mm;margin-bottom:6mm;border-inline-start:1.2mm solid var(--gold-2)}
-.t-royal .inv-it img{border:.6pt solid var(--line)}
-.t-royal .inv-sum .tot{background:var(--ink);color:#F5F0E8}.t-royal .inv-sum .tot b{color:var(--gold-2)}
-.t-royal .inv-f{margin-top:auto;padding:7mm 16mm 0}
-.t-royal .inv-thx{margin-top:3mm}
-.t-royal .inv-soc{margin-top:4mm}
-.t-royal .inv-strip{margin:7mm -16mm 0;background:var(--ink);border-top:1mm solid var(--gold-2);padding:4.5mm 0;display:flex;justify-content:center}
-.t-royal .inv-strip .inv-sign{color:var(--gold-2)}
-
-/* 2 · Noir — the whole page in espresso & gold (best for sending as a PDF; heavy on ink if printed) */
-.t-noir{--ink:#F3EBDD;--paper:#15100A;--card:#211810;--line:#3a2b1d;--muted:#a8957d;--soft:#d9ccb8;--gold:#C9A46E;--gold-2:#E2C79C}
-.t-noir::before{content:"";position:absolute;inset:8mm;border:.6pt solid rgba(208,180,140,.45);pointer-events:none}
-.t-noir::after{content:"";position:absolute;inset:9.5mm;border:.4pt solid rgba(208,180,140,.18);pointer-events:none}
-.t-noir .inv-h{padding:17mm 18mm 0;display:flex;justify-content:space-between;align-items:center}
-.t-noir .inv-brand{display:flex;align-items:center;gap:4mm}
-.t-noir .inv-logo{width:16mm;height:16mm}
-.t-noir .inv-wm b{color:var(--gold-2)}
-.t-noir .inv-tt{text-align:left}.t-noir .inv-tt b{color:var(--ink)}
-.t-noir .inv-body{padding:0 18mm}
-.t-noir .inv-meta{margin:9mm 0 6mm;padding:4mm 0;border-top:.6pt solid var(--line);border-bottom:.6pt solid var(--line)}
-.t-noir .inv-to{background:var(--card);border:.6pt solid var(--line);border-radius:3mm;padding:4.5mm 5mm;margin-bottom:6mm}
-.t-noir .inv-t th{border-bottom-color:var(--gold)}
-.t-noir .inv-it img{background:#2a1f15}
-.t-noir .inv-sum .tot{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#15100A}.t-noir .inv-sum .tot b{color:#15100A}
-.t-noir .inv-save{color:#9fbf86}
-.t-noir .inv-f{margin:auto 18mm 15mm;padding-top:6mm;border-top:.6pt solid var(--line)}
-.t-noir .inv-thx b{color:var(--gold-2);font-size:17pt}
-.t-noir .inv-soc{margin-top:4mm}
-.t-noir .inv-strip{margin-top:5mm}
-
-/* 3 · مينيمال — white boutique receipt, everything centred, hairlines */
-.t-mini{--paper:#fff;--card:#faf7f2}
-.t-mini .inv-h{padding:16mm 16mm 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:5mm}
-.t-mini .inv-brand{display:flex;flex-direction:column;align-items:center;gap:3mm}
-.t-mini .inv-logo{width:15mm;height:15mm}.t-mini .inv-logo .rc-mark{color:var(--ink)}
-.t-mini .inv-wm b{font-size:21pt}
-.t-mini .inv-tt{display:flex;flex-direction:column;align-items:center;gap:1mm;width:100%;padding:3.5mm 0;border-top:.6pt solid var(--ink);border-bottom:.6pt solid var(--ink)}
-.t-mini .inv-tt b{font-size:12pt;letter-spacing:.1em}
-.t-mini .inv-meta{margin:6mm 0;text-align:center}.t-mini .inv-meta > div{padding:0 3mm}.t-mini .inv-meta > div:first-child{padding:0 3mm}
-.t-mini .inv-to{text-align:center;margin-bottom:6mm;padding-bottom:5mm;border-bottom:.6pt dashed #cdbba2}
-.t-mini .inv-to-g{grid-template-columns:1fr;gap:1.5mm}
-.t-mini .inv-t th{border-bottom-width:.6pt}
-.t-mini .inv-t td{border-bottom-style:dashed;border-bottom-color:#ddd0bd}
-.t-mini .inv-it img{border-radius:50%;width:14mm;height:14mm}
-.t-mini .inv-sum{width:100%;margin:5mm 0 0;align-items:stretch}
-.t-mini .inv-sum > div{padding:0 2mm}
-.t-mini .inv-sum .tot{flex-direction:column;align-items:center;gap:1mm;margin-top:4mm;padding:5mm;border:.8pt solid var(--ink);border-radius:0}
-.t-mini .inv-sum .tot > span{font-size:9pt;letter-spacing:.06em;color:var(--muted)}.t-mini .inv-sum .tot b{font-size:22pt;color:var(--ink)}
-.t-mini .inv-save{text-align:center}
-.t-mini .inv-f{margin:auto 16mm 13mm;padding-top:5mm}
-.t-mini .inv-thx b{font-size:15pt}
-.t-mini .inv-soc{margin-top:4mm}
-.t-mini .inv-strip{margin-top:5mm}
+.inv-wm b{display:block;font:500 25pt/1 'Bodoni Moda',serif;letter-spacing:.24em;color:#F5EEE2}
+.inv-wm small{display:block;margin-top:2.5mm;font:500 10pt/1 'Bodoni Moda',serif;letter-spacing:.55em;color:#E8DCC8}
+.inv-tag{display:flex;align-items:center;gap:4mm;font:600 6.3pt/1 'Archivo',sans-serif;letter-spacing:.55em;color:var(--gold-2)}
+.inv-tag i{width:12mm;height:.6pt;background:var(--gold)}
+.inv-div{width:.6pt;height:28mm;background:var(--gold);margin:0 8mm;position:relative}
+.inv-tt{position:relative;text-align:center;direction:rtl}
+.inv-tt b{display:block;font-size:27pt;font-weight:700;line-height:1.15;color:#F5EEE2}
+.inv-tt span{display:block;margin-top:2mm;font:500 10pt/1 'Bodoni Moda',serif;letter-spacing:.6em;color:#E8DCC8;direction:ltr;margin-right:-.6em}
+.inv-body{flex:1;display:flex;flex-direction:column;padding:0 11mm;min-height:0}
+/* order number · date · payment */
+.inv-meta{display:grid;grid-template-columns:repeat(3,1fr);padding:5mm 0 4.5mm;border-bottom:.7pt solid var(--gold-2)}
+.inv-meta > div{display:flex;align-items:center;gap:4mm;padding:0 5mm;border-inline-start:.7pt solid var(--line)}
+.inv-meta > div:first-child{border:0;padding-inline-start:0}
+.inv-ic{width:13mm;height:13mm;border-radius:3mm;background:var(--card);color:var(--gold);display:grid;place-items:center;flex:none}
+.inv-ic svg{width:7mm;height:7mm}
+.inv-meta small{display:block;font-size:8.5pt;color:var(--muted)}
+.inv-meta b{display:block;font-size:13.5pt;font-weight:700;line-height:1.3;white-space:nowrap}
+/* customer */
+.inv-to{margin-top:4mm;background:var(--card);border-radius:3.5mm;padding:3.5mm 6mm;display:grid;grid-template-columns:1fr auto 1.15fr;gap:0 6mm}
+.inv-to-h{grid-column:1/-1;display:flex;align-items:center;gap:3mm;margin-bottom:1.5mm;font-size:12pt;font-weight:700}
+.inv-dot{width:10mm;height:10mm;border-radius:50%;background:linear-gradient(145deg,#B98A5B,#8a6136);color:#fff;display:grid;place-items:center;flex:none}
+.inv-dot svg{width:5mm;height:5mm}
+.inv-to small{display:block;font-size:8.5pt;color:var(--muted)}
+.inv-to b{display:block;font-size:12.5pt;font-weight:700}
+.inv-to .ph{margin-top:1mm}
+.inv-to .ph b{font-family:'Archivo',sans-serif;direction:ltr;text-align:right}
+.inv-to-sep{width:.7pt;background:var(--gold-2)}
+.inv-to-a span{display:block;font-size:10pt;color:#3d3024;margin-top:.5mm}
+.inv-note{grid-column:1/-1;margin-top:2.5mm;padding-top:2.5mm;border-top:.6pt dashed #cdbba2;font-size:9.5pt}.inv-note b{display:inline;font-size:9.5pt}
+/* products */
+.inv-th{margin-top:4mm;display:grid;grid-template-columns:1fr 26mm 34mm;background:var(--dk);color:#F5EEE2;border-radius:2.5mm;padding:2.8mm 6mm;font-size:10.5pt;font-weight:600}
+.inv-th span:not(:first-child){text-align:center}
+.inv-items{display:flex;flex-direction:column;gap:2.5mm;margin-top:2.5mm}
+.inv-it{background:var(--card);border-radius:3mm;overflow:hidden}
+.inv-it-r{display:grid;grid-template-columns:1fr 26mm 34mm;align-items:center;padding:3.5mm 6mm}
+.inv-nm b{display:block;font:700 15pt/1.25 'Archivo','Noto Kufi Arabic',sans-serif}
+.inv-nm small{display:block;font:600 7.5pt/1.4 'Archivo',sans-serif;letter-spacing:.12em;color:var(--muted);margin-top:.8mm}
+.inv-ops{display:flex;flex-wrap:wrap;gap:1.6mm 2mm;margin-top:2.2mm}
+.inv-op{display:inline-flex;align-items:center;gap:1.6mm;background:#fff;border:.6pt solid var(--line);border-radius:999px;padding:.8mm 3mm;font-size:9pt;color:var(--muted);line-height:1.4}
+.inv-op b{color:var(--ink);font-weight:700;font-size:9.5pt}
+.inv-op i{width:3.2mm;height:3.2mm;border-radius:50%;border:.6pt solid rgba(0,0,0,.2);flex:none}
+.inv-q{justify-self:center;min-width:13mm;height:9mm;border-radius:2.2mm;background:var(--card-2);display:grid;place-items:center;font:700 13pt/1 'Archivo',sans-serif}
+.inv-pr{text-align:center}.inv-pr b{display:block;font:700 13pt/1.2 'Archivo',sans-serif}
+.inv-pr s{display:block;font:500 8pt/1.3 'Archivo',sans-serif;color:#a4927e}
+.inv-it-t span{white-space:nowrap}.inv-it-t{display:flex;justify-content:space-between;align-items:center;background:var(--card-2);padding:2.4mm 6mm;font-size:9.5pt;color:var(--muted)}
+.inv-it-t b{font:700 14pt/1 'Archivo',sans-serif;color:var(--gold)}
+.inv-cur{font-size:.68em;font-weight:600;margin-inline-start:1mm}
+/* totals + notes + thanks */
+.inv-bot{margin-top:4mm;padding-top:4mm;border-top:.7pt solid var(--gold-2);display:grid;grid-template-columns:1fr 1fr;gap:6mm;align-items:start}
+.inv-sum{background:var(--card);border-radius:3.5mm;padding:3mm 4mm 4mm}
+.inv-sl{display:flex;align-items:center;gap:4mm;padding:1.8mm 1mm;border-bottom:.6pt solid var(--line)}
+.inv-sl:last-of-type{border-bottom:0}
+.inv-sl .inv-dot{width:9.5mm;height:9.5mm}
+.inv-sl small{display:block;font-size:9pt;color:var(--muted)}
+.inv-sl b{display:block;font:700 15pt/1.2 'Archivo',sans-serif}
+.inv-sl.off b{color:#4f6b3a}
+.inv-tot{margin-top:1.5mm;background:var(--dk);border-radius:3mm;padding:3.2mm 4mm;display:flex;align-items:center;gap:4mm;color:#F5EEE2}
+.inv-tot .inv-dot{width:13mm;height:13mm;background:transparent;border:.8pt solid var(--gold-2);color:var(--gold-2)}
+.inv-tot small{display:block;font-size:9.5pt;color:var(--gold-2)}
+.inv-tot b{display:block;font:700 21pt/1.15 'Archivo',sans-serif;color:var(--gold-2)}
+.inv-save{margin:2mm 1mm 0;font-size:8.5pt;color:#4f6b3a}
+.inv-side{display:flex;flex-direction:column;gap:5mm}
+.inv-nt{background:var(--card);border-radius:3.5mm;padding:4mm 5mm}
+.inv-nt-h{display:flex;align-items:center;gap:3mm;font-size:11.5pt;font-weight:700;margin-bottom:1.5mm}
+.inv-nt-h .inv-dot{width:9mm;height:9mm}
+.inv-nt p{margin:0;font-size:10pt;font-weight:600}
+.inv-thx{text-align:center;padding-top:1mm}
+.inv-thx b{display:block;font-size:17pt;font-weight:700;line-height:1.3}
+.inv-thx p{margin:2mm 0 0;font-size:9.5pt;line-height:1.8;color:#4a3b2c}
+.inv-thx .inv-tag{justify-content:center;color:var(--gold);margin-top:3.5mm;font-size:5.8pt}
+/* footer band */
+.inv-f{position:relative;height:22mm;margin-top:3mm;flex:none}
+.inv-f-bg{position:absolute;inset:0;background:var(--dk);clip-path:ellipse(85% 100% at 60% 100%)}
+.inv-f-ph{position:absolute;left:-5mm;bottom:-12mm;width:38mm;height:38mm;border-radius:50%;overflow:hidden;border:.8pt solid rgba(208,180,140,.5)}
+.inv-f-ph img{width:100%;height:100%;object-fit:cover}
+.inv-soc{position:absolute;right:11mm;left:40mm;bottom:6.5mm;display:flex;justify-content:flex-start;align-items:center;gap:0;direction:rtl;color:#EDE3D3}
+.inv-soc span{display:inline-flex;align-items:center;gap:2mm;font:500 8.8pt/1 'Archivo',sans-serif;padding:0 4.5mm;border-inline-start:.6pt solid rgba(208,180,140,.45);direction:ltr}
+.inv-soc span:first-child{border:0;padding-inline-start:0}
+.inv-soc i{width:5mm;height:5mm;color:#EDE3D3;display:inline-grid}.inv-soc i svg{width:100%;height:100%}
+/* long orders: tighter so it still fits one page */
+.inv.many .inv-h{height:40mm}.inv.many .inv-meta{padding:5mm 0 4mm}.inv.many .inv-it-r{padding:2.4mm 6mm}.inv.many .inv-it-t{padding:1.6mm 6mm}
+.inv.many .inv-thx p{display:none}.inv.many .inv-bot{margin-top:3mm;padding-top:3mm}.inv.many .inv-f{height:24mm;margin-top:3mm}
 </style>
 </head>
 <body>
@@ -882,7 +869,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024000122"></script>
+<script src="assets/config.js?v=20261024000822"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -974,8 +961,8 @@ async function once(key, fn) { if (_busy.has(key)) return; _busy.add(key); try {
 /* ---------- a refresh comes back to the same place: every tab, sub-tab, filter and sort the admin picked, plus the scroll ---------- */
 const UI_KEYS = { dashScope: v => dashScope = v, orderKind: v => orderKind = v, orderGen: v => orderGen = v, orderProd: v => orderProd = v, dashSt: v => dashSt = v,
   range: v => range = v, orderFilter: v => orderFilter = v, ovStk: v => ovStk = v, custSort: v => custSort = v, custView: v => custView = v,
-  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v, invScope: v => invScope = v, invTheme: v => invTheme = v, invSel: v => invSel = v.filter(Number.isFinite) };
-function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope, invScope, invTheme, invSel }; }
+  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v, invScope: v => invScope = v, invSel: v => invSel = v.filter(Number.isFinite) };
+function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope, invScope, invSel }; }
 function saveUI() { try { localStorage.setItem('dq-ui', JSON.stringify(uiNow())); if (tab) sessionStorage.setItem('dq-admin-y', scrollY); } catch (e) {} }
 function restoreUI() {
   try { const o = JSON.parse(localStorage.getItem('dq-ui') || '{}'), now = uiNow();
@@ -1441,7 +1428,7 @@ function renderOrders() {
   freshIds.clear();
 }
 /* ---------- invoices: orders in «تم الاستلام» (packed, about to go to the courier) → tick → print, one invoice per page ---------- */
-let invScope = 'all', invSel = [], invTheme = 'royal';
+let invScope = 'all', invSel = [];
 const PRINTED_K = 'dq-printed';
 const invPrinted = () => { try { return new Set(JSON.parse(localStorage.getItem(PRINTED_K) || '[]')); } catch (e) { return new Set(); } };
 function markPrinted(ids) { try { const s = invPrinted(); ids.forEach(i => s.add(i)); localStorage.setItem(PRINTED_K, JSON.stringify([...s].slice(-600))); } catch (e) {} }
@@ -1455,7 +1442,7 @@ function renderInvoices() {
   $('#main').innerHTML = `
     <div class="head"><div><h1>طباعة الفواتير</h1><div class="sub">الطلبات اللي حالتها «${statuses.confirmed}» وجاهزة تخرج للشحن · علّم على اللي عاوزه واطبع، كل فاتورة في صفحة</div></div></div>
     <div class="toolbar"><div class="seg" id="invSeg">${[['all', 'الكل', ready.length], ['reg', 'المتجر العادي', ready.length - nLux], ['lux', 'Luxury', nLux]].map(([k, l, n]) => `<button data-iv="${k}" class="${invScope === k ? 'on' : ''}">${l} <span class="en">${n}</span></button>`).join('')}</div>
-      <div class="inv-look"><span>شكل الفاتورة</span><div class="seg" id="invTh">${INV_THEMES.map(([k, l]) => `<button data-th="${k}" class="${invTheme === k ? 'on' : ''}">${l}</button>`).join('')}</div>${list.length ? '<button type="button" class="btn btn-ghost btn-sm" id="invPv">معاينة</button>' : ''}</div></div>
+      <div class="inv-look">${list.length ? '<button type="button" class="btn btn-ghost btn-sm" id="invPv">معاينة</button>' : ''}</div></div>
     ${list.length ? `<div class="inv-bar">
       <label class="inv-all"><input type="checkbox" id="invAll" ${allOn ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
       <span class="inv-n">${sel.size ? `<b class="en">${sel.size}</b> متحدد` : 'محددتش حاجة'}</span>
@@ -1469,7 +1456,6 @@ function renderInvoices() {
       <div class="inv-r"><b class="en">${money(o.total)}</b><small>${fmtDate(o.created_at)}</small></div></label>`).join('')}</div>`
     : `<div class="panel empty">مفيش طلبات «${statuses.confirmed}» ${invScope === 'all' ? '' : 'هنا '}دلوقتي. أول ما تخلي حالة طلب «${statuses.confirmed}» هيظهر هنا.</div>`}`;
   $('#invSeg').onclick = e => { const b = e.target.closest('[data-iv]'); if (b) { invScope = b.dataset.iv; renderInvoices(); } };
-  $('#invTh').onclick = e => { const b = e.target.closest('[data-th]'); if (b) { invTheme = b.dataset.th; renderInvoices(); } };
   const m = $('#main');
   m.querySelectorAll('[data-inv]').forEach(c => c.onchange = () => { const id = +c.dataset.inv; invSel = c.checked ? [...new Set([...invSel, id])] : invSel.filter(x => x !== id); renderInvoices(); });
   if (!list.length) return;
@@ -1484,46 +1470,66 @@ function renderInvoices() {
     for (const o of l) await setStatus(o.id, 'shipped');
     invSel = invSel.filter(id => !l.some(o => o.id === id)); if (tab === 'invoices') renderInvoices(); });
 }
-// one A4 page per order: brand, customer, pieces (with what they picked), totals to collect, thank-you · 3 looks to pick from
-const INV_THEMES = [['royal', 'ملكي'], ['noir', 'Noir'], ['mini', 'مينيمال']];
-function invoiceHTML(o, theme = invTheme) {
+// one A4 page per order: brand, order number, customer, each piece with what the buyer picked (dial, strap, colour…), totals to collect, thank-you
+const IV = (d, w = 1.7) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const INV_IC = {
+  no: IV('<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>'),
+  date: IV('<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14h2M12 14h2M16 14h.01M8 17h2M12 17h2"/>'),
+  pay: IV('<path d="M2.5 7h11v9h-11zM13.5 10h4l3 3v3h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'),
+  user: IV('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', 2),
+  bag: IV('<path d="M5 8h14l-1 13H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>', 1.8),
+  truck: IV('<path d="M2.5 6.5h11v10h-11zM13.5 9.5h4.5l3 3.5v3.5h-7.5"/><circle cx="6.5" cy="17.5" r="1.9"/><circle cx="17.5" cy="17.5" r="1.9"/>', 1.8),
+  tag: IV('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>', 1.8),
+  wallet: IV('<path d="M4 7h15a1.5 1.5 0 0 1 1.5 1.5v10A1.5 1.5 0 0 1 19 20H5a1.5 1.5 0 0 1-1.5-1.5V6.5A2 2 0 0 1 5.5 4.5H17"/><path d="M15.5 12.5h5v4h-5a2 2 0 0 1 0-4z"/>', 1.6),
+  note: IV('<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 11h7M9 14.5h7M9 18h4"/>', 1.8)
+};
+const nf = n => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 });
+const cur = n => `${nf(n)}<span class="inv-cur">ج.م</span>`;
+function invoiceHTML(o) {
   const items = o.shop_order_items || [], lux = isLuxOrder(o);
-  const soc = RC.socials(settings).filter(x => ['whatsapp', 'phone', 'instagram', 'tiktok', 'facebook', 'website'].includes(x.type)).slice(0, 4);
-  const line = (l, v, cls = '') => `<div class="${cls}"><span>${l}</span><b>${v}</b></div>`;
-  return `<section class="inv t-${INV_THEMES.some(t => t[0] === theme) ? theme : 'royal'}${lux ? ' lux' : ''}">
+  const soc = RC.socials(settings).filter(x => ['instagram', 'whatsapp', 'phone', 'tiktok', 'facebook', 'website'].includes(x.type)).slice(0, 3);
+  return `<section class="inv${lux ? ' lux' : ''}${items.length > 2 ? ' many' : ''}">
     <header class="inv-h">
-      <div class="inv-brand"><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div>
+      <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
+      <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024000822" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
-        <div><small>رقم الطلب</small><b class="en">${esc(o.code)}</b></div>
-        <div><small>تاريخ الطلب</small><b class="en" dir="ltr">${esc(dmy(o.created_at))}</b></div>
-        <div><small>طريقة الدفع</small><b>كاش عند الاستلام</b></div>
+        <div><span class="inv-ic">${INV_IC.no}</span><div><small>رقم الطلب</small><b class="en">${esc(o.code)}</b></div></div>
+        <div><span class="inv-ic">${INV_IC.date}</span><div><small>تاريخ الطلب</small><b class="en">${esc(dmy(o.created_at))}</b></div></div>
+        <div><span class="inv-ic">${INV_IC.pay}</span><div><small>طريقة الدفع</small><b>كاش عند الاستلام</b></div></div>
       </div>
-      <div class="inv-to"><small>بيانات الشحن</small>
-        <div class="inv-to-g"><div><b>${esc(o.customer_name)}</b><span class="en" dir="ltr">${esc(o.phone)}</span></div>
-          <div><b>${esc(o.city || '')}</b><span>${esc(o.address || '')}</span></div></div>
-        ${o.notes ? `<p class="inv-note">ملاحظة: ${esc(o.notes)}</p>` : ''}</div>
-      <table class="inv-t"><thead><tr><th>المنتج</th><th>الكمية</th><th>سعر القطعة</th><th>الإجمالي</th></tr></thead><tbody>
-        ${items.map(i => { const p = products.find(x => x.id === i.product_id); return `<tr><td><div class="inv-it">${i.image ? `<img src="${esc(i.image)}" alt="" crossorigin="anonymous" onerror="this.remove()">` : ''}<div><b>${esc(i.name)}</b>${p ? `<small class="en">${esc(RC.sku(p))}</small>` : ''}${(i.options || []).length ? `<span>${i.options.map(x => `${esc(x.g)}: <b>${esc(x.v)}</b>`).join(' · ')}</span>` : ''}</div></div></td>
-          <td class="n en">${i.qty}</td><td class="n en">${money(i.unit_price)}${+i.original_price > +i.unit_price ? `<s>${money(i.original_price)}</s>` : ''}</td><td class="n en">${money(i.unit_price * i.qty)}</td></tr>`; }).join('')}
-      </tbody></table>
-      <div class="inv-sum">
-        ${line('المنتجات', `<span class="en">${money(o.subtotal)}</span>`)}
-        ${+o.coupon_off ? line(`كود خصم <span class="en">${esc(o.coupon || '')}</span>`, `<span class="en">− ${money(o.coupon_off)}</span>`) : ''}
-        ${line('الشحن', +o.shipping ? `<span class="en">${money(o.shipping)}</span>` : 'مجاني')}
-        ${line('المطلوب عند الاستلام', `<span class="en">${money(o.total)}</span>`, 'tot')}
-        ${+o.savings ? `<p class="inv-save">وفّرت <span class="en">${money(o.savings)}</span> في الطلب ده</p>` : ''}
+      <div class="inv-to">
+        <div class="inv-to-h"><span class="inv-dot">${INV_IC.user}</span>بيانات العميل</div>
+        <div><small>الاسم</small><b>${esc(o.customer_name)}</b><div class="ph"><small>رقم الهاتف</small><b>${esc(o.phone)}</b></div></div>
+        <span class="inv-to-sep"></span>
+        <div class="inv-to-a"><small>العنوان</small><b>${esc(o.city || '')}</b><span>${esc(o.address || '')}</span></div>
+      </div>
+      <div class="inv-th"><span>المنتج</span><span>الكمية</span><span>سعر القطعة</span></div>
+      <div class="inv-items">${items.map(i => { const p = products.find(x => x.id === i.product_id), ops = (i.options || []).filter(x => x && x.v);
+        return `<div class="inv-it"><div class="inv-it-r">
+          <div class="inv-nm"><b>${esc(i.name)}</b>${p ? `<small>${esc(RC.sku(p))}</small>` : ''}${ops.length ? `<div class="inv-ops">${ops.map(x => `<span class="inv-op">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.g)}: <b>${esc(x.v)}</b></span>`).join('')}</div>` : ''}</div>
+          <span class="inv-q">${i.qty}</span>
+          <div class="inv-pr"><b>${cur(i.unit_price)}</b>${+i.original_price > +i.unit_price ? `<s>${cur(i.original_price)}</s>` : ''}</div></div>
+          <div class="inv-it-t"><span class="en" dir="ltr">( ${nf(i.unit_price)} × ${i.qty} )</span><b>${cur(i.unit_price * i.qty)}</b></div></div>`; }).join('')}</div>
+      <div class="inv-bot">
+        <div class="inv-side">
+          ${o.notes ? `<div class="inv-nt"><div class="inv-nt-h"><span class="inv-dot">${INV_IC.note}</span>ملاحظات</div><p>${esc(o.notes)}</p></div>` : ''}
+          <div class="inv-thx"><b>شكراً إنك اشتريت من دقّة</b><p>اخترنالك القطعة دي بعناية وجهّزناها بإيدينا عشان توصلك بأحسن شكل.<br>نتمنى تعجبك وتبقى جزء من تفاصيلك كل يوم.</p><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.<i></i></div></div>
+        </div>
+        <div class="inv-sum">
+          <div class="inv-sl"><span class="inv-dot">${INV_IC.bag}</span><div><small>إجمالي المنتجات</small><b>${cur(o.subtotal)}</b></div></div>
+          ${+o.coupon_off ? `<div class="inv-sl off"><span class="inv-dot">${INV_IC.tag}</span><div><small>كود خصم <span class="en">${esc(o.coupon || '')}</span></small><b>− ${cur(o.coupon_off)}</b></div></div>` : ''}
+          <div class="inv-sl"><span class="inv-dot">${INV_IC.truck}</span><div><small>مصاريف الشحن</small><b>${+o.shipping ? cur(o.shipping) : 'مجاني'}</b></div></div>
+          <div class="inv-tot"><span class="inv-dot">${INV_IC.wallet}</span><div><small>المبلغ المطلوب عند الاستلام</small><b>${cur(o.total)}</b></div></div>
+          ${+o.savings ? `<p class="inv-save">وفّرت <b class="en">${nf(o.savings)}</b> ج.م في الطلب ده</p>` : ''}
+        </div>
       </div>
     </div>
-    <footer class="inv-f">
-      <div class="inv-orn"><i></i>✦<i></i></div>
-      <div class="inv-thx"><b>شكراً إنك اشتريت من دقّة</b><p>اخترتنا وده يفرق معانا جداً. كل قطعة بنختارها بعناية وبنجهّزها بإيدينا عشان توصلك بالشكل اللي يليق بيك. نتمنى تعجبك ومستنيينك تاني.</p></div>
-      <div class="inv-help">لو محتاج أي حاجة بخصوص طلبك كلّمنا وإحنا معاك.</div>
-      ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i><b class="en" dir="ltr">${esc(RC.socialLabel(x))}</b></span>`).join('')}</div>` : ''}
-      <div class="inv-strip"><span class="inv-sign">DAQQA STORE</span></div>
-    </footer>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024000822" alt=""></div>
+      ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
 // iPhone / iPad, and the dashboard opened as a home-screen app, can't open the print dialog from the page:
@@ -1536,7 +1542,7 @@ let printBusy = false;
 async function printInvoices(l, asPdf = PDF_PRINT) {
   if (!l.length || printBusy) return; printBusy = true;
   try { await (asPdf ? invoicesPDF(l) : invoicesDialog(l)); }
-  catch (err) { toast('معرفناش نجهّز الفواتير: ' + (err.message || err), 'err'); }
+  catch (err) { toast('معرفناش نجهّز الفواتير: ' + (err && err.message || 'الملف مقدرش يتعمل، جرّب تاني'), 'err'); }
   finally { printBusy = false; }
 }
 async function invoicesDialog(l) {
@@ -1549,21 +1555,32 @@ async function invoicesDialog(l) {
   addEventListener('afterprint', done);
   window.print();
 }
+// the invoice fonts, cut down by Google Fonts to only the letters on these invoices and inlined (a few KB instead of MBs)
+async function invFontCSS(text) {
+  try {
+    const t = [...new Set(text.replace(/\s/g, '') + '0123456789,.:/()×−-+ج.م')].join('');
+    const css = await (await fetch('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;600;700&display=swap&text=' + encodeURIComponent(t))).text();
+    const urls = [...new Set([...css.matchAll(/url\((https:[^)]+)\)/g)].map(m => m[1]))];
+    const data = await Promise.all(urls.map(u => fetch(u).then(r => r.blob()).then(b => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b); }))));
+    return urls.reduce((c, u, i) => c.split(u).join(data[i]), css);
+  } catch (e) { return ''; }
+}
 async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024000122'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024000122')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024000822'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024000822')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
-    const fontEmbedCSS = await htmlToImage.getFontEmbedCSS(pages[0]).catch(() => '');
+    const fontEmbedCSS = await invFontCSS(stage.textContent);
     const pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
     for (let i = 0; i < pages.length; i++) {
       const opt = { pixelRatio: 2, quality: .92, backgroundColor: getComputedStyle(pages[i]).backgroundColor, fontEmbedCSS };
       // Safari paints the photos inside the snapshot only from the second pass
       if (ios) await htmlToImage.toJpeg(pages[i], opt).catch(() => {});
-      const img = await htmlToImage.toJpeg(pages[i], opt);
+      // if the fonts are what breaks it, the page still goes out in the phone's own fonts
+      const img = await htmlToImage.toJpeg(pages[i], opt).catch(() => htmlToImage.toJpeg(pages[i], { ...opt, fontEmbedCSS: '', skipFonts: true }));
       if (i) pdf.addPage('a4');
       pdf.addImage(img, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
       const pr = $('#invProg'); if (pr) pr.textContent = `${i + 1} / ${pages.length}`;
@@ -1586,13 +1603,11 @@ async function invoicesPDF(l) {
 // a look at the first ticked invoice, scaled to the screen, before printing
 function invPreview(o) {
   const m = document.createElement('div'); m.className = 'fin-m inv-pv';
-  m.innerHTML = `<div class="inv-pv-box"><div class="inv-pv-th">${INV_THEMES.map(([k, l]) => `<button type="button" data-th="${k}" class="${k === invTheme ? 'on' : ''}">${l}</button>`).join('')}</div><div class="inv-pv-pg"><div class="inv-pv-sc">${invoiceHTML(o)}</div></div><div class="fin-acts"><button class="btn btn-ghost" type="button" data-later>قفل</button></div></div>`;
+  m.innerHTML = `<div class="inv-pv-box"><div class="inv-pv-pg"><div class="inv-pv-sc">${invoiceHTML(o)}</div></div><div class="fin-acts"><button class="btn btn-ghost" type="button" data-later>قفل</button></div></div>`;
   document.body.appendChild(m);
   const fit = () => { const pg = m.querySelector('.inv-pv-pg'), sc = m.querySelector('.inv-pv-sc'), w = pg.clientWidth, k = w / sc.firstElementChild.offsetWidth; sc.style.transform = `scale(${k})`; pg.style.height = sc.firstElementChild.offsetHeight * k + 'px'; };
   fit(); addEventListener('resize', fit);
-  m.onclick = e => { const t = e.target.closest('[data-th]');
-    if (t) { invTheme = t.dataset.th; saveUI(); m.querySelectorAll('[data-th]').forEach(b => b.classList.toggle('on', b === t)); m.querySelector('.inv-pv-sc').innerHTML = invoiceHTML(o); fit(); if (tab === 'invoices') renderInvoices(); return; }
-    if (e.target === m || e.target.closest('[data-later]')) { removeEventListener('resize', fit); m.remove(); } };
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) { removeEventListener('resize', fit); m.remove(); } };
 }
 // customer cancellations: shown on the cancelled order and warned about on the same customer's next orders
 const digits = v => String(v || '').replace(/\D/g, '');
