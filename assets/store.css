@@ -868,6 +868,7 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 /* quick add pop-up: quantity + required options before a watch goes in the cart */
 .qa-card{position:relative;width:min(480px,100%);display:grid;gap:14px}
 .qa-x{position:absolute;top:12px;inset-inline-end:12px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--muted);border:1px solid var(--line);font-size:13px}
+.qa-card .qa-x{z-index:5;background:var(--surface)}
 .qa-x:hover{color:var(--ink);border-color:var(--accent)}
 .qa-top{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;padding-inline-end:36px}
 .qa-im{width:96px;height:96px;border-radius:14px;object-fit:cover;background:var(--surface-2);transition:opacity .2s}

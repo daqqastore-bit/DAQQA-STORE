@@ -19,8 +19,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024181432">
-<link rel="stylesheet" href="assets/store.css?v=20261024181432">
+<link rel="stylesheet" href="assets/base.css?v=20261024192031">
+<link rel="stylesheet" href="assets/store.css?v=20261024192031">
 <style>
 .c-hero{position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 0%,rgb(var(--accent-rgb)/.16),transparent 60%),var(--hero);border-bottom:1px solid var(--line)}
 .c-hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;min-height:360px;padding-top:56px;padding-bottom:56px}
@@ -107,36 +107,34 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024181432"></script>
-<script src="assets/app.js?v=20261024181432"></script>
+<script src="assets/config.js?v=20261024192031"></script>
+<script src="assets/app.js?v=20261024192031"></script>
 <script>
 const { esc, finalPrice, discountPct } = RC;
 const C = new URLSearchParams(location.search).get('c');
 const PAGE = RC.pages[C] && C !== 'luxury' ? C : null;
 if (!PAGE) location.replace(C === 'luxury' ? 'luxury.html' : './');
-const COPY = {
-  men:   { en: 'For Him', ar: 'لِـه.', sub: 'ساعات ونضارات واكسسوارات رجالي مختارة بعناية.' },
-  women: { en: 'For Her', ar: 'لِـها.', sub: 'ساعات ونضارات واكسسوارات حريمي بتفاصيل ناعمة.' }
-};
 let tab = 'all', sort = 'default';
 DQ.start(PAGE, () => {
   if (!PAGE) return;
   const all = DQ.pageItems(PAGE);
   // a page with no photographed products doesn't exist
-  if (!all.length && !DQ.loadError) return location.replace('./');
-  const V = RC.pages[PAGE], K = COPY[PAGE];
+  const K = RC.pageCfg(PAGE, DQ.settings);
+  if ((K.off || !all.length) && !DQ.loadError) return location.replace('./');
+  const V = RC.pages[PAGE];
   document.title = `${V.ar} | DAQQA - دقّة`;
   document.getElementById('ogTitle').content = document.title;
   document.getElementById('canon').href = location.origin + location.pathname + '?c=' + PAGE;
   const kinds = Object.keys(RC.kinds).filter(k => all.some(p => RC.kindOf(p) === k));
+  const sub = K.sub || `${RC.arJoin(kinds.map(k => RC.kinds[k].ar))} ${K.tail}`;
   const pics = all.slice(0, 3), cover = ((DQ.settings.banners || {})[PAGE] || {}).hero;
   document.getElementById('page').innerHTML = `
   <section class="c-hero ${cover ? 'has-cover' : ''}" data-glow>${cover ? `<div class="c-cover" style="background-image:url('${esc(cover)}')"></div>` : ''}<div class="big" aria-hidden="true">${V.en.toUpperCase()}</div><div class="wrap">
     <div class="op op-stagger">
       <div class="mini-brand"><b>DAQQA</b><small>${V.en.toUpperCase()}</small></div>
-      <h1 class="en" dir="ltr" style="text-align:right">${K.en}</h1>
-      <div class="ar">${V.ar} — ${K.ar}</div>
-      <p>${K.sub}</p>
+      <h1 class="en" dir="ltr" style="text-align:right">${esc(K.en)}</h1>
+      <div class="ar">${V.ar} — ${esc(K.ar)}</div>
+      <p>${esc(sub)}</p>
       <div class="count en"><b>${all.length}</b> PIECES · ${kinds.map(k => RC.kinds[k].en.toUpperCase()).join(' · ')}</div>
     </div>
     ${cover ? '' : `<div class="c-stack op op-curtain" aria-hidden="true">${pics.map(p => `<img ${DQ.thumb(p)} alt="">`).join('')}</div>`}
