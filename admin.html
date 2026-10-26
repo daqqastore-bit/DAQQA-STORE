@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026152052">
+<link rel="stylesheet" href="assets/base.css?v=20261026173849">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -297,6 +297,17 @@ form[data-busy] [type=submit]::after{content:"";display:inline-block;width:13px;
 .editor{position:fixed;inset:0;width:100%;background:var(--bg);z-index:90;transform:translateY(24px);opacity:0;visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s .35s;display:flex;flex-direction:column}
 .editor.on{transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility 0s;visibility:visible;opacity:1}
 .editor .ed-head,.editor .ed-foot{background:var(--bg-2)}
+.ed-nav{display:none}
+@media (min-width:1100px){.editor .ed-body{padding-right:max(300px,calc((100% - 1184px) / 2))!important}
+  .ed-nav{display:flex;flex-direction:column;position:absolute;right:0;top:var(--edh,69px);bottom:var(--edf,69px);width:272px;border-left:1px solid var(--line);background:var(--bg-2);z-index:2}
+  .en-h{display:grid;gap:10px;padding:16px 14px 12px;border-bottom:1px solid var(--line)}.en-h b{font-size:14px}.en-h b span{color:var(--muted);font-weight:500;font-size:12px;margin-inline-start:4px}.en-h .input{height:38px;font-size:13px}
+  .en-l{flex:1;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:2px}
+  .en-g{font-size:11px;color:var(--accent);letter-spacing:.06em;padding:12px 8px 6px}
+  .en-it{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:10px;text-align:start;color:var(--ink);border:1px solid transparent}
+  .en-it:hover{background:rgb(var(--accent-rgb)/.08)}.en-it.on{background:rgb(var(--accent-rgb)/.16);border-color:rgb(var(--accent-rgb)/.45)}.en-it.off{opacity:.55}
+  .en-it img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:none;background:var(--bg)}
+  .en-it span{display:grid;gap:2px;min-width:0}.en-it b{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.en-it small{font-size:11px;color:var(--muted)}
+  .en-none{color:var(--muted);font-size:12.5px;padding:14px 8px}}
 .ed-body{display:grid!important;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);align-items:start;gap:22px!important;width:100%;padding:26px max(28px,calc((100% - 1184px) / 2)) 40px!important}
 html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .ed-col{display:flex;flex-direction:column;gap:18px;min-width:0}
@@ -886,7 +897,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261026152052"></script>
+<script src="assets/config.js?v=20261026173849"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1510,7 +1521,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026152052" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026173849" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1544,7 +1555,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026152052" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026173849" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1585,7 +1596,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026152052'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026152052')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026173849'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026173849')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1783,10 +1794,32 @@ function openEditor(id, init) {
   if (!p && init) Object.assign(draft, init);
   // a new product goes last in its own section (regular and Luxury are numbered separately) until the admin types a number
   if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
-  openTexts(draft);
+  openTexts(draft); edDirty = false;
   $('#editor').innerHTML = ''; renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
 }
+// computers only: a list of every product beside the editor, to jump straight to another one (asks first if this one has unsaved changes)
+let edNavQ = '', edNavY = 0, edDirty = false;
+const edNavRows = () => { const q = edNavQ.trim().toLowerCase(), hit = p => !q || [p.name, p.brand, RC.sku ? RC.sku(p) : ''].some(x => String(x || '').toLowerCase().includes(q));
+  const by = (a, b) => (+a.sort || 0) - (+b.sort || 0) || a.id - b.id, isLx = p => RC.isLuxury ? RC.isLuxury(p) : !!p.luxury;
+  return [['المنتجات', products.filter(p => !isLx(p) && hit(p)).sort(by)], ['Luxury', products.filter(p => isLx(p) && hit(p)).sort(by)]].filter(([, l]) => l.length); };
+function edNavHTML() {
+  const groups = edNavRows();
+  return `<nav class="ed-nav" aria-label="المنتجات"><div class="en-h"><b>المنتجات <span class="en">${products.length}</span></b><input class="input" id="edNavQ" value="${esc(edNavQ)}" placeholder="دوّر باسم المنتج…" autocomplete="off"></div>
+    <div class="en-l" id="edNavL">${groups.map(([t, l]) => `<div class="en-g">${t === 'Luxury' ? '<span class="en">Luxury</span>' : t}</div>${l.map(p => `<button type="button" class="en-it ${draft && draft.id === p.id ? 'on' : ''}${p.active === false ? ' off' : ''}" data-edgo="${p.id}"><img src="${esc(RC.thumb((p.images || [])[0] || ''))}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc((p.images || [])[0] || '')}'"><span><b class="en">${esc(p.name || 'بدون اسم')}</b><small class="en">${esc(RC.sku ? RC.sku(p) : '')}${p.active === false ? ' · مخفي' : ''}</small></span></button>`).join('')}`).join('') || '<p class="en-none">مفيش منتج بالاسم ده</p>'}</div></nav>`;
+}
+function bindEdNav() {
+  const L = $('#edNavL'); if (!L) return; L.scrollTop = edNavY;
+  const ed = $('#editor'), hd = ed.querySelector('.ed-head'), ft = ed.querySelector('.ed-foot'); if (hd) ed.style.setProperty('--edh', hd.offsetHeight + 'px'); if (ft) ed.style.setProperty('--edf', ft.offsetHeight + 'px');
+  if (!edNavY) { const on = L.querySelector('.on'); if (on) on.scrollIntoView({ block: 'center' }); }
+  L.onscroll = () => { edNavY = L.scrollTop; };
+  $('#edNavQ').oninput = e => { edNavQ = e.target.value; const nav = $('#editor .ed-nav'); edNavY = 0; nav.outerHTML = edNavHTML(); bindEdNav(); const q = $('#edNavQ'); q.focus(); q.setSelectionRange(q.value.length, q.value.length); };
+  L.onclick = async e => { const b = e.target.closest('[data-edgo]'); if (!b) return; const id = +b.dataset.edgo; if (draft && draft.id === id) return;
+    if (edDirty && !(await confirmBox('فيه تعديلات في المنتج ده ماتحفظتش. تسيبها وتروح للمنتج التاني؟', 'سيبها وروح'))) return;
+    edNavY = L.scrollTop; openEditor(id); };
+}
+$('#editor').addEventListener('input', e => { if (!e.target.closest('.ed-nav')) edDirty = true; });
+$('#editor').addEventListener('change', e => { if (!e.target.closest('.ed-nav')) edDirty = true; });
 function closeEditor() { $('#editor').classList.remove('on'); $('#overlay').classList.remove('on'); clearTimeout(keepT); try { localStorage.removeItem('dq-ed-draft'); } catch (e) {} }
 // the product being written is kept on this device while the editor is open, so a refresh never loses it
 let keepT = 0;
@@ -1901,7 +1934,8 @@ function renderEditor() {
       <label class="check lux-check" ${COLS.luxury ? '' : 'title="محتاج تفعيل من Supabase (daqqa-pages.sql)" style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_lux" ${d.luxury?'checked':''}> <span>منتج Luxury <small>— يظهر في صفحة Luxury</small></span></label>
       <div class="field"><label>الترتيب (الأصغر يظهر الأول)</label><input class="input en" id="f_sort" inputmode="numeric" value="${esc(d.sort)}"></div></section>
     </div></div>
-    <div class="ed-foot"><button class="btn btn-primary" id="saveP" style="flex:1">حفظ</button>${d.id ? '<button class="btn btn-danger" id="delP">حذف</button>' : ''}</div>`;
+    <div class="ed-foot"><button class="btn btn-primary" id="saveP" style="flex:1">حفظ</button>${d.id ? '<button class="btn btn-danger" id="delP">حذف</button>' : ''}</div>${edNavHTML()}`;
+  bindEdNav();
   updatePreview();
   $('#edClose').onclick = closeEditor;
   $('#f_kind').onchange = () => { const k0 = draft.kind; syncDraft(); const k = draft.kind;
