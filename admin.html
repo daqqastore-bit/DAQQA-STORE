@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026173931">
+<link rel="stylesheet" href="assets/base.css?v=20261026174047">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -329,6 +329,9 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .o-opt i{width:16px;height:16px;border-radius:50%;flex:none;box-shadow:0 0 0 1px var(--line),0 0 0 3px var(--bg-2)}
 .o-opt small{color:var(--muted);font-size:12px;flex:none;min-width:58px}.o-opt b{flex:1;min-width:0;color:var(--ink);font-weight:700;font-size:14px;overflow-wrap:break-word}
 @media (max-width:600px){.o-item .q{width:100%;padding-inline-start:58px}.o-opts{max-width:none}}
+.vg-fold{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 6px 0 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink);font-size:12px;background:var(--bg-2)}.vg-fold:hover{border-color:var(--accent)}
+.vg-fold svg{width:18px;height:18px;transition:transform .2s}.vg-fold .vg-n{color:var(--muted)}
+.vg.fold .vg-fold svg{transform:rotate(90deg)}.vg.fold>:not(.vg-h),.vg.fold .vg-h>p{display:none}.vg.fold{gap:0}
 .vg{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px;background:var(--bg)}
 .vg-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
 .vg-h b{font-size:14px}.vg-h b small{font:600 10.5px var(--f-ui);letter-spacing:.12em;color:var(--amber);text-transform:uppercase;margin-inline-start:4px}
@@ -897,7 +900,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261026173931"></script>
+<script src="assets/config.js?v=20261026174047"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1521,7 +1524,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026173931" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026174047" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1555,7 +1558,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026173931" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026174047" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1596,7 +1599,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026173931'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026173931')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026174047'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026174047')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1820,6 +1823,11 @@ function bindEdNav() {
 }
 $('#editor').addEventListener('input', e => { if (!e.target.closest('.ed-nav')) edDirty = true; });
 $('#editor').addEventListener('change', e => { if (!e.target.closest('.ed-nav')) edDirty = true; });
+// option groups folded shut in the editor (kept on this device, so a refresh keeps them closed)
+const vgFold = () => { try { return JSON.parse(localStorage.getItem('dq-vg-fold') || '[]'); } catch (e) { return []; } };
+document.addEventListener('click', e => { const b = e.target.closest('[data-vgfold]'); if (!b) return; const vg = b.closest('.vg'), k = vg.dataset.vg, on = !vg.classList.contains('fold');
+  vg.classList.toggle('fold', on); b.setAttribute('aria-expanded', !on); b.title = on ? 'افتح الخانة' : 'اقفل الخانة';
+  try { const f = vgFold().filter(x => x !== k); if (on) f.push(k); localStorage.setItem('dq-vg-fold', JSON.stringify(f)); } catch (er) {} });
 function closeEditor() { $('#editor').classList.remove('on'); $('#overlay').classList.remove('on'); clearTimeout(keepT); try { localStorage.removeItem('dq-ed-draft'); } catch (e) {} }
 // the product being written is kept on this device while the editor is open, so a refresh never loses it
 let keepT = 0;
@@ -1864,8 +1872,8 @@ function renderEditor() {
             <small class="st-on">الصورة الرئيسية هتظهر في كارت المنتج بس، ولما العميل يفتح المنتج مش هيشوفها.</small>
             <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
       <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>اكتب اسم الاختيار، ولو ليه لون اختاره من «لون»، واضغط إضافة، وبعدها اختار صورة الساعة بتاعته. كل اختيار كارت باسم ولون وصورة (اللون والصورة اختياري). أي خانة فيها اختيارات المشتري لازم يختار منها، ولما يختار بتظهرله الصورة، والاختيار بيوصلك مع الطلب</small></h4>
-        ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); return `<div class="vg" data-vg="${g.k}">
-          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p><label class="vg-ord" title="ترتيب الخانة دي عند العميل: 1 بتظهر الأول"><span>ترتيب الخانة</span><select data-vgord aria-label="ترتيب الخانة">${d.variants.map((_, k) => `<option value="${k}" ${d.variants[k] === g ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label></div>
+        ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); const fold = vgFold().includes(g.k), n = g.o.filter(o => String(o.n || '').trim()).length; return `<div class="vg${fold ? ' fold' : ''}" data-vg="${g.k}">
+          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p><button type="button" class="vg-fold" data-vgfold aria-expanded="${!fold}" title="${fold ? 'افتح الخانة' : 'اقفل الخانة'}"><span class="vg-n">${n ? n + ' اختيار' : 'فاضية'}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><label class="vg-ord" title="ترتيب الخانة دي عند العميل: 1 بتظهر الأول"><span>ترتيب الخانة</span><select data-vgord aria-label="ترتيب الخانة">${d.variants.map((_, k) => `<option value="${k}" ${d.variants[k] === g ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label></div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo${draft._pick === g.k + ':' + i || draft._link === g.k + ':' + i ? ' open' : ''}${RC.optOut(o) ? ' is-out' : ''}" data-vi="${i}">
               ${g.o.length > 1 ? `<label class="vo-ord" title="الترتيب: رقم 1 بيظهر الأول للعميل"><span>ترتيب</span><select data-vord aria-label="ترتيب الاختيار">${g.o.map((_, k) => `<option value="${k}" ${k === i ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label>` : ''}
               <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length > 1 ? `<span class="vo-mos m${Math.min(o.imgs.length, 4)}">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="">`).join('')}</span><em class="en">${o.imgs.length}</em>` : o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
