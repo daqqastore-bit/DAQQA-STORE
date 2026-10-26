@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026134450">
+<link rel="stylesheet" href="assets/base.css?v=20261026134739">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -331,6 +331,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vg-ac input{position:absolute;inset:0;opacity:0;cursor:pointer}.vg-add .input{flex:1;min-width:0;height:40px}.vg-add .btn{flex:none}
 .vo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;align-items:start}
 .vo-ord{position:absolute;top:16px;inset-inline-end:16px;z-index:2;display:flex;align-items:center;gap:4px;padding:3px 4px 3px 8px;border-radius:999px;background:rgba(0,0,0,.72);color:#fff;font-size:11px}.vo-ord select{appearance:none;-webkit-appearance:none;border:0;background:var(--accent);color:#1a120b;font:700 12px var(--f-ui);width:24px;height:24px;border-radius:50%;text-align:center;text-align-last:center;cursor:pointer;padding:0}
+.vg-ord{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-inline-start:auto}.vg-ord select{appearance:none;-webkit-appearance:none;border:0;background:var(--accent);color:#1a120b;font:700 13px var(--f-ui);width:28px;height:28px;border-radius:50%;text-align:center;text-align-last:center;cursor:pointer;padding:0}
 .vo{position:relative;border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;background:var(--bg-2)}
 .vo-ph{aspect-ratio:1;border-radius:10px;border:1px dashed var(--line);display:grid;place-items:center;overflow:hidden;background:var(--bg);color:var(--muted);font-size:12px}
 .vo-ph.has{border-style:solid}.vo-ph img{width:100%;height:100%;object-fit:cover}.vo-ph i{width:46%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 3px var(--bg-2),0 0 0 4px var(--line)}
@@ -883,7 +884,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261026134450"></script>
+<script src="assets/config.js?v=20261026134739"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1507,7 +1508,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026134450" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026134739" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1541,7 +1542,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026134450" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026134739" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1582,7 +1583,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026134450'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026134450')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026134739'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026134739')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1805,7 +1806,9 @@ function renderEditor() {
   const adds = [...document.querySelectorAll('#varSec .vg-add')].map(r => ({ k: r.closest('.vg').dataset.vg, n: r.querySelector('[data-vn]').value, h: r.querySelector('[data-vnh]').value, c: r.querySelector('[data-vnc]').value, on: r.querySelector('[data-vnc]').dataset.on }));
   // the four buyer options always exist in the draft (empty ones are simply not saved)
   // runs on every render: the old single img / dials are folded into imgs / links once and dropped, so removing a photo or a link sticks
-  d.variants = RC.VARS.map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
+  // groups keep the order saved on the product (set with «ترتيب الخانة»); groups not used yet follow in the default order
+  const vOrd = (Array.isArray(d.variants) ? d.variants : []).map(x => x && x.k), vKey = v => { const i = vOrd.indexOf(v.k); return i < 0 ? 99 + RC.VARS.indexOf(v) : i; };
+  d.variants = RC.VARS.slice().sort((a, b) => vKey(a) - vKey(b)).map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
   if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
   $('#editor').innerHTML = `
@@ -1827,7 +1830,7 @@ function renderEditor() {
             <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
       <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>اكتب اسم الاختيار، ولو ليه لون اختاره من «لون»، واضغط إضافة، وبعدها اختار صورة الساعة بتاعته. كل اختيار كارت باسم ولون وصورة (اللون والصورة اختياري). أي خانة فيها اختيارات المشتري لازم يختار منها، ولما يختار بتظهرله الصورة، والاختيار بيوصلك مع الطلب</small></h4>
         ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); return `<div class="vg" data-vg="${g.k}">
-          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p></div>
+          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p><label class="vg-ord" title="ترتيب الخانة دي عند العميل: 1 بتظهر الأول"><span>ترتيب الخانة</span><select data-vgord aria-label="ترتيب الخانة">${d.variants.map((_, k) => `<option value="${k}" ${d.variants[k] === g ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label></div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo${draft._pick === g.k + ':' + i || draft._link === g.k + ':' + i ? ' open' : ''}" data-vi="${i}">
               ${g.o.length > 1 ? `<label class="vo-ord" title="الترتيب: رقم 1 بيظهر الأول للعميل"><span>ترتيب</span><select data-vord aria-label="ترتيب الاختيار">${g.o.map((_, k) => `<option value="${k}" ${k === i ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label>` : ''}
               <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length > 1 ? `<span class="vo-mos m${Math.min(o.imgs.length, 4)}">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="">`).join('')}</span><em class="en">${o.imgs.length}</em>` : o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
@@ -1957,7 +1960,9 @@ function renderEditor() {
       const c = e.target === ci ? ci.value.toUpperCase() : hex(hi.value); if (!c) return;
       o.c = c; ci.value = c.toLowerCase(); if (e.target === ci) hi.value = c; ci.previousElementSibling.style.background = c; const ph = v.querySelector('.vo-ph:not(.has) i'); if (ph) ph.style.background = c; } });
   // order number on each option card: picking another number moves it there (1 = shown first to the buyer)
-  $('#varSec').addEventListener('change', e => { if (!e.target.matches('[data-vord]')) return; const { g, i } = vOpt(e.target), to = +e.target.value; if (to === i) return;
+  $('#varSec').addEventListener('change', e => { if (e.target.matches('[data-vgord]')) { const i = draft.variants.findIndex(x => x.k === e.target.closest('.vg').dataset.vg), to = +e.target.value; if (to === i) return;
+      syncDraft(); const [g] = draft.variants.splice(i, 1); draft.variants.splice(to, 0, g); draft._pick = draft._link = null; renderEditor(); return; }
+    if (!e.target.matches('[data-vord]')) return; const { g, i } = vOpt(e.target), to = +e.target.value; if (to === i) return;
     syncDraft(); const [o] = g.o.splice(i, 1); g.o.splice(to, 0, o); draft._pick = draft._link = null; renderEditor(); });
   $('#varSec').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-vn]')) { e.preventDefault(); vAdd(e.target.closest('.vg'), e.target.value); } });
   $('#f_sort').oninput = () => { draft._autoSort = false; };

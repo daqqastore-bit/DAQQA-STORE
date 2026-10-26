@@ -49,7 +49,7 @@ RC.VARS = [
 ];
 RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g => g && RC.VARS.some(v => v.k === g.k) && Array.isArray(g.o) && g.o.some(o => o && o.n))
   .map(g => { const V = RC.VARS.find(v => v.k === g.k); return { ...V, ar: String(g.ar || '').trim() || V.ar, en: String(g.en || '').trim() || V.en, o: g.o.filter(o => o && o.n).map(o => { const imgs = [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))]; return { ...o, imgs, img: imgs[0] || null }; }) }; })
-  .sort((a, b) => RC.VARS.findIndex(v => v.k === a.k) - RC.VARS.findIndex(v => v.k === b.k));
+  ; // groups show in the order they were saved (the admin sets it per product with «ترتيب الخانة»)
 // an option can cost more (o.x = extra EGP added to the piece price when it's picked); the order function adds the same on the server
 RC.optX = (o) => Math.max(0, Math.round(Number(o && o.x) || 0));
 RC.optExtra = (p, sel) => !sel ? 0 : RC.variants(p).reduce((s, g) => s + RC.optX(g.o.find(o => o.n === sel[g.k])), 0);
@@ -162,7 +162,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261026134450';
+RC.build = '20261026134739';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
