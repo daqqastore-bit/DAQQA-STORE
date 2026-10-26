@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026173849">
+<link rel="stylesheet" href="assets/base.css?v=20261026173931">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -897,7 +897,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261026173849"></script>
+<script src="assets/config.js?v=20261026173931"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1521,7 +1521,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026173849" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026173931" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1555,7 +1555,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026173849" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026173931" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1596,7 +1596,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026173849'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026173849')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026173931'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026173931')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1873,7 +1873,7 @@ function renderEditor() {
               <input class="input vo-n vo-d" data-vdesc value="${esc(o.d || '')}" placeholder="وصف (اختياري)" dir="auto" maxlength="120">
               <label class="vo-xp" title="لو الاختيار ده أغلى، اكتب الفرق وهيتزود على سعر القطعة لما العميل يختاره"><span>سعر زيادة +</span><input class="input en" data-vx inputmode="numeric" value="${RC.optX(o) || ''}" placeholder="0" dir="ltr" maxlength="7"><span>ج.م</span></label>
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><input class="input vo-hex en" data-vhex value="${esc(o.c.toUpperCase())}" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
-                <button type="button" class="vo-mini vo-out ${RC.optOut(o) ? 'on' : ''}" data-vout aria-pressed="${RC.optOut(o)}" title="لو الاختيار ده خلص: العميل هيشوفه مشطوب بكلمة «نفذ» ومش هيقدر يختاره">${RC.optOut(o) ? '✕ نفذ من المخزون' : 'متاح · اعمله نفذ'}</button>
+                <button type="button" class="vo-mini vo-out ${RC.optOut(o) ? 'on' : ''}" data-vout aria-pressed="${RC.optOut(o)}" title="لو الاختيار ده خلص: العميل هيشوفه مشطوب بكلمة «نفذ» ومش هيقدر يختاره">${RC.optOut(o) ? '✕ مش موجود في الاستور' : '✓ موجود في الاستور'}</button>
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
               ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
               ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
