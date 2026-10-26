@@ -29,8 +29,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024202131">
-<link rel="stylesheet" href="assets/store.css?v=20261024202131">
+<link rel="stylesheet" href="assets/base.css?v=20261026123319">
+<link rel="stylesheet" href="assets/store.css?v=20261026123319">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -44,6 +44,7 @@
 .ld-slogan:hover::before{opacity:1}
 .ld-slogan:hover span{color:color-mix(in srgb,var(--accent) 70%,#fff3d6);text-shadow:0 0 24px rgb(var(--accent-rgb)/.7),0 0 6px rgb(var(--accent-rgb)/.5);filter:brightness(1.12)}
 .ld-slogan:hover span:nth-child(2){transition-delay:.07s}.ld-slogan:hover span:nth-child(3){transition-delay:.14s}
+html.ld-lite #ldDial{will-change:transform}html.ld-lite .nav-bar,html.ld-lite .fr-tag,html.ld-lite .fr-cap{-webkit-backdrop-filter:none;backdrop-filter:none}html.ld-lite .ld-ring{display:none}
 @keyframes ldMotto{from{opacity:0;filter:blur(10px)}}
 /* the second line mirrors the first on the other side of the logo */
 .ld-slogan.r{left:auto;right:calc(max(64px,7vw) + 120px);align-items:flex-end}
@@ -337,8 +338,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261024202131"></script>
-<script src="assets/app.js?v=20261024202131"></script>
+<script src="assets/config.js?v=20261026123319"></script>
+<script src="assets/app.js?v=20261026123319"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -364,6 +365,11 @@ const S_KEY = 'dq-strip-s'; let sMem = {}; try { sMem = JSON.parse(sessionStorag
   const hand = c => dial.querySelector('.' + c);
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   let p = 0, held = null;
+  // light mode for weak phones: very low memory/cores switch at once, otherwise the first ~70 frames are timed while the intro runs anyway (no extra work, no delay)
+  let lite = location.search.includes('lite') || (navigator.deviceMemory && navigator.deviceMemory <= 2) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  const fps = { n: 0, slow: 0, last: 0 };
+  const goLite = () => { lite = true; document.documentElement.classList.add('ld-lite'); stage.style.webkitMaskImage = stage.style.maskImage = 'none'; ring.style.opacity = 0; if (pv) render(pv); };
+  if (lite) document.documentElement.classList.add('ld-lite');
   // real Egypt time (Africa/Cairo, follows DST automatically)
   const CF = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Cairo', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
   const cairo = d => { const o = {}; CF.formatToParts(d).forEach(x => o[x.type] = +x.value); return { h: o.hour % 24, m: o.minute, s: o.second }; };
@@ -381,15 +387,17 @@ const S_KEY = 'dq-strip-s'; let sMem = {}; try { sMem = JSON.parse(sessionStorag
   function render(v) {
     if (!geo) measure();
     const g = clamp(v / .28), mv = 1 - (1 - g) ** 3;
-    const z = clamp((v - .3) / .7), sc = 1 + z * z * 16;
+    const z = clamp((v - .3) / .7), sc = lite ? 1 + z * 1.4 : 1 + z * z * 16;
     // scale without will-change: the browser repaints the vector at each size, so it stays sharp
     dial.style.transform = `translate(${geo.ox * mv}px, ${geo.oy * mv}px) rotate(${v * 25}deg) scale(${sc})`;
     dial.style.filter = v > .05 ? 'none' : '';
-    dial.style.opacity = 1 - clamp((v - .82) / .14);
+    dial.style.opacity = lite ? 1 - clamp((v - .45) / .3) : 1 - clamp((v - .82) / .14);
     letters.forEach((el, i) => { const k = i - (letters.length - 1) / 2; el.style.transform = `translate(${k * v * 220}px, ${v * 40}px) rotate(${k * v * 12}deg)`; el.style.opacity = 1 - clamp(v / .22); if (v > .01) el.style.animation = 'none'; });
     fades.forEach(el => { if (v > .01) el.style.animation = 'none'; el.style.opacity = 1 - clamp(v / .07); el.style.translate = `0 ${v * -60}px`; });
     // a window opens in the middle of the watch and the store shows through it
     const q = clamp((v - .58) / .3), R = q ** 1.6 * 125;
+    // light mode: the intro just fades out over the store instead of the full-screen mask (repainting the whole screen every frame)
+    if (lite) { stage.style.opacity = 1 - clamp((v - .5) / .35); stage.style.pointerEvents = v > .85 ? 'none' : ''; ring.style.opacity = 0; return; }
     const m = R > 0 ? `radial-gradient(circle at ${geo.cx}px ${geo.cy}px, transparent ${R}vmax, #000 calc(${R}vmax + 1px))` : 'none';
     stage.style.webkitMaskImage = m; stage.style.maskImage = m;
     stage.style.pointerEvents = v > .85 ? 'none' : '';
@@ -397,6 +405,7 @@ const S_KEY = 'dq-strip-s'; let sMem = {}; try { sMem = JSON.parse(sessionStorag
   }
   const H = { s: hand('dq-s'), m: hand('dq-m'), h: hand('dq-h') }; let lastT = 0;
   function frame(now) {
+    if (!lite && fps.n < 70 && now > 1500) { if (fps.last && !document.hidden) { fps.n++; if (now - fps.last > 26) fps.slow++; if (fps.n >= 30 && fps.slow / fps.n > .4) goLite(); } fps.last = now; }
     // at rest the hands only need ~25 updates a second; while scrolling every frame counts
     if (p === pv && now - lastT < 40 && !(p >= 1 && pv >= 1)) return requestAnimationFrame(frame);
     lastT = now;
@@ -410,11 +419,12 @@ const S_KEY = 'dq-strip-s'; let sMem = {}; try { sMem = JSON.parse(sessionStorag
     if (p >= 1 && pv >= 1) { asleep = true; return; }
     requestAnimationFrame(frame);
   }
-  let asleep = false;
+  let asleep = false, Z0 = 0;   // page zoom, read once (and on resize) instead of on every scroll event
   // scroll only handles layout: progress + holding the store under the header
   function onScroll() {
     // size the stage from the real window height (the page is zoomed on big screens, so vh would overflow)
-    const Z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1, vhc = innerHeight / Z;
+    if (!Z0) Z0 = parseFloat(getComputedStyle(document.documentElement).zoom) || 1;
+    const Z = Z0, vhc = innerHeight / Z;
     const nav = document.getElementById('hdr'), secs = document.getElementById('sections'), navH = nav ? nav.offsetHeight : 0;
     // the stage is pinned right under the header from the first pixel, so nothing slides up before the clock moves
     if (Math.abs(stage.offsetHeight - (vhc - navH)) > 1) { stage.style.height = (vhc - navH) + 'px'; L.style.height = vhc * 2.6 + 'px'; geo = null; }
@@ -432,7 +442,7 @@ const S_KEY = 'dq-strip-s'; let sMem = {}; try { sMem = JSON.parse(sessionStorag
     // once the store is released the intro must already be fully open
     if (p >= 1 && pv < 1) { pv = 1; render(1); }
   }
-  addEventListener('scroll', onScroll, { passive: true }); onScroll(); addEventListener('resize', () => { geo = null; onScroll(); }); const _s = document.getElementById('sections'); if (_s && window.ResizeObserver) new ResizeObserver(onScroll).observe(_s); requestAnimationFrame(frame);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll(); addEventListener('resize', () => { geo = null; Z0 = 0; onScroll(); }); const _s = document.getElementById('sections'); if (_s && window.ResizeObserver) new ResizeObserver(onScroll).observe(_s); requestAnimationFrame(frame);
   // links to a section (#glasses, #watches-shop …): the store sits under the intro, so scroll past it to the section
   // slow eased glide (the rail asks for a calm ~3s descent instead of the browser's quick jump); any wheel/touch/key hands control back
   const glide = (top, ms) => {

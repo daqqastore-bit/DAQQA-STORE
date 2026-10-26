@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261024202131">
+<link rel="stylesheet" href="assets/base.css?v=20261026123319">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -257,7 +257,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .fx-del{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);color:var(--muted);font-size:20px;line-height:1}.fx-del:hover{color:var(--red);border-color:var(--red)}
 .fx-add{margin-top:8px;height:42px;width:100%;border:1px dashed var(--line);border-radius:12px;color:var(--amber);font-weight:700;font-size:14px}.fx-add:hover{border-color:var(--amber);background:var(--surface-2)}
 @media (max-width:520px){.fx-row{grid-template-columns:1fr 92px 40px}}
-.pg-card{margin-bottom:14px}.pg-card .set-h{align-items:center}.pg-card .set-h .switch{margin-inline-start:auto}.pg-card.is-off .two,.pg-card.is-off>.field{opacity:.55}
+.pg-card{margin-bottom:14px}.pg-body{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}.pg-cover{order:2}.pg-cover:empty{display:none}.pg-body:has(.pg-cover:empty){grid-template-columns:1fr}.pg-cover .bslot img,.pg-cover .bslot .up{height:auto;aspect-ratio:16/9}.pg-f>.field{margin-bottom:0}.pg-card.is-off .pg-body{opacity:.55}@media (max-width:900px){.pg-body{grid-template-columns:1fr}.pg-cover{order:-1}}.pg-card .set-h{align-items:center}.pg-card .set-h .switch{margin-inline-start:auto}.pg-card.is-off .two,.pg-card.is-off>.field{opacity:.55}
 .rowlink{cursor:pointer;transition:background .15s}.rowlink:hover{background:var(--surface-2)}
 .exp-form{position:relative;z-index:30}
 .panel:has(.cat.open),.fin-box:has(.cat.open){position:relative;z-index:30}
@@ -584,7 +584,7 @@ html{--z:1}
 }
 .ord-scope{margin-bottom:10px;flex-wrap:wrap;gap:10px}
 .cov-panel{margin-bottom:14px}
-.bslot .re{position:absolute;bottom:6px;left:6px;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.65);color:#fff}
+.bslot .re{position:absolute;top:8px;left:38px;font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(0,0,0,.65);color:#fff}
 .lux-h{background:linear-gradient(100deg,#9c7642,#f6e3b5 40%,#c9a96e 60%,#9c7642);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.12em}
 .push-how ol{margin:12px 0 4px;padding-inline-start:20px;display:grid;gap:8px;font-size:13.5px;color:var(--muted);text-align:right}.push-how ol b{color:var(--ink)}.push-how .sh{display:inline-grid;place-items:center;width:22px;height:22px;border:1px solid var(--line);border-radius:6px;color:var(--amber)}
 .notify-ask i{font-style:normal;margin-inline-start:10px;opacity:.6;font-size:16px}
@@ -881,7 +881,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261024202131"></script>
+<script src="assets/config.js?v=20261026123319"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1505,7 +1505,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261024202131" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026123319" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1539,7 +1539,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261024202131" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026123319" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1580,7 +1580,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261024202131'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261024202131')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026123319'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026123319')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2159,7 +2159,6 @@ async function saveBanner(k, slot, url) {
 /* ---------- section photos: every section & page has its own cover, separate from products ---------- */
 const COVER_GROUPS = () => [
   ['أقسام المتجر', 'البانر العريض فوق كل قسم (صورة الشريط اللي تحت المنتجات في الإعدادات ← السكاشن)', Object.entries(RC.kinds).map(([k, v]) => [k, v.ar, v.en, [['hero', 'البانر']]])],
-  ['صفحات رجالي وحريمي', 'صورة الغلاف أول الصفحة', [['men', 'رجالي', 'Men', [['hero', 'الغلاف']]], ['women', 'حريمي', 'Women', [['hero', 'الغلاف']]]]],
   ['Luxury — DAQQA Privé', 'صورة أول الصفحة (جوه الدايرة) + غلاف لكل سكشن جوه Luxury', [['luxury', 'الصفحة', 'Privé', [['hero', 'الصورة الرئيسية']]], ...Object.entries(RC.kinds).map(([k, v]) => ['lux-' + k, v.ar, v.en, [['hero', 'غلاف السكشن']]])]]
 ];
 // the shape each section photo is shown in on the site → crop is locked to it, and the admin sees the best size to upload
@@ -2212,26 +2211,31 @@ function renderStories() {
     if (del) { const k = del.dataset.stdel; if (!(await confirmBox('تشيل الصورة دي؟', 'شيل'))) return; read(document.querySelector(`.st-card[data-sk="${k}"]`)); storyDraft[k].img = ''; await save('اتشالت ✓'); renderStories(); }
   };
 }
-function renderCovers() {
-  const s = settings, B = s.banners || {};
-  $('#main').innerHTML = `<div class="head"><div><h1>صور الأقسام</h1><div class="sub">صورة لكل سكشن وصفحة في الموقع — منفصلة عن صور المنتجات. لو مفيش صورة، الموقع بيستخدم صورة أهم منتج.</div></div></div>
-    ${'banners' in s ? COVER_GROUPS().map(([title, sub, rows]) => `<div class="panel cov-panel"><h2>${title} <small>${sub}</small></h2><div class="sec-imgs">${rows.map(([k, ar, en, slots]) => { const b = B[k] || {}; return `
-      <div class="sec-img-row"><b>${ar} <span class="en" style="color:var(--muted)">${en}</span></b>
-        ${slots.map(([slot, lbl]) => `<div class="bslot" data-slot="${k}:${slot}">${b[slot] ? `<img src="${esc(b[slot])}" alt=""><button class="x" data-bdel="${k}:${slot}" aria-label="حذف">×</button><button class="re" data-bup="${k}:${slot}">تغيير</button>` : `<button class="up" data-bup="${k}:${slot}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>${lbl}<em>اسحب صورة هنا أو دوس</em></button>`}<small><b>${lbl}</b> · <span class="en">${slotSpec(k, slot)[0]}</span> · <span class="en" dir="ltr">${slotSpec(k, slot)[2]}</span> · ${slotSpec(k, slot)[3]}</small></div>`).join('')}
-      </div>`; }).join('')}</div></div>`).join('')
-    : `<div class="panel" style="color:var(--muted);font-size:13px">محتاج تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor.</div>`}`;
-  $('#main').onclick = async e => {
+// one photo slot (upload / change / remove), used in «صور الأقسام» and next to the men/women page texts
+const bslotHTML = (k, slot, lbl, b) => `<div class="bslot" data-slot="${k}:${slot}">${b[slot] ? `<img src="${esc(b[slot])}" alt=""><button class="x" data-bdel="${k}:${slot}" aria-label="حذف">×</button><button class="re" data-bup="${k}:${slot}">تغيير</button>` : `<button class="up" data-bup="${k}:${slot}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg>${lbl}<em>اسحب صورة هنا أو دوس</em></button>`}<small><b>${lbl}</b> · <span class="en">${slotSpec(k, slot)[0]}</span> · <span class="en" dir="ltr">${slotSpec(k, slot)[2]}</span> · ${slotSpec(k, slot)[3]}</small></div>`;
+// click + drop a photo on any .bslot inside root: crop (locked to its shape) then upload
+function bindSlots(root) {
+  root.onclick = async e => {
     const up = e.target.closest('[data-bup]'), del = e.target.closest('[data-bdel]');
     if (up) { const [k, slot] = up.dataset.bup.split(':'); const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
       inp.onchange = () => upBanner(k, slot, inp.files[0], up);
       inp.click(); }
     if (del) { const [k, slot] = del.dataset.bdel.split(':'); if (await confirmBox('تشيل الصورة دي؟', 'شيل')) saveBanner(k, slot, null); }
   };
-  // drop a photo on a slot: crop (locked to its shape) then upload
   const slotOf = e => e.target.closest && e.target.closest('.bslot[data-slot]'), hasF = e => [...(e.dataTransfer?.types || [])].includes('Files');
-  $('#main').ondragover = e => { const b = slotOf(e); if (!b || !hasF(e)) return; e.preventDefault(); document.querySelectorAll('.bslot.drop').forEach(x => x !== b && x.classList.remove('drop')); b.classList.add('drop'); };
-  $('#main').ondragleave = e => { const b = slotOf(e); if (b && !b.contains(e.relatedTarget)) b.classList.remove('drop'); };
-  $('#main').ondrop = e => { const b = slotOf(e); if (!b) return; e.preventDefault(); b.classList.remove('drop'); const [k, slot] = b.dataset.slot.split(':'); upBanner(k, slot, e.dataTransfer.files[0], b.querySelector('[data-bup]')); };
+  root.ondragover = e => { const b = slotOf(e); if (!b || !hasF(e)) return; e.preventDefault(); document.querySelectorAll('.bslot.drop').forEach(x => x !== b && x.classList.remove('drop')); b.classList.add('drop'); };
+  root.ondragleave = e => { const b = slotOf(e); if (b && !b.contains(e.relatedTarget)) b.classList.remove('drop'); };
+  root.ondrop = e => { const b = slotOf(e); if (!b) return; e.preventDefault(); b.classList.remove('drop'); const [k, slot] = b.dataset.slot.split(':'); upBanner(k, slot, e.dataTransfer.files[0], b.querySelector('[data-bup]')); };
+}
+function renderCovers() {
+  const s = settings, B = s.banners || {};
+  $('#main').innerHTML = `<div class="head"><div><h1>صور الأقسام</h1><div class="sub">صورة لكل سكشن وصفحة في الموقع — منفصلة عن صور المنتجات. لو مفيش صورة، الموقع بيستخدم صورة أهم منتج.</div></div></div>
+    ${'banners' in s ? COVER_GROUPS().map(([title, sub, rows]) => `<div class="panel cov-panel"><h2>${title} <small>${sub}</small></h2><div class="sec-imgs">${rows.map(([k, ar, en, slots]) => { const b = B[k] || {}; return `
+      <div class="sec-img-row"><b>${ar} <span class="en" style="color:var(--muted)">${en}</span></b>
+        ${slots.map(([slot, lbl]) => bslotHTML(k, slot, lbl, b)).join('')}
+      </div>`; }).join('')}</div></div>`).join('')
+    : `<div class="panel" style="color:var(--muted);font-size:13px">محتاج تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor.</div>`}`;
+  bindSlots($('#main'));
 }
 const GOV = ['القاهرة','الجيزة','القليوبية','الإسكندرية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
 // governorates the shop ships to; nothing saved yet = all of them
@@ -2253,29 +2257,33 @@ function zonesHTML() {
 let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
 const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="pages" class="${setTab === 'pages' ? 'on' : ''}">رجالي وحريمي</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
 /* ---------- settings → men / women pages: show or hide each page + its texts (empty = the default) ---------- */
+let pgDraft = null;   // unsaved texts survive the re-render after a cover photo upload
 function renderPagesCfg(s) {
-  const C = JSON.parse(JSON.stringify(s.page_cfg || {}));
+  const C = pgDraft || JSON.parse(JSON.stringify(s.page_cfg || {}));
   const kindsOf = k => Object.keys(RC.kinds).filter(kk => products.some(p => RC.pages[k].test(p) && RC.kindOf(p) === kk && p.images && p.images.length)).map(kk => RC.kinds[kk].ar);
   const card = k => { const D = RC.PAGE_DEF[k], c = C[k] || {}, n = products.filter(p => RC.pages[k].test(p) && p.images && p.images.length).length, auto = `${RC.arJoin(kindsOf(k)) || 'ساعات'} ${D.tail}`;
     return `<div class="panel set-card pg-card ${c.off ? 'is-off' : ''}" data-pg="${k}">
       <div class="set-h"><span class="set-ic en" style="font-weight:700">${k === 'men' ? '♂' : '♀'}</span><div><h2>صفحة ${RC.pages[k].ar} <span class="en" style="color:var(--muted);font-weight:500;font-size:.8em;margin-inline-start:6px">${RC.pages[k].en}</span></h2><small>${c.off ? 'مخفية من الموقع' : n ? `ظاهرة · فيها ${n} منتج` : 'مش هتظهر غير لما يبقى فيها منتجات بصور'}</small></div>
         <button type="button" class="switch ${c.off ? '' : 'on'}" data-pgsw="${k}" aria-label="إظهار/إخفاء صفحة ${RC.pages[k].ar}"></button></div>
+      <div class="pg-body"><div class="pg-cover">${'banners' in s ? bslotHTML(k, 'hero', 'صورة الغلاف', (s.banners || {})[k] || {}) : ''}</div><div class="pg-f">
       <div class="two"><div class="field"><label>العنوان بالإنجليزي</label><input class="input en" data-pf="en" maxlength="40" placeholder="${esc(D.en)}" value="${esc(c.en || '')}"></div>
         <div class="field"><label>الجملة بالعربي <small style="color:var(--muted);font-weight:400">(بتظهر بعد «${RC.pages[k].ar} —»)</small></label><input class="input" data-pf="ar" maxlength="40" placeholder="${esc(D.ar)}" value="${esc(c.ar || '')}"></div></div>
-      <div class="field"><label>الوصف <small style="color:var(--muted);font-weight:400">(سيبه فاضي = بيتكتب لوحده من الأقسام اللي فيها منتجات)</small></label><input class="input" data-pf="sub" maxlength="140" placeholder="${esc(auto)}" value="${esc(c.sub || '')}"></div></div>`; };
+      <div class="field"><label>الوصف <small style="color:var(--muted);font-weight:400">(سيبه فاضي = بيتكتب لوحده من الأقسام اللي فيها منتجات)</small></label><input class="input" data-pf="sub" maxlength="140" placeholder="${esc(auto)}" value="${esc(c.sub || '')}"></div></div></div></div>`; };
   $('#main').innerHTML = `
     <div class="head"><div><h1>الإعدادات</h1><div class="sub">صفحتين رجالي وحريمي: تظهر ولا لأ، والكلام اللي أولها</div></div></div>
     ${setTabs()}
     <div id="pgWrap">${card('men')}${card('women')}</div>
     <div class="set-acts" style="margin-top:4px"><button class="btn btn-primary" type="button" id="pgSave">حفظ</button></div>`;
-  bindSetTabs();
-  $('#pgWrap').onclick = e => { const sw = e.target.closest('[data-pgsw]'); if (!sw) return; const k = sw.dataset.pgsw; C[k] = C[k] || {}; C[k].off = !C[k].off;
+  bindSetTabs(); bindSlots($('#main'));
+  const keep = () => { document.querySelectorAll('[data-pg]').forEach(el => { const k = el.dataset.pg; C[k] = C[k] || {}; el.querySelectorAll('[data-pf]').forEach(i => { C[k][i.dataset.pf] = i.value.trim(); }); }); pgDraft = C; };
+  $('#pgWrap').oninput = keep;
+  $('#pgWrap').onclick = e => { const sw = e.target.closest('[data-pgsw]'); if (!sw) return; const k = sw.dataset.pgsw; C[k] = C[k] || {}; C[k].off = !C[k].off; keep();
     sw.classList.toggle('on', !C[k].off); sw.closest('.pg-card').classList.toggle('is-off', !!C[k].off); sw.closest('.pg-card').querySelector('.set-h small').textContent = C[k].off ? 'مخفية من الموقع (اضغط حفظ)' : 'ظاهرة (اضغط حفظ)'; };
   $('#pgSave').onclick = () => once('pgSave', async () => {
     document.querySelectorAll('[data-pg]').forEach(el => { const k = el.dataset.pg; C[k] = C[k] || {}; el.querySelectorAll('[data-pf]').forEach(i => { C[k][i.dataset.pf] = i.value.trim(); }); C[k].off = !!C[k].off; });
     const { error } = await sb.from('shop_settings').update({ page_cfg: C, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/page_cfg/.test(error.message) ? 'الخاصية دي محتاجة تحديث في Supabase' : error.message, 'err');
-    settings.page_cfg = C; toast('اتحفظ ✓', 'ok'); renderPagesCfg(settings); });
+    settings.page_cfg = C; pgDraft = null; toast('اتحفظ ✓', 'ok'); renderPagesCfg(settings); });
 }
 function bindSetTabs() { $('#setTabs').onclick = e => { const b = e.target.closest('[data-st]'); if (!b || b.dataset.st === setTab) return; setTab = b.dataset.st; try { localStorage.setItem('dq-set-tab', setTab); } catch (er) {} renderSettings(); }; }
 /* ---------- settings → social: accounts + contact numbers shown on the site (top bar, footer, social page) ---------- */
