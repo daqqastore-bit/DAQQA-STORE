@@ -587,7 +587,7 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .lxp-sw i{width:20px;height:20px;border-radius:50%;box-shadow:0 0 0 2px var(--L-bg),0 0 0 3px rgb(var(--L-rgb)/.6)}
 .lxp-price{display:flex;align-items:baseline;gap:14px;margin-top:6px;font-family:var(--f-ui)}
 .lxp-price .now{font:500 42px var(--f-display);background:linear-gradient(100deg,var(--L-gold3),var(--L-gold2) 30%,var(--L-gold) 55%,var(--L-gold4) 80%,var(--L-gold3));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:luxSheen 8s linear infinite}
-.lxp-price s{color:var(--L-dim);font-size:16px}
+.lxp-price s{color:var(--L-dim);font-size:16px;text-decoration-thickness:1px}
 .lxp-price .off{font:700 11px var(--f-ui);color:var(--L-on);background:var(--L-gold);padding:4px 10px;border-radius:999px}
 .lxp-stock{font-size:13px;color:#9fb08a}.lxp-stock.low{color:var(--L-gold)}.lxp-stock.out{color:#d98a6e}
 .lxp-buy{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
@@ -1006,7 +1006,7 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .card .qv-eye:hover,.card .fav:hover{color:var(--accent);transform:scale(1.06)}
 .card .ph .badge-off{display:flex;align-items:baseline;gap:5px;top:12px;right:12px;background:#B3261E;color:#fff;font:800 17px/1 var(--f-ui);padding:8px 12px 7px;border-radius:12px;box-shadow:0 6px 16px rgb(179 38 30/.35);letter-spacing:0}
 .card .ph .badge-off small{font:700 12px var(--f-ar)}
-.card .price-old{font-size:14px;color:var(--muted);text-decoration-thickness:2px;text-decoration-color:#B3261E}
+.card .price-old{font-size:14px;color:inherit;opacity:.5}
 .qv-off{background:#B3261E;color:#fff;font-size:16px;padding:7px 13px;border-radius:12px}
 @media (hover:none){.card .fav,.card .qv-eye{width:40px;height:40px}.card .qv-eye{top:auto;bottom:10px}}
 @media (max-width:560px){.card .fav{top:8px;left:8px}.card .qv-eye{bottom:8px;right:8px}.card .ph .badge-off{top:8px;right:8px;font-size:15px;padding:7px 10px 6px}.card .ph .badge-off small{font-size:11px}}
@@ -1045,7 +1045,7 @@ html.co-cart .overlay{z-index:97}html.co-cart .drawer{z-index:98}
 .oc-sums .sum.total{margin-top:6px;padding-top:9px;border-top:1px dashed var(--line);font-size:16px;font-weight:700}.oc-sums .sum.total b{font-size:19px}
 .oc-price{flex-direction:column;align-items:flex-start;gap:6px}
 .oc-price .op-r{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:8px}.oc-price .op-r small{font-size:12.5px;color:var(--muted)}.oc-price .op-r b{font:700 16px var(--f-ui);color:var(--ink)}
-.oc-price .op-r s{font-size:13px;color:var(--muted);text-decoration-color:#B3261E}.oc-price .op-r em{font:800 12px var(--f-ui);font-style:normal;color:#fff;background:#B3261E;padding:2px 7px;border-radius:7px}
+.oc-price .op-r s{font-size:13px;color:var(--muted);text-decoration-thickness:1px}.oc-price .op-r em{font:800 12px var(--f-ui);font-style:normal;color:#fff;background:#B3261E;padding:2px 7px;border-radius:7px}
 .oc-price .op-r.tot{padding-top:6px;border-top:1px dashed var(--line)}.oc-price .op-r.tot b{font-size:17px;color:#2E7D4F}
 
 /* the page's main heading for search engines and screen readers, kept off screen */
