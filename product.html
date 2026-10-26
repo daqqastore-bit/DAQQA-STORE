@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026123511">
-<link rel="stylesheet" href="assets/store.css?v=20261026123511">
+<link rel="stylesheet" href="assets/base.css?v=20261026124026">
+<link rel="stylesheet" href="assets/store.css?v=20261026124026">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -198,8 +198,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261026123511"></script>
-<script src="assets/app.js?v=20261026123511"></script>
+<script src="assets/config.js?v=20261026124026"></script>
+<script src="assets/app.js?v=20261026124026"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -310,7 +310,7 @@ function render() {
         ${LUX ? '<span class="lux-ribbon en">DAQQA PRIVÉ</span>' : ''}<h1 class="en" dir="ltr" style="text-align:right">${esc(p.name)}</h1>
         <span class="pd-sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
         ${RC.colors(p).length && !vs.length ? `<div class="pd-colors"><span>${esc(p.colors_label || 'الألوان المتاحة')}</span><div class="sw">${RC.colors(p).map(c => imgs.includes(RC.colorImg(p, c)) ? `<button type="button" class="swb" data-pick="${c}" style="background:${c}" title="${c.toUpperCase()}" aria-label="شوف اللون ${c.toUpperCase()}"></button>` : `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div></div>` : ''}
-        <div class="price-box"><span class="price-new${p.soon ? ' price-soon en' : ''}">${DQ.priceTxt(p)}</span>${off ? `<span class="price-old">${money(p.price)}</span><span class="badge-off">-${off}%</span><span class="save-tag">قيمة الخصم ${money(p.price - finalPrice(p))}</span>` : ''}</div>
+        <div class="price-box"><span class="price-new${p.soon ? ' price-soon en' : ''}" data-pn="${p.id}">${DQ.priceTxt(p)}</span>${off ? `<span class="price-old" data-po="${p.id}">${money(p.price)}</span><span class="badge-off">-${off}%</span><span class="save-tag">قيمة الخصم ${money(p.price - finalPrice(p))}</span>` : ''}</div>
         <div class="stock ${stockCls}"><i></i>${stockTxt}</div>
         ${body ? `<p class="lead-d">${esc(body)}</p>` : ''}
         ${optsBox}
@@ -328,7 +328,7 @@ function render() {
         <div>
           ${specs.length ? `<details open><summary>المواصفات</summary><div class="body" style="white-space:normal"><ul class="specs">${specs.map(([k, v]) => `<li><i aria-hidden="true"></i><span>${esc(k)}</span><b>${esc(v.replace(/[.،]\s*$/, ''))}</b></li>`).join('')}</ul></div></details>` : ''}
           <details ${specs.length ? '' : 'open'}><summary>عن ال${noun}</summary><div class="body">${esc(body || noun + ' مختارة من كولكشن DAQQA، متفحوصة قبل الشحن.')}</div></details>
-          <details><summary>الشحن والاستبدال</summary><div class="body">${p.shipping_note ? esc(p.shipping_note) : `الشحن لكل المحافظات خلال 2–5 أيام عمل${DQ.settings.shipping_fee ? ` بـ ${money(DQ.settings.shipping_fee)}` : ''}${DQ.settings.free_shipping_over ? `، ومجاني للطلبات فوق ${money(DQ.settings.free_shipping_over)}` : ''}.
+          <details><summary>الشحن والاستبدال</summary><div class="body">${p.shipping_note ? esc(p.shipping_note) : `الشحن خلال 2–5 أيام عمل${DQ.settings.shipping_fee ? ` بـ ${money(DQ.settings.shipping_fee)}` : ''}${DQ.settings.free_shipping_over ? `، ومجاني للطلبات فوق ${money(DQ.settings.free_shipping_over)}` : ''}.
 الدفع كاش عند الاستلام بعد ما تفحص ال${noun}.
 تقدر تستبدل خلال 14 يوم لو ال${noun} بحالتها.`}</div></details>
         </div>
@@ -354,7 +354,7 @@ function render() {
         ${body ? `<p class="lxp-lead">${esc(body)}</p>` : ''}
         ${specs.length ? `<div class="lxp-specs">${specs.map(([k, v]) => `<div><span>${esc(k)}</span><i></i><b>${esc(v)}</b></div>`).join('')}</div>` : ''}
         ${RC.colors(p).length && !vs.length ? `<div class="lxp-sw"><span>${esc(p.colors_label || 'الألوان')}</span>${RC.colors(p).map(c => `<i style="background:${c}" title="${c.toUpperCase()}"></i>`).join('')}</div>` : ''}
-        <div class="lxp-price"><span class="now${p.soon ? ' en' : ''}">${DQ.priceTxt(p)}</span>${off ? `<s>${money(p.price)}</s><span class="off en">-${off}%</span>` : ''}</div>
+        <div class="lxp-price"><span class="now${p.soon ? ' en' : ''}" data-pn="${p.id}">${DQ.priceTxt(p)}</span>${off ? `<s data-po="${p.id}">${money(p.price)}</s><span class="off en">-${off}%</span>` : ''}</div>
         <div class="lxp-stock ${stockCls}">${stockTxt}</div>
         ${optsBox}
         ${p.stock > 0 ? `<div class="lxp-buy" id="buy">
@@ -428,7 +428,7 @@ function render() {
       if (askOpts && !window._askedOpts) { window._askedOpts = 1; setTimeout(() => { $('#opts').scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast('اختار المواصفات اللي تعجبك وبعدين أضفها للسلة'); }, 500); }
     }
     const sb = $('#sbar');
-    sb.innerHTML = `<img ${DQ.thumb(p)} alt=""><div class="t"><b class="en">${esc(p.name)}</b>${DQ.priceHTML(p)}</div><button class="btn btn-amber btn-sm" id="sbBuy">اطلب دلوقتي</button>`;
+    sb.innerHTML = `<img ${DQ.thumb(p)} alt=""><div class="t"><b class="en">${esc(p.name)}</b>${DQ.priceHTML(p, RC.optExtra(p, sel), true)}</div><button class="btn btn-amber btn-sm" id="sbBuy">اطلب دلوقتي</button>`;
     $('#sbBuy').onclick = () => { if (need()) return; DQ.addToCart(p.id, q, true, opt()); DQ.openCart('checkout'); };
     new IntersectionObserver(([e]) => sb.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe($('#buy'));
   }

@@ -64,8 +64,10 @@
         const t = (r.top + r.height / 2 - vh / 2) / vh; el.style.setProperty('--py', (t * -60).toFixed(1) + 'px'); });
     }); }, { passive: true });
   }
-  DQ.priceTxt = (p) => p.soon ? 'Coming Soon' : money(finalPrice(p));
-  DQ.priceHTML = (p) => { if (p.soon) return '<div class="prices"><span class="price-soon en">Coming Soon</span></div>'; const off = discountPct(p); return `<div class="prices"><span class="price-new">${money(finalPrice(p))}</span>${off ? `<span class="price-old">${money(p.price)}</span>` : ''}</div>`; };
+  DQ.priceTxt = (p, x = 0) => p.soon ? 'Coming Soon' : money(finalPrice(p) + x);
+  // x = extra cost of the picked options; data-pn / data-po let the price follow the buyer's picks live
+  DQ.priceHTML = (p, x = 0, live) => { if (p.soon) return '<div class="prices"><span class="price-soon en">Coming Soon</span></div>'; const off = discountPct(p), L = live ? ` data-pn="${p.id}"` : '';
+    return `<div class="prices"><span class="price-new"${L}>${money(finalPrice(p) + x)}</span>${off ? `<span class="price-old"${live ? ` data-po="${p.id}"` : ''}>${money(Number(p.price) + x)}</span>` : ''}</div>`; };
   DQ.img = (p, i = 0) => esc((p.images && p.images[i]) || FALLBACK);
   // <img> attributes for a card-sized photo: the small copy first, the full photo if the small one isn't there yet
   DQ.thumb = (p, i = 0) => { const u = (p.images && p.images[i]) || FALLBACK, t = RC.thumb(u); return t === u ? `src="${esc(u)}" onerror="this.onerror=null;this.src=DQ.FALLBACK"` : `src="${esc(t)}" data-full="${esc(u)}" onerror="DQ.imgFail(this)"`; };
@@ -385,7 +387,8 @@
   /* ---------- cart ---------- */
   let view = 'cart';
   function saveCart() { try { localStorage.setItem('dq-cart', JSON.stringify(DQ.cart)) } catch (e) {} }
-  const lines = () => DQ.cart.map((c, i) => ({ ...c, i, p: DQ.byId(c.id) })).filter(c => c.p);
+  // u = piece price with the picked options' extra cost (x), o = the same before the sale
+  const lines = () => DQ.cart.map((c, i) => { const p = DQ.byId(c.id); if (!p) return null; const x = RC.optExtra(p, c.opt); return { ...c, i, p, x, u: finalPrice(p) + x, o: Number(p.price) + x }; }).filter(Boolean);
   // the same watch with different picked options (dial, strap…) is its own cart line
   const optKey = o => JSON.stringify(Object.entries(o || {}).sort());
   DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]) && RC.optFits(p, g.k, opt[g.k], opt || {}));
@@ -409,7 +412,7 @@
     if (!silent) DQ.toast('اتضافت للسلة ✓', 'ok');
   };
   // an option card on the store: its photo (several linked photos show as small thumbs under it), colour dot, name and short description
-  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span></button>`;
+  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span>${RC.optX(o) ? `<em class="po-x">زيادة ${money(RC.optX(o))}</em>` : ''}</button>`;
   // tapping a small photo on an option card: picks that option, and also the option of another group that photo belongs to
   // (the green-dial photo on the steel strap picks the green dial) → returns {picks: {k: name}, u: photo}
   DQ.optThumb = (p, el) => { const card = el.closest('.po-card'), gk = card.closest('.po-g').dataset.g, u = el.dataset.ti, picks = { [gk]: card.dataset.o };
@@ -423,7 +426,12 @@
       const pv = box.querySelector('.po-v'); pv.textContent = sel[k] || 'لازم تختار'; pv.classList.toggle('set', !!sel[k]);
       box.querySelectorAll('.po-card').forEach(b => { const on = b.dataset.o === sel[k]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
         const ok = RC.optFits(p, k, b.dataset.o, sel); b.classList.toggle('off', !ok); b.title = ok ? '' : 'مش متاح مع اختيارك'; }); });
-    DQ.optSync(root, p, sel); };
+    DQ.optSync(root, p, sel); DQ.optPrice(root, p, sel); };
+  // the shown price follows the picks (options can cost more)
+  DQ.optPrice = (root, p, sel) => { if (p.soon) return; const x = RC.optExtra(p, sel), scope = root.closest('.qa-m') || document;
+    scope.querySelectorAll(`[data-pn="${p.id}"]`).forEach(el => { el.textContent = money(finalPrice(p) + x); });
+    scope.querySelectorAll(`[data-po="${p.id}"]`).forEach(el => { el.textContent = money(Number(p.price) + x); });
+    const t = scope.querySelector('#qaT'); if (t) t.textContent = money((finalPrice(p) + x) * (+scope.dataset.q || 1)); };
   // each multi-photo option card shows the photo that goes with what's picked in the other groups
   DQ.optSync = (root, p, sel) => root.querySelectorAll('.po-card').forEach(c => { const th = c.querySelector('.po-th'); if (!th) return;
     const gk = c.closest('.po-g').dataset.g, u = RC.optPhoto(p, { ...sel, [gk]: c.dataset.o }, gk), im = c.querySelector(':scope>img');
@@ -442,10 +450,10 @@
       ${full ? `<div class="qv-gal"><div class="qv-main"><img class="qa-im" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="qv-off en">-${off}%</span>` : ''}</div>
         ${imgs.length > 1 ? `<div class="qv-th">${imgs.slice(0, 8).map((u, k) => `<button type="button" data-qvi="${k}" class="${k ? '' : 'on'}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div><div class="qv-info">
         <span class="qv-cap en">${esc(p.brand || 'DAQQA')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <h3 id="qaH" class="en qv-h">${esc(p.name)}</h3>${DQ.priceHTML(p)}
+        <h3 id="qaH" class="en qv-h">${esc(p.name)}</h3>${DQ.priceHTML(p, 0, true)}
         ${body ? `<p class="qv-d">${esc(body)}</p>` : ''}
         ${specs.length ? `<ul class="qv-sp">${specs.slice(0, 6).map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>` : ''}`
-      : `<div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p)}</div></div>`}
+      : `<div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p, 0, true)}</div></div>`}
       ${vs.length ? `<p class="qa-lead po-need">يجب اختيار الاختيارات الآتية</p>` : ''}
       ${vs.map(g => `<div class="po-g" data-g="${g.k}"><div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
         <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div></div>`).join('')}
@@ -467,7 +475,7 @@
       if (c) { const t = e.target.closest('[data-ti]'), r = t ? DQ.optThumb(p, t) : { picks: { [c.closest('.po-g').dataset.g]: c.dataset.o } };
         DQ.optApply(m, p, sel, r.picks); if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }
       const d = e.target.closest('[data-qd]');
-      if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; $m('#qaT').textContent = money(finalPrice(p) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
+      if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; m.dataset.q = q; $m('#qaT').textContent = money((finalPrice(p) + RC.optExtra(p, sel)) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
       if (e.target.closest('[data-ok]')) {
         const miss = vs.find(g => !sel[g.k]);
         if (miss) { const g = $m(`.po-g[data-g="${miss.k}"]`); g.classList.remove('err'); void g.offsetWidth; g.classList.add('err'); g.scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast(`اختار ${miss.ar} الأول`); return; }
@@ -483,13 +491,13 @@
   const savedCity = () => { try { const c = JSON.parse(localStorage.getItem('dq-cust') || '{}').city || ''; return govs().includes(c) ? c : '' } catch (e) { return '' } };
   function totals(city = savedCity()) {
     const ls = lines();
-    const sub = ls.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0);
-    const orig = ls.reduce((s, l) => s + Number(l.p.price) * l.qty, 0);
+    const sub = ls.reduce((s, l) => s + l.u * l.qty, 0);
+    const orig = ls.reduce((s, l) => s + l.o * l.qty, 0);
     const fso = DQ.settings.free_shipping_over != null ? Number(DQ.settings.free_shipping_over) : null;
     // null = not known yet (no governorate chosen, or no shipping prices set at all)
     const ship = !ls.length ? 0 : fso != null && sub >= fso ? 0 : (!zones().length && !Number(DQ.settings.shipping_fee)) || (zones().length && !city) ? null : DQ.shipFor(city);
     // a discount code only takes off from the pieces it covers (regular / Luxury · men / women), never from shipping
-    const cp = DQ.coupon, cpOff = cp ? ls.reduce((s, l) => s + (cpFits(cp, l.p) ? Math.round(finalPrice(l.p) * l.qty * cp.pct / 100) : 0), 0) : 0;
+    const cp = DQ.coupon, cpOff = cp ? ls.reduce((s, l) => s + (cpFits(cp, l.p) ? Math.round(l.u * l.qty * cp.pct / 100) : 0), 0) : 0;
     return { ls, sub, save: orig - sub, ship, total: sub - cpOff + (ship || 0), fso, city, cp, cpOff };
   }
   /* ---------- discount code ---------- */
@@ -548,10 +556,10 @@
       $('#drTitle').textContent = `Shopping Cart (${n})`;
       // Luxury pieces get their own glowing Privé block with their value, regular items follow
       const ci = (l, lx) => `<div class="ci${lx ? ' lx' : ''}"><a href="${RC.productUrl(l.p)}"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"></a>
-        <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${optsHTML(l)}${DQ.priceHTML(l.p)}<div class="qty"><button data-q="${l.i}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.i}" data-d="1" aria-label="زيادة">+</button></div></div>
+        <div><h4 class="en"><a href="${RC.productUrl(l.p)}">${esc(l.p.name)}</a></h4>${optsHTML(l)}${DQ.priceHTML(l.p, l.x)}<div class="qty"><button data-q="${l.i}" data-d="-1" aria-label="تقليل">−</button><span>${l.qty}</span><button data-q="${l.i}" data-d="1" aria-label="زيادة">+</button></div></div>
         <button class="rm" data-rm="${l.i}" aria-label="حذف ${esc(l.p.name)} من السلة" title="حذف من السلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.3c.1 1 .9 1.7 1.9 1.7h5.6c1 0 1.8-.7 1.9-1.7L17.5 7M10.2 11v5M13.8 11v5"/></svg></button></div>`;
       const lxs = t.ls.filter(l => RC.isLuxury(l.p)), regs = t.ls.filter(l => !RC.isLuxury(l.p));
-      const lxVal = lxs.reduce((s, l) => s + finalPrice(l.p) * l.qty, 0), lxN = lxs.reduce((s, l) => s + l.qty, 0);
+      const lxVal = lxs.reduce((s, l) => s + l.u * l.qty, 0), lxN = lxs.reduce((s, l) => s + l.qty, 0);
       $('#drBody').innerHTML = (lxs.length ? `<section class="cart-lx"><div class="cl-in">
           <div class="cl-head"><span class="cl-mark en">DAQQA <i>Privé</i></span><span class="cl-n">${lxN} ${lxN > 1 ? 'قطع' : 'قطعة'} Luxury</span></div>
           ${lxs.map(l => ci(l, true)).join('')}
@@ -575,7 +583,7 @@
       if (saved.city && !govs().includes(saved.city)) saved.city = '';
       if (DQ.user && !saved.name) saved.name = userName(DQ.user);
       const loc = coLoc || '';
-      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}<span class="qty-pill">الكمية <b class="en">${l.qty}</b></span>${optsHTML(l)}</div><span class="en">${money(finalPrice(l.p) * l.qty)}</span></div>`).join('');
+      const items = t.ls.map((l, k) => `<div class="co-it${RC.isLuxury(l.p) ? ' lx' : ''}" style="--k:${k}"><span class="co-im"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><i class="en">${l.qty}</i></span><div><b class="en">${esc(l.p.name)}</b>${RC.isLuxury(l.p) ? '<small class="en">DAQQA Privé</small>' : ''}<span class="qty-pill">الكمية <b class="en">${l.qty}</b></span>${optsHTML(l)}</div><span class="en">${money(l.u * l.qty)}</span></div>`).join('');
       $('#coMain').innerHTML = `
         <ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="cur"><i>2</i>بيانات التوصيل</li><li><i>3</i>تأكيد الطلب</li></ol>
         <div class="co-grid">
@@ -775,7 +783,7 @@
       const t = totals(($('#f-city') || {}).value || savedCity());
       const m = document.createElement('div'); m.className = 'oc-m';
       m.innerHTML = `<div class="oc-card" role="dialog" aria-modal="true" aria-labelledby="ocH"><h3 id="ocH">متأكد من اختياراتك؟</h3><p>ده بالظبط اللي هيوصلك:</p>
-        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)}</b><span class="qty-pill">الكمية <b class="en">${l.qty}</b>${l.qty > 1 ? ` <small>قطع</small>` : ` <small>قطعة</small>`}</span>${optsHTML(l)}<span class="oc-price"><span class="op-r"><small>سعر القطعة</small><b class="en">${money(finalPrice(l.p))}</b>${discountPct(l.p) ? `<s class="en">${money(l.p.price)}</s><em class="en">-${discountPct(l.p)}%</em>` : ''}</span>${l.qty > 1 ? `<span class="op-r tot"><small>إجمالي ${l.qty} قطع</small><b class="en">${money(finalPrice(l.p) * l.qty)}</b></span>` : ''}</span></div></div>`).join('')}</div>
+        <div class="oc-list">${lines().map(l => `<div class="oc-it"><img src="${lineImg(l)}" alt="" onerror="this.src='${FALLBACK}'"><div><b class="en">${esc(l.p.name)}</b><span class="qty-pill">الكمية <b class="en">${l.qty}</b>${l.qty > 1 ? ` <small>قطع</small>` : ` <small>قطعة</small>`}</span>${optsHTML(l)}<span class="oc-price"><span class="op-r"><small>سعر القطعة</small><b class="en">${money(l.u)}</b>${discountPct(l.p) ? `<s class="en">${money(l.o)}</s><em class="en">-${discountPct(l.p)}%</em>` : ''}</span>${l.qty > 1 ? `<span class="op-r tot"><small>إجمالي ${l.qty} قطع</small><b class="en">${money(l.u * l.qty)}</b></span>` : ''}</span></div></div>`).join('')}</div>
         <div class="oc-sums">${sumsHTML(t, true)}</div>
         <div class="oc-acts"><button type="button" class="btn btn-amber" data-ok>أيوه، أكّد الطلب · <span class="en">${money(t.total)}</span></button><button type="button" class="btn btn-ghost" data-no>رجوع</button></div></div>`;
       document.body.appendChild(m); requestAnimationFrame(() => m.classList.add('on'));
@@ -788,7 +796,7 @@
   function orderOnWA(d) {
     const t = totals(d.city), ls = t.ls;
     const msg = ['أهلاً DAQQA عايز أطلب:', '',
-      ...ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`), '',
+      ...ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(l.u * l.qty)}`), '',
       `المنتجات: ${money(t.sub)}`, t.cpOff ? `كود الخصم ${t.cp.code} (${t.cp.pct}%): − ${money(t.cpOff)}` : '', `الشحن: ${t.ship == null ? 'حسب المحافظة' : t.ship ? money(t.ship) : 'مجاني'}`, `الإجمالي: ${money(t.total)} (كاش عند الاستلام)`, '',
       `الاسم: ${d.name}`, `الموبايل: ${d.phone}`, `المحافظة: ${d.city}`, `العنوان: ${d.address}`,
       d.location ? `اللوكيشن: ${d.location}` : '', d.notes ? `ملاحظات: ${d.notes}` : ''].filter((x, i, a) => x !== '' || a[i - 1] !== '').join('\n').trim();
@@ -808,7 +816,7 @@
   function notifyOrder(data, d, ls, cp) {
     if (!RC.notifyEmail) return;
     const base = location.origin + location.pathname.replace(/[^/]*$/, '');
-    const items = ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(finalPrice(l.p) * l.qty)}`).join('\n');
+    const items = ls.map(l => `• ${l.p.name}${optLine(l)} (${RC.sku(l.p)}) × ${l.qty} = ${money(l.u * l.qty)}`).join('\n');
     const body = { _subject: `طلب جديد ${data.code} — ${money(data.total)} — DAQQA`, _template: 'table', _captcha: 'false',
       'رقم الطلب': data.code, 'وقت الطلب': RC.when(new Date()), 'الإجمالي': money(data.total), ...(cp ? { 'كود الخصم': `${cp.code} (${cp.pct}%) − ${money(cp.off)}` } : {}), 'المنتجات': items,
       'اسم العميل': d.name, 'التليفون': d.phone, 'واتساب العميل': 'https://wa.me/' + String(d.phone || '').replace(/\D/g, '').replace(/^0/, '20'),
