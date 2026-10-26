@@ -391,7 +391,7 @@
   const lines = () => DQ.cart.map((c, i) => { const p = DQ.byId(c.id); if (!p) return null; const x = RC.optExtra(p, c.opt); return { ...c, i, p, x, u: finalPrice(p) + x, o: Number(p.price) + x }; }).filter(Boolean);
   // the same watch with different picked options (dial, strap…) is its own cart line
   const optKey = o => JSON.stringify(Object.entries(o || {}).sort());
-  DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k]) && RC.optFits(p, g.k, opt[g.k], opt || {}));
+  DQ.optsOk = (p, opt) => RC.variants(p).every(g => g.o.some(o => o.n === (opt || {})[g.k] && !RC.optOut(o)) && RC.optFits(p, g.k, opt[g.k], opt || {}));
   // ordering closed from the admin (Settings → «استقبال الطلبات»): nothing goes into the cart or out as an order
   DQ.closed = () => !!(DQ.settings && DQ.settings.orders_closed);
   DQ.closedMsg = () => ((DQ.settings && DQ.settings.orders_closed_msg) || '').trim() || 'الطلبات مقفولة دلوقتي، جرّب تاني بعدين';
@@ -412,14 +412,18 @@
     if (!silent) DQ.toast('اتضافت للسلة ✓', 'ok');
   };
   // an option card on the store: its photo (several linked photos show as small thumbs under it), colour dot, name and short description
-  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}">${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span>${RC.optX(o) ? `<em class="po-x">زيادة ${money(RC.optX(o))}</em>` : ''}</button>`;
+  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}${RC.optOut(o) ? ' so' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}"${RC.optOut(o) ? ' aria-disabled="true" title="نفذ من المخزون"' : ''}>${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span>${RC.optOut(o) ? '<em class="po-so">نفذ</em>' : RC.optX(o) ? `<em class="po-x">زيادة ${money(RC.optX(o))}</em>` : ''}</button>`;
   // tapping a small photo on an option card: picks that option, and also the option of another group that photo belongs to
   // (the green-dial photo on the steel strap picks the green dial) → returns {picks: {k: name}, u: photo}
   DQ.optThumb = (p, el) => { const card = el.closest('.po-card'), gk = card.closest('.po-g').dataset.g, u = el.dataset.ti, picks = { [gk]: card.dataset.o };
-    RC.variants(p).forEach(g => { if (g.k === gk) return; const hit = g.o.filter(o => RC.optImgs(p, o).includes(u)); if (hit.length === 1) picks[g.k] = hit[0].n; });
+    RC.variants(p).forEach(g => { if (g.k === gk) return; const hit = g.o.filter(o => !RC.optOut(o) && RC.optImgs(p, o).includes(u)); if (hit.length === 1) picks[g.k] = hit[0].n; });
     return { picks, u }; };
   // pick an option: anything picked elsewhere that doesn't go with it is cleared, and cards that don't fit the picks are dimmed
+  // an out-of-stock option is never picked: tapping it only says so (returns false)
   DQ.optApply = (root, p, sel, picks) => {
+    const isOut = (k, v) => RC.optOut((RC.variants(p).find(g => g.k === k) || { o: [] }).o.find(o => o.n === v)), asked = Object.keys(picks).length;
+    picks = Object.fromEntries(Object.entries(picks).filter(([k, v]) => { if (!isOut(k, v)) return true; DQ.toast(`${v} نفذ من المخزون`, 'err'); return false; }));
+    if (asked && !Object.keys(picks).length) return false;
     Object.entries(picks).forEach(([k, v]) => { sel[k] = v; });
     RC.variants(p).forEach(g => { if (sel[g.k] && !(g.k in picks) && !RC.optFits(p, g.k, sel[g.k], sel)) delete sel[g.k]; });
     root.querySelectorAll('.po-g').forEach(box => { const k = box.dataset.g; if (k in picks) box.classList.remove('err');
@@ -444,7 +448,7 @@
     const out = p.stock <= 0, imgs = (p.images || []).length ? p.images : [FALLBACK], { specs, body } = full ? RC.splitDesc(p.description) : { specs: [], body: '' }, off = discountPct(p);
     document.querySelectorAll('.qa-m').forEach(x => x.remove());
     const vs = RC.variants(p), sel = {}, max = p.stock == null ? 20 : Math.min(p.stock, 20); let q = 1;
-    vs.forEach(g => { if (g.o.length === 1) sel[g.k] = g.o[0].n; });
+    vs.forEach(g => { const ok = g.o.filter(o => !RC.optOut(o)); if (ok.length === 1 && g.o.length === 1) sel[g.k] = ok[0].n; });
     const m = document.createElement('div'); m.className = 'oc-m qa-m' + (full ? ' qv-m' : '');
     m.innerHTML = `<div class="oc-card qa-card${full ? ' qv-card' : ''}${out ? ' is-out' : ''}" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
       ${full ? `<div class="qv-gal"><div class="qv-main"><img class="qa-im" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="qv-off en">-${off}%</span>` : ''}</div>
@@ -473,12 +477,12 @@
       const th = e.target.closest('[data-qvi]'); if (th) { $m('.qa-im').src = imgs[+th.dataset.qvi]; m.querySelectorAll('[data-qvi]').forEach(x => x.classList.toggle('on', x === th)); return; }
       const c = e.target.closest('.po-card');
       if (c) { const t = e.target.closest('[data-ti]'), r = t ? DQ.optThumb(p, t) : { picks: { [c.closest('.po-g').dataset.g]: c.dataset.o } };
-        DQ.optApply(m, p, sel, r.picks); if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }
+        if (DQ.optApply(m, p, sel, r.picks) === false) return; if (r.u) { $m('.qa-im').src = r.u; c.querySelector(':scope>img').src = r.u; c.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); } else showImg(c.closest('.po-g').dataset.g); return; }
       const d = e.target.closest('[data-qd]');
       if (d) { q = Math.max(1, Math.min(max, q + +d.dataset.qd)); $m('#qaN').textContent = q; m.dataset.q = q; $m('#qaT').textContent = money((finalPrice(p) + RC.optExtra(p, sel)) * q); if (q === max && +d.dataset.qd > 0) DQ.toast(`أقصى كمية متاحة ${max}`); return; }
       if (e.target.closest('[data-ok]')) {
         const miss = vs.find(g => !sel[g.k]);
-        if (miss) { const g = $m(`.po-g[data-g="${miss.k}"]`); g.classList.remove('err'); void g.offsetWidth; g.classList.add('err'); g.scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast(`اختار ${miss.ar} الأول`); return; }
+        if (miss) { const g = $m(`.po-g[data-g="${miss.k}"]`); g.classList.remove('err'); void g.offsetWidth; g.classList.add('err'); g.scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast(miss.o.every(RC.optOut) ? `كل اختيارات ${miss.ar} نفذت من المخزون` : `اختار ${miss.ar} الأول`); return; }
         end(); DQ.addToCart(p.id, q, false, vs.length ? { ...sel } : undefined);
       }
     });
