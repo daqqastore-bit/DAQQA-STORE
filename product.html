@@ -5,15 +5,15 @@
 <script>try{var n=navigator,c=n.connection||{};if(matchMedia('(pointer:coarse)').matches||(n.deviceMemory&&n.deviceMemory<=4)||(n.hardwareConcurrency&&n.hardwareConcurrency<=4)||c.saveData)document.documentElement.classList.add('lite')}catch(e){}</script>
 <script>try{var t=localStorage.getItem('dq-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>DAQQA - دقّة</title>
+<title>DAQQA | دقّة</title>
 <meta name="description" content="منتج من DAQQA — الدفع عند الاستلام وشحن سريع.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#20160E">
 <link rel="canonical" id="canon" href="https://daqqastore-bit.github.io/DAQQA-STORE/product.html">
 <meta property="og:type" content="product">
-<meta property="og:site_name" content="DAQQA - دقّة">
+<meta property="og:site_name" content="DAQQA | دقّة">
 <meta property="og:locale" content="ar_EG">
-<meta property="og:title" id="ogTitle" content="DAQQA - دقّة">
+<meta property="og:title" id="ogTitle" content="DAQQA | دقّة">
 <meta property="og:description" id="ogDesc" content="ساعات رجالي وحريمي — الدفع عند الاستلام.">
 <meta property="og:image" id="ogImg" content="https://daqqastore-bit.github.io/DAQQA-STORE/assets/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026123319">
-<link rel="stylesheet" href="assets/store.css?v=20261026123319">
+<link rel="stylesheet" href="assets/base.css?v=20261026123511">
+<link rel="stylesheet" href="assets/store.css?v=20261026123511">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -198,8 +198,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261026123319"></script>
-<script src="assets/app.js?v=20261026123319"></script>
+<script src="assets/config.js?v=20261026123511"></script>
+<script src="assets/app.js?v=20261026123511"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -254,7 +254,7 @@ let q = 1, galKey = null, sel = {};
 const askOpts = location.hash === '#opts';
 
 function notFound() {
-  document.title = 'المنتج مش موجود | DAQQA - دقّة';
+  document.title = 'المنتج مش موجود · DAQQA | دقّة';
   $('#page').innerHTML = `<div class="nf"><div class="m">${RC.logo()}</div><h1 style="font:400 34px var(--f-display)">المنتج ده مش متاح دلوقتي</h1><p style="color:var(--muted)">ممكن يكون اتباع أو اتشال. شوف باقي الكولكشن.</p><a class="btn btn-amber" href="./">كل المنتجات</a></div>`;
 }
 
@@ -269,7 +269,7 @@ function render() {
 
   // SEO
   const cat = categories[p.category] || '', kind = RC.kindOf(p), K = RC.kinds[kind], noun = RC.noun(p), perks = RC.perks(DQ.settings).cards;
-  document.title = `${p.name} | DAQQA - دقّة`;
+  document.title = `${p.name} · DAQQA | دقّة`;
   const LUX = RC.isLuxury(p);
   if (LUX) document.documentElement.classList.add('lux-mode');
   const desc = `${p.name} من DAQQA ${p.soon ? '— قريبًا' : 'بـ ' + money(finalPrice(p))}${off ? ` بدل ${money(p.price)} (خصم ${off}%)` : ''}. ${body ? body.slice(0, 110) + ' — ' : ''}الدفع عند الاستلام وشحن سريع.`;
