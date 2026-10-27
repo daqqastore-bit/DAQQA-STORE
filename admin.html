@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027171002">
+<link rel="stylesheet" href="assets/base.css?v=20261027171027">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -144,7 +144,9 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .stk{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font:600 12.5px var(--f-ui);border:1px solid;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
 .stk:active{transform:scale(.96)}.stk i{width:7px;height:7px;border-radius:50%;background:currentColor}.stk b{font-weight:700;padding-inline-start:7px;border-inline-start:1px solid currentColor;opacity:.85}
 .stk.soon{color:var(--amber);background:rgb(180 130 70/.12);border-color:rgb(180 130 70/.4);letter-spacing:.04em}
-.stk-wrap{position:relative;display:inline-block}.stk .stk-car{width:12px;height:12px;margin-inline-start:-2px;opacity:.75}
+.stk-wrap{position:relative;display:inline-block}
+/* out of stock: the whole row is marked red so it stands out in the list */
+.ptable tr.row-out td{background:rgb(194 69 58/.1)}.ptable tr.row-out td:first-child{box-shadow:inset -3px 0 0 #c2453a}.ptable tr.row-out:hover td{background:rgb(194 69 58/.16)}.stk .stk-car{width:12px;height:12px;margin-inline-start:-2px;opacity:.75}
 .stk-menu{position:fixed;z-index:60;min-width:210px;display:grid;gap:2px;padding:6px;border-radius:12px;border:1px solid var(--line);background:var(--bg-2);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .stk-menu button{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:9px;padding:8px 10px;border-radius:8px;text-align:start;font:600 13px var(--f-ui);color:var(--ink)}.stk-menu button:hover:not(:disabled){background:var(--surface-2)}.stk-menu button:disabled{opacity:.4;cursor:not-allowed}
 .stk-menu button i{grid-row:span 2;width:8px;height:8px;border-radius:50%}.stk-menu small{grid-column:2;font:400 11.5px var(--f-ui);color:var(--muted)}
@@ -910,7 +912,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261027171002"></script>
+<script src="assets/config.js?v=20261027171027"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1540,7 +1542,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027171002" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027171027" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1574,7 +1576,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027171002" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027171027" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1615,7 +1617,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027171002'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027171002')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027171027'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027171027')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1741,7 +1743,7 @@ function renderProducts() {
     <div class="seg" id="kindSeg" style="margin-bottom:14px;width:max-content;max-width:100%"><button data-pk="all" class="${pKind==='all'?'on':''}">الكل <span class="en">${list.length}</span></button>${Object.entries(RC.kinds).map(([k,v]) => `<button data-pk="${k}" class="${pKind===k?'on':''}">${v.ar} <span class="en">${list.filter(p => RC.kindOf(p)===k).length}</span></button>`).join('')}</div>
     ${COLS.kind ? '' : `<div class="panel" style="margin-bottom:14px;border-color:var(--accent-2);color:var(--muted);font-size:13px">الأقسام (ساعات / نضارات / اكسسوارات) والأنواع والألوان محتاجين تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor. لحد ما تعمل كده كل المنتجات بتظهر في قسم الساعات.</div>`}
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${list.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
-      ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = rawOff(p), st = pStatus(p); return `<tr data-edit="${p.id}">
+      ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = rawOff(p), st = pStatus(p); return `<tr data-edit="${p.id}"${st === 'out' ? ' class="row-out"' : ''}>
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
         <td class="en">${+p.price > 0 ? `<b>${money(rawFinal(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
