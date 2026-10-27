@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027180525">
+<link rel="stylesheet" href="assets/base.css?v=20261027210709">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -476,6 +476,7 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .soc-pick b small{font-weight:400;color:var(--muted);font-size:12px}
 .soc-pick-acts{display:flex;gap:8px}
 .set-card{display:flex;flex-direction:column;gap:14px}
+.og-prev{position:relative;width:100%;max-width:520px;aspect-ratio:1200/630;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg2,rgba(127,127,127,.08));display:grid;place-items:center}.og-prev img{width:100%;height:100%;object-fit:cover;display:block}.og-prev span{padding:16px;text-align:center;color:var(--muted);font-size:13px}.og-prev img[hidden],.og-prev span[hidden]{display:none}.og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:320px;overflow:auto}.og-grid[hidden]{display:none}.og-grid button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:none;cursor:pointer;aspect-ratio:1}.og-grid button:hover{border-color:var(--amber,#C9A96E)}.og-grid img{width:100%;height:100%;object-fit:cover;display:block}.og-card .btn,#ogCard label.btn{cursor:pointer}
 .web-ord{margin-bottom:14px}.oc-card.is-off{border-color:var(--red,#B04834)}.oc-card.is-off #ocTxt{color:var(--red,#B04834);font-weight:600}.oc-msg{margin-top:12px}.oc-card .set-acts{margin-top:8px}.web-ord .set-h{align-items:center}.web-ord .set-h>div{flex:1}.wo-warn{color:var(--red,#B04834);font-size:12.5px}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .set-h h2{margin:0;font-size:17px}.set-h small{font-size:12.5px;color:var(--muted)}.set-h small.ok{color:var(--green)}
@@ -930,7 +931,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261027180525"></script>
+<script src="assets/config.js?v=20261027210709"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1560,7 +1561,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027180525" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027210709" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1594,7 +1595,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027180525" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027210709" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1635,7 +1636,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027180525'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027180525')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027210709'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027210709')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2703,6 +2704,42 @@ function cpBox(c) {
   setTimeout(() => form.code.focus(), 60);
 }
 const ocTxt = closed => closed ? 'مقفولة: العميل مش هيقدر يطلب، وهيشوف رسالتك فوق في الموقع' : 'مفتوحة: العملاء بيطلبوا عادي';
+// link preview (og:image): crawlers don't run JS, so every page points at one fixed file that the admin overwrites
+const OG_PATH = 'og/share.jpg', ogUrl = () => sb.storage.from(RC.bucket).getPublicUrl(OG_PATH).data.publicUrl;
+async function ogMake(src) {
+  const img = new Image(); img.crossOrigin = 'anonymous';
+  await new Promise((ok, bad) => { img.onload = ok; img.onerror = () => bad(new Error('الصورة مش بتتحمل')); img.src = typeof src === 'string' ? src : URL.createObjectURL(src); });
+  const W = 1200, H = 630, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
+  const iw = img.naturalWidth, ih = img.naturalHeight, cov = Math.max(W / iw, H / ih), fit = Math.min(W / iw, H / ih);
+  g.filter = 'blur(28px) brightness(.55)'; g.drawImage(img, (W - iw * cov) / 2 - 40, (H - ih * cov) / 2 - 40, iw * cov + 80, ih * cov + 80);   // blurred fill, so a square watch photo isn't cropped
+  g.filter = 'none'; g.drawImage(img, (W - iw * fit) / 2, (H - ih * fit) / 2, iw * fit, ih * fit);
+  return await new Promise(r => c.toBlob(r, 'image/jpeg', .86));
+}
+const ogErr = e => toast(/row-level|policy|security/i.test(e.message || '') ? 'محتاج تشغّل supabase/og-image.sql في Supabase الأول' : 'فشل: ' + (e.message || e), 'err');
+function ogShow() {
+  const im = $('#ogPrev'); if (!im) return;
+  im.onload = () => { im.hidden = false; $('#ogNone').hidden = true; }; im.onerror = () => { im.hidden = true; $('#ogNone').hidden = false; };
+  im.src = ogUrl() + '?t=' + Date.now();
+}
+async function ogSave(src) {
+  try { const blob = await ogMake(src);
+    const { error } = await sb.storage.from(RC.bucket).upload(OG_PATH, blob, { contentType: 'image/jpeg', cacheControl: '300', upsert: true }); if (error) throw error;
+    toast('اتحفظت صورة المعاينة ✓', 'ok'); ogShow(); $('#ogGrid').hidden = true;
+  } catch (e) { ogErr(e); }
+}
+function ogInit() {
+  ogShow();
+  $('#ogPick').onclick = () => { const gr = $('#ogGrid'); gr.hidden = !gr.hidden; if (gr.hidden) return;
+    const imgs = []; products.forEach(p => (p.images || []).forEach(u => u && imgs.push({ u, n: p.name })));
+    gr.innerHTML = imgs.length ? imgs.map((x, i) => `<button type="button" data-i="${i}" title="${esc(x.n || '')}"><img src="${esc(RC.thumb(x.u))}" loading="lazy" alt=""></button>`).join('') : '<small class="hint">مفيش صور منتجات لسه</small>';
+    gr.onclick = e => { const b = e.target.closest('[data-i]'); if (b) once('og', () => ogSave(imgs[+b.dataset.i].u)); }; };
+  $('#ogFile').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) once('og', () => ogSave(f)); };
+  $('#ogDel').onclick = () => once('og', async () => {
+    if (!(await confirmBox('تشيل صورة المعاينة؟ اللينك هيظهر من غير صورة.', 'شيل'))) return;
+    const { data, error } = await sb.storage.from(RC.bucket).remove([OG_PATH]); if (error) return ogErr(error);
+    if (!data || !data.length) return ogErr(new Error('policy'));
+    toast('اتشالت ✓', 'ok'); ogShow(); });
+}
 function renderSettings() {
   const s = settings;
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
@@ -2747,7 +2784,14 @@ function renderSettings() {
       <div class="zones-h"><b>أسعار حسب المحافظة</b><small>اكتب السعر واختار محافظاته. اكتب 0 عشان يبقى الشحن مجاني.</small></div>
       <div id="zones">${zonesHTML()}</div>
       <div class="set-acts"><button type="button" class="btn btn-ghost" id="zoneAdd">+ إضافة سعر شحن</button><button class="btn btn-primary" type="submit">حفظ أسعار الشحن</button></div>
-    </form>`;
+    </form>
+    <div class="panel set-card" id="ogCard">
+      <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8"/></svg></span><div><h2>صورة معاينة اللينك</h2><small>الصورة اللي بتظهر لما حد يبعت لينك الموقع على واتساب أو فيسبوك أو ديسكورد</small></div></div>
+      <div class="og-prev"><img id="ogPrev" alt=""><span id="ogNone">مفيش صورة: اللينك هيظهر بالاسم والوصف بس</span></div>
+      <div class="set-acts"><button type="button" class="btn btn-sm btn-ghost" id="ogPick">اختار من صور الساعات</button><label class="btn btn-sm btn-ghost">ارفع صورة<input type="file" accept="image/*" id="ogFile" hidden></label><button type="button" class="btn btn-sm btn-ghost" id="ogDel">شيل الصورة</button></div>
+      <div class="og-grid" id="ogGrid" hidden></div>
+      <small class="hint">بتتقص تلقائي على مقاس 1200×630. واتساب وفيسبوك بيحفظوا المعاينة القديمة فترة، فاللينكات الجديدة هي اللي هتاخد الصورة على طول.</small>
+    </div>`;
   $('#ocSw').onclick = () => once('oc', async () => {
     const closed = !settings.orders_closed, msg = $('#ocMsg').value.trim();
     if (closed && !(await confirmBox('تقفل الطلبات؟ العميل مش هيقدر يضيف للسلة ولا يطلب لحد ما تفتحها تاني.', 'اقفل'))) return;
@@ -2796,6 +2840,7 @@ function renderSettings() {
       drawZones(); }
     if (del) { const i = +del.dataset.zdel; if (zonesDraft[i].cities.length && !(await confirmBox('تحذف السعر ده؟ محافظاته هترجع لسعر باقي المحافظات.', 'حذف'))) return; zonesDraft.splice(i, 1); drawZones(); }
   };
+  ogInit();
   $('#shipForm').onsubmit = async e => { e.preventDefault(); const f = Object.fromEntries(new FormData(e.target));
     const zs = zonesDraft.filter(z => z.cities.length).map(z => ({ price: Math.max(0, +String(z.price).replace(/[^\d.]/g, '') || 0), cities: AV().filter(c => z.cities.includes(c)) })).filter(z => z.cities.length);
     const row = { shipping_fee: +f.shipping_fee || 0, shipping_zones: zs, updated_at: new Date().toISOString() };
