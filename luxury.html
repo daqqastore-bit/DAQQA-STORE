@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027210709">
-<link rel="stylesheet" href="assets/store.css?v=20261027210709">
+<link rel="stylesheet" href="assets/base.css?v=20261027212625">
+<link rel="stylesheet" href="assets/store.css?v=20261027212625">
 <style>
 /* DAQQA PRIVÉ — the luxury room: near-black, champagne gold, slow light */
 :root{--lx-bg:var(--L-bg);--lx-bg2:var(--L-bg2);--lx-gold:var(--L-gold);--lx-gold-2:var(--L-gold2);--lx-gold-3:var(--L-gold3);--lx-ink:var(--L-ink);--lx-mute:var(--L-mute);--lx-line:rgb(var(--L-rgb)/.22);
@@ -129,7 +129,7 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 /* dial colours on a Privé card: little jewels — a gold bezel and a glassy highlight */
 .lc-eye{top:auto!important;bottom:14px;right:14px;left:auto!important;width:42px!important;height:42px!important}.lc-eye svg,.lc-fav svg{width:19px!important;height:19px!important}.lc-fav{width:42px;height:42px;background:rgb(var(--L-bgrgb)/.9)}
 .lc-off{font-size:15px!important;font-weight:800!important;padding:7px 12px!important;background:#B3261E!important;color:#fff!important;border:0!important;box-shadow:0 6px 16px rgb(179 38 30/.35)}.lc-eye svg{width:17px;height:17px}
-.lc-sw{position:relative;z-index:2;display:flex;gap:11px;margin-top:14px;width:max-content}
+.lc-sw{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:11px;margin-top:14px;width:fit-content;max-width:100%;padding:4px}
 .lc-sw .swb,.lc-sw i{width:18px;height:18px;padding:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgb(255 255 255/.55),rgb(255 255 255/0) 45%),radial-gradient(circle at 70% 80%,rgb(0 0 0/.35),rgb(0 0 0/0) 60%),var(--c)!important;box-shadow:0 0 0 2px var(--lx-bg2,#16110b),0 0 0 3px var(--lx-gold),0 3px 8px -2px rgb(0 0 0/.5);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .lc-sw .swb:hover{transform:scale(1.18)}
 .lc-sw .swb.on{transform:scale(1.15);box-shadow:0 0 0 2px var(--lx-bg2,#16110b),0 0 0 4px var(--lx-gold-2),0 0 14px rgb(var(--L-rgb,201 169 110)/.55)}
@@ -267,8 +267,8 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261027210709"></script>
-<script src="assets/app.js?v=20261027210709"></script>
+<script src="assets/config.js?v=20261027212625"></script>
+<script src="assets/app.js?v=20261027212625"></script>
 <script>
 const { esc, money, finalPrice, discountPct } = RC;
 const ORDER = Object.keys(RC.kinds); // watches first
