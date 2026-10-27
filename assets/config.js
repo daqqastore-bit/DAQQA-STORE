@@ -9,11 +9,11 @@ window.RC = {
   statuses: { new: 'جديد', confirmed: 'تم الاستلام', shipped: 'في التوصيل', delivered: 'تم التسليم', cancelled: 'ملغي', returned: 'مرتجع (تم الشحن ولم يستلم)' }
 };
 RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' ' + RC.currency;
-// no price saved (0 / empty) = shown as Coming Soon and can't be bought
-RC.soon = (p) => !(Number(p && p.price) > 0);
+// coming soon: no price yet, or the admin switched «Coming Soon» on (coming_soon) — shown without a price, can't be ordered
+RC.soon = (p) => !!(p && p.coming_soon) || !(Number(p && p.price) > 0);
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
 RC.onOffer = (p) => !!(p && p.on_offer);
-RC.discountPct = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Math.round((1 - p.sale_price / p.price) * 100) : 0;
+RC.discountPct = (p) => !RC.soon(p) && (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Math.round((1 - p.sale_price / p.price) * 100) : 0; // no discount badge while coming soon
 RC.esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // store sections — p.kind: 'watches' | 'glasses' | 'accessories' (missing → watches)
 // p.style: sub-type shown as tabs (e.g. Classic, Chronograph) · p.colors: ['#hex', ...] shown as swatches
@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261027163048';
+RC.build = '20261027165619';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
