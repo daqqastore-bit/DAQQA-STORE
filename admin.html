@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027165619">
+<link rel="stylesheet" href="assets/base.css?v=20261027171002">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -143,7 +143,13 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @media (max-width:760px){.st-grid{grid-template-columns:1fr}.st-stats{grid-template-columns:1fr 1fr}}
 .stk{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;font:600 12.5px var(--f-ui);border:1px solid;white-space:nowrap;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
 .stk:active{transform:scale(.96)}.stk i{width:7px;height:7px;border-radius:50%;background:currentColor}.stk b{font-weight:700;padding-inline-start:7px;border-inline-start:1px solid currentColor;opacity:.85}
-.stk.soon{color:var(--amber);background:rgb(180 130 70/.12);border-color:rgb(180 130 70/.4);cursor:default;letter-spacing:.04em}
+.stk.soon{color:var(--amber);background:rgb(180 130 70/.12);border-color:rgb(180 130 70/.4);letter-spacing:.04em}
+.stk-wrap{position:relative;display:inline-block}.stk .stk-car{width:12px;height:12px;margin-inline-start:-2px;opacity:.75}
+.stk-menu{position:fixed;z-index:60;min-width:210px;display:grid;gap:2px;padding:6px;border-radius:12px;border:1px solid var(--line);background:var(--bg-2);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.stk-menu button{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:9px;padding:8px 10px;border-radius:8px;text-align:start;font:600 13px var(--f-ui);color:var(--ink)}.stk-menu button:hover:not(:disabled){background:var(--surface-2)}.stk-menu button:disabled{opacity:.4;cursor:not-allowed}
+.stk-menu button i{grid-row:span 2;width:8px;height:8px;border-radius:50%}.stk-menu small{grid-column:2;font:400 11.5px var(--f-ui);color:var(--muted)}
+.stk-menu .in i{background:#2f8a55}.stk-menu .out i{background:#c2453a}.stk-menu .soon i{background:var(--amber)}.stk-menu .cur{background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--amber)}
+.st-field{margin-top:14px}.st-field label small{color:var(--muted);font-weight:400}.st-hint{display:block;margin-top:6px;font-size:12px;color:var(--muted);line-height:1.6}
 .p-del{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);color:var(--muted);transition:color .2s,border-color .2s,background .2s}.p-del svg{width:17px;height:17px}.p-del:hover{color:var(--red);border-color:var(--red);background:rgb(194 69 58/.08)}
 .stk.in{color:#2f8a55;background:rgb(47 138 85/.12);border-color:rgb(47 138 85/.35)}
 .stk.low{color:#b7791f;background:rgb(183 121 31/.12);border-color:rgb(183 121 31/.4)}
@@ -904,9 +910,15 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261027165619"></script>
+<script src="assets/config.js?v=20261027171002"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
+addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
+// product status for the admin: Coming Soon (switched on, or no price yet) · Out of Stock (stock 0) · Stock
+const pStatus = p => RC.soon(p) ? 'soon' : p.stock === 0 ? 'out' : 'in';
+// the admin always sees the real price and discount, even while a product is Coming Soon
+const rawOff = p => p.sale_price != null && +p.sale_price < +p.price && +p.price > 0 ? Math.round((1 - p.sale_price / p.price) * 100) : 0;
+const rawFinal = p => rawOff(p) ? +p.sale_price : +p.price;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
 let RECOVERY = /(^|[#&?])type=recovery(&|$)/.test(location.hash + location.search);
 const sb = supabase.createClient(RC.url, RC.key);
@@ -1528,7 +1540,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027165619" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027171002" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1562,7 +1574,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027165619" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027171002" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1603,7 +1615,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027165619'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027165619')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027171002'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027171002')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1729,11 +1741,11 @@ function renderProducts() {
     <div class="seg" id="kindSeg" style="margin-bottom:14px;width:max-content;max-width:100%"><button data-pk="all" class="${pKind==='all'?'on':''}">الكل <span class="en">${list.length}</span></button>${Object.entries(RC.kinds).map(([k,v]) => `<button data-pk="${k}" class="${pKind===k?'on':''}">${v.ar} <span class="en">${list.filter(p => RC.kindOf(p)===k).length}</span></button>`).join('')}</div>
     ${COLS.kind ? '' : `<div class="panel" style="margin-bottom:14px;border-color:var(--accent-2);color:var(--muted);font-size:13px">الأقسام (ساعات / نضارات / اكسسوارات) والأنواع والألوان محتاجين تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor. لحد ما تعمل كده كل المنتجات بتظهر في قسم الساعات.</div>`}
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${list.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
-      ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = discountPct(p); return `<tr data-edit="${p.id}">
+      ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = rawOff(p), st = pStatus(p); return `<tr data-edit="${p.id}">
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
-        <td class="en">${!RC.soon(p) ? `<b>${money(finalPrice(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
+        <td class="en">${+p.price > 0 ? `<b>${money(rawFinal(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
-        <td>${!RC.soon(p) ? '' : `<span class="stk soon" title="${p.coming_soon ? 'متفعّل عليه Coming Soon · اقفله من صفحة المنتج' : 'من غير سعر · حط سعر عشان يتعرض للبيع'}"><i></i><span class="en">Coming Soon</span></span>`}<button type="button" ${!RC.soon(p) ? '' : 'hidden'} class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
+        <td><div class="stk-wrap"><button type="button" class="stk ${st === 'soon' ? 'soon' : st === 'out' ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" aria-haspopup="menu" title="غيّر الحالة"><i></i><span class="en">${st === 'soon' ? 'Coming Soon' : st === 'out' ? 'Out of Stock' : 'In Stock'}</span>${st === 'in' && p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}<svg class="stk-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></td>
         <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td>
         <td><button type="button" class="p-del" data-pdel="${p.id}" aria-label="حذف ${esc(p.name)}" title="حذف المنتج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg></button></td></tr>`; }).join('')}
       </tbody></table>` : `<div class="empty">مفيش منتجات هنا لسه. دوس «+ منتج جديد».</div>`}</div>`;
@@ -1741,12 +1753,26 @@ function renderProducts() {
   $('#kindSeg').onclick = e => { const b = e.target.closest('[data-pk]'); if (b) { pKind = b.dataset.pk; renderProducts(); } };
 }
 document.addEventListener('click', async e => {
-  // one tap: In Stock ⇄ Out of Stock (the last count is remembered and comes back; none = unlimited)
+  // status pill → small menu: Stock / Out of Stock / Coming Soon (the last count is remembered and comes back; none = unlimited)
+  const sm = e.target.closest('[data-stset]');
+  if (sm) { e.stopPropagation(); const p = products.find(x => x.id === +sm.closest('.stk-menu').dataset.p), to = sm.dataset.stset; document.querySelectorAll('.stk-menu').forEach(m => m.remove()); if (!p || to === pStatus(p)) return;
+    if (to !== 'soon' && !(+p.price > 0)) return toast('حط سعر للمنتج الأول (من صفحة المنتج)', 'err');
+    let mem = {}; try { mem = JSON.parse(localStorage.getItem('dq-stk-mem') || '{}') } catch (er) {}
+    const up = {}; if (COLS.coming_soon) up.coming_soon = to === 'soon';
+    if (to === 'out') { if (p.stock) mem[p.id] = p.stock; up.stock = 0; } else if (to === 'in' && p.stock === 0) up.stock = mem[p.id] > 0 ? mem[p.id] : null;
+    const {error} = await sb.from('shop_products').update(up).eq('id', p.id); if (error) return toast(error.message, 'err');
+    try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} const prev = p.stock; Object.assign(p, up); if ('stock' in up) lowMail(p, prev);
+    toast(to === 'soon' ? 'بقى Coming Soon' : to === 'out' ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
   const sk = e.target.closest('[data-stk]');
-  if (sk) { e.stopPropagation(); const p = products.find(x => x.id === +sk.dataset.stk); if (!p) return; let mem = {}; try { mem = JSON.parse(localStorage.getItem('dq-stk-mem') || '{}') } catch (er) {}
-    const goOut = p.stock !== 0; if (goOut && p.stock != null) mem[p.id] = p.stock; const next = goOut ? 0 : (mem[p.id] > 0 ? mem[p.id] : null);
-    sk.disabled = true; const {error} = await sb.from('shop_products').update({ stock: next }).eq('id', p.id); sk.disabled = false; if (error) return toast(error.message, 'err');
-    try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} const prev = p.stock; p.stock = next; lowMail(p, prev); toast(goOut ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
+  document.querySelectorAll('.stk-menu').forEach(m => { if (!sk || m.dataset.p !== sk.dataset.stk) m.remove(); });
+  if (sk) { e.stopPropagation(); const wrap = sk.parentNode; if (wrap.querySelector('.stk-menu')) return wrap.querySelector('.stk-menu').remove();
+    const p = products.find(x => x.id === +sk.dataset.stk); if (!p) return; const cur = pStatus(p);
+    wrap.insertAdjacentHTML('beforeend', `<div class="stk-menu" role="menu" data-p="${p.id}">${[['in', 'Stock', 'متاح للطلب'], ['out', 'Out of Stock', 'ظاهر بس مش هيتطلب'], ['soon', 'Coming Soon', 'من غير سعر للعميل']].map(([v, t, h]) => `<button type="button" role="menuitem" class="${v}${v === cur ? ' cur' : ''}" data-stset="${v}" ${v === 'soon' && !COLS.coming_soon ? 'disabled' : ''}><i></i><span class="en">${t}</span><small>${h}</small></button>`).join('')}</div>`);
+    // fixed to the screen so the table's scroll box doesn't cut it; opens upward when there's no room below
+    const m = wrap.querySelector('.stk-menu'), b = sk.getBoundingClientRect(), h = m.offsetHeight, w = m.offsetWidth;
+    m.style.top = (innerHeight - b.bottom > h + 12 ? b.bottom + 6 : Math.max(8, b.top - h - 6)) + 'px';
+    m.style.left = Math.max(8, Math.min(innerWidth - w - 8, (document.dir === 'rtl' || document.documentElement.dir === 'rtl' ? b.right - w : b.left))) + 'px';
+    return; }
   const pd = e.target.closest('[data-pdel]');
   if (pd) { e.stopPropagation(); const p = products.find(x => x.id === +pd.dataset.pdel); if (p) once('delprod', () => deleteProduct_(p)); return; }
   const sw = e.target.closest('[data-active]');
@@ -1923,10 +1949,9 @@ function renderEditor() {
         <div class="two"><div class="field"><label>السعر بعد الخصم</label><input class="input en" id="f_sale" inputmode="decimal" value="${d.sale_price == null ? '' : esc(d.sale_price)}" placeholder="فاضي = بدون خصم"></div>
           <div class="field"><label>نسبة الخصم %</label><input class="input en" id="f_pct" inputmode="numeric" value="${off || ''}" placeholder="0"></div></div>
         <div class="preview-price" id="pv"></div>
-        <label class="cov-sw soon-sw" ${COLS.coming_soon ? '' : 'style="opacity:.5;pointer-events:none" title="محتاج تشغّل ملف product-soon.sql في Supabase الأول"'}><input type="checkbox" id="f_soon" ${d.coming_soon?'checked':''}><span class="tg" aria-hidden="true"></span>
-          <span class="tx"><b>Coming Soon · قريبًا <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
-            <small class="st-on">المنتج هيظهر بكلمة Coming Soon من غير سعر، ومحدش هيقدر يطلبه لحد ما تقفله.</small>
-            <small class="st-off">المنتج معروض للبيع عادي بسعره.</small></span></label>
+        <div class="field st-field"><label for="f_status">حالة المنتج <small>(بتظهر للعميل كده)</small></label>
+          <select class="input" id="f_status">${[['in', 'Stock · متاح'], ['out', 'Out of Stock · خلصان'], ['soon', 'Coming Soon · قريبًا']].map(([v, t]) => `<option value="${v}" ${pStatus(d) === v ? 'selected' : ''} ${v === 'soon' && !COLS.coming_soon ? 'disabled' : ''}>${t}</option>`).join('')}</select>
+          <small class="st-hint" id="stHint"></small></div>
         <label class="cov-sw" ${COLS.on_offer ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_offer" ${d.on_offer?'checked':''}><span class="tg" aria-hidden="true"></span>
           <span class="tx"><b>يظهر في "العروض" <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
             <small class="st-on">المنتج هيظهر في تبويب العروض في الموقع.</small>
@@ -2061,7 +2086,7 @@ function renderEditor() {
     $('#f_pct').value = v || ''; $('#f_sale').value = v ? Math.round(pr * (1 - v/100)) : ''; updatePreview(); };
   $('#f_pct').oninput = () => { const v = +$('#f_pct').value, pr = +$('#f_price').value; $('#f_sale').value = v > 0 && v < 100 && pr ? Math.round(pr * (1 - v/100)) : ''; updatePreview(); };
   $('#f_sale').oninput = () => { const pr = +$('#f_price').value, sp = $('#f_sale').value; $('#f_pct').value = pr && sp !== '' && +sp < pr ? Math.round((1 - sp/pr) * 100) : ''; updatePreview(); };
-  if ($('#f_soon')) $('#f_soon').onchange = updatePreview;
+  if ($('#f_status')) $('#f_status').onchange = updatePreview;
   $('#f_price').oninput = () => { const v = +$('#f_pct').value, pr = +$('#f_price').value; if (v && pr) $('#f_sale').value = Math.round(pr * (1 - v/100)); updatePreview(); };
   $('#saveP').onclick = saveProduct;
   if ($('#delP')) $('#delP').onclick = deleteProduct;
@@ -2074,7 +2099,9 @@ function updatePreview() {
   const pr = +$('#f_price').value || 0, spv = $('#f_sale').value, sp = spv === '' ? null : +spv;
   const has = sp != null && sp < pr, off = has ? Math.round((1 - sp/pr) * 100) : 0;
   document.querySelectorAll('#presets [data-pre]').forEach(b => b.classList.toggle('on', +b.dataset.pre === off));
-  if (!pr || ($('#f_soon') && $('#f_soon').checked)) return $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new en" style="letter-spacing:.14em">COMING SOON</span></div>`;
+  const st = $('#f_status') ? $('#f_status').value : 'in';
+  if ($('#stHint')) $('#stHint').textContent = st === 'soon' ? 'العميل هيشوف Coming Soon من غير سعر ومش هيقدر يطلبه. السعر بيفضل محفوظ وظاهر ليك هنا.' : st === 'out' ? 'العميل هيشوف السعر بس مكتوب Out of Stock ومش هيقدر يطلبه.' : !pr ? 'من غير سعر المنتج هيفضل Coming Soon. حط سعر عشان يتعرض للبيع.' : 'معروض للبيع عادي.';
+  if (!pr || st === 'soon') return $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new en" style="letter-spacing:.14em">COMING SOON</span></div>`;
   $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new">${money(has ? sp : pr)}</span>${has ? `<span class="price-old">${money(pr)}</span><span class="badge-off">-${off}%</span>` : ''}</div>`;
 }
 // about + filled spec lines → the one description field the store reads ("البند: القيمة" lines become the specs list)
@@ -2083,7 +2110,7 @@ const composeDesc = d => { const about = String(d._about || '').trim();
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, _about: $('#f_about').value, _ship: $('#f_ship').value, _specs: [...document.querySelectorAll('#specRows .spec-row')].map(r => [r.querySelector('[data-sk]').value, r.querySelector('[data-sv]').value]),
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, coming_soon: $('#f_soon') ? $('#f_soon').checked : !!draft.coming_soon, active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, status: $('#f_status') ? $('#f_status').value : pStatus(draft), active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 // a photo dropped off-target must not make the browser open it and lose the unsaved product
@@ -2215,7 +2242,10 @@ async function saveProduct() {
   const cl = vs.flatMap(g => g.o.filter(o => o.c).map(o => ({ c: o.c.toUpperCase(), img: o.img, g: g.k }))).filter((x, k, a) => a.findIndex(y => y.c === x.c) === k).slice(0, 6);
   d.colors = cl.map(x => x.c); d.image_colors = Object.fromEntries(cl.filter(x => x.img).map(x => [x.img, x.c])); d.colors_label = cl.length ? (vs.find(g => g.k === cl[0].g).ar || RC.varDef(cl[0].g).ar) : null;
   if (COLS.on_offer) row.on_offer = !!d.on_offer;
-  if (COLS.coming_soon) row.coming_soon = !!d.coming_soon;
+  // status dropdown: Stock / Out of Stock (stock 0) / Coming Soon (coming_soon, price stays saved but hidden from buyers)
+  const st = d.status || pStatus(d);
+  if (st === 'out') row.stock = 0; else if (st === 'in' && row.stock === 0) row.stock = null;
+  if (COLS.coming_soon) row.coming_soon = st === 'soon';
   if (COLS.image_colors) { const m = {}, cl = (d.colors || []).map(c => c.toLowerCase()); Object.entries(d.image_colors || {}).forEach(([u, c]) => { if (d.images.includes(u) && cl.includes(String(c).toLowerCase())) m[u] = c; }); row.image_colors = Object.keys(m).length ? m : null; }
   if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
   if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_colors) row.show_colors = d.show_colors !== false; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
