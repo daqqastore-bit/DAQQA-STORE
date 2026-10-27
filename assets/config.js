@@ -54,7 +54,9 @@ RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g
   ; // groups show in the order they were saved (the admin sets it per product with «ترتيب الخانة»)
 // an option can cost more (o.x = extra EGP added to the piece price when it's picked); the order function adds the same on the server
 // an option the admin marked out of stock (o.out): shown crossed with «نفذ», can't be picked or ordered
-RC.optOut = (o) => !!(o && o.out);
+// an option marked coming soon (o.soon): shown with «قريبًا», also can't be picked or ordered (so optOut covers both)
+RC.optSoon = (o) => !!(o && o.soon && !o.out);
+RC.optOut = (o) => !!(o && (o.out || o.soon));
 RC.optX = (o) => Math.max(0, Math.round(Number(o && o.x) || 0));
 RC.optExtra = (p, sel) => !sel ? 0 : RC.variants(p).reduce((s, g) => s + RC.optX(g.o.find(o => o.n === sel[g.k])), 0);
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
@@ -166,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261027130107';
+RC.build = '20261027163048';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {

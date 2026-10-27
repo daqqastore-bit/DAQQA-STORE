@@ -897,6 +897,9 @@ html.pg-leave body{transition:opacity .3s,filter .3s,transform .3s;opacity:0;fil
 .po-card.so{position:relative;cursor:not-allowed;border-style:dashed;color:var(--muted)}.po-card.so>:not(.po-so){opacity:.45;filter:grayscale(.8)}.po-card.so:hover{border-color:var(--line)}.po-card.so .po-t>span{text-decoration:line-through;text-decoration-thickness:1px}
 .po-so{margin-inline-start:auto;padding:2px 8px;border-radius:999px;background:rgb(201 88 63/.14);color:#c9583f;font:700 11.5px var(--f-ui);font-style:normal;white-space:nowrap}
 .po-cards.ph .po-card.so .po-so{position:absolute;top:10px;inset-inline-start:10px;margin:0;background:rgb(201 88 63/.92);color:#fff}
+/* coming soon option: same lock as «نفذ», but not crossed and with the accent «قريبًا» tag */
+.po-card.sn .po-t>span{text-decoration:none}.po-card.sn .po-so{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);letter-spacing:.02em}
+.po-cards.ph .po-card.sn .po-so{background:rgb(var(--bg-rgb)/.85);backdrop-filter:blur(6px);color:var(--accent)}
 /* option group title (المينا · DIAL): bigger and clearer */
 .po-h{align-items:center;font-size:18px;font-weight:700;line-height:1.3}
 .po-h>span{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px}
