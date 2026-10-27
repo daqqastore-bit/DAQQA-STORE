@@ -30,8 +30,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027213453">
-<link rel="stylesheet" href="assets/store.css?v=20261027213453">
+<link rel="stylesheet" href="assets/base.css?v=20261027213709">
+<link rel="stylesheet" href="assets/store.css?v=20261027213709">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -201,7 +201,6 @@ html.ld-lite #ldDial{will-change:transform}html.ld-lite .nav-bar,html.ld-lite .f
 .tabs button:hover{color:var(--strip-ink)}
 .tabs button.on{color:var(--strip-ink);border-color:var(--strip-ink);font-weight:600}
 .strip .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
-.strip .grid.clip>.card:nth-child(n+5){display:none}
 .strip .empty{color:var(--s-muted)}
 /* lifestyle band (dark) */
 .band{position:relative;min-height:460px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;background:var(--bg)}
@@ -236,7 +235,6 @@ html.ld-lite #ldDial{will-change:transform}html.ld-lite .nav-bar,html.ld-lite .f
 @media (max-width:1000px){
   .bn-grid{grid-template-columns:1fr minmax(0,340px);gap:32px}
   .strip .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .strip .grid.clip>.card:nth-child(n+4){display:none}
 }
 @media (max-width:760px){
   .banner,.section-first .banner{min-height:auto;flex-direction:column;align-items:stretch}
@@ -250,7 +248,6 @@ html.ld-lite #ldDial{will-change:transform}html.ld-lite .nav-bar,html.ld-lite .f
   .band.plain{min-height:auto;padding-top:56px}
   .mini-brand{margin-bottom:16px}
   .strip .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-  .strip .grid.clip>.card:nth-child(4){display:flex}
   .band{min-height:440px}
   .band.has-photo{width:calc(100% - 20px);min-height:0;border-radius:20px}.band.has-photo .wrap{padding-left:18px;padding-right:18px}
   .band.has-photo .feats{grid-template-columns:repeat(var(--n,3),1fr)}.band.has-photo .feats>*{border-top:0;border-inline-start:1px solid rgb(var(--accent-rgb)/.22);padding:12px 4px 14px;font-size:11.5px}.band.has-photo .feats>:first-child{border-inline-start:0}.band.has-photo.op-drop{clip-path:inset(0 0 100% 0 round 20px)}.band.has-photo.op-drop.in{clip-path:inset(0 0 0 0 round 20px)}
@@ -339,8 +336,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261027213453"></script>
-<script src="assets/app.js?v=20261027213453"></script>
+<script src="assets/config.js?v=20261027213709"></script>
+<script src="assets/app.js?v=20261027213709"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -572,7 +569,7 @@ function build() {
           ${styles.map(s => `<button class="en" data-tab="${esc(s)}" data-k="${k}">${esc(s)}</button>`).join('')}
           ${sale ? `<button data-tab="__sale" data-k="${k}">العروض</button>` : ''}
         </div></div>
-        <div class="grid clip"></div>
+        <div class="grid"></div>
       </div></div>
       <div data-glow class="band op op-drop ${img.life ? 'has-photo op-zoom' : 'plain'}" ${img.life ? 'data-parallax' : ''}>${img.life ? `<div class="bg" data-ar="${esc(img.life)}" style="--img:url('${esc(img.life)}')"></div>` : `<div class="wm" aria-hidden="true">${RC.logo()}</div>`}
         <div class="wrap"><div class="op op-stagger"><div class="lbl en">DAQQA</div><h2 class="en" dir="ltr" style="text-align:right">${B.en}</h2><div class="ar">${B.ar}</div></div>
