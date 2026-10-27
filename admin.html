@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027163048">
+<link rel="stylesheet" href="assets/base.css?v=20261027165619">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -348,7 +348,8 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;align-items:start}
 .vo-ord{position:absolute;top:16px;inset-inline-end:16px;z-index:2;display:flex;align-items:center;gap:4px;padding:3px 4px 3px 8px;border-radius:999px;background:rgba(0,0,0,.72);color:#fff;font-size:11px}.vo-ord select{appearance:none;-webkit-appearance:none;border:0;background:var(--accent);color:#1a120b;font:700 12px var(--f-ui);width:24px;height:24px;border-radius:50%;text-align:center;text-align-last:center;cursor:pointer;padding:0}
 .vg-ord{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-inline-start:auto}.vg-ord select{appearance:none;-webkit-appearance:none;border:0;background:var(--accent);color:#1a120b;font:700 13px var(--f-ui);width:28px;height:28px;border-radius:50%;text-align:center;text-align-last:center;cursor:pointer;padding:0}
-.vo{position:relative;border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;background:var(--bg-2)}
+.vo{position:relative;border:1px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;background:var(--bg-2);min-width:0}
+.vo-st{display:grid;grid-template-columns:1fr 1fr;gap:6px}.vo-st .vo-mini{text-align:center;padding:5px 6px;white-space:normal}
 .vo-ph{aspect-ratio:1;border-radius:10px;border:1px dashed var(--line);display:grid;place-items:center;overflow:hidden;background:var(--bg);color:var(--muted);font-size:12px}
 .vo-ph.has{border-style:solid}.vo-ph img{width:100%;height:100%;object-fit:cover}.vo-ph i{width:46%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 3px var(--bg-2),0 0 0 4px var(--line)}
 .vo-ph:hover{border-color:var(--amber)}
@@ -903,7 +904,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261027163048"></script>
+<script src="assets/config.js?v=20261027165619"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -960,7 +961,7 @@ const SCOPES = {
 let dashSt = '';
 let tab = 'dash', range = 30, orderFilter = 'all', orderQuery = '', openOrders = new Set();
 let products = [], orders = [], settings = {}, chart = null, channel = null, freshIds = new Set();
-const COLS = { show_colors: false, shipping_note: false, cover_only: false, on_offer: false, image_colors: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false, variants: false }; let pKind = 'all';
+const COLS = { show_colors: false, shipping_note: false, cover_only: false, on_offer: false, coming_soon: false, image_colors: false, kind: false, style: false, colors: false, luxury: false, colors_label: false, show_left: false, variants: false }; let pKind = 'all';
 
 ['#loginLogo','#sideLogo','#forgotLogo','#resetLogo'].forEach(s => $(s).innerHTML = RC.logo());
 function toast(msg, type='') { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition='opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 3000); }
@@ -1527,7 +1528,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027163048" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027165619" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1561,7 +1562,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027163048" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027165619" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1602,7 +1603,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027163048'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027163048')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027165619'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027165619')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1730,9 +1731,9 @@ function renderProducts() {
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${list.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
       ${list.filter(p => pKind==='all' || RC.kindOf(p)===pKind).map(p => { const off = discountPct(p); return `<tr data-edit="${p.id}">
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
-        <td class="en">${+p.price > 0 ? `<b>${money(finalPrice(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
+        <td class="en">${!RC.soon(p) ? `<b>${money(finalPrice(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
-        <td>${+p.price > 0 ? '' : '<span class="stk soon" title="من غير سعر · حط سعر عشان يتعرض للبيع"><i></i><span class="en">Coming Soon</span></span>'}<button type="button" ${+p.price > 0 ? '' : 'hidden'} class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
+        <td>${!RC.soon(p) ? '' : `<span class="stk soon" title="${p.coming_soon ? 'متفعّل عليه Coming Soon · اقفله من صفحة المنتج' : 'من غير سعر · حط سعر عشان يتعرض للبيع'}"><i></i><span class="en">Coming Soon</span></span>`}<button type="button" ${!RC.soon(p) ? '' : 'hidden'} class="stk ${p.stock === 0 ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" title="${p.stock === 0 ? 'دوس عشان يرجع متاح' : 'دوس عشان يبقى نفدت الكمية'}"><i></i><span class="en">${p.stock === 0 ? 'Out of Stock' : 'In Stock'}</span>${p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}</button></td>
         <td><button class="switch ${p.active ? 'on' : ''}" data-active="${p.id}" aria-label="إظهار/إخفاء"></button></td>
         <td><button type="button" class="p-del" data-pdel="${p.id}" aria-label="حذف ${esc(p.name)}" title="حذف المنتج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg></button></td></tr>`; }).join('')}
       </tbody></table>` : `<div class="empty">مفيش منتجات هنا لسه. دوس «+ منتج جديد».</div>`}</div>`;
@@ -1886,9 +1887,8 @@ function renderEditor() {
               <input class="input vo-n vo-d" data-vdesc value="${esc(o.d || '')}" placeholder="وصف (اختياري)" dir="auto" maxlength="120">
               <label class="vo-xp" title="لو الاختيار ده أغلى، اكتب الفرق وهيتزود على سعر القطعة لما العميل يختاره"><span>سعر زيادة +</span><input class="input en" data-vx inputmode="numeric" value="${RC.optX(o) || ''}" placeholder="0" dir="ltr" maxlength="7"><span>ج.م</span></label>
               <div class="vo-row">${o.c ? `<label class="vo-c" title="غيّر اللون"><i style="background:${esc(o.c)}"></i><input type="color" data-vclr value="${esc(o.c.toLowerCase())}"></label><input class="input vo-hex en" data-vhex value="${esc(o.c.toUpperCase())}" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><button type="button" class="vo-mini" data-vnoclr>شيل اللون</button>` : '<button type="button" class="vo-mini" data-vaddclr>+ لون</button>'}
-                <button type="button" class="vo-mini vo-out ${o.out ? 'on' : ''}" data-vout aria-pressed="${!!o.out}" title="لو الاختيار ده خلص: العميل هيشوفه مشطوب بكلمة «نفذ» ومش هيقدر يختاره">${o.out ? '✕ مش موجود في الاستور' : '✓ موجود في الاستور'}</button>
-                <button type="button" class="vo-mini vo-soon ${o.soon ? 'on' : ''}" data-vsoon aria-pressed="${!!o.soon}" title="لو الاختيار ده لسه منزلش: العميل هيشوفه بكلمة «قريبًا» ومش هيقدر يختاره (مالوش علاقة بالسعر)">${o.soon ? '⏳ قريبًا' : '+ قريبًا'}</button>
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
+              <div class="vo-st"><button type="button" class="vo-mini vo-out ${o.out ? 'on' : ''}" data-vout aria-pressed="${!!o.out}" title="لو الاختيار ده خلص: العميل هيشوفه مشطوب بكلمة «نفذ» ومش هيقدر يختاره">${o.out ? '✕ نفذ' : '✓ متاح'}</button><button type="button" class="vo-mini vo-soon ${o.soon ? 'on' : ''}" data-vsoon aria-pressed="${!!o.soon}" title="لو الاختيار ده لسه منزلش: العميل هيشوفه بكلمة «قريبًا» ومش هيقدر يختاره (مالوش علاقة بالسعر)">${o.soon ? '⏳ قريبًا' : 'قريبًا'}</button></div>
               ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
               ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.varDef(x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${d.images.length > 1 && o.imgs.length < d.images.length ? '<button type="button" class="vo-mini" data-vimgall>كل الصور</button>' : ''}${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
@@ -1923,6 +1923,10 @@ function renderEditor() {
         <div class="two"><div class="field"><label>السعر بعد الخصم</label><input class="input en" id="f_sale" inputmode="decimal" value="${d.sale_price == null ? '' : esc(d.sale_price)}" placeholder="فاضي = بدون خصم"></div>
           <div class="field"><label>نسبة الخصم %</label><input class="input en" id="f_pct" inputmode="numeric" value="${off || ''}" placeholder="0"></div></div>
         <div class="preview-price" id="pv"></div>
+        <label class="cov-sw soon-sw" ${COLS.coming_soon ? '' : 'style="opacity:.5;pointer-events:none" title="محتاج تشغّل ملف product-soon.sql في Supabase الأول"'}><input type="checkbox" id="f_soon" ${d.coming_soon?'checked':''}><span class="tg" aria-hidden="true"></span>
+          <span class="tx"><b>Coming Soon · قريبًا <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
+            <small class="st-on">المنتج هيظهر بكلمة Coming Soon من غير سعر، ومحدش هيقدر يطلبه لحد ما تقفله.</small>
+            <small class="st-off">المنتج معروض للبيع عادي بسعره.</small></span></label>
         <label class="cov-sw" ${COLS.on_offer ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_offer" ${d.on_offer?'checked':''}><span class="tg" aria-hidden="true"></span>
           <span class="tx"><b>يظهر في "العروض" <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
             <small class="st-on">المنتج هيظهر في تبويب العروض في الموقع.</small>
@@ -2057,6 +2061,7 @@ function renderEditor() {
     $('#f_pct').value = v || ''; $('#f_sale').value = v ? Math.round(pr * (1 - v/100)) : ''; updatePreview(); };
   $('#f_pct').oninput = () => { const v = +$('#f_pct').value, pr = +$('#f_price').value; $('#f_sale').value = v > 0 && v < 100 && pr ? Math.round(pr * (1 - v/100)) : ''; updatePreview(); };
   $('#f_sale').oninput = () => { const pr = +$('#f_price').value, sp = $('#f_sale').value; $('#f_pct').value = pr && sp !== '' && +sp < pr ? Math.round((1 - sp/pr) * 100) : ''; updatePreview(); };
+  if ($('#f_soon')) $('#f_soon').onchange = updatePreview;
   $('#f_price').oninput = () => { const v = +$('#f_pct').value, pr = +$('#f_price').value; if (v && pr) $('#f_sale').value = Math.round(pr * (1 - v/100)); updatePreview(); };
   $('#saveP').onclick = saveProduct;
   if ($('#delP')) $('#delP').onclick = deleteProduct;
@@ -2069,7 +2074,7 @@ function updatePreview() {
   const pr = +$('#f_price').value || 0, spv = $('#f_sale').value, sp = spv === '' ? null : +spv;
   const has = sp != null && sp < pr, off = has ? Math.round((1 - sp/pr) * 100) : 0;
   document.querySelectorAll('#presets [data-pre]').forEach(b => b.classList.toggle('on', +b.dataset.pre === off));
-  if (!pr) return $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new en" style="letter-spacing:.14em">COMING SOON</span></div>`;
+  if (!pr || ($('#f_soon') && $('#f_soon').checked)) return $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new en" style="letter-spacing:.14em">COMING SOON</span></div>`;
   $('#pv').innerHTML = `<span style="font-size:13px;color:var(--muted)">هيظهر للعميل كده:</span><div class="prices"><span class="price-new">${money(has ? sp : pr)}</span>${has ? `<span class="price-old">${money(pr)}</span><span class="badge-off">-${off}%</span>` : ''}</div>`;
 }
 // about + filled spec lines → the one description field the store reads ("البند: القيمة" lines become the specs list)
@@ -2078,7 +2083,7 @@ const composeDesc = d => { const about = String(d._about || '').trim();
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, _about: $('#f_about').value, _ship: $('#f_ship').value, _specs: [...document.querySelectorAll('#specRows .spec-row')].map(r => [r.querySelector('[data-sk]').value, r.querySelector('[data-sv]').value]),
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, coming_soon: $('#f_soon') ? $('#f_soon').checked : !!draft.coming_soon, active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 // a photo dropped off-target must not make the browser open it and lose the unsaved product
@@ -2210,6 +2215,7 @@ async function saveProduct() {
   const cl = vs.flatMap(g => g.o.filter(o => o.c).map(o => ({ c: o.c.toUpperCase(), img: o.img, g: g.k }))).filter((x, k, a) => a.findIndex(y => y.c === x.c) === k).slice(0, 6);
   d.colors = cl.map(x => x.c); d.image_colors = Object.fromEntries(cl.filter(x => x.img).map(x => [x.img, x.c])); d.colors_label = cl.length ? (vs.find(g => g.k === cl[0].g).ar || RC.varDef(cl[0].g).ar) : null;
   if (COLS.on_offer) row.on_offer = !!d.on_offer;
+  if (COLS.coming_soon) row.coming_soon = !!d.coming_soon;
   if (COLS.image_colors) { const m = {}, cl = (d.colors || []).map(c => c.toLowerCase()); Object.entries(d.image_colors || {}).forEach(([u, c]) => { if (d.images.includes(u) && cl.includes(String(c).toLowerCase())) m[u] = c; }); row.image_colors = Object.keys(m).length ? m : null; }
   if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
   if (COLS.kind) row.kind = d.kind; if (COLS.style) row.style = d.style || null; if (COLS.colors) row.colors = d.colors || []; if (COLS.luxury) row.luxury = !!d.luxury; if (COLS.show_colors) row.show_colors = d.show_colors !== false; if (COLS.show_left) { const n = parseInt(d.shown_left, 10); row.shown_left = n >= 0 ? n : null; row.show_left = row.shown_left != null; } if (COLS.colors_label) row.colors_label = (d.colors || []).length ? (d.colors_label || null) : null;
