@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027174522">
+<link rel="stylesheet" href="assets/base.css?v=20261027175627">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -930,7 +930,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261027174522"></script>
+<script src="assets/config.js?v=20261027175627"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1560,7 +1560,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027174522" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027175627" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1594,7 +1594,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027174522" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027175627" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1635,7 +1635,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027174522'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027174522')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027175627'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027175627')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1769,9 +1769,9 @@ function pfApply(list) {
   else if (PF.sort === 'new') out.sort((a, b) => b.id - a.id); else if (PF.sort === 'name') out.sort((a, b) => String(a.name).localeCompare(String(b.name)));
   return out;
 }
-// one switch on the men / women pages: every product there goes Coming Soon at once; switching it off puts back
+// one switch on every products page (regular, Luxury, men, women): every product there goes Coming Soon at once; switching it off puts back
 // only the ones it changed (products that were already Coming Soon before stay so) — remembered per page in this browser
-const BULK_TABS = ['men', 'women', 'lux-men', 'lux-women'];
+const BULK_TABS = ['products', 'lux', 'men', 'women', 'lux-men', 'lux-women'];
 async function bulkSoon(list, on, el) {
   const key = 'dq-bulk-soon-' + tab; let before = []; try { before = JSON.parse(localStorage.getItem(key) || '[]'); } catch (er) {}
   if (on) before = list.filter(p => p.coming_soon).map(p => p.id);
@@ -1792,7 +1792,7 @@ function renderProducts() {
     <div class="head"><div><h1 ${tab === 'lux' ? 'class="en lux-h"' : ''}>${SC.title}</h1><div class="sub">${SC.sub}</div></div>
       <button class="btn btn-amber" id="newP">+ منتج جديد</button></div>
     ${BULK_TABS.includes(tab) && list.length ? `<label class="cov-sw bulk-soon" ${COLS.coming_soon ? '' : 'style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="bulkSoon" ${list.every(p => p.coming_soon) ? 'checked' : ''}><span class="tg" aria-hidden="true"></span>
-      <span class="tx"><b>كل منتجات ${SC.title} Coming Soon <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
+      <span class="tx"><b>${tab === 'products' ? 'كل المنتجات العادية' : 'كل منتجات ' + SC.title} Coming Soon <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
         <small class="st-on">كل المنتجات هنا (${list.length}) ظاهرة Coming Soon ومحدش يقدر يطلبها. اقفله وكله يرجع زي ما كان.</small>
         <small class="st-off">شغّله عشان تخلي كل المنتجات هنا Coming Soon مرة واحدة بدل منتج منتج.</small></span></label>` : ''}
     <div class="seg" id="kindSeg" style="margin-bottom:14px;width:max-content;max-width:100%"><button data-pk="all" class="${pKind==='all'?'on':''}">الكل <span class="en">${list.length}</span></button>${Object.entries(RC.kinds).map(([k,v]) => `<button data-pk="${k}" class="${pKind===k?'on':''}">${v.ar} <span class="en">${list.filter(p => RC.kindOf(p)===k).length}</span></button>`).join('')}</div>
