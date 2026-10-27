@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261026174116">
+<link rel="stylesheet" href="assets/base.css?v=20261027130107">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -338,6 +338,8 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vg-h p{font-size:11.5px;color:var(--muted);margin-top:2px}
 .vg-t{display:flex;gap:6px;flex-wrap:wrap}.vg-t .input{height:38px;width:150px;font-weight:700;font-size:15px}.vg-t .en{width:170px;font:600 12px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
 .vg-none{font-size:12px;color:var(--muted)}
+.vg-new{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;width:100%;min-height:48px;padding:10px 14px;border:1px dashed var(--accent);border-radius:14px;background:transparent;color:var(--accent);font:700 14px var(--f-ui)}.vg-new small{font-weight:500;font-size:12px;color:var(--muted)}.vg-new:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.vg-rm{height:32px;padding:0 12px;border-radius:999px;border:1px solid color-mix(in srgb,#e5534b 55%,var(--line));color:#e5534b;background:transparent;font-size:12px}.vg-rm:hover{background:color-mix(in srgb,#e5534b 10%,transparent)}
 .vg-add{display:flex;gap:8px;align-items:center}
 .vg-ac{position:relative;flex:none;height:40px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border:1px dashed var(--line);border-radius:10px;font-size:12px;color:var(--muted);cursor:pointer}
 .vg-ac i{width:16px;height:16px;border-radius:50%;background:conic-gradient(#e74c3c,#f1c40f,#2ecc71,#3498db,#9b59b6,#e74c3c)}
@@ -900,7 +902,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261026174116"></script>
+<script src="assets/config.js?v=20261027130107"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 // read this before the client consumes the link: a password-recovery link lands here with type=recovery
@@ -1524,7 +1526,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261026174116" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027130107" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1558,7 +1560,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261026174116" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027130107" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1599,7 +1601,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261026174116'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261026174116')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027130107'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027130107')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1850,8 +1852,10 @@ function renderEditor() {
   // the four buyer options always exist in the draft (empty ones are simply not saved)
   // runs on every render: the old single img / dials are folded into imgs / links once and dropped, so removing a photo or a link sticks
   // groups keep the order saved on the product (set with «ترتيب الخانة»); groups not used yet follow in the default order
+  // plus any extra groups added on this product (x1, x2…), which can be removed again
   const vOrd = (Array.isArray(d.variants) ? d.variants : []).map(x => x && x.k), vKey = v => { const i = vOrd.indexOf(v.k); return i < 0 ? 99 + RC.VARS.indexOf(v) : i; };
-  d.variants = RC.VARS.slice().sort((a, b) => vKey(a) - vKey(b)).map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
+  const vDefs = [...RC.VARS, ...[...new Set(vOrd)].map(k => RC.VARS.some(v => v.k === k) ? null : RC.varDef(k)).filter(Boolean)];
+  d.variants = vDefs.sort((a, b) => vKey(a) - vKey(b)).map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
   if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants[0].o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
   $('#editor').innerHTML = `
@@ -1872,8 +1876,8 @@ function renderEditor() {
             <small class="st-on">الصورة الرئيسية هتظهر في كارت المنتج بس، ولما العميل يفتح المنتج مش هيشوفها.</small>
             <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
       <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>اكتب اسم الاختيار، ولو ليه لون اختاره من «لون»، واضغط إضافة، وبعدها اختار صورة الساعة بتاعته. كل اختيار كارت باسم ولون وصورة (اللون والصورة اختياري). أي خانة فيها اختيارات المشتري لازم يختار منها، ولما يختار بتظهرله الصورة، والاختيار بيوصلك مع الطلب</small></h4>
-        ${d.variants.map(g => { const V = RC.VARS.find(v => v.k === g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); const fold = vgFold().includes(g.k), n = g.o.filter(o => String(o.n || '').trim()).length; return `<div class="vg${fold ? ' fold' : ''}" data-vg="${g.k}">
-          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p><button type="button" class="vg-fold" data-vgfold aria-expanded="${!fold}" title="${fold ? 'افتح الخانة' : 'اقفل الخانة'}"><span class="vg-n">${n ? n + ' اختيار' : 'فاضية'}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><label class="vg-ord" title="ترتيب الخانة دي عند العميل: 1 بتظهر الأول"><span>ترتيب الخانة</span><select data-vgord aria-label="ترتيب الخانة">${d.variants.map((_, k) => `<option value="${k}" ${d.variants[k] === g ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label></div>
+        ${d.variants.map(g => { const V = RC.varDef(g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); const fold = vgFold().includes(g.k), n = g.o.filter(o => String(o.n || '').trim()).length; return `<div class="vg${fold ? ' fold' : ''}" data-vg="${g.k}">
+          <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${V.x ? 'اسم الخانة' : esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p><button type="button" class="vg-fold" data-vgfold aria-expanded="${!fold}" title="${fold ? 'افتح الخانة' : 'اقفل الخانة'}"><span class="vg-n">${n ? n + ' اختيار' : 'فاضية'}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><label class="vg-ord" title="ترتيب الخانة دي عند العميل: 1 بتظهر الأول"><span>ترتيب الخانة</span><select data-vgord aria-label="ترتيب الخانة">${d.variants.map((_, k) => `<option value="${k}" ${d.variants[k] === g ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label>${V.x ? '<button type="button" class="vg-rm" data-vgrm title="امسح الخانة دي كلها">× امسح الخانة</button>' : ''}</div>
           ${g.o.length ? `<div class="vo-grid">${g.o.map((o, i) => `<div class="vo${draft._pick === g.k + ':' + i || draft._link === g.k + ':' + i ? ' open' : ''}${RC.optOut(o) ? ' is-out' : ''}" data-vi="${i}">
               ${g.o.length > 1 ? `<label class="vo-ord" title="الترتيب: رقم 1 بيظهر الأول للعميل"><span>ترتيب</span><select data-vord aria-label="ترتيب الاختيار">${g.o.map((_, k) => `<option value="${k}" ${k === i ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label>` : ''}
               <button type="button" class="vo-ph ${o.imgs.length ? 'has' : ''}" data-vpick title="اربطه بصورة أو أكتر">${o.imgs.length > 1 ? `<span class="vo-mos m${Math.min(o.imgs.length, 4)}">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" alt="">`).join('')}</span><em class="en">${o.imgs.length}</em>` : o.imgs.length ? `<img src="${esc(o.imgs[0])}" alt="">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : '<span>+ صورة</span>'}</button>
@@ -1884,12 +1888,13 @@ function renderEditor() {
                 <button type="button" class="vo-mini vo-out ${RC.optOut(o) ? 'on' : ''}" data-vout aria-pressed="${RC.optOut(o)}" title="لو الاختيار ده خلص: العميل هيشوفه مشطوب بكلمة «نفذ» ومش هيقدر يختاره">${RC.optOut(o) ? '✕ مش موجود في الاستور' : '✓ موجود في الاستور'}</button>
                 <button type="button" class="vo-x" data-vrm aria-label="شيل الاختيار">×</button></div>
               ${OG.length ? `<button type="button" class="vo-mini vo-lk ${Object.values(o.links || {}).some(l => l.length) ? 'on' : ''}" data-vlink>🔗 بيتباع مع ${Object.values(o.links || {}).some(l => l.length) ? '(محدد)' : '(كله)'}</button>` : ''}
-              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.VARS.find(v => v.k === x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
+              ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.varDef(x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(y.c)}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${d.images.length > 1 && o.imgs.length < d.images.length ? '<button type="button" class="vo-mini" data-vimgall>كل الصور</button>' : ''}${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
-          <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : g.k === 'back' ? 'مثلاً: ضهر شفاف' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
+          <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : g.k === 'back' ? 'مثلاً: ضهر شفاف' : V.x ? 'اسم الاختيار' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
           ${g.k === 'movement' || g.k === 'back' ? `<div class="vg-quick">${(g.k === 'back' ? ['ضهر مقفول', 'ضهر شفاف', 'ضهر محفور'] : ['Quartz (بطارية)', 'Automatic (أوتوماتيك)', 'Mechanical (تعبئة يدوية)']).filter(n => !g.o.some(o => o.n === n)).map(n => `<button type="button" data-vq="${esc(n)}">+ ${esc(n)}</button>`).join('')}</div>` : ''}
-        </div>`; }).join('')}</section>
+        </div>`; }).join('')}
+        <button type="button" class="vg-new" data-vgnew>+ خانة اختيارات جديدة <small>زي العلبة، الحفر، المقاس…</small></button></section>
       <section class="ed-sec"><h4>بيانات المنتج</h4>
       <div class="two">
         <div class="field"><label>القسم</label><select class="input" id="f_kind" ${COLS.kind ? '' : 'disabled title="محتاج تفعيل من Supabase"'}>${Object.entries(RC.kinds).map(([k,v]) => `<option value="${k}" ${k===d.kind?'selected':''}>${v.ar} — ${v.en}</option>`).join('')}</select></div>
@@ -1964,7 +1969,17 @@ function renderEditor() {
     box.querySelector('[data-vn]').value = box.querySelector('[data-vnh]').value = ''; delete ci.dataset.on;
     syncDraft(); g.o.push(c ? { n, c, imgs: [] } : { n, imgs: [] }); draft._pick = draft.images.length ? g.k + ':' + (g.o.length - 1) : null; renderEditor();
     const nc = document.querySelector(`.vg[data-vg="${g.k}"] .vo:last-child`); nc && nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
-  $('#varSec').addEventListener('click', e => { const box = e.target.closest('.vg'); if (!box) return; const { g, i, o } = vOpt(e.target);
+  $('#varSec').addEventListener('click', e => {
+    // an extra group: added at the end (opened, title focused), removed with everything in it
+    if (e.target.closest('[data-vgnew]')) { if (draft.variants.filter(x => RC.varDef(x.k).x).length >= 5) return toast('أقصى حاجة 5 خانات إضافية', 'err');
+      syncDraft(); let n = 1; while (draft.variants.some(x => x.k === 'x' + n)) n++; const k = 'x' + n; draft.variants.push({ k, ar: '', en: '', o: [] });
+      try { localStorage.setItem('dq-vg-fold', JSON.stringify(vgFold().filter(x => x !== k))); } catch (er) {}
+      renderEditor(); const nb = document.querySelector(`.vg[data-vg="${k}"]`); if (nb) { nb.scrollIntoView({ block: 'center', behavior: 'smooth' }); nb.querySelector('[data-vtar]').focus({ preventScroll: true }); } return; }
+    const box = e.target.closest('.vg'); if (!box) return;
+    if (e.target.closest('[data-vgrm]')) { const g = draft.variants.find(x => x.k === box.dataset.vg); if (!g) return;
+      if (g.o.length && !confirm(`تمسح خانة «${g.ar || 'اختيار إضافي'}» بكل اختياراتها؟`)) return;
+      syncDraft(); draft.variants = draft.variants.filter(x => x !== g); draft.variants.forEach(x => x.o.forEach(y => { if (y.links) delete y.links[g.k]; })); draft._pick = draft._link = null; renderEditor(); return; }
+    const { g, i, o } = vOpt(e.target);
     const ad = e.target.closest('[data-vadd]'), qk = e.target.closest('[data-vq]'), im = e.target.closest('[data-vimg]');
     if (ad) return vAdd(box, box.querySelector('[data-vn]').value);
     if (qk) return vAdd(box, qk.dataset.vq);
@@ -2185,11 +2200,12 @@ async function saveProduct() {
   const vs = (d.variants || []).map(g => ({ ...g, o: g.o.map(o => { const imgs = (o.imgs || []).filter(u => d.images.includes(u)); // links: only to options that still exist; a list naming everything in a group means no limit there
       const lk = Object.fromEntries(d.variants.filter(x => x.k !== g.k).map(x => { const all = x.o.map(y => String(y.n || '').trim()).filter(Boolean), l = [...new Set(((o.links || {})[x.k] || []).map(v => String(v).trim()))].filter(v => all.includes(v)); return [x.k, l.length && l.length < all.length ? l : null]; }).filter(([, l]) => l));
       return { n: String(o.n || '').trim().slice(0, 60), d: String(o.d || '').trim().slice(0, 120) || null, c: o.c || null, links: Object.keys(lk).length ? lk : null, img: imgs[0] || null, imgs: imgs.length > 1 ? imgs : null, x: RC.optX(o) || null, out: RC.optOut(o) || null }; }).filter(o => o.n) }));
-  const dup = vs.find(g => new Set(g.o.map(o => o.n)).size < g.o.length); if (dup) return toast(`فيه اختيارين بنفس الاسم في ${RC.VARS.find(v => v.k === dup.k).ar}`, 'err');
-  if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.VARS.find(v => v.k === g.k); return { k: g.k, ar: String(g.ar || '').trim().slice(0, 30) || V.ar, en: String(g.en || '').trim().slice(0, 30) || V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
+  const dup = vs.find(g => new Set(g.o.map(o => o.n)).size < g.o.length); if (dup) return toast(`فيه اختيارين بنفس الاسم في ${dup.ar || RC.varDef(dup.k).ar}`, 'err');
+  const noT = vs.find(g => g.o.length && RC.varDef(g.k).x && !String(g.ar || '').trim()); if (noT) return toast('اكتب اسم الخانة الإضافية الأول', 'err');
+  if (COLS.variants) row.variants = vs.filter(g => g.o.length).map(g => { const V = RC.varDef(g.k); return { k: g.k, ar: String(g.ar || '').trim().slice(0, 30) || V.ar, en: String(g.en || '').trim().slice(0, 30) || V.en, o: g.o.map(o => Object.fromEntries(Object.entries(o).filter(([, v]) => v))) }; });
   // the store cards keep showing colour dots: they come from the options that have a colour (first 6), each with its photo
   const cl = vs.flatMap(g => g.o.filter(o => o.c).map(o => ({ c: o.c.toUpperCase(), img: o.img, g: g.k }))).filter((x, k, a) => a.findIndex(y => y.c === x.c) === k).slice(0, 6);
-  d.colors = cl.map(x => x.c); d.image_colors = Object.fromEntries(cl.filter(x => x.img).map(x => [x.img, x.c])); d.colors_label = cl.length ? RC.VARS.find(v => v.k === cl[0].g).ar : null;
+  d.colors = cl.map(x => x.c); d.image_colors = Object.fromEntries(cl.filter(x => x.img).map(x => [x.img, x.c])); d.colors_label = cl.length ? (vs.find(g => g.k === cl[0].g).ar || RC.varDef(cl[0].g).ar) : null;
   if (COLS.on_offer) row.on_offer = !!d.on_offer;
   if (COLS.image_colors) { const m = {}, cl = (d.colors || []).map(c => c.toLowerCase()); Object.entries(d.image_colors || {}).forEach(([u, c]) => { if (d.images.includes(u) && cl.includes(String(c).toLowerCase())) m[u] = c; }); row.image_colors = Object.keys(m).length ? m : null; }
   if (COLS.shipping_note) { const t = String(d._ship || '').trim(); row.shipping_note = !t || t === shipDef(d.kind) ? null : t; }
