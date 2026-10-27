@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261027180319">
+<link rel="stylesheet" href="assets/base.css?v=20261027180525">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -930,7 +930,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261027180319"></script>
+<script src="assets/config.js?v=20261027180525"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1560,7 +1560,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027180319" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261027180525" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1594,7 +1594,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027180319" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261027180525" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1635,7 +1635,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027180319'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027180319')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261027180525'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261027180525')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -1848,9 +1848,10 @@ document.addEventListener('click', async e => {
     // added to <body> so no moving/transformed parent shifts it away from the pill
     document.body.insertAdjacentHTML('beforeend', `<div class="stk-menu" role="menu" data-p="${p.id}">${[['in', 'Stock', 'متاح للطلب'], ['out', 'Out of Stock', 'ظاهر بس مش هيتطلب'], ['soon', 'Coming Soon', 'من غير سعر للعميل']].map(([v, t, h]) => `<button type="button" role="menuitem" class="${v}${v === cur ? ' cur' : ''}" data-stset="${v}" ${v === 'soon' && !COLS.coming_soon ? 'disabled' : ''}><i></i><span class="en">${t}</span><small>${h}</small></button>`).join('')}</div>`);
     // fixed to the screen so the table's scroll box doesn't cut it; opens upward when there's no room below
-    const m = document.body.lastElementChild, b = sk.getBoundingClientRect(), h = m.offsetHeight, w = m.offsetWidth;
-    m.style.top = (innerHeight - b.bottom > h + 12 ? b.bottom + 6 : Math.max(8, b.top - h - 6)) + 'px';
-    m.style.left = Math.max(8, Math.min(innerWidth - w - 8, (document.dir === 'rtl' || document.documentElement.dir === 'rtl' ? b.right - w : b.left))) + 'px';
+    // big screens zoom the page (html zoom 1.2/1.5): measure in screen px, then divide back into the page's px
+    const m = document.body.lastElementChild, b = sk.getBoundingClientRect(), z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1, h = m.offsetHeight * z, w = m.offsetWidth * z;
+    m.style.top = (innerHeight - b.bottom > h + 12 ? b.bottom + 6 : Math.max(8, b.top - h - 6)) / z + 'px';
+    m.style.left = Math.max(8, Math.min(innerWidth - w - 8, b.right - w)) / z + 'px';
     return; }
   const pd = e.target.closest('[data-pdel]');
   if (pd) { e.stopPropagation(); const p = products.find(x => x.id === +pd.dataset.pdel); if (p) once('delprod', () => deleteProduct_(p)); return; }
