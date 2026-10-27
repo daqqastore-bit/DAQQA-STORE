@@ -47,8 +47,10 @@ RC.VARS = [
   { k: 'back', ar: 'ضهر الساعة', en: 'Case Back', hint: 'مقفول، شفاف يبان منه الماكينة، أو محفور عليه اسم أو نقشة' },
   { k: 'movement', ar: 'الماكينة', en: 'Movement', hint: 'Quartz بالبطارية · Automatic بتتشحن من حركة المعصم · Mechanical تعبئة يدوية' }
 ];
-RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g => g && RC.VARS.some(v => v.k === g.k) && Array.isArray(g.o) && g.o.some(o => o && o.n))
-  .map(g => { const V = RC.VARS.find(v => v.k === g.k); return { ...V, ar: String(g.ar || '').trim() || V.ar, en: String(g.en || '').trim() || V.en, o: g.o.filter(o => o && o.n).map(o => { const imgs = [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))]; return { ...o, imgs, img: imgs[0] || null }; }) }; })
+// extra groups the admin adds per product (k = x1, x2…): same as the fixed ones, with a title the admin writes
+RC.varDef = (k) => RC.VARS.find(v => v.k === k) || (/^x\d{1,3}$/.test(String(k)) ? { k, ar: 'اختيار إضافي', en: 'Option', hint: 'خانة إضافية: اكتب اسمها فوق (مثلاً: العلبة، الحفر، المقاس) وضيف اختياراتها', x: true } : null);
+RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g => g && RC.varDef(g.k) && Array.isArray(g.o) && g.o.some(o => o && o.n))
+  .map(g => { const V = RC.varDef(g.k); return { ...V, ar: String(g.ar || '').trim() || V.ar, en: String(g.en || '').trim() || V.en, o: g.o.filter(o => o && o.n).map(o => { const imgs = [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))]; return { ...o, imgs, img: imgs[0] || null }; }) }; })
   ; // groups show in the order they were saved (the admin sets it per product with «ترتيب الخانة»)
 // an option can cost more (o.x = extra EGP added to the piece price when it's picked); the order function adds the same on the server
 // an option the admin marked out of stock (o.out): shown crossed with «نفذ», can't be picked or ordered
@@ -78,7 +80,7 @@ RC.optFits = (p, k, n, sel) => { const vs = RC.variants(p), me = (vs.find(g => g
   return vs.every(g => { if (g.k === k || !sel[g.k]) return true; const other = g.o.find(o => o.n === sel[g.k]);
     const a = RC.optLinks(me, g.k), b = RC.optLinks(other, k); return (!a || a.includes(sel[g.k])) && (!b || b.includes(n)); }); };
 // the picked options as readable text: "المينا: أسود · الماكينة: Automatic"
-RC.optText = (opts, sep = ' · ') => (Array.isArray(opts) ? opts.map(o => `${o.g}: ${o.v}`) : Object.entries(opts || {}).map(([k, v]) => `${(RC.VARS.find(x => x.k === k) || { ar: k }).ar}: ${v}`)).join(sep);
+RC.optText = (opts, sep = ' · ') => (Array.isArray(opts) ? opts.map(o => `${o.g}: ${o.v}`) : Object.entries(opts || {}).map(([k, v]) => `${(RC.varDef(k) || { ar: k }).ar}: ${v}`)).join(sep);
 // product links: product.html?p=<id>-<name-slug>  (the id is what's used; the slug is for people and Google)
 RC.slug = (p) => p.id + '-' + String(p.name || '').toLowerCase().replace(/[^a-z0-9؀-ۿ]+/g, '-').replace(/^-+|-+$/g, '');
 RC.productUrl = (p) => 'product.html?p=' + encodeURIComponent(RC.slug(p));
@@ -164,7 +166,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261026174116';
+RC.build = '20261027130107';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
