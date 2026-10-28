@@ -398,13 +398,13 @@
   const fkSeen = () => { try { const v = JSON.parse(sessionStorage.getItem('dq-fk') || 'null'); return v && v.k === fkKey ? v.i : []; } catch (e) { return []; } };
   const fkMark = i => { try { sessionStorage.setItem('dq-fk', JSON.stringify({ k: fkKey, i: fkSeen().concat(i) })); } catch (e) {} };
   function fakeRun() {
-    const f = RC.fakeLive(DQ.settings, RC.now()), key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
+    const f = RC.fakeLive(DQ.settings, RC.now(), 'site'), key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
     if (key === fkKey) return; fkKey = key; clearTimeout(fkT);
     if (!f) return document.querySelectorAll('.fk-pop').forEach(fkClose);
     RC.syncClock().then(() => { if (fkKey === key) fkNext(); });
   }
   function fkNext() {
-    clearTimeout(fkT); const now = RC.now(), f = RC.fakeLive(DQ.settings, now); if (!f) return;
+    clearTimeout(fkT); const now = RC.now(), f = RC.fakeLive(DQ.settings, now, 'site'); if (!f) return;
     const seen = new Set(fkSeen()), e = RC.fakePlan(f, DQ.products).find(x => !seen.has(x.i) && x.t > now - 4000); if (!e) return;
     // the opening animation / loader still covering the page: wait for it (a few seconds at most) instead of showing it underneath
     const veil = () => { const L = $('#dqLoad'), X = $('.lx-intro:not(.open)'); return document.documentElement.classList.contains('intro-on') || (L && getComputedStyle(L).display !== 'none') || (X && getComputedStyle(X).display !== 'none' && !X.hidden); };

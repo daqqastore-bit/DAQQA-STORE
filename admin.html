@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028133221">
+<link rel="stylesheet" href="assets/base.css?v=20261028133627">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028133221"></script>
+<script src="assets/config.js?v=20261028133627"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1151,7 +1151,7 @@ async function boot() {
   else go(h0 || 'overview');
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   restoreDraft();
-  listen(); askNotify();
+  listen(); askNotify(); fkAdmRun();
   // orders that came in while the panel was closed reach the sheet when it opens (merged, older rows stay; at most every 20 min)
   try { if (Date.now() - (+localStorage.getItem('dq-sheet-merge') || 0) > 12e5) { localStorage.setItem('dq-sheet-merge', Date.now()); sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow), offline: offs.map(offRow) }); } } catch (e) {}
 }
@@ -1228,6 +1228,9 @@ function listen() {
     freshIds.add(payload.new.id); cash(); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); desktopNotify(payload.new);
     await Promise.all([loadOrders(), loadProducts(), payload.new && payload.new.user_id && !mailOf(payload.new.user_id) ? loadUsers() : null]); renderTabs(); go(tab, true);
     const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
+  }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_settings'}, payload => {
+    // a fake-notification run started / stopped from another device reaches this dashboard too
+    if (!payload.new || !payload.new.perks) return; settings.perks = payload.new.perks; fkAdmRun(); if (tab === 'fake') renderFake();
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_orders'}, payload => {
     // a customer cancelled their order from the store
     const o = orders.find(x => x.id === payload.new.id); if (!o || o.status === payload.new.status) return;
@@ -1279,7 +1282,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028133221'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028133627'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1848,7 +1851,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028133221" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028133627" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1882,7 +1885,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028133221" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028133627" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1923,7 +1926,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028133221'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028133221')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028133627'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028133627')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3080,7 +3083,7 @@ function ogInit() {
 }
 /* ---------- نوتفكشن وهمية: «فلان طلب …» pop-ups on the store for a set time, display only (settings.perks.fake, plan in RC.fakePlan) ---------- */
 let fkTick = 0;
-const fkIn = (() => { let v = null; try { v = JSON.parse(localStorage.getItem('dq-fake-in') || 'null'); } catch (e) {} v = v || { u: 'm', v: 5, n: 10 }; if (!v.u) { v.u = 'm'; v.v = v.min; } return v; })();   // u = 's' seconds | 'm' minutes
+const fkIn = (() => { let v = null; try { v = JSON.parse(localStorage.getItem('dq-fake-in') || 'null'); } catch (e) {} v = v || { u: 'm', v: 5, n: 10 }; if (!v.u) { v.u = 'm'; v.v = v.min; } if (!v.to) v.to = 'admin'; return v; })();   // u = 's' seconds | 'm' minutes
 const fkSaveIn = () => { try { localStorage.setItem('dq-fake-in', JSON.stringify(fkIn)); } catch (e) {} };
 const fkMins = () => fkIn.u === 's' ? (+fkIn.v || 0) / 60 : +fkIn.v || 0;
 const fkDur = min => { const t = Math.round(min * 60); return t < 60 ? `${t} ثانية` : t % 60 ? `${fkClock(t * 1000)} دقيقة` : `${t / 60} دقيقة`; };
@@ -3103,19 +3106,21 @@ function renderFake() {
     </div>`;
   }
   $('#main').innerHTML = `
-    <div class="head"><div><h1>نوتفكشن وهمية</h1><div class="sub">إشعارات «فلان من القاهرة طلب …» بتظهر لكل اللي فاتحين الموقع في الوقت اللي تحدده — عرض بس، مفيش أي طلب بيتعمل</div></div></div>
+    <div class="head"><div><h1>نوتفكشن وهمية</h1><div class="sub">طلبات وهمية بصوت وإشعار في الأدمن، أو «فلان طلب …» للي فاتحين الموقع، في الوقت اللي تحدده — عرض بس، مفيش أي طلب بيتسجل</div></div></div>
     <div class="panel set-card">
       <div class="fk-in">
         <div class="field"><label class="fk-lb">المدة <span class="fk-u"><button type="button" data-fu="s" class="${fkIn.u === 's' ? 'on' : ''}">ثواني</button><button type="button" data-fu="m" class="${fkIn.u === 's' ? '' : 'on'}">دقايق</button></span></label><input class="input en" id="fkMin" type="number" inputmode="numeric" min="1" max="${fkIn.u === 's' ? 3600 : 240}" value="${+fkIn.v || ''}">${fkIn.u === 's' ? chips('v', [10, 15, 20, 30, 45, 60, 90], ' ث') : chips('v', [1, 2, 5, 10, 15, 30, 60], ' د')}</div>
         <div class="field"><label>عدد النوتفكشنز</label><input class="input en" id="fkN" type="number" inputmode="numeric" min="1" max="500" value="${n || ''}">${chips('n', [3, 5, 10, 15, 20, 30], '')}</div>
       </div>
-      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيظهر <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة تطلع مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج متاح. اللي فاتح الموقع بس هو اللي بيشوفها.`}</div>
+      <div class="field" style="margin:0"><label>يوصل فين</label><div class="fk-q fk-to">${[['admin', 'الأدمن · صوت + إشعار طلب'], ['site', 'الموقع · للزوار'], ['both', 'الاتنين']].map(([k, l]) => `<button type="button" class="gchip ${fkIn.to === k ? 'on' : ''}" data-fto="${k}">${l}</button>`).join('')}</div></div>
+      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيوصل <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج. ${fkIn.to === 'site' ? 'بتظهر للي فاتحين الموقع بس.' : `في الأدمن: صوت الكاش + «طلب جديد» + إشعار على الجهاز، زي الطلب الحقيقي بالظبط${fkIn.to === 'both' ? '، وكمان بتظهر للي فاتحين الموقع' : ''}. مفيش أي طلب بيتسجل. لازم لوحة التحكم تكون مفتوحة والشاشة شغالة.`}`}</div>
       <div class="set-acts"><button class="btn btn-primary" type="button" id="fkGo" ${bad ? 'disabled' : ''}>${run ? 'ابدأ من جديد' : 'ابدأ'}</button></div>
     </div>
     ${live}`;
   const upd = () => { fkSaveIn(); renderFake(); };
   $('#fkMin').onchange = e => { fkIn.v = Math.max(0, Math.min(fkIn.u === 's' ? 3600 : 240, Math.round(+e.target.value || 0))); upd(); };
   $('#main').querySelectorAll('[data-fu]').forEach(b => b.onclick = () => { if (fkIn.u === b.dataset.fu) return; const sec = Math.round(fkMins() * 60); fkIn.u = b.dataset.fu; fkIn.v = fkIn.u === 's' ? Math.min(3600, sec) : Math.max(1, Math.round(sec / 60)); upd(); });
+  $('#main').querySelectorAll('[data-fto]').forEach(b => b.onclick = () => { fkIn.to = b.dataset.fto; upd(); });
   $('#fkN').onchange = e => { fkIn.n = Math.max(0, Math.min(500, Math.round(+e.target.value || 0))); upd(); };
   $('#main').querySelectorAll('[data-fq]').forEach(b => b.onclick = () => { fkIn[b.dataset.fq] = +b.dataset.v; upd(); });
   $('#fkGo').onclick = () => once('fkGo', async () => {
@@ -3123,7 +3128,8 @@ function renderFake() {
     if (!m || !k || !pool.length) return renderFake();
     if (run && !(await confirmBox('فيه نوتفكشنز شغالة دلوقتي. تبدأ من جديد؟', 'ابدأ'))) return;
     await RC.syncClock();
-    await fkSave({ on: true, at: Math.round(RC.now()), min: m, n: k, seed: 1 + Math.floor(Math.random() * 2147483646) }, 'اشتغلت ✓ النوتفكشنز هتبدأ تظهر في الموقع');
+    const base = orders.reduce((x, o) => Math.max(x, +o.seq || 0), 0);   // fake order numbers carry on after the last real one
+    await fkSave({ on: true, at: Math.round(RC.now()), min: m, n: k, to: fkIn.to, base, seed: 1 + Math.floor(Math.random() * 2147483646) }, fkIn.to === 'site' ? 'اشتغلت ✓ النوتفكشنز هتبدأ تظهر في الموقع' : 'اشتغلت ✓ أول طلب وهمي جاي');
   });
   const st = $('#fkStop'); if (st) st.onclick = () => once('fkStop', () => fkSave({ ...f, on: false, stop: Math.round(RC.now()) }, 'اتوقفت'));
   clearInterval(fkTick); fkTick = 0;
@@ -3133,7 +3139,30 @@ async function fkSave(fake, ok) {
   const perks = { ...(settings.perks || {}), fake };
   const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
   if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
-  settings.perks = perks; toast(ok, 'ok'); renderFake();
+  settings.perks = perks; toast(ok, 'ok'); renderFake(); fkAdmRun();
+}
+/* the same plan as fake order alerts on every open dashboard (f.to admin / both): cash sound + «طلب جديد» toast + a device notification — nothing is saved */
+let fkAdmKey = '', fkAdmT = 0;
+const fkAdmSeen = () => { try { const v = JSON.parse(sessionStorage.getItem('dq-fk-adm') || 'null'); return v && v.k === fkAdmKey ? v.i : []; } catch (e) { return []; } };
+const fkAdmMark = i => { try { sessionStorage.setItem('dq-fk-adm', JSON.stringify({ k: fkAdmKey, i: fkAdmSeen().concat(i) })); } catch (e) {} };
+function fkAdmRun() {
+  const f = RC.fakeLive(settings, RC.now(), 'admin'), key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
+  if (key === fkAdmKey) return; fkAdmKey = key; clearTimeout(fkAdmT);
+  if (f) RC.syncClock().then(() => { if (fkAdmKey === key) fkAdmNext(); });
+}
+function fkAdmNext() {
+  clearTimeout(fkAdmT); const now = RC.now(), f = RC.fakeLive(settings, now, 'admin'); if (!f) return;
+  const seen = new Set(fkAdmSeen()), e = RC.fakePlan(f, products).find(x => !seen.has(x.i) && x.t > now - 4000); if (!e) return;
+  fkAdmT = setTimeout(() => { if (RC.now() - e.t < 10000) fkAdmFire(f, e); fkAdmMark(e.i); fkAdmNext(); }, Math.max(0, e.t - now));
+}
+function fkAdmFire(f, e) {
+  const p = products.find(x => x.id === e.pid); if (!p) return;
+  const no = '#' + ((+f.base || 0) + e.i + 1), total = finalPrice(p) + (+settings.shipping_fee || 0), title = `طلب جديد ${no} — ${money(total)}`, body = `${e.name} ${e.last} · ${e.city}\n${p.name} × 1`;
+  cash(); toast(`طلب جديد ${no}`, 'ok');
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const opt = { body, tag: 'dq-fk-' + e.i, renotify: true, icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: 'admin.html#orders' } };
+  ('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then(r => r ? r.showNotification(title, opt) : Promise.reject()) : Promise.reject())
+    .catch(() => { try { new Notification(title, opt); } catch (er) {} });
 }
 function renderSettings() {
   const s = settings;
