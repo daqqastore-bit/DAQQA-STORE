@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028153109">
+<link rel="stylesheet" href="assets/base.css?v=20261028154303">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028153109"></script>
+<script src="assets/config.js?v=20261028154303"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1226,7 +1226,7 @@ async function loadSettings() { const {data} = await sb.from('shop_settings').se
 function listen() {
   if (channel) sb.removeChannel(channel);
   channel = sb.channel('rc-orders').on('postgres_changes', {event:'INSERT', schema:'public', table:'shop_orders'}, async payload => {
-    freshIds.add(payload.new.id); sndOnce(payload.new.code); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); desktopNotify(payload.new);
+    freshIds.add(payload.new.id); sndOnce(payload.new.code); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); onClaim('n:' + payload.new.code, () => desktopNotify(payload.new));
     await Promise.all([loadOrders(), loadProducts(), payload.new && payload.new.user_id && !mailOf(payload.new.user_id) ? loadUsers() : null]); renderTabs(); go(tab, true);
     const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_settings'}, payload => {
@@ -1236,7 +1236,7 @@ function listen() {
     // a customer cancelled their order from the store
     const o = orders.find(x => x.id === payload.new.id); if (!o || o.status === payload.new.status) return;
     Object.assign(o, payload.new);
-    if (o.status === 'cancelled') { beep(); toast(`${o.cancelled_by === 'customer' ? 'العميل ' + o.customer_name + ' لغى' : 'اتلغى'} الطلب ${oLbl(o)}`, 'err'); loadProducts(); sheetOrder(o); }
+    if (o.status === 'cancelled') { sndOnce('x:' + o.code); toast(`${o.cancelled_by === 'customer' ? 'العميل ' + o.customer_name + ' لغى' : 'اتلغى'} الطلب ${oLbl(o)}`, 'err'); loadProducts(); sheetOrder(o); }
     renderTabs(); refreshOrderUI(o);
   }).subscribe();
 }
@@ -1283,10 +1283,16 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261028153109'); orderSnd.preload = 'auto';
-// one cash sound per alert: a push for an order the live connection (or a fake alert) already rang for stays quiet
-const sndSeen = new Map();
-function sndOnce(tag) { const now = Date.now(); sndSeen.forEach((t, k) => now - t > 6e4 && sndSeen.delete(k)); if (tag && sndSeen.has(tag)) return; if (tag) sndSeen.set(tag, now); cash(); }
+const orderSnd = new Audio('assets/order.mp3?v=20261028154303'); orderSnd.preload = 'auto';
+// one alert per order per device: every open tab / window of the dashboard hears the same order, and the live connection and the push
+// both report it. Only one tab rings (it holds the «dq-alert-lead» lock; when it closes the next tab takes over), and it rings once
+// per order even after a reload (claimed keys are kept for 10 minutes).
+let alertLead = !(navigator.locks && navigator.locks.request);
+if (!alertLead) navigator.locks.request('dq-alert-lead', () => { alertLead = true; return new Promise(() => {}); }).catch(() => { alertLead = true; });
+function claim(key) { try { const now = Date.now(), m = JSON.parse(localStorage.getItem('dq-alerted') || '{}'); for (const k in m) if (now - m[k] > 6e5) delete m[k];
+  if (m[key]) return false; m[key] = now; localStorage.setItem('dq-alerted', JSON.stringify(m)); return true; } catch (e) { return true; } }
+const onClaim = (key, fn) => { if (alertLead && claim(key)) fn(); };
+function sndOnce(tag) { if (!tag) return cash(); onClaim('s:' + tag, cash); }
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1303,7 +1309,6 @@ function fkClear() {
 const oNum = o => o && o.seq ? '#' + o.seq : '';
 const oNo = o => o && o.seq ? `<span class="o-no">#${o.seq}</span>` : '';
 const oLbl = o => [oNum(o), o.code].filter(Boolean).join(' · ');
-function beep() { try { const a = new (window.AudioContext || window.webkitAudioContext)(); [880, 1320].forEach((f, i) => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = f; o.connect(g); g.connect(a.destination); g.gain.setValueAtTime(.0001, a.currentTime + i*.15); g.gain.exponentialRampToValueAtTime(.2, a.currentTime + i*.15 + .02); g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + i*.15 + .25); o.start(a.currentTime + i*.15); o.stop(a.currentTime + i*.15 + .3); }); } catch(e) {} }
 
 /* ---------- nav ---------- */
 function renderTabs() {
@@ -1866,7 +1871,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028153109" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028154303" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1900,7 +1905,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028153109" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028154303" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1941,7 +1946,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028153109'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028153109')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028154303'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028154303')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3194,10 +3199,13 @@ function fkMsg(f, e) {
 function fkAdmFire(f, e) {
   const m = fkMsg(f, e); if (!m) return;
   // the sound plays even with the page in the background (on iPhone that shows as a «now playing» player, which is how it reached the phone before)
-  sndSeen.set(m.tag, Date.now()); fkCash(); toast(`طلب جديد ${m.no}`, 'ok');
-  // the page shows its own notification too; a server push for the same alert carries the same tag, so it replaces it instead of doubling
+  if (!document.hidden) toast(`طلب جديد ${m.no}`, 'ok');
+  // only one tab of this device rings and shows the notification (s: also keeps the server push for it quiet), and never twice for one alert
+  onClaim('f:' + m.tag, () => { claim('s:' + m.tag); fkCash(); fkNote(m); });
+}
+function fkNote(m) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const opt = { body: m.body, tag: m.tag, renotify: true, silent: true, icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: 'admin.html#orders' } };
+  const opt = { body: m.body, tag: m.tag, silent: true, icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: 'admin.html#orders' } };
   ('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then(r => r ? r.showNotification(m.title, opt) : Promise.reject()) : Promise.reject())
     .catch(() => { try { new Notification(m.title, opt); } catch (er) {} });
 }
@@ -3775,7 +3783,7 @@ async function resync(force) {
   const before = new Set(orders.map(o => o.id));
   await Promise.all([loadOrders(), loadProducts(), loadFin(), loadSettings()]);
   const fresh = before.size ? orders.filter(o => !before.has(o.id)) : [];
-  if (fresh.length) { fresh.forEach(o => { freshIds.add(o.id); sheetOrder(o); }); cash(); toast(fresh.length === 1 ? `طلب جديد ${oLbl(fresh[0])}` : `${fresh.length} طلبات جديدة`, 'ok'); }
+  if (fresh.length) { fresh.forEach(o => { freshIds.add(o.id); sheetOrder(o); sndOnce(o.code); }); toast(fresh.length === 1 ? `طلب جديد ${oLbl(fresh[0])}` : `${fresh.length} طلبات جديدة`, 'ok'); }
   listen(); renderTabs();
   if (!adminBusy() && !$('#editor').classList.contains('on')) go(tab, true);
 }
@@ -3784,7 +3792,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) wake
 addEventListener('focus', wake); addEventListener('online', wake);
 addEventListener('pageshow', e => { if (e.persisted) wake(); });
 // a push that lands while the app is open refreshes it straight away (sw.js passes it on)
-if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.type === 'dq-push') { sndOnce(e.data.tag); resync(true); } });
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.type === 'dq-push') { sndOnce(e.data.tag); if (!/^dq-fk-/.test(e.data.tag || '')) resync(true); } });
 
 boot();
 </script>

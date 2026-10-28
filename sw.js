@@ -23,7 +23,7 @@ self.addEventListener('push', e => {
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).catch(() => []).then(ws => {
     const open = ws.filter(w => w.url.includes('admin.html'));
     open.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }));
-    return self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: true, requireInteraction: true, silent: open.length > 0,
+    return self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: !open.length, requireInteraction: true, silent: open.length > 0,
       icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: d.url || 'admin.html#orders' } });
   }));
 });
