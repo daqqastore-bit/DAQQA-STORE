@@ -18,16 +18,10 @@ self.addEventListener('fetch', e => {
 // order notifications for the admin (sent by the order-push function when a new order comes in)
 self.addEventListener('push', e => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch (er) { d = { title: 'DAQQA', body: e.data ? e.data.text() : '' }; }
-  // an open dashboard reloads its orders right away and plays the shop's cash sound, so the notification itself stays silent then
-  // (with the dashboard closed it rings with the device's own notification sound — a website can't give it another one)
-  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).catch(() => []).then(ws => {
-    const admin = ws.filter(w => w.url.includes('admin.html'));
-    admin.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }));
-    // only a dashboard that's actually on screen counts: on iPhone the home-screen app stays «open» in the background, where it can't play anything
-    const open = admin.filter(w => w.visibilityState === 'visible');
-    return self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: true, requireInteraction: true, silent: open.length > 0,
-      icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: d.url || 'admin.html#orders' } });
-  }));
+  // an open dashboard reloads its orders right away
+  self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(ws => ws.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }))).catch(() => {});
+  e.waitUntil(self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: true, requireInteraction: true,
+    icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: d.url || 'admin.html#orders' } }));
 });
 self.addEventListener('notificationclick', e => {
   e.notification.close();
