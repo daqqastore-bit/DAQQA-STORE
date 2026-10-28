@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028134154">
+<link rel="stylesheet" href="assets/base.css?v=20261028134300">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028134154"></script>
+<script src="assets/config.js?v=20261028134300"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1282,8 +1282,18 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028134154'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028134300'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
+// fake alerts: every one plays the whole cash sound (Web Audio, so a new one never cuts the last one off), each starting a little after the one before
+let fkCtx = null, fkBuf = null, fkAt = 0;
+const fkLoad = () => { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; fkCtx = fkCtx || new C(); if (fkCtx.state === 'suspended') fkCtx.resume().catch(() => {});
+  return fkBuf ? Promise.resolve(fkBuf) : fetch(orderSnd.src).then(r => r.arrayBuffer()).then(a => new Promise((res, rej) => fkCtx.decodeAudioData(a, res, rej))).then(b => fkBuf = b); };
+['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function fkUnlock() { removeEventListener('pointerdown', fkUnlock, true); removeEventListener('keydown', fkUnlock, true); try { const p = fkLoad(); p && p.catch(() => {}); } catch (e) {} }, true));
+function fkCash() {
+  try { const p = fkLoad(); if (!p) return cash();
+    p.then(b => { const t = Math.max(fkCtx.currentTime + .02, fkAt); fkAt = t + .8; const s = fkCtx.createBufferSource(), g = fkCtx.createGain(); g.gain.value = .85; s.buffer = b; s.connect(g); g.connect(fkCtx.destination); s.start(t); }).catch(cash);
+  } catch (e) { cash(); }
+}
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
 const oNum = o => o && o.seq ? '#' + o.seq : '';
@@ -1851,7 +1861,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028134154" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028134300" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1885,7 +1895,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028134154" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028134300" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1926,7 +1936,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028134154'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028134154')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028134300'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028134300')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3158,7 +3168,7 @@ function fkAdmNext() {
 function fkAdmFire(f, e) {
   const p = products.find(x => x.id === e.pid); if (!p) return;
   const no = '#' + ((+f.base || 0) + e.i + 1), zone = (Array.isArray(settings.shipping_zones) ? settings.shipping_zones : []).find(z => z && Array.isArray(z.cities) && z.cities.includes(e.city)), total = finalPrice(p) + (zone ? +zone.price || 0 : +settings.shipping_fee || 0), title = `طلب جديد ${no} — ${money(total)}`, body = `${e.name} ${e.last} · ${e.city}\n${p.name} × 1`;
-  cash(); toast(`طلب جديد ${no}`, 'ok');
+  fkCash(); toast(`طلب جديد ${no}`, 'ok');
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   const opt = { body, tag: 'dq-fk-' + e.i, renotify: true, icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: 'admin.html#orders' } };
   ('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then(r => r ? r.showNotification(title, opt) : Promise.reject()) : Promise.reject())
