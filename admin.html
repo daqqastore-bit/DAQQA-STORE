@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028012735">
+<link rel="stylesheet" href="assets/base.css?v=20261028013522">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -872,6 +872,85 @@ html{--z:1}
 /* long orders: tighter so it still fits one page */
 .inv.many .inv-h{height:40mm}.inv.many .inv-meta{padding:5mm 0 4mm}.inv.many .inv-it-r{padding:2.4mm 6mm}.inv.many .inv-it-t{padding:1.6mm 6mm}
 .inv.many .inv-thx p{display:none}.inv.many .inv-bot{margin-top:3mm;padding-top:3mm}.inv.many .inv-f{height:24mm;margin-top:3mm}
+/* tracking */
+.trk-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
+.trk-sel{position:relative;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:13px;cursor:pointer;min-width:0}
+.trk-sel:hover{border-color:var(--line-2)}
+.trk-sel svg{width:16px;height:16px;flex:none;color:var(--muted)}
+.trk-sel select{appearance:none;-webkit-appearance:none;background:none;border:0;color:var(--ink);font:inherit;font-weight:600;cursor:pointer;padding-inline-end:20px;max-width:100%;outline:0}
+.trk-sel::after{content:"";position:absolute;left:14px;top:50%;width:6px;height:6px;margin-top:-5px;border:solid var(--muted);border-width:0 1.6px 1.6px 0;transform:rotate(45deg);pointer-events:none}
+.trk-sel.has-ic::after{display:none}.trk-sel.has-ic select{padding-inline-end:4px}
+.trk-sel select option{background:var(--bg-2);color:var(--ink)}
+.trk-sel>span{color:var(--muted);font-size:12px;white-space:nowrap}
+.trk-ps{max-width:240px}.trk-ps select{text-overflow:ellipsis;width:100%}
+.trk-cus{display:flex;align-items:center;gap:6px}.trk-cus .input{height:40px;width:150px;font-size:13px;border-radius:12px}.trk-cus i{font-style:normal;color:var(--muted)}
+.trk-live{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--muted);margin-inline-start:auto}
+.trk-live b{color:var(--ink);font-size:14px}
+.trk-live i{width:8px;height:8px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgb(63 185 80/.6);animation:trkPulse 1.8s infinite}
+@keyframes trkPulse{70%{box-shadow:0 0 0 8px rgb(63 185 80/0)}100%{box-shadow:0 0 0 0 rgb(63 185 80/0)}}
+.trk-note{background:color-mix(in srgb,var(--amber) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:12px;padding:12px 14px;font-size:13px;margin-bottom:14px;line-height:1.7}
+.trk-main{margin-bottom:14px;padding:12px 12px 16px}
+.trk-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;margin-bottom:12px}
+.trk-k{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:12px 14px;border-radius:12px;text-align:start;color:inherit;font:inherit;cursor:pointer;transition:background .2s;min-width:0}
+.trk-k:hover{background:var(--bg-2)}
+.trk-k.on{background:var(--bg-2);box-shadow:inset 0 -2px 0 var(--amber)}
+.trk-k span{font-size:12.5px;color:var(--muted);text-decoration:underline dotted color-mix(in srgb,var(--muted) 60%,transparent);text-underline-offset:4px}
+.trk-k b{font:700 19px/1.25 var(--f-ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.trk-d{font:600 11.5px var(--f-ui);font-style:normal;color:var(--muted)}
+.trk-d.up{color:var(--green)}.trk-d.dn{color:var(--red)}
+.trk-chart{height:290px;padding:0 6px}
+.trk-leg{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+.trk-leg span{display:flex;align-items:center;gap:6px}.trk-leg i{width:14px;height:3px;border-radius:2px;background:var(--amber)}
+.trk-leg .pv i{background:repeating-linear-gradient(90deg,var(--muted-2) 0 4px,transparent 4px 7px)}
+.trk-leg b{font-weight:500}
+.trk-prods{margin-bottom:14px}
+.trk-ph,.trk-pb{display:grid;grid-template-columns:minmax(0,2.4fr) .8fr 1fr .6fr .9fr .8fr 1.3fr;gap:10px;align-items:center}
+.trk-ph{font-size:11.5px;color:var(--muted);padding:0 10px 8px;border-bottom:1px solid var(--line)}
+.trk-pr{border-bottom:1px solid var(--line)}.trk-pr:last-child{border-bottom:0}
+.trk-pb{width:100%;padding:10px;text-align:start;color:inherit;font:inherit;font-size:13px;border-radius:10px;cursor:pointer;transition:background .2s}
+.trk-pb:hover,.trk-pr.on .trk-pb{background:var(--bg-2)}
+.trk-pb small{color:var(--muted);font-size:11px}
+.trk-pn{display:flex;align-items:center;gap:10px;min-width:0}
+.trk-pn img,.trk-pn>i{width:38px;height:38px;border-radius:8px;object-fit:cover;flex:none;background:var(--bg-2)}
+.trk-pn b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trk-last{font-size:12px;color:var(--muted)}
+.trk-tl{padding:6px 10px 14px 10px;margin-inline-start:28px;border-inline-start:2px solid color-mix(in srgb,var(--amber) 40%,transparent)}
+.trk-ev{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:12px;align-items:center;padding:9px 6px;font-size:12.5px;border-bottom:1px dashed var(--line)}
+.trk-ev:last-of-type{border-bottom:0}
+.trk-ev>i{position:absolute;inset-inline-start:-16px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 3px var(--surface)}
+.trk-et{color:var(--muted);white-space:nowrap}
+.trk-ew{min-width:0;overflow:hidden;text-overflow:ellipsis}.trk-ew small{display:block;color:var(--muted);font-size:11px}
+.trk-off{font-size:11px;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--blue) 22%,transparent)}
+.trk-tla{padding-top:10px}
+.trk-ts{display:inline-flex;margin-inline-start:auto;padding:3px}.trk-ts button{height:28px;padding:0 12px;font-size:12px}
+.trk-tbox{height:230px}
+.trk-fun{display:grid;gap:12px}
+.trk-f{display:grid;grid-template-columns:120px 1fr auto 44px;gap:10px;align-items:center;font-size:13px}
+.trk-f .track{height:10px;border-radius:99px;background:var(--bg-2);overflow:hidden}.trk-f .track i{display:block;height:100%;border-radius:99px;background:var(--amber)}
+.trk-f small{color:var(--muted);font-size:11.5px;text-align:end}
+.trk-rec{display:grid}
+.trk-ri{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--line);text-align:start;color:inherit;font:inherit;font-size:13px}
+.trk-ri:last-child{border-bottom:0}.trk-ri[data-tro]{cursor:pointer}.trk-ri[data-tro]:hover b:first-child{color:var(--amber)}
+.trk-ri>span{display:grid;gap:2px;min-width:0}.trk-ri span b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.trk-ri small{color:var(--muted);font-size:11.5px}
+.trk-ri>b{white-space:nowrap;font-size:12.5px}
+.trk-dev{display:flex;gap:18px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}.trk-dev b{color:var(--ink)}
+.panel h2 .trk-ts{float:none}
+@media (max-width:1100px){ .trk-kpis{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (max-width:760px){
+  .trk-bar{gap:6px}.trk-sel{height:38px;padding:0 11px}.trk-sel>span{display:none}.trk-ps{max-width:none;flex:1 1 100%}
+  .trk-live{margin-inline-start:0;height:38px}
+  .trk-cus{flex:1 1 100%}.trk-cus .input{flex:1;width:auto}
+  .trk-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.trk-k{padding:10px}.trk-k b{font-size:17px}
+  .trk-chart{height:220px;padding:0}
+  .trk-ph{display:none}
+  .trk-pb{grid-template-columns:minmax(0,1fr) auto;row-gap:4px}
+  .trk-pb .hv{display:none}.trk-pn{grid-column:1/-1}.trk-last{grid-column:1/-1}
+  .trk-tl{margin-inline-start:12px;padding-inline:8px 2px}
+  .trk-ev{grid-template-columns:minmax(0,1fr) auto auto;row-gap:2px}.trk-et{grid-column:1/-1;font-size:11.5px}.trk-ev .badge{display:none}
+  .trk-f{grid-template-columns:96px 1fr auto 38px;font-size:12px}
+  .trk-time h2{flex-wrap:wrap}.trk-time h2 small{order:3;flex:1 1 100%}
+  .trk-sel::after{left:11px}
+}
 </style>
 </head>
 <body>
@@ -932,7 +1011,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028012735"></script>
+<script src="assets/config.js?v=20261028013522"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -958,6 +1037,7 @@ const ICONS = {
   overview: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>',
   stories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h12M8 7h6M8 11h4"/></svg>',
   accounts: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M8 18.5h2M14 18.5h2"/></svg>',
+  tracking: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>',
   dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   orders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>',
   lux: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/></svg>',
@@ -968,7 +1048,7 @@ const ICONS = {
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['customers','العملاء'], ['invoices','طباعة الفواتير'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['invoices','طباعة الفواتير'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات']];
@@ -1003,7 +1083,7 @@ function confirmBox(msg, okText='تأكيد') { return new Promise(res => { cons
 // dates in English, day/month/year — 19/10/2026 · 2:27 PM
 const dmy = RC.dmy;
 const fmtDate = d => `<span class="en" dir="ltr">${RC.when(d)}</span>`;
-$('#themeBtn').onclick = () => { const h = document.documentElement; h.dataset.theme = h.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('rc-theme', h.dataset.theme) } catch(e) {} ; if (tab === 'dash') renderDash(); };
+$('#themeBtn').onclick = () => { const h = document.documentElement; h.dataset.theme = h.dataset.theme === 'light' ? 'dark' : 'light'; try { localStorage.setItem('rc-theme', h.dataset.theme) } catch(e) {} ; if (tab === 'dash') renderDash(); if (tab === 'tracking') renderTracking(); };
 
 /* ---------- double-submit guard ----------
    every form handler (onsubmit) is wrapped once, here: while it is running the form is locked,
@@ -1030,8 +1110,9 @@ async function once(key, fn) { if (_busy.has(key)) return; _busy.add(key); try {
 /* ---------- a refresh comes back to the same place: every tab, sub-tab, filter and sort the admin picked, plus the scroll ---------- */
 const UI_KEYS = { dashScope: v => dashScope = v, orderKind: v => orderKind = v, orderGen: v => orderGen = v, orderProd: v => orderProd = v, dashSt: v => dashSt = v,
   range: v => range = v, orderFilter: v => orderFilter = v, ovStk: v => ovStk = v, custSort: v => custSort = v, custView: v => custView = v,
-  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v, invScope: v => invScope = v, invSel: v => invSel = v.filter(Number.isFinite) };
-function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope, invScope, invSel }; }
+  setTab: v => setTab = v, bandK: v => bandK = v, accTab: v => accTab = v, accScope: v => accScope = v, invScope: v => invScope = v, invSel: v => invSel = v.filter(Number.isFinite),
+  trkR: v => trkR = v, trkFrom: v => trkFrom = v, trkTo: v => trkTo = v, trkCh: v => trkCh = v, trkScope: v => trkScope = v, trkProd: v => trkProd = v, trkMetric: v => trkMetric = v, trkOpen: v => trkOpen = v, trkTime: v => trkTime = v };
+function uiNow() { return { dashScope, orderKind, orderGen, orderProd, dashSt, range, orderFilter, ovStk, custSort, custView, setTab, bandK, accTab, accScope, invScope, invSel, trkR, trkFrom, trkTo, trkCh, trkScope, trkProd, trkMetric, trkOpen, trkTime }; }
 function saveUI() { try { localStorage.setItem('dq-ui', JSON.stringify(uiNow())); if (tab) sessionStorage.setItem('dq-admin-y', scrollY); } catch (e) {} }
 function restoreUI() {
   try { const o = JSON.parse(localStorage.getItem('dq-ui') || '{}'), now = uiNow();
@@ -1183,7 +1264,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028012735'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028013522'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1206,7 +1287,8 @@ document.addEventListener('click', e => { const t = e.target.closest('[data-tab]
 function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings}[t] || renderDash)();
+  if (t !== 'tracking') { trkCharts.forEach(c => c.destroy()); trkCharts = []; }
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
@@ -1478,6 +1560,184 @@ function renderDash() {
   });
 }
 
+/* ---------- tracking: when things sell (dates, hours, products), store visits and live visitors — compared with the period before ---------- */
+let trkR = '30', trkFrom = '', trkTo = '', trkCh = 'all', trkScope = 'all', trkProd = 'all', trkMetric = 'sales', trkOpen = '', trkTime = 'hour', trkCharts = [];
+const trkStats = {}; let TRK_OK = true, trkLive = null, trkLiveT = 0;
+const TRK_R = [['today','النهارده'],['yesterday','امبارح'],['7','آخر 7 أيام'],['30','آخر 30 يوم'],['90','آخر 90 يوم'],['month','الشهر ده'],['lastmonth','الشهر اللي فات'],['all','من الأول'],['custom','تاريخ مخصوص…']];
+const TRK_SRC = { instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', whatsapp: 'WhatsApp', google: 'Google', direct: 'مباشر', other: 'تاني' };
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const day0 = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+function trkPeriod() {
+  const t = day0(new Date()); let from, to = addD(t, 1);
+  if (trkR === 'today') from = t;
+  else if (trkR === 'yesterday') { from = addD(t, -1); to = t; }
+  else if (trkR === 'month') from = new Date(t.getFullYear(), t.getMonth(), 1);
+  else if (trkR === 'lastmonth') { from = new Date(t.getFullYear(), t.getMonth() - 1, 1); to = new Date(t.getFullYear(), t.getMonth(), 1); }
+  else if (trkR === 'all') from = day0(Math.min(+t, ...orders.map(o => +new Date(o.created_at)), ...offs.map(x => +new Date(x.sold_on + 'T12:00'))));
+  else if (trkR === 'custom') { from = trkFrom ? day0(new Date(trkFrom + 'T00:00')) : addD(t, -29); to = trkTo ? addD(day0(new Date(trkTo + 'T00:00')), 1) : addD(t, 1); if (to <= from) to = addD(from, 1); }
+  else from = addD(t, 1 - (+trkR || 30));
+  const days = Math.round((to - from) / 864e5), unit = days <= 1 ? 'hour' : 'day';
+  const prevTo = from, prevFrom = unit === 'hour' ? addD(from, -1) : addD(from, -days);
+  return { from, to, prevFrom, prevTo, days, unit };
+}
+const trkLbl = P => { const f = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); return P.days <= 1 ? f(P.from) : `${f(P.from)} – ${f(addD(P.to, -1))}`; };
+// bucket keys: one per day, or one per hour for a single day
+function trkBuckets(from, to, unit) { const out = []; for (let d = new Date(from); d < to; ) { out.push(new Date(d)); if (unit === 'hour') d.setHours(d.getHours() + 1); else d.setDate(d.getDate() + 1); } return out; }
+const bKey = (d, unit) => unit === 'hour' ? ymd(d) + 'T' + String(d.getHours()).padStart(2, '0') : ymd(d);
+const prodOf = id => products.find(p => p.id === id);
+const scopeOk = id => { if (trkScope === 'all') return true; const p = prodOf(id); return !!(p && RC.isLuxury(p)) === (trkScope === 'lux'); };
+// every piece sold in a period, from website orders and outside sales, after the channel / store / product filters
+function trkLines(from, to) {
+  const L = [];
+  if (trkCh !== 'off') orders.forEach(o => { if (o.status === 'cancelled' || o.status === 'returned') return; const at = new Date(o.created_at); if (at < from || at >= to) return;
+    (o.shop_order_items || []).forEach(i => { if (!scopeOk(i.product_id) || (trkProd !== 'all' && String(i.product_id) !== trkProd)) return;
+      L.push({ at, pid: i.product_id, name: i.name, qty: +i.qty, rev: +i.line_total, o, opts: i.options }); }); });
+  if (trkCh !== 'web') offs.forEach(x => { const at = new Date(x.sold_on + 'T12:00'); if (at < from || at >= to || !scopeOk(x.product_id) || (trkProd !== 'all' && String(x.product_id) !== trkProd)) return;
+    L.push({ at, pid: x.product_id, name: x.name, qty: +x.qty, rev: +x.price, off: x }); });
+  return L;
+}
+function trkSum(L) { const ords = new Set(L.filter(l => l.o).map(l => l.o.id)); const offN = L.filter(l => l.off).length;
+  const sales = L.reduce((s, l) => s + l.rev, 0), n = ords.size + offN; return { sales, orders: n, webOrders: ords.size, units: L.reduce((s, l) => s + l.qty, 0), aov: n ? sales / n : 0 }; }
+async function trkLoad(from, to, unit) {
+  // kept a minute, so a period that includes today keeps filling in as people visit
+  const k = `${+from}|${+to}|${unit}`, c = trkStats[k]; if (c && (c.busy || Date.now() - c.at < 60e3 || (to < Date.now() - 864e5 && c.d))) return;
+  trkStats[k] = { busy: 1, at: Date.now(), d: c ? c.d : null };
+  let d = false; try { const { data, error } = await sb.rpc('shop_track_stats', { p_from: from.toISOString(), p_to: to.toISOString(), p_unit: unit }); if (error) TRK_OK = false; else d = data; } catch (e) {}
+  trkStats[k] = { at: Date.now(), d }; if (c && JSON.stringify(c.d) === JSON.stringify(d)) return;
+  if (tab === 'tracking') renderTracking();
+}
+const trkSt = (from, to, unit) => { const c = trkStats[`${+from}|${+to}|${unit}`]; return c ? c.d : null; };
+async function trkPollLive() {
+  clearTimeout(trkLiveT); trkLiveT = 0; if (tab !== 'tracking' || document.hidden) return;
+  try { const { data, error } = await sb.rpc('shop_live_now'); if (!error) { trkLive = data; const el = $('#trkLive'); if (el) el.querySelector('b').textContent = data; } } catch (e) {}
+  trkLiveT = setTimeout(trkPollLive, 30e3);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && tab === 'tracking') trkPollLive(); });
+const hexA = (h, a) => { const m = /^#?([0-9a-f]{6})$/i.exec(h); if (!m) return h; const n = parseInt(m[1], 16); return `rgba(${n >> 16},${n >> 8 & 255},${n & 255},${a})`; };
+const pct = (a, b) => b ? Math.round(a / b * 1000) / 10 : 0;
+function trkDelta(cur, prev) {
+  if (!prev && !cur) return '<em class="trk-d">—</em>';
+  if (!prev) return '<em class="trk-d up">جديد</em>';
+  const d = (cur - prev) / prev * 100, a = Math.abs(d), s = a >= 1000 ? (a / 1000).toFixed(1) + 'K' : a >= 10 ? Math.round(a) : a.toFixed(1);
+  return `<em class="trk-d ${d > 0 ? 'up' : d < 0 ? 'dn' : ''}" dir="ltr">${d > 0 ? '↗' : d < 0 ? '↘' : ''} ${s}%</em>`;
+}
+function renderTracking() {
+  trkCharts.forEach(c => c.destroy()); trkCharts = [];
+  const P = trkPeriod(), cur = trkLines(P.from, P.to), prev = trkLines(P.prevFrom, P.prevTo), C = trkSum(cur), V = trkSum(prev);
+  trkLoad(P.from, P.to, P.unit); trkLoad(P.prevFrom, P.prevTo, P.unit);
+  const S = trkSt(P.from, P.to, P.unit), SP = trkSt(P.prevFrom, P.prevTo, P.unit), noTrk = S === false || !TRK_OK, wait = S == null && !noTrk;
+  // sessions come from the visit log: the whole store, whatever the filters (a product filter uses that product's page views)
+  const sess = st => !st ? 0 : trkProd === 'all' ? st.sessions : +(st.pviews || {})[trkProd] || 0;
+  const conv = (o, s) => s ? o / s * 100 : 0;
+  const K = {
+    sessions: { l: trkProd === 'all' ? 'الزيارات' : 'مشاهدات المنتج', v: sess(S), p: sess(SP), f: n => wait ? '…' : noTrk ? '—' : n.toLocaleString('en-US') },
+    sales: { l: 'إجمالي المبيعات', v: C.sales, p: V.sales, f: money },
+    orders: { l: 'الطلبات', v: C.orders, p: V.orders, f: n => n.toLocaleString('en-US') },
+    conv: { l: 'نسبة الشراء', v: conv(C.webOrders, sess(S)), p: conv(V.webOrders, sess(SP)), f: n => wait ? '…' : noTrk ? '—' : n.toFixed(n >= 10 ? 1 : 2) + '%' },
+    aov: { l: 'متوسط الطلب', v: C.aov, p: V.aov, f: money },
+    units: { l: 'قطع اتباعت', v: C.units, p: V.units, f: n => n.toLocaleString('en-US') }
+  };
+  if (!K[trkMetric]) trkMetric = 'sales';
+  // chart series: this period vs the one before, bucket by bucket
+  const B = trkBuckets(P.from, P.to, P.unit), BP = trkBuckets(P.prevFrom, P.prevTo, P.unit);
+  const series = (L, st, bs) => { const m = {}; bs.forEach(b => m[bKey(b, P.unit)] = { sales: 0, units: 0, o: new Set(), off: 0, s: 0 });
+    L.forEach(l => { const k = bKey(P.unit === 'hour' ? l.at : day0(l.at), P.unit), r = m[k]; if (!r) return; r.sales += l.rev; r.units += l.qty; if (l.o) r.o.add(l.o.id); else r.off++; });
+    if (st) { if (trkProd === 'all') (st.series || []).forEach(x => { const k = P.unit === 'hour' ? x.t.slice(0, 13) : x.t.slice(0, 10); if (m[k]) m[k].s = x.s; }); }
+    return bs.map(b => { const r = m[bKey(b, P.unit)], n = r.o.size + r.off; return { sales: r.sales, units: r.units, orders: n, aov: n ? r.sales / n : 0, sessions: r.s, conv: r.s ? r.o.size / r.s * 100 : 0 }; }); };
+  const sc = series(cur, S, B), sp = series(prev, SP, BP);
+  const lab = b => P.unit === 'hour' ? b.toLocaleTimeString('en-US', { hour: 'numeric' }) : b.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  // products: what sold, how many times it was looked at, and when it last sold
+  const PR = {}; const pv = (S && S.pviews) || {}, pc = (S && S.pcarts) || {};
+  cur.forEach(l => { const k = l.pid || 'n:' + l.name; const r = PR[k] = PR[k] || { pid: l.pid, name: (prodOf(l.pid) || l).name, units: 0, rev: 0, o: new Set(), last: 0, lines: [] };
+    r.units += l.qty; r.rev += l.rev; r.o.add(l.o ? l.o.id : 'x' + l.off.id); r.last = Math.max(r.last, +l.at); r.lines.push(l); });
+  if (trkProd === 'all') Object.keys(pv).forEach(id => { const p = prodOf(+id); if (!p || PR[id] || !scopeOk(+id)) return; PR[id] = { pid: +id, name: p.name, units: 0, rev: 0, o: new Set(), last: 0, lines: [] }; });
+  const prows = Object.values(PR).sort((a, b) => b.units - a.units || b.rev - a.rev || (+pv[b.pid] || 0) - (+pv[a.pid] || 0));
+  // when it sells: hour of the day / day of the week (website orders keep the exact time)
+  const web = cur.filter(l => l.o), hrs = Array(24).fill(0), wds = Array(7).fill(0);
+  web.forEach(l => { hrs[l.at.getHours()] += l.qty; wds[l.at.getDay()] += l.qty; });
+  const WD = ['الأحد', 'الاتنين', 'التلات', 'الأربع', 'الخميس', 'الجمعة', 'السبت'];
+  const bestH = web.length ? hrs.indexOf(Math.max(...hrs)) : -1, bestD = web.length ? wds.indexOf(Math.max(...wds)) : -1;
+  const hLbl = h => new Date(2000, 0, 1, h).toLocaleTimeString('en-US', { hour: 'numeric' });
+  const recent = cur.slice().sort((a, b) => b.at - a.at).slice(0, 8);
+  const prodOpts = [...new Map(orders.flatMap(o => (o.shop_order_items || []).map(i => [String(i.product_id), (prodOf(i.product_id) || i).name])).concat(offs.filter(x => x.product_id).map(x => [String(x.product_id), (prodOf(x.product_id) || x).name]))).entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  if (trkProd !== 'all' && !prodOpts.some(([id]) => id === trkProd)) { const p = prodOf(+trkProd); if (p) prodOpts.unshift([trkProd, p.name]); }
+  const src = Object.entries((S && S.src) || {}).sort((a, b) => b[1] - a[1]), srcT = src.reduce((s, x) => s + x[1], 0) || 1;
+  const dev = (S && S.dev) || {}, devT = (+dev.mobile || 0) + (+dev.desktop || 0) || 1;
+  const fun = S ? [['زيارات', S.sessions], ['شافوا منتج', S.pv_s], ['ضافوا للسلة', S.cart_s], ['فتحوا صفحة الطلب', S.co_s], ['طلبوا', C.webOrders]] : [];
+  const IC = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  $('#main').innerHTML = `
+    <div class="head"><div><h1 class="en">Tracking</h1><div class="sub">المنتجات بتتباع إمتى، مين بيزور المتجر، ومقارنة بالفترة اللي قبلها</div></div></div>
+    <div class="trk-bar">
+      <label class="trk-sel has-ic">${IC('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>')}<select id="trkR" aria-label="الفترة">${TRK_R.map(([v, l]) => `<option value="${v}" ${v === trkR ? 'selected' : ''}>${l}</option>`).join('')}</select><span class="en" dir="ltr">${trkLbl(P)}</span></label>
+      ${trkR === 'custom' ? `<span class="trk-cus"><input class="input en" type="date" id="trkF" value="${trkFrom || ymd(P.from)}" max="${ymd(new Date())}" aria-label="من"><i>←</i><input class="input en" type="date" id="trkT" value="${trkTo || ymd(addD(P.to, -1))}" max="${ymd(new Date())}" aria-label="لحد"></span>` : ''}
+      <label class="trk-sel"><select id="trkCh" aria-label="القناة">${[['all','كل القنوات'],['web','الموقع بس'],['off','برا الموقع بس']].map(([v, l]) => `<option value="${v}" ${v === trkCh ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <label class="trk-sel"><select id="trkSc" aria-label="القسم">${[['all','كل المتجر'],['reg','المتجر العادي'],['lux','Luxury']].map(([v, l]) => `<option value="${v}" ${v === trkScope ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <label class="trk-sel trk-ps"><select id="trkP" aria-label="المنتج"><option value="all">كل المنتجات</option>${prodOpts.map(([id, n]) => `<option value="${id}" ${id === trkProd ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
+      <span class="trk-live" id="trkLive" title="الناس اللي فاتحين المتجر دلوقتي (آخر 3 دقايق)"><i></i><b class="en">${noTrk ? '—' : trkLive == null ? '…' : trkLive}</b> زائر دلوقتي</span>
+    </div>
+    ${noTrk ? `<div class="trk-note">عدّاد الزيارات لسه مش متفعّل — شغّل ملف <b class="en">supabase/tracking.sql</b> مرة واحدة في Supabase SQL Editor. المبيعات والطلبات شغالة عادي.</div>` : ''}
+    <div class="panel trk-main">
+      <div class="trk-kpis">${Object.entries(K).map(([k, x]) => `<button type="button" class="trk-k ${k === trkMetric ? 'on' : ''}" data-tm="${k}"><span>${x.l}</span><b class="en" dir="ltr">${x.f(x.v)}</b>${(k === 'sessions' || k === 'conv') && (wait || noTrk) ? '' : trkDelta(x.v, x.p)}</button>`).join('')}</div>
+      <div class="chart-box trk-chart"><canvas id="trkChart" role="img" aria-label="${K[trkMetric].l}"></canvas></div>
+      <div class="trk-leg"><span><i></i><b class="en" dir="ltr">${trkLbl(P)}</b></span><span class="pv"><i></i><b class="en" dir="ltr">${trkLbl({ from: P.prevFrom, to: P.prevTo, days: P.days })}</b></span></div>
+    </div>
+    <div class="panel trk-prods"><h2>المنتجات بتتباع إمتى <small>${prows.length ? `${prows.length} منتج · دوس على أي منتج تشوف كل بيعة بتاريخها` : ''}</small></h2>
+      ${prows.length ? `<div class="trk-ph"><span>المنتج</span><span>اتباع</span><span>المبيعات</span><span class="hv">طلبات</span><span class="hv">مشاهدات</span><span class="hv">نسبة الشراء</span><span>آخر بيعة</span></div>
+      ${prows.map(r => { const views = +pv[r.pid] || 0, open = trkOpen === String(r.pid || r.name), p = prodOf(r.pid), img = p && p.images && p.images[0];
+        return `<div class="trk-pr ${open ? 'on' : ''}"><button type="button" class="trk-pb" data-tp="${esc(String(r.pid || r.name))}" aria-expanded="${open}">
+          <span class="trk-pn">${img ? `<img src="${esc(img)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<i></i>'}<b>${esc(r.name)}</b></span>
+          <span class="en"><b>${r.units}</b><small> قطعة</small></span><span class="en">${money(r.rev)}</span><span class="en hv">${r.o.size}</span><span class="en hv">${S ? views : '—'}${+pc[r.pid] ? `<small> · ${pc[r.pid]} سلة</small>` : ''}</span><span class="en hv">${views ? pct(r.o.size, views) + '%' : '—'}</span>
+          <span class="trk-last">${r.last ? fmtDate(r.last) : '<small>لسه ماتباعش</small>'}</span></button>
+          ${open ? `<div class="trk-tl">${r.lines.length ? r.lines.sort((a, b) => b.at - a.at).map(l => `<div class="trk-ev"><i></i><span class="trk-et">${l.off ? `<span class="en" dir="ltr">${RC.dmy(l.at)}</span>` : fmtDate(l.at)}</span><span class="trk-ew">${l.o ? `${oNo(l.o)}<span class="en">${esc(l.o.code)}</span> · ${esc(l.o.customer_name || '')}${l.o.city ? ' · ' + esc(l.o.city) : ''}` : `<span class="trk-off">برا الموقع</span> ${esc(l.off.note || l.off.seller || '')}`}${(l.opts || []).length ? `<small>${l.opts.map(x => esc(x.v)).join(' · ')}</small>` : ''}</span><span class="en">×${l.qty}</span><b class="en">${money(l.rev)}</b>${l.o ? `<span class="badge st-${l.o.status}">${statuses[l.o.status] || l.o.status}</span>` : '<span></span>'}</div>`).join('') : '<div class="empty" style="padding:12px">اتشاف بس ماتباعش في الفترة دي.</div>'}
+            ${r.pid ? `<div class="trk-tla"><button type="button" class="btn btn-ghost btn-sm" data-tpf="${r.pid}">${trkProd === String(r.pid) ? 'رجّع كل المنتجات في الجراف' : 'اعرضه لوحده في الجراف'}</button></div>` : ''}</div>` : ''}</div>`; }).join('')}` : '<div class="empty">مفيش مبيعات في الفترة دي.</div>'}
+    </div>
+    <div class="row2">
+      <div class="panel trk-time"><h2>أوقات البيع <small>${bestH >= 0 ? `أكتر وقت: <b class="en">${hLbl(bestH)}</b> · أكتر يوم: <b>${WD[bestD]}</b>` : 'من طلبات الموقع'}</small>
+        <div class="seg trk-ts" id="trkTs">${[['hour','الساعة'],['wd','اليوم']].map(([v, l]) => `<button data-tt="${v}" class="${v === trkTime ? 'on' : ''}">${l}</button>`).join('')}</div></h2>
+        ${web.length ? `<div class="chart-box trk-tbox"><canvas id="trkTime" role="img" aria-label="أوقات البيع"></canvas></div>` : '<div class="empty">مفيش طلبات من الموقع في الفترة دي.</div>'}</div>
+      <div class="panel"><h2>رحلة الزائر <small>من الزيارة للطلب</small></h2>
+        ${noTrk ? '<div class="empty">هتظهر بعد تفعيل عدّاد الزيارات.</div>' : wait ? '<div class="empty">بيحمّل…</div>' : `<div class="trk-fun">${fun.map(([l, n], i) => `<div class="trk-f"><span>${l}</span><div class="track"><i style="width:${Math.max(2, pct(n, fun[0][1] || 1))}%"></i></div><b class="en">${(+n || 0).toLocaleString('en-US')}</b><small class="en">${i ? pct(n, fun[0][1]) + '%' : ''}</small></div>`).join('')}</div>`}</div>
+    </div>
+    <div class="row2">
+      <div class="panel"><h2>آخر المبيعات <small>في الفترة دي</small></h2>
+        ${recent.length ? `<div class="trk-rec">${recent.map(l => `<button type="button" class="trk-ri" ${l.o ? `data-tro="${l.o.id}"` : ''}><span><b>${esc((prodOf(l.pid) || l).name)}</b><small>${l.o ? `<span class="en">${oNum(l.o)}</span> · ${esc(l.o.customer_name || '')} · ` : 'برا الموقع · '}${l.o ? fmtDate(l.at) : `<span class="en" dir="ltr">${RC.dmy(l.at)}</span>`}</small></span><b class="en">×${l.qty} · ${money(l.rev)}</b></button>`).join('')}</div>` : '<div class="empty">مفيش مبيعات في الفترة دي.</div>'}</div>
+      <div class="panel"><h2>الزوار جايين منين</h2>
+        ${noTrk ? '<div class="empty">هتظهر بعد تفعيل عدّاد الزيارات.</div>' : !src.length ? `<div class="empty">${wait ? 'بيحمّل…' : 'لسه مفيش زيارات في الفترة دي.'}</div>` : `${src.map(([k, n]) => `<div class="bar-row"><div><span class="en" style="font-weight:600">${TRK_SRC[k] || esc(k)}</span><span class="en" style="color:var(--muted)">${n} · ${pct(n, srcT)}%</span></div><div class="track"><i style="width:${Math.max(3, n / srcT * 100)}%"></i></div></div>`).join('')}
+          <div class="trk-dev"><span>📱 موبايل <b class="en">${pct(+dev.mobile || 0, devT)}%</b></span><span>💻 كمبيوتر <b class="en">${pct(+dev.desktop || 0, devT)}%</b></span></div>`}</div>
+    </div>`;
+  const m = $('#main');
+  $('#trkR').onchange = e => { trkR = e.target.value; if (trkR === 'custom' && !trkFrom) { trkFrom = ymd(addD(new Date(), -29)); trkTo = ymd(new Date()); } renderTracking(); };
+  if ($('#trkF')) { $('#trkF').onchange = e => { trkFrom = e.target.value; if (trkTo && trkFrom > trkTo) trkTo = trkFrom; renderTracking(); }; $('#trkT').onchange = e => { trkTo = e.target.value; if (trkFrom && trkTo < trkFrom) trkFrom = trkTo; renderTracking(); }; }
+  $('#trkCh').onchange = e => { trkCh = e.target.value; renderTracking(); };
+  $('#trkSc').onchange = e => { trkScope = e.target.value; renderTracking(); };
+  $('#trkP').onchange = e => { trkProd = e.target.value; if (trkProd !== 'all') trkOpen = trkProd; renderTracking(); };
+  m.querySelectorAll('[data-tm]').forEach(b => b.onclick = () => { trkMetric = b.dataset.tm; renderTracking(); });
+  m.querySelectorAll('[data-tp]').forEach(b => b.onclick = () => { trkOpen = trkOpen === b.dataset.tp ? '' : b.dataset.tp; renderTracking(); });
+  m.querySelectorAll('[data-tpf]').forEach(b => b.onclick = () => { trkProd = trkProd === b.dataset.tpf ? 'all' : b.dataset.tpf; renderTracking(); $('#trkChart') && $('#trkChart').scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  m.querySelectorAll('[data-tro]').forEach(b => b.onclick = () => { const o = orders.find(x => x.id === +b.dataset.tro); if (!o) return; orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(isLuxOrder(o) ? 'lux-orders' : 'orders'); });
+  $('#trkTs').onclick = e => { const b = e.target.closest('[data-tt]'); if (b) { trkTime = b.dataset.tt; renderTracking(); } };
+  if (!trkLiveT) trkPollLive();
+  if (!window.Chart) return;
+  const cs = getComputedStyle(document.documentElement), col = n => cs.getPropertyValue(n).trim(), dpr = Math.max(2, (window.devicePixelRatio || 1) * (parseFloat(cs.zoom) || 1));
+  const tk = { color: col('--muted'), font: { family: 'Archivo' } }, fmt = K[trkMetric].f;
+  const short = v => trkMetric === 'conv' ? v + '%' : v >= 1000 ? (v / 1000) + 'k' : v;
+  trkCharts.push(new Chart($('#trkChart'), {
+    type: 'line',
+    data: { labels: B.map(lab), datasets: [
+      { data: sc.map(x => x[trkMetric]), borderColor: col('--amber'), backgroundColor: 'transparent', borderWidth: 2.2, cubicInterpolationMode: 'monotone', pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: col('--amber') },
+      { data: BP.slice(0, B.length).map((b, i) => sp[i] ? sp[i][trkMetric] : null), borderColor: col('--muted-2'), borderDash: [4, 4], borderWidth: 1.5, cubicInterpolationMode: 'monotone', pointRadius: 0, pointHoverRadius: 3 }] },
+    options: { maintainAspectRatio: false, devicePixelRatio: dpr, interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false }, tooltip: { rtl: true, callbacks: { title: c => { const i = c[0].dataIndex; return `${lab(B[i])}${BP[i] ? '  ·  قبلها: ' + lab(BP[i]) : ''}`; }, label: c => ` ${c.datasetIndex ? 'الفترة اللي قبلها' : 'الفترة دي'}: ${fmt(c.raw || 0)}` } } },
+      scales: { x: { grid: { display: false }, ticks: { ...tk, maxRotation: 0, autoSkipPadding: 14 } }, y: { beginAtZero: true, grid: { color: col('--line') }, ticks: { ...tk, precision: 0, callback: short } } } }
+  }));
+  if ($('#trkTime')) { const H = trkTime === 'hour';
+    trkCharts.push(new Chart($('#trkTime'), { type: 'bar',
+      data: { labels: H ? hrs.map((_, h) => hLbl(h)) : WD, datasets: [{ data: H ? hrs : wds, backgroundColor: (H ? hrs : wds).map((v, i) => i === (H ? bestH : bestD) ? col('--amber') : hexA(col('--amber'), .4)), borderRadius: 5, maxBarThickness: 26 }] },
+      options: { maintainAspectRatio: false, devicePixelRatio: dpr, plugins: { legend: { display: false }, tooltip: { rtl: true, callbacks: { label: c => ` ${c.raw} قطعة` } } },
+        scales: { x: { grid: { display: false }, ticks: { ...tk, maxRotation: 0, autoSkipPadding: 6 } }, y: { beginAtZero: true, grid: { color: col('--line') }, ticks: { ...tk, precision: 0 } } } } })); }
+}
+
 /* ---------- orders ---------- */
 function renderOrders() {
   const LUXT = tab === 'lux-orders', ORD0 = orders.filter(o => isLuxOrder(o) === LUXT), ORD = ORD0.filter(o => (orderKind === 'all' || orderHasKind(o, orderKind)) && (orderGen === 'all' || orderHasGen(o, orderGen)) && (orderProd === 'all' || (o.shop_order_items || []).some(i => String(i.product_id) === orderProd)));
@@ -1570,7 +1830,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028012735" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028013522" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1604,7 +1864,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028012735" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028013522" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1645,7 +1905,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028012735'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028012735')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028013522'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028013522')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
