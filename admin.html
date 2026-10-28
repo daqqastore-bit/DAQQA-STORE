@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028135858">
+<link rel="stylesheet" href="assets/base.css?v=20261028140154">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1032,7 +1032,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028135858"></script>
+<script src="assets/config.js?v=20261028140154"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1292,7 +1292,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028135858'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028140154'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 // fake alerts: every one plays the whole cash sound (Web Audio, so a new one never cuts the last one off), each starting a little after the one before
 let fkCtx = null, fkBuf = null, fkAt = 0;
@@ -1872,7 +1872,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028135858" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028140154" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1906,7 +1906,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028135858" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028140154" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1947,7 +1947,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028135858'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028135858')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028140154'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028140154')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3134,7 +3134,7 @@ function renderFake() {
         <div class="field"><label>عدد النوتفكشنز</label><input class="input en" id="fkN" type="number" inputmode="numeric" min="1" max="500" value="${n || ''}">${chips('n', [3, 5, 10, 15, 20, 30], '')}</div>
       </div>
       <div class="field fk-to-f" style="margin:0"><label>يوصل فين</label><div class="fk-q fk-to">${[['admin', 'الأدمن · صوت + إشعار طلب'], ['site', 'الموقع · للزوار'], ['both', 'الاتنين']].map(([k, l]) => `<button type="button" class="gchip ${fkIn.to === k ? 'on' : ''}" data-fto="${k}">${l}</button>`).join('')}</div></div>
-      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيوصل <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج. ${fkIn.to === 'site' ? 'بتظهر للي فاتحين الموقع بس.' : `بتوصل الجهاز ده بس كإشعار «طلب جديد» بصوته، زي الطلب الحقيقي${fkIn.to === 'both' ? '، وكمان بتظهر للي فاتحين الموقع' : ''}. مفيش أي طلب بيتسجل.`}`}</div>
+      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيوصل <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج. ${fkIn.to === 'site' ? 'بتظهر للي فاتحين الموقع بس.' : `بتوصل كل الأجهزة اللي فاتحة الأدمن أو مفعّل عليها الإشعارات كإشعار «طلب جديد» بصوته، زي الطلب الحقيقي${fkIn.to === 'both' ? '، وكمان بتظهر للي فاتحين الموقع' : ''}. مفيش أي طلب بيتسجل.`}`}</div>
       <div class="set-acts"><button class="btn btn-primary" type="button" id="fkGo" ${bad ? 'disabled' : ''}>${run ? 'ابدأ من جديد' : 'ابدأ'}</button></div>
     </div>
     ${live}`;
@@ -3153,10 +3153,10 @@ function renderFake() {
     const base = orders.reduce((x, o) => Math.max(x, +o.seq || 0), 0);   // fake order numbers carry on after the last real one
     const nf = { on: true, at: Math.round(RC.now()), min: m, n: k, to: fkIn.to, base, cities: AV(), dev: FK_DEV, seed: 1 + Math.floor(Math.random() * 2147483646) };
     if (RC.fakeTo(nf, 'admin')) {   // queue them on the server so each one arrives as a real notification, phone locked or not
-      let ep = ''; try { if (pushReady() && Notification.permission === 'granted') { const s = await (await swReg()).pushManager.getSubscription(); ep = s ? s.endpoint : ''; } } catch (e) {}   // this device's push address only
-      const items = ep ? RC.fakePlan(nf, products).map(e => { const x = fkMsg(nf, e); return x && { at: Math.round(e.t), title: x.title, body: x.body, tag: x.tag, endpoint: ep }; }).filter(Boolean) : [];
-      let ok = false; if (ep) try { const r = await sb.rpc('shop_fake_push', { items }); ok = !r.error; } catch (e) {}
-      nf.srv = ok; if (!ok) toast(ep ? 'الإشعارات على الموبايل وهو مقفول محتاجة تحديث في Supabase — دلوقتي هتشتغل والصفحة مفتوحة بس' : 'فعّل «إشعارات الطلبات» على الجهاز ده عشان توصلك وهو مقفول — دلوقتي هتشتغل والصفحة مفتوحة بس', 'err');
+      // no endpoint = every device with order notifications on (a device muted in Security isn't in shop_push_subs)
+      const items = RC.fakePlan(nf, products).map(e => { const x = fkMsg(nf, e); return x && { at: Math.round(e.t), title: x.title, body: x.body, tag: x.tag }; }).filter(Boolean);
+      let ok = false; try { const r = await sb.rpc('shop_fake_push', { items }); ok = !r.error; } catch (e) {}
+      nf.srv = ok; if (!ok) toast('الإشعارات على الموبايل وهو مقفول محتاجة تحديث في Supabase — دلوقتي هتشتغل على الأجهزة اللي فاتحة الصفحة بس', 'err');
     }
     else if (f && f.srv) { try { await sb.rpc('shop_fake_push', { items: [] }); } catch (e) {} }
     await fkSave(nf, fkIn.to === 'site' ? 'اشتغلت ✓ النوتفكشنز هتبدأ تظهر في الموقع' : 'اشتغلت ✓ أول طلب وهمي جاي');
@@ -3173,12 +3173,12 @@ async function fkSave(fake, ok) {
 }
 /* the same plan as fake order alerts on every open dashboard (f.to admin / both): cash sound + «طلب جديد» toast + a device notification — nothing is saved */
 let fkAdmKey = '', fkAdmT = 0;
-// each device is on its own: a run only alerts the device that started it (f.dev), the others just see it on the page
+// whoever presses «ابدأ», a run alerts every dashboard (except a device muted in Security); f.dev just records who started it
 const FK_DEV = (() => { try { let d = localStorage.getItem('dq-dev'); if (!d) { d = Math.random().toString(36).slice(2, 12); localStorage.setItem('dq-dev', d); } return d; } catch (e) { return 'x'; } })();
 const fkAdmSeen = () => { try { const v = JSON.parse(sessionStorage.getItem('dq-fk-adm') || 'null'); return v && v.k === fkAdmKey ? v.i : []; } catch (e) { return []; } };
 const fkAdmMark = i => { try { sessionStorage.setItem('dq-fk-adm', JSON.stringify({ k: fkAdmKey, i: fkAdmSeen().concat(i) })); } catch (e) {} };
 function fkAdmRun() {
-  let f = RC.fakeLive(settings, RC.now(), 'admin'); if (f && f.dev && f.dev !== FK_DEV) f = null;
+  const f = RC.fakeLive(settings, RC.now(), 'admin');
   const key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
   if (key === fkAdmKey) return; fkAdmKey = key; clearTimeout(fkAdmT);
   if (f) RC.syncClock().then(() => { if (fkAdmKey === key) fkAdmNext(); });
@@ -3198,6 +3198,7 @@ function fkMsg(f, e) {
 // and plays the sound only while it's on screen (a page playing audio in the background turns into a «now playing» player on the phone)
 function fkAdmFire(f, e) {
   const m = fkMsg(f, e); if (!m) return;
+  if (devPrefs.mute) return toast(`طلب جديد ${m.no}`, 'ok');
   if (!document.hidden) { fkCash(); toast(`طلب جديد ${m.no}`, 'ok'); }
   if (f.srv || !('Notification' in window) || Notification.permission !== 'granted') return;
   const opt = { body: m.body, tag: m.tag, renotify: true, icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: 'admin.html#orders' } };
