@@ -28,7 +28,9 @@ Deno.serve(async (req) => {
   }
 
   webpush.setVapidDetails("mailto:daqqastore@gmail.com", conf.vapid_public, conf.vapid_private);
-  const { data: subs } = await sb.from("shop_push_subs").select("endpoint, p256dh, auth");
+  // a fake run goes only to the device that started it
+  let q = sb.from("shop_push_subs").select("endpoint, p256dh, auth"); if (fake && fake.endpoint) q = q.eq("endpoint", String(fake.endpoint));
+  const { data: subs } = await q;
   const sent = await Promise.all((subs || []).map((s: any) =>
     webpush.sendNotification({ endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } }, JSON.stringify(msg), { TTL: 86400, urgency: "high" })
       .then((r: any) => s.endpoint.slice(8, 30) + " " + r.statusCode)
