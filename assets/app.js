@@ -33,6 +33,34 @@
   const DQ = window.DQ = { sb, FALLBACK, ICON, products: [], settings: {}, cart: [] };
   try { DQ.cart = JSON.parse(localStorage.getItem('dq-cart') || localStorage.getItem('rc-cart') || '[]') } catch (e) {}
 
+  /* ---------- visit tracking for the admin «Tracking» page (anonymous: a random device id + a session that ends after 30 min idle) ---------- */
+  DQ.track = (() => {
+    const rid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+    let vid = '', ses = {};
+    try { vid = localStorage.getItem('dq-vid') || ''; if (!vid) localStorage.setItem('dq-vid', vid = rid()); ses = JSON.parse(localStorage.getItem('dq-ses') || '{}'); } catch (e) { vid = vid || rid(); }
+    const sp = new URLSearchParams(location.search), ref = document.referrer || '', own = ref && new URL(ref, location.href).host === location.host;
+    const srcNow = () => { const u = (sp.get('utm_source') || '').toLowerCase(), r = ref.toLowerCase(), t = u + ' ' + r;
+      if (/instagram/.test(t) || u === 'ig') return 'instagram';
+      if (sp.get('ttclid') || /tiktok/.test(t)) return 'tiktok';
+      if (sp.get('fbclid') || /facebook|m\.me|messenger/.test(t) || u === 'fb') return 'facebook';
+      if (/whatsapp|wa\.me/.test(t)) return 'whatsapp';
+      if (sp.get('gclid') || /google|bing|yahoo|duckduckgo/.test(t)) return 'google';
+      if (u || (r && !own)) return 'other'; return 'direct'; };
+    const fresh = Date.now() - (ses.at || 0) > 30 * 6e4;
+    if (fresh) ses = { id: rid(), src: srcNow() };
+    else if (!own && ref && srcNow() !== 'direct') ses.src = srcNow();
+    const dev = /Mobi|Android|iPhone|iPad/.test(navigator.userAgent) ? 'mobile' : 'desktop';
+    const path = location.pathname.split('/').pop() || 'index.html';
+    const pidNow = () => /product\.html$/.test(location.pathname) ? parseInt(sp.get('p') || '', 10) || null : null;
+    const send = (ev, pid) => { try { ses.at = Date.now(); localStorage.setItem('dq-ses', JSON.stringify(ses)); } catch (e) {}
+      if (/[?&]notrack/.test(location.search)) return;
+      sb.rpc('shop_track', { p_vid: vid, p_sid: ses.id, p_ev: ev, p_path: path, p_pid: pid || null, p_src: ses.src, p_dev: dev }).then(() => {}, () => {}); };
+    send('pv', pidNow());
+    // still here: keeps the visitor counted as «live» while the page stays open and visible
+    setInterval(() => { if (!document.hidden) send('hb'); }, 60e3);
+    return send;
+  })();
+
   /* ---------- small helpers ---------- */
   DQ.toast = (msg, type = '') => { const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; $('#toasts').appendChild(t); setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = 0; setTimeout(() => t.remove(), 300) }, 2800); };
   // scroll reveals: measured with getBoundingClientRect (an IntersectionObserver never fires for clip-path:inset(..) elements, which have zero visible area until they open)
@@ -407,7 +435,7 @@
     const line = DQ.cart.find(c => c.id === id && optKey(c.opt) === optKey(opt));
     const next = Math.min((line ? line.qty : 0) + qty, p.stock, 20);
     if (line) line.qty = next; else DQ.cart.push(opt ? { id, qty: next, opt } : { id, qty: next });
-    saveCart(); renderCart();
+    saveCart(); renderCart(); DQ.track('cart', id);
     const b = $('#cartBtn'); b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump');
     if (!silent) DQ.toast('اتضافت للسلة ✓', 'ok');
   };
@@ -839,6 +867,7 @@
     if (DQ.closed()) { DQ.closedNote(); return DQ.openCart(); }
     if (!lines().length) return DQ.openCart();
     const pg = $('#coPage'); ['#drawer', '#overlay', '#menuSheet', '#searchSheet', '#favSheet', '#accSheet'].forEach(s => $(s) && $(s).classList.remove('on'));
+    DQ.track('co');
     coState = 'form'; pg.classList.remove('shown'); renderCheckout(); pg.hidden = false; pg.scrollTop = 0; document.body.style.overflow = 'hidden';
     requestAnimationFrame(() => requestAnimationFrame(() => pg.classList.add('on')));
   };
