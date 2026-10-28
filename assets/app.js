@@ -394,13 +394,13 @@
 
   /* ---------- fake "just ordered" pop-ups (Admin → «نوتفكشن وهمية»): shown on the admin's schedule, nothing is ordered ----------
      every visitor gets the same moments; one already shown (or missed while away) isn't shown again on the next page */
-  let fkKey = '', fkT = 0, fkHide = 0;
+  let fkKey = '', fkT = 0;
   const fkSeen = () => { try { const v = JSON.parse(sessionStorage.getItem('dq-fk') || 'null'); return v && v.k === fkKey ? v.i : []; } catch (e) { return []; } };
   const fkMark = i => { try { sessionStorage.setItem('dq-fk', JSON.stringify({ k: fkKey, i: fkSeen().concat(i) })); } catch (e) {} };
   function fakeRun() {
     const f = RC.fakeLive(DQ.settings, RC.now()), key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
     if (key === fkKey) return; fkKey = key; clearTimeout(fkT);
-    if (!f) return fkClose();
+    if (!f) return document.querySelectorAll('.fk-pop').forEach(fkClose);
     RC.syncClock().then(() => { if (fkKey === key) fkNext(); });
   }
   function fkNext() {
@@ -411,15 +411,18 @@
     const fire = () => { const late = RC.now() - e.t; if (veil() && late < 9000) { fkT = setTimeout(fire, 700); return; } if (!document.hidden && late < 10000) fkShow(e); fkMark(e.i); fkNext(); };
     fkT = setTimeout(fire, Math.max(0, e.t - now));
   }
-  function fkClose() { const el = $('#fkPop'); clearTimeout(fkHide); if (!el) return; el.classList.remove('on'); setTimeout(() => el.remove(), 400); }
+  // several can be up at once (stacked); each leaves on its own after 5s, the oldest goes first when there are too many
+  function fkClose(el) { if (!el || el.dataset.out) return; el.dataset.out = 1; el.classList.remove('on'); setTimeout(() => { el.remove(); const w = $('#fkWrap'); if (w && !w.children.length) w.remove(); }, 400); }
   function fkShow(e) {
     const p = DQ.byId(e.pid); if (!p) return;
-    const old = $('#fkPop'); if (old) old.remove(); clearTimeout(fkHide);
-    const el = document.createElement('a'); el.id = 'fkPop'; el.className = 'fk-pop'; el.href = RC.productUrl(p);
+    let w = $('#fkWrap'); if (!w) { w = document.createElement('div'); w.id = 'fkWrap'; w.className = 'fk-wrap'; document.body.appendChild(w); }
+    const live = [...w.children].filter(x => !x.dataset.out), max = matchMedia('(max-width:640px)').matches ? 2 : 3;
+    live.slice(0, Math.max(0, live.length - max + 1)).forEach(fkClose);
+    const el = document.createElement('a'); el.className = 'fk-pop'; el.href = RC.productUrl(p);
     el.innerHTML = `<img ${DQ.thumb(p)} alt=""><span class="fk-t"><small><b>${esc(e.name)}</b> من ${esc(e.city)} ${e.g === 'f' ? 'طلبت' : 'طلب'}</small><b class="en">${esc(p.name)}</b><em>${['دلوقتي', 'من دقيقة', 'من دقيقتين', 'من 3 دقايق'][e.ago] || 'دلوقتي'}</em></span><button type="button" class="fk-x" aria-label="إغلاق">×</button>`;
-    el.querySelector('.fk-x').onclick = ev => { ev.preventDefault(); ev.stopPropagation(); fkClose(); };
-    document.body.appendChild(el); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
-    fkHide = setTimeout(fkClose, 5000);
+    el.querySelector('.fk-x').onclick = ev => { ev.preventDefault(); ev.stopPropagation(); fkClose(el); };
+    w.appendChild(el); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
+    setTimeout(() => fkClose(el), 5000);
   }
 
   /* ---------- social accounts: top bar (with the announcement) + footer; accounts without a link are skipped ---------- */

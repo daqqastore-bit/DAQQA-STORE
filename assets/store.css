@@ -1095,7 +1095,8 @@ html.dq-lock{overflow:hidden;overscroll-behavior:none}html.dq-lock body{position
 @media (max-width:640px){.c-bar .sdd{width:100%}}
 .strip .sdd-btn{background:rgb(var(--accent-rgb)/.08);color:var(--strip-ink);border-color:rgb(var(--accent-rgb)/.22)}.strip .sdd-pop{background:var(--strip-bg);color:var(--strip-ink);border-color:rgb(var(--accent-rgb)/.22)}.strip .sdd-pop button{color:var(--strip-ink)}.strip .sdd-pop button:hover{background:var(--s-tile)}.strip .sdd-pop button.on{color:#8a5a2b}
 /* fake "just ordered" pop-up (Admin → نوتفكشن وهمية): desktop = bottom-left card, phones = top banner */
-.fk-pop{position:fixed;z-index:120;left:20px;bottom:20px;width:min(340px,calc(100% - 32px));display:flex;align-items:center;gap:12px;padding:10px 34px 10px 10px;padding-inline:10px 34px;border-radius:16px;background:color-mix(in srgb,var(--nav) 96%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--ink);text-decoration:none;opacity:0;transform:translateY(18px) scale(.97);transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.3,1.15);pointer-events:none}
+.fk-wrap{position:fixed;z-index:120;left:20px;bottom:20px;width:min(340px,calc(100% - 32px));display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.fk-pop{position:relative;display:flex;align-items:center;gap:12px;padding:10px 34px 10px 10px;padding-inline:10px 34px;border-radius:16px;background:color-mix(in srgb,var(--nav) 96%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--ink);text-decoration:none;opacity:0;transform:translateY(18px) scale(.97);transition:opacity .35s,transform .45s cubic-bezier(.2,.9,.3,1.15);pointer-events:none}
 .fk-pop.on{opacity:1;transform:none;pointer-events:auto}
 .fk-pop img{width:56px;height:56px;flex:none;border-radius:12px;object-fit:cover;background:var(--surface-2)}
 .fk-t{display:grid;gap:2px;min-width:0;line-height:1.45}
@@ -1105,5 +1106,5 @@ html.dq-lock{overflow:hidden;overscroll-behavior:none}html.dq-lock body{position
 .fk-t em::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 25%,transparent)}
 .fk-x{position:absolute;top:6px;inset-inline-end:6px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:17px;line-height:1;color:var(--muted);background:none;border:0;cursor:pointer}
 .fk-x:hover{color:var(--ink);background:var(--surface-2)}
-@media (max-width:640px){.fk-pop{background:var(--nav);left:10px;right:10px;width:auto;bottom:auto;top:max(10px,env(safe-area-inset-top));transform:translateY(-130%)}.fk-pop img{width:48px;height:48px}}
+@media (max-width:640px){.fk-wrap{left:10px;right:10px;width:auto;bottom:auto;top:max(10px,env(safe-area-inset-top));flex-direction:column-reverse}.fk-pop{background:var(--nav);transform:translateY(-130%)}.fk-pop img{width:48px;height:48px}}
 @media (prefers-reduced-motion:reduce){.fk-pop{transition:opacity .3s;transform:none}}
