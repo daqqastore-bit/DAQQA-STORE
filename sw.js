@@ -21,8 +21,10 @@ self.addEventListener('push', e => {
   // an open dashboard reloads its orders right away and plays the shop's cash sound, so the notification itself stays silent then
   // (with the dashboard closed it rings with the device's own notification sound — a website can't give it another one)
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).catch(() => []).then(ws => {
-    const open = ws.filter(w => w.url.includes('admin.html'));
-    open.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }));
+    const admin = ws.filter(w => w.url.includes('admin.html'));
+    admin.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }));
+    // only a dashboard that's actually on screen counts: on iPhone the home-screen app stays «open» in the background, where it can't play anything
+    const open = admin.filter(w => w.visibilityState === 'visible');
     return self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: !open.length, requireInteraction: true, silent: open.length > 0,
       icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: d.url || 'admin.html#orders' } });
   }));
