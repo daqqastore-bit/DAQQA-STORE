@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028115755';
+RC.build = '20261028131839';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -238,3 +238,26 @@ RC.policy = (settings) => { const p = ((settings && settings.perks) || {}).polic
 // one line of policy text → safe HTML (escaped, then **bold** and the auto values)
 RC.policyLine = (x, vals) => { let h = RC.esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
   for (const [k, v] of Object.entries(vals || {})) { if (h.includes('[' + k + ']')) { if (!v) return ''; h = h.split('[' + k + ']').join(v); } } return h; };
+// fake "someone just ordered" pop-ups (Admin → «نوتفكشن وهمية»), display only — no order is made.
+// settings.perks.fake = {on, at (start, ms), min (minutes), n (how many), seed}; admin and store build the same plan from it
+RC.FAKE_NAMES = { m: ['أحمد', 'محمد', 'محمود', 'مصطفى', 'عمر', 'يوسف', 'كريم', 'إسلام', 'حسن', 'علي', 'مينا', 'عمرو', 'خالد', 'طارق', 'شريف', 'إبراهيم', 'زياد', 'مازن', 'سيف', 'بيتر', 'هشام', 'وليد', 'أدهم', 'مروان', 'ياسين', 'عبدالرحمن', 'أنس', 'رامي', 'تامر'],
+  f: ['مريم', 'سارة', 'نور', 'منة', 'آية', 'هبة', 'ياسمين', 'دينا', 'رنا', 'سلمى', 'فرح', 'ملك', 'شهد', 'روان', 'نادين', 'مي', 'إسراء', 'رحمة', 'هاجر', 'جنى', 'مارينا', 'ندى', 'بسمة', 'دعاء', 'لمياء'] };
+RC.FAKE_CITIES = ['القاهرة', 'القاهرة', 'القاهرة', 'الجيزة', 'الجيزة', 'الإسكندرية', 'الإسكندرية', 'القليوبية', 'الشرقية', 'الدقهلية', 'الغربية', 'المنوفية', 'البحيرة', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'الفيوم', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'الغردقة'];
+RC.fakeCfg = s => { const f = ((s && s.perks) || {}).fake; return f && typeof f === 'object' ? f : null; };
+RC.fakeLive = (s, now = Date.now()) => { const f = RC.fakeCfg(s); return f && f.on && +f.n > 0 && +f.min > 0 && now < +f.at + f.min * 6e4 + 1e4 ? f : null; };
+// pieces a pop-up can name: on the site, with a photo, orderable (same list on both sides: sorted by id)
+RC.fakePool = prods => (prods || []).filter(p => p.active !== false && p.images && p.images.length && !RC.soon(p) && !p.soon && (p.stock == null || p.stock > 0)).sort((a, b) => a.id - b.id);
+// n moments spread at random over the window (never closer than `gap`), each with a name, a city and a product (every product before any repeats)
+RC.fakePlan = (f, prods) => {
+  let s = (+f.seed || 1) >>> 0; const rnd = () => { s = (s + 0x6D2B79F5) >>> 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const n = Math.max(0, Math.round(+f.n || 0)), T = Math.max(1, +f.min || 0) * 6e4, gap = Math.min(9000, T / n * .5), span = T - gap * (n - 1) - 4000;
+  const pool = RC.fakePool(prods), shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const at = Array.from({ length: n }, () => rnd() * Math.max(0, span)).sort((a, b) => a - b);
+  let deck = [];
+  return at.map((t, i) => { if (!deck.length) deck = shuf(pool); const g = rnd() < .62 ? 'm' : 'f', L = RC.FAKE_NAMES[g];
+    return { i, t: +f.at + 3000 + t + gap * i, g, name: L[Math.floor(rnd() * L.length)], city: RC.FAKE_CITIES[Math.floor(rnd() * RC.FAKE_CITIES.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
+};
+// a visitor's clock can be minutes off: the site's own server time (Date header of version.json) keeps everyone on the admin's schedule
+RC.skew = 0; RC.now = () => Date.now() + RC.skew;
+RC.syncClock = () => RC._clk || (RC._clk = (async () => { try { const t0 = Date.now(), r = await fetch('version.json?t=' + t0, { cache: 'no-store' }), d = Date.parse(r.headers.get('date'));
+  const k = d ? d + 500 - (t0 + Date.now()) / 2 : 0; if (Math.abs(k) > 3000) RC.skew = k; } catch (e) {} })());

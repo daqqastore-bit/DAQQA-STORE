@@ -376,7 +376,7 @@
   const apply = (prods, sets) => {
     // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
     DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x).map(x => RC.soon(x) ? { ...x, stock: 0, soon: true } : x); DQ.settings = sets || {};
-    renderSocial(); renderClosed();
+    renderSocial(); renderClosed(); fakeRun();
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };
   DQ.useCache = c => { DQ.dataSig = c.sig; apply(c.p, c.s); };
@@ -391,6 +391,36 @@
     apply(p.data, s.data);
     return !same;
   };
+
+  /* ---------- fake "just ordered" pop-ups (Admin → «نوتفكشن وهمية»): shown on the admin's schedule, nothing is ordered ----------
+     every visitor gets the same moments; one already shown (or missed while away) isn't shown again on the next page */
+  let fkKey = '', fkT = 0, fkHide = 0;
+  const fkSeen = () => { try { const v = JSON.parse(sessionStorage.getItem('dq-fk') || 'null'); return v && v.k === fkKey ? v.i : []; } catch (e) { return []; } };
+  const fkMark = i => { try { sessionStorage.setItem('dq-fk', JSON.stringify({ k: fkKey, i: fkSeen().concat(i) })); } catch (e) {} };
+  function fakeRun() {
+    const f = RC.fakeLive(DQ.settings, RC.now()), key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
+    if (key === fkKey) return; fkKey = key; clearTimeout(fkT);
+    if (!f) return fkClose();
+    RC.syncClock().then(() => { if (fkKey === key) fkNext(); });
+  }
+  function fkNext() {
+    clearTimeout(fkT); const now = RC.now(), f = RC.fakeLive(DQ.settings, now); if (!f) return;
+    const seen = new Set(fkSeen()), e = RC.fakePlan(f, DQ.products).find(x => !seen.has(x.i) && x.t > now - 4000); if (!e) return;
+    // the opening animation / loader still covering the page: wait for it (a few seconds at most) instead of showing it underneath
+    const veil = () => { const L = $('#dqLoad'), X = $('.lx-intro:not(.open)'); return document.documentElement.classList.contains('intro-on') || (L && getComputedStyle(L).display !== 'none') || (X && getComputedStyle(X).display !== 'none' && !X.hidden); };
+    const fire = () => { const late = RC.now() - e.t; if (veil() && late < 9000) { fkT = setTimeout(fire, 700); return; } if (!document.hidden && late < 10000) fkShow(e); fkMark(e.i); fkNext(); };
+    fkT = setTimeout(fire, Math.max(0, e.t - now));
+  }
+  function fkClose() { const el = $('#fkPop'); clearTimeout(fkHide); if (!el) return; el.classList.remove('on'); setTimeout(() => el.remove(), 400); }
+  function fkShow(e) {
+    const p = DQ.byId(e.pid); if (!p) return;
+    const old = $('#fkPop'); if (old) old.remove(); clearTimeout(fkHide);
+    const el = document.createElement('a'); el.id = 'fkPop'; el.className = 'fk-pop'; el.href = RC.productUrl(p);
+    el.innerHTML = `<img ${DQ.thumb(p)} alt=""><span class="fk-t"><small><b>${esc(e.name)}</b> من ${esc(e.city)} ${e.g === 'f' ? 'طلبت' : 'طلب'}</small><b class="en">${esc(p.name)}</b><em>${['دلوقتي', 'من دقيقة', 'من دقيقتين', 'من 3 دقايق'][e.ago] || 'دلوقتي'}</em></span><button type="button" class="fk-x" aria-label="إغلاق">×</button>`;
+    el.querySelector('.fk-x').onclick = ev => { ev.preventDefault(); ev.stopPropagation(); fkClose(); };
+    document.body.appendChild(el); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
+    fkHide = setTimeout(fkClose, 5000);
+  }
 
   /* ---------- social accounts: top bar (with the announcement) + footer; accounts without a link are skipped ---------- */
   const socLink = (x, cls) => { const t = RC.SOCIAL[x.type], href = RC.socialHref(x), ext = /^https?:/.test(href);
