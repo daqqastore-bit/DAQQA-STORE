@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028201630">
-<link rel="stylesheet" href="assets/store.css?v=20261028201630">
+<link rel="stylesheet" href="assets/base.css?v=20261028201754">
+<link rel="stylesheet" href="assets/store.css?v=20261028201754">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -200,8 +200,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261028201630"></script>
-<script src="assets/app.js?v=20261028201630"></script>
+<script src="assets/config.js?v=20261028201754"></script>
+<script src="assets/app.js?v=20261028201754"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -448,7 +448,9 @@ function render() {
     if (same && history.length > 1) history.back(); else location.href = LUX ? 'luxury.html' : './#' + kind;
   });
   // related
-  const rel = DQ.products.filter(x => x.id !== p.id && RC.isLuxury(x) === RC.isLuxury(p)).sort((a, b) => ((RC.kindOf(b) === kind) - (RC.kindOf(a) === kind)) || ((b.category === p.category) - (a.category === p.category)) || (b.featured - a.featured)).slice(0, 4);
+  // never another gender's piece: a men's watch suggests men's + unisex, a women's one women's + unisex (unisex suggests all)
+  const genOk = x => p.category === 'unisex' || x.category === p.category || x.category === 'unisex';
+  const rel = DQ.products.filter(x => x.id !== p.id && RC.isLuxury(x) === RC.isLuxury(p) && genOk(x)).sort((a, b) => ((RC.kindOf(b) === kind) - (RC.kindOf(a) === kind)) || ((b.category === p.category) - (a.category === p.category)) || (b.featured - a.featured)).slice(0, 4);
   if (rel.length && LUX) $('#related').innerHTML = `<div class="lxp-rel-h"><span class="en">FROM THE PRIVÉ COLLECTION</span><h2 class="en">More <em>Pieces</em></h2><a href="luxury.html">كل المجموعة ←</a></div><div class="grid">${rel.map(DQ.card).join('')}</div>`;
   else if (rel.length) {
     // the last tile of the grid leads to the whole section instead of a small text link in the header
