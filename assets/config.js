@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028132642';
+RC.build = '20261028133221';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -250,7 +250,7 @@ RC.fakePool = prods => (prods || []).filter(p => p.active !== false && p.images 
 // n moments at random anywhere in the window (some can land together, like real orders), each with a name, a city and a product (every product before any repeats)
 RC.fakePlan = (f, prods) => {
   let s = (+f.seed || 1) >>> 0; const rnd = () => { s = (s + 0x6D2B79F5) >>> 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t ^= t + Math.imul(t ^ (t >>> 7), 61 | t); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
-  const n = Math.max(0, Math.round(+f.n || 0)), T = Math.max(1, +f.min || 0) * 6e4, span = T - 2500;
+  const n = Math.max(0, Math.round(+f.n || 0)), T = Math.max(1000, (+f.min || 0) * 6e4), span = T - 2500;
   const pool = RC.fakePool(prods), shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const at = Array.from({ length: n }, () => rnd() * Math.max(0, span)).sort((a, b) => a - b);
   let deck = [];
