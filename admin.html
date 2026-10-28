@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028013522">
+<link rel="stylesheet" href="assets/base.css?v=20261028014234">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -883,7 +883,7 @@ html{--z:1}
 .trk-sel select option{background:var(--bg-2);color:var(--ink)}
 .trk-sel>span{color:var(--muted);font-size:12px;white-space:nowrap}
 .trk-ps{max-width:240px}.trk-ps select{text-overflow:ellipsis;width:100%}
-.trk-cus{display:flex;align-items:center;gap:6px}.trk-cus .input{height:40px;width:150px;font-size:13px;border-radius:12px}.trk-cus i{font-style:normal;color:var(--muted)}
+.trk-cus{display:flex;align-items:center;gap:6px}.trk-cus label{display:flex;align-items:center;gap:6px;height:40px;padding:0 4px 0 0;padding-inline-start:12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);cursor:pointer}.trk-cus small{font-size:12px;color:var(--muted)}.trk-cus .input{height:36px;width:138px;font-size:13px;border:0;background:none;padding:0 6px}.trk-cus.on label{border-color:var(--amber)}
 .trk-live{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:13px;color:var(--muted);margin-inline-start:auto}
 .trk-live b{color:var(--ink);font-size:14px}
 .trk-live i{width:8px;height:8px;border-radius:50%;background:#3fb950;box-shadow:0 0 0 0 rgb(63 185 80/.6);animation:trkPulse 1.8s infinite}
@@ -939,7 +939,7 @@ html{--z:1}
 @media (max-width:760px){
   .trk-bar{gap:6px}.trk-sel{height:38px;padding:0 11px}.trk-sel>span{display:none}.trk-ps{max-width:none;flex:1 1 100%}
   .trk-live{margin-inline-start:0;height:38px}
-  .trk-cus{flex:1 1 100%}.trk-cus .input{flex:1;width:auto}
+  .trk-cus{flex:1 1 100%}.trk-cus label{flex:1;min-width:0;height:38px}.trk-cus .input{flex:1;width:auto;min-width:0}
   .trk-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}.trk-k{padding:10px}.trk-k b{font-size:17px}
   .trk-chart{height:220px;padding:0}
   .trk-ph{display:none}
@@ -1011,7 +1011,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028013522"></script>
+<script src="assets/config.js?v=20261028014234"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1264,7 +1264,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028013522'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028014234'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1563,7 +1563,7 @@ function renderDash() {
 /* ---------- tracking: when things sell (dates, hours, products), store visits and live visitors — compared with the period before ---------- */
 let trkR = '30', trkFrom = '', trkTo = '', trkCh = 'all', trkScope = 'all', trkProd = 'all', trkMetric = 'sales', trkOpen = '', trkTime = 'hour', trkCharts = [];
 const trkStats = {}; let TRK_OK = true, trkLive = null, trkLiveT = 0;
-const TRK_R = [['today','النهارده'],['yesterday','امبارح'],['7','آخر 7 أيام'],['30','آخر 30 يوم'],['90','آخر 90 يوم'],['month','الشهر ده'],['lastmonth','الشهر اللي فات'],['all','من الأول'],['custom','تاريخ مخصوص…']];
+const TRK_R = [['today','النهارده'],['yesterday','امبارح'],['7','آخر 7 أيام'],['30','آخر 30 يوم'],['90','آخر 90 يوم'],['month','الشهر ده'],['lastmonth','الشهر اللي فات'],['all','من الأول'],['custom','فترة مخصوصة']];
 const TRK_SRC = { instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', whatsapp: 'WhatsApp', google: 'Google', direct: 'مباشر', other: 'تاني' };
 const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const day0 = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
@@ -1669,8 +1669,8 @@ function renderTracking() {
   $('#main').innerHTML = `
     <div class="head"><div><h1 class="en">Tracking</h1><div class="sub">المنتجات بتتباع إمتى، مين بيزور المتجر، ومقارنة بالفترة اللي قبلها</div></div></div>
     <div class="trk-bar">
-      <label class="trk-sel has-ic">${IC('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>')}<select id="trkR" aria-label="الفترة">${TRK_R.map(([v, l]) => `<option value="${v}" ${v === trkR ? 'selected' : ''}>${l}</option>`).join('')}</select><span class="en" dir="ltr">${trkLbl(P)}</span></label>
-      ${trkR === 'custom' ? `<span class="trk-cus"><input class="input en" type="date" id="trkF" value="${trkFrom || ymd(P.from)}" max="${ymd(new Date())}" aria-label="من"><i>←</i><input class="input en" type="date" id="trkT" value="${trkTo || ymd(addD(P.to, -1))}" max="${ymd(new Date())}" aria-label="لحد"></span>` : ''}
+      <label class="trk-sel has-ic">${IC('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>')}<select id="trkR" aria-label="الفترة">${TRK_R.map(([v, l]) => `<option value="${v}" ${v === trkR ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <span class="trk-cus ${trkR === 'custom' ? 'on' : ''}"><label><small>من</small><input class="input en" type="date" id="trkF" value="${ymd(P.from)}" max="${ymd(new Date())}" aria-label="من تاريخ"></label><label><small>لحد</small><input class="input en" type="date" id="trkT" value="${ymd(addD(P.to, -1))}" max="${ymd(new Date())}" aria-label="لحد تاريخ"></label></span>
       <label class="trk-sel"><select id="trkCh" aria-label="القناة">${[['all','كل القنوات'],['web','الموقع بس'],['off','برا الموقع بس']].map(([v, l]) => `<option value="${v}" ${v === trkCh ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
       <label class="trk-sel"><select id="trkSc" aria-label="القسم">${[['all','كل المتجر'],['reg','المتجر العادي'],['lux','Luxury']].map(([v, l]) => `<option value="${v}" ${v === trkScope ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
       <label class="trk-sel trk-ps"><select id="trkP" aria-label="المنتج"><option value="all">كل المنتجات</option>${prodOpts.map(([id, n]) => `<option value="${id}" ${id === trkProd ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
@@ -1708,7 +1708,9 @@ function renderTracking() {
     </div>`;
   const m = $('#main');
   $('#trkR').onchange = e => { trkR = e.target.value; if (trkR === 'custom' && !trkFrom) { trkFrom = ymd(addD(new Date(), -29)); trkTo = ymd(new Date()); } renderTracking(); };
-  if ($('#trkF')) { $('#trkF').onchange = e => { trkFrom = e.target.value; if (trkTo && trkFrom > trkTo) trkTo = trkFrom; renderTracking(); }; $('#trkT').onchange = e => { trkTo = e.target.value; if (trkFrom && trkTo < trkFrom) trkFrom = trkTo; renderTracking(); }; }
+  // typing a date in «من» or «لحد» switches to an exact range, starting from what's on screen
+  const pick = (k, v) => { if (!v) return; trkFrom = $('#trkF').value || ymd(P.from); trkTo = $('#trkT').value || ymd(addD(P.to, -1)); if (k === 'f') { trkFrom = v; if (trkFrom > trkTo) trkTo = trkFrom; } else { trkTo = v; if (trkTo < trkFrom) trkFrom = trkTo; } trkR = 'custom'; renderTracking(); };
+  $('#trkF').onchange = e => pick('f', e.target.value); $('#trkT').onchange = e => pick('t', e.target.value);
   $('#trkCh').onchange = e => { trkCh = e.target.value; renderTracking(); };
   $('#trkSc').onchange = e => { trkScope = e.target.value; renderTracking(); };
   $('#trkP').onchange = e => { trkProd = e.target.value; if (trkProd !== 'all') trkOpen = trkProd; renderTracking(); };
@@ -1830,7 +1832,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028013522" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028014234" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1864,7 +1866,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028013522" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028014234" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1905,7 +1907,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028013522'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028013522')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028014234'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028014234')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
