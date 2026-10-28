@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028154809">
+<link rel="stylesheet" href="assets/base.css?v=20261028154854">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028154809"></script>
+<script src="assets/config.js?v=20261028154854"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1283,7 +1283,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261028154809'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028154854'); orderSnd.preload = 'auto';
 // one alert per order per device: every open tab / window of the dashboard hears the same order, and the live connection and the push
 // both report it. Only one tab rings (it holds the «dq-alert-lead» lock; when it closes the next tab takes over), and it rings once
 // per order even after a reload (claimed keys are kept for 10 minutes).
@@ -1307,9 +1307,14 @@ function fkClear() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration().then(r => r && r.getNotifications()).then(l => (l || []).forEach(n => /^dq-fk-/.test(n.tag) && n.close())).catch(() => {});
 }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
-// Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
-const oNum = o => o && o.seq ? '#' + o.seq : '';
-const oNo = o => o && o.seq ? `<span class="o-no">#${o.seq}</span>` : '';
+// Running order number (#1, #2 …): the order's place among the orders there are now, oldest = #1, so deleting one closes the gap.
+// Admin only, customers keep the DQ- code. An order that just came in and isn't loaded yet gets the next number.
+let oRankOf = null, oRankKey = '';
+const oRank = o => { if (!o) return 0; const k = orders.length + ':' + (orders[0] && orders[0].id) + ':' + (orders[orders.length - 1] && orders[orders.length - 1].id);
+  if (k !== oRankKey) { oRankKey = k; oRankOf = new Map(orders.slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at) || a.id - b.id).map((x, i) => [x.id, i + 1])); }
+  return oRankOf.get(o.id) || orders.length + 1; };
+const oNum = o => o ? '#' + oRank(o) : '';
+const oNo = o => o ? `<span class="o-no">#${oRank(o)}</span>` : '';
 const oLbl = o => [oNum(o), o.code].filter(Boolean).join(' · ');
 
 /* ---------- nav ---------- */
@@ -1873,7 +1878,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028154809" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028154854" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1907,7 +1912,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028154809" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028154854" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1948,7 +1953,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028154809'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028154809')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028154854'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028154854')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3153,7 +3158,7 @@ function renderFake() {
     if (!m || !k || !pool.length) return renderFake();
     if (run && !(await confirmBox('فيه نوتفكشنز شغالة دلوقتي. تبدأ من جديد؟', 'ابدأ'))) return;   // starting again replaces the queued ones
     await RC.syncClock();
-    const base = orders.reduce((x, o) => Math.max(x, +o.seq || 0), 0);   // fake order numbers carry on after the last real one
+    const base = orders.length;   // fake order numbers carry on after the last real one
     const nf = { on: true, at: Math.round(RC.now()), min: m, n: k, to: fkIn.to, base, cities: fkCities(), dev: FK_DEV, seed: 1 + Math.floor(Math.random() * 2147483646) };
     if (RC.fakeTo(nf, 'admin')) {   // queue them on the server so each one arrives as a real notification, phone locked or not
       // no endpoint = every device with order notifications on
