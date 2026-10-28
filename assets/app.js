@@ -1150,7 +1150,7 @@
       ${DQ.isAdmin ? `<a class="btn btn-amber acc-admin" href="admin.html">لوحة التحكم</a>` : ''}
       <h4 class="acc-h">طلباتي</h4><div id="accOrders"><div class="acc-empty">جاري التحميل…</div></div>
       <button class="btn btn-ghost acc-out" id="accOut">تسجيل خروج</button>`;
-    $('#accOut').onclick = async () => { await sb.auth.signOut(); DQ.toast('اتسجل الخروج'); };
+    $('#accOut').onclick = async () => { await sb.auth.signOut({ scope: 'local' }); DQ.toast('اتسجل الخروج'); };
     const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,cancelled_by,shop_order_items(name,qty,image)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
     const el = $('#accOrders'); if (!el) return;
     const acc = error ? [] : data.filter(shown), extra = await trackLocal(acc.map(o => o.code));
