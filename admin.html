@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028140746">
+<link rel="stylesheet" href="assets/base.css?v=20261028140943">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028140746"></script>
+<script src="assets/config.js?v=20261028140943"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1283,7 +1283,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028140746'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028140943'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 // fake alerts: every one plays the whole cash sound (Web Audio, so a new one never cuts the last one off), each starting a little after the one before
 let fkCtx = null, fkBuf = null, fkAt = 0;
@@ -1863,7 +1863,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028140746" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028140943" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1897,7 +1897,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028140746" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028140943" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1938,7 +1938,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028140746'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028140746')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028140943'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028140943')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3095,6 +3095,8 @@ function ogInit() {
 }
 /* ---------- نوتفكشن وهمية: «فلان طلب …» pop-ups on the store for a set time, display only (settings.perks.fake, plan in RC.fakePlan) ---------- */
 let fkTick = 0;
+// the governorates given a shipping price (Settings → الشحن); with none set, every governorate the shop ships to
+const fkCities = () => { const av = AV(), z = (Array.isArray(settings.shipping_zones) ? settings.shipping_zones : []).flatMap(x => x && Array.isArray(x.cities) ? x.cities : []); const l = av.filter(c => z.includes(c)); return l.length ? l : av; };
 const fkIn = (() => { let v = null; try { v = JSON.parse(localStorage.getItem('dq-fake-in') || 'null'); } catch (e) {} v = v || { u: 'm', v: 5, n: 10 }; if (!v.u) { v.u = 'm'; v.v = v.min; } if (!v.to) v.to = 'admin'; return v; })();   // u = 's' seconds | 'm' minutes
 const fkSaveIn = () => { try { localStorage.setItem('dq-fake-in', JSON.stringify(fkIn)); } catch (e) {} };
 const fkMins = () => fkIn.u === 's' ? (+fkIn.v || 0) / 60 : +fkIn.v || 0;
@@ -3125,7 +3127,7 @@ function renderFake() {
         <div class="field"><label>عدد النوتفكشنز</label><input class="input en" id="fkN" type="number" inputmode="numeric" min="1" max="500" value="${n || ''}">${chips('n', [3, 5, 10, 15, 20, 30], '')}</div>
       </div>
       <div class="field fk-to-f" style="margin:0"><label>يوصل فين</label><div class="fk-q fk-to">${[['admin', 'الأدمن · صوت + إشعار طلب'], ['site', 'الموقع · للزوار'], ['both', 'الاتنين']].map(([k, l]) => `<button type="button" class="gchip ${fkIn.to === k ? 'on' : ''}" data-fto="${k}">${l}</button>`).join('')}</div></div>
-      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيوصل <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج. ${fkIn.to === 'site' ? 'بتظهر للي فاتحين الموقع بس.' : `بتوصل كل الأجهزة اللي فاتحة الأدمن أو مفعّل عليها الإشعارات كإشعار «طلب جديد» بصوته، زي الطلب الحقيقي${fkIn.to === 'both' ? '، وكمان بتظهر للي فاتحين الموقع' : ''}. مفيش أي طلب بيتسجل.`}`}</div>
+      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيوصل <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج. المحافظات: <b>${esc(fkCities().join('، '))}</b>. ${fkIn.to === 'site' ? 'بتظهر للي فاتحين الموقع بس.' : `بتوصل كل الأجهزة اللي فاتحة الأدمن أو مفعّل عليها الإشعارات كإشعار «طلب جديد» بصوته، زي الطلب الحقيقي${fkIn.to === 'both' ? '، وكمان بتظهر للي فاتحين الموقع' : ''}. مفيش أي طلب بيتسجل.`}`}</div>
       <div class="set-acts"><button class="btn btn-primary" type="button" id="fkGo" ${bad ? 'disabled' : ''}>${run ? 'ابدأ من جديد' : 'ابدأ'}</button></div>
     </div>
     ${live}`;
@@ -3142,7 +3144,7 @@ function renderFake() {
     if (run && !(await confirmBox('فيه نوتفكشنز شغالة دلوقتي. تبدأ من جديد؟', 'ابدأ'))) return;   // starting again replaces the queued ones
     await RC.syncClock();
     const base = orders.reduce((x, o) => Math.max(x, +o.seq || 0), 0);   // fake order numbers carry on after the last real one
-    const nf = { on: true, at: Math.round(RC.now()), min: m, n: k, to: fkIn.to, base, cities: AV(), dev: FK_DEV, seed: 1 + Math.floor(Math.random() * 2147483646) };
+    const nf = { on: true, at: Math.round(RC.now()), min: m, n: k, to: fkIn.to, base, cities: fkCities(), dev: FK_DEV, seed: 1 + Math.floor(Math.random() * 2147483646) };
     if (RC.fakeTo(nf, 'admin')) {   // queue them on the server so each one arrives as a real notification, phone locked or not
       // no endpoint = every device with order notifications on
       const items = RC.fakePlan(nf, products).map(e => { const x = fkMsg(nf, e); return x && { at: Math.round(e.t), title: x.title, body: x.body, tag: x.tag }; }).filter(Boolean);
