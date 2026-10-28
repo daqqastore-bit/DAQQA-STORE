@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028140154">
+<link rel="stylesheet" href="assets/base.css?v=20261028140746">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -492,13 +492,6 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 @media (max-width:640px){.fk-in{grid-template-columns:1fr;gap:14px}.fk-nums b{font-size:17px}}
 .og-prev{position:relative;width:100%;max-width:520px;aspect-ratio:1200/630;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg2,rgba(127,127,127,.08));display:grid;place-items:center}.og-prev img{width:100%;height:100%;object-fit:cover;display:block}.og-prev span{padding:16px;text-align:center;color:var(--muted);font-size:13px}.og-prev img[hidden],.og-prev span[hidden]{display:none}.og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:320px;overflow:auto}.og-grid[hidden]{display:none}.og-grid button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:none;cursor:pointer;aspect-ratio:1}.og-grid button:hover{border-color:var(--amber,#C9A96E)}.og-grid img{width:100%;height:100%;object-fit:cover;display:block}.og-card .btn,#ogCard label.btn{cursor:pointer}
 .web-ord{margin-bottom:14px}.oc-card.is-off{border-color:var(--red,#B04834)}.oc-card.is-off #ocTxt{color:var(--red,#B04834);font-weight:600}.oc-msg{margin-top:12px}.oc-card .set-acts{margin-top:8px}.web-ord .set-h{align-items:center}.web-ord .set-h>div{flex:1}.wo-warn{color:var(--red,#B04834);font-size:12.5px}
-.sec-list{display:grid;gap:8px}.sec-dev{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:14px}
-.sec-dev.is-on{border-color:color-mix(in srgb,var(--green) 55%,var(--line))}.sec-ic{position:relative;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--muted)}.sec-ic svg{width:22px;height:22px}.sec-dev.is-on .sec-ic{color:var(--green)}
-.sec-ic i{position:absolute;top:5px;inset-inline-end:5px;width:9px;height:9px;border-radius:50%;background:#2f9e5b;box-shadow:0 0 0 2px var(--surface)}
-.sec-tx{display:grid;gap:2px;min-width:0}.sec-tx b{font:600 14.5px var(--f-ui)}.sec-tx b em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--amber);background:var(--surface-2);padding:1px 8px;border-radius:99px;margin-inline-start:4px}.sec-tx small{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}.sec-tx small[dir=ltr]{text-align:right}
-.sec-acts{display:flex;align-items:center;gap:10px}.sec-sw{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);cursor:pointer}
-.sec-past .sec-dev{opacity:.85}
-@media (max-width:640px){.sec-dev{grid-template-columns:40px minmax(0,1fr);gap:10px}.sec-ic{width:40px;height:40px}.sec-acts{grid-column:1/-1;justify-content:space-between}}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .set-h h2{margin:0;font-size:17px}.set-h small{font-size:12.5px;color:var(--muted)}.set-h small.ok{color:var(--green)}
 .set-ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--surface-2);color:var(--amber);flex:none}.set-ic svg{width:20px;height:20px}
@@ -1032,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028140154"></script>
+<script src="assets/config.js?v=20261028140746"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1046,7 +1039,7 @@ let RECOVERY = /(^|[#&?])type=recovery(&|$)/.test(location.hash + location.searc
 const sb = supabase.createClient(RC.url, RC.key);
 sb.auth.onAuthStateChange(ev => { if (ev === 'PASSWORD_RECOVERY') { RECOVERY = true; showReset(); }
   // signed out here or in another tab of the site: don't leave a dashboard that can't save anything
-  if (ev === 'SIGNED_OUT' && !$('#appView').classList.contains('hidden')) { if (channel) sb.removeChannel(channel); secStop(); toast('اتعمل تسجيل خروج — ادخل تاني عشان تكمل', 'err'); showLogin(); } });
+  if (ev === 'SIGNED_OUT' && !$('#appView').classList.contains('hidden')) { if (channel) sb.removeChannel(channel); toast('اتعمل تسجيل خروج — ادخل تاني عشان تكمل', 'err'); showLogin(); } });
 const $ = s => document.querySelector(s);
 // «ملغي» isn't something the admin sets any more (a shipped order that comes back is «مرتجع»); customers can still cancel from the store,
 // so the cancelled status only shows in lists when there are such orders
@@ -1068,13 +1061,12 @@ const ICONS = {
   covers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15-5-5L5 20"/></svg>',
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   fake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/><path d="M19 3.5l1.5-1M21 7h1.5"/></svg>',
-  security: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
 const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['invoices','طباعة الفواتير'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
-  ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات'], ['security','Security'], ['_h',''], ['fake','نوتفكشن وهمية']];
+  ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات'], ['_h',''], ['fake','نوتفكشن وهمية']];
 const MOB_TABS = ['overview','accounts','orders','products','lux-orders'];
 // an order counts as Luxury when any of its pieces is a Luxury product
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
@@ -1159,7 +1151,7 @@ async function boot() {
   else go(h0 || 'overview');
   try { const y = +sessionStorage.getItem('dq-admin-y'); sessionStorage.removeItem('dq-admin-y'); if (y) setTimeout(() => scrollTo(0, y), 60); } catch (e) {}
   restoreDraft();
-  listen(); askNotify(); fkAdmRun(); secStart();
+  listen(); askNotify(); fkAdmRun();
   // orders that came in while the panel was closed reach the sheet when it opens (merged, older rows stay; at most every 20 min)
   try { if (Date.now() - (+localStorage.getItem('dq-sheet-merge') || 0) > 12e5) { localStorage.setItem('dq-sheet-merge', Date.now()); sheetSend({ action: 'merge', orders: orders.map(orderRow), expenses: expenses.map(expRow), offline: offs.map(offRow) }); } } catch (e) {}
 }
@@ -1218,8 +1210,8 @@ $('#pwBtn').onclick = () => {
     const btn = e.target.querySelector('[type=submit]'); btn.disabled = true;
     const {error} = await sb.auth.updateUser({password: f.pw}); btn.disabled = false; if (error) return toast(error.message, 'err'); m.remove(); toast('اتغير الباسورد ✓', 'ok'); };
 };
-// signing out here only signs out this device (the others stay in; Security → «اخرج من كل الأجهزة التانية» does that)
-$('#logoutBtn').onclick = async () => { $('#appView').classList.add('hidden'); secStop(); await sb.auth.signOut({ scope: 'local' }); if (channel) sb.removeChannel(channel); showLogin(); };
+// signing out here only signs out this device, the others stay in
+$('#logoutBtn').onclick = async () => { $('#appView').classList.add('hidden'); await sb.auth.signOut({ scope: 'local' }); if (channel) sb.removeChannel(channel); showLogin(); };
 
 /* ---------- data ---------- */
 async function detectCols() { await Promise.all(Object.keys(COLS).map(async c => { const { error } = await sb.from('shop_products').select(c).limit(1); COLS[c] = !error; })); }
@@ -1234,7 +1226,7 @@ async function loadSettings() { const {data} = await sb.from('shop_settings').se
 function listen() {
   if (channel) sb.removeChannel(channel);
   channel = sb.channel('rc-orders').on('postgres_changes', {event:'INSERT', schema:'public', table:'shop_orders'}, async payload => {
-    freshIds.add(payload.new.id); if (!devPrefs.mute) cash(); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); if (!devPrefs.mute) desktopNotify(payload.new);   // a muted device (Security page) only updates the list
+    freshIds.add(payload.new.id); cash(); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); desktopNotify(payload.new);
     await Promise.all([loadOrders(), loadProducts(), payload.new && payload.new.user_id && !mailOf(payload.new.user_id) ? loadUsers() : null]); renderTabs(); go(tab, true);
     const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_settings'}, payload => {
@@ -1272,14 +1264,13 @@ async function enablePush() {
     const j = sub.toJSON(), dev = (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB');
     const { error } = await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: dev });
     if (error) throw error;
-    if (devPrefs.mute) { devPrefs.mute = false; devSavePrefs(); secTrack(); }
     await sb.rpc('shop_push_test'); toast('اتفعّلت ✓ هيوصلك إشعار تجربة دلوقتي', 'ok'); askNotify();
   } catch (e) { toast('معرفناش نفعّل الإشعارات: ' + (e.message || e), 'err'); }
 }
 async function askNotify() {
   document.querySelectorAll('.notify-ask').forEach(b => b.remove());
-  const on = pushActive = await pushOn(); const sb_ = $('#pushBtn'); if (sb_) sb_.querySelector('span').textContent = devPrefs.mute ? 'الإشعارات مقفولة على الجهاز ده' : on ? 'الإشعارات شغالة ✓ (جرّب)' : 'إشعارات الطلبات';
-  if (on || devPrefs.mute || localStorage.getItem('dq-push-later')) return;
+  const on = pushActive = await pushOn(); const sb_ = $('#pushBtn'); if (sb_) sb_.querySelector('span').textContent = on ? 'الإشعارات شغالة ✓ (جرّب)' : 'إشعارات الطلبات';
+  if (on || localStorage.getItem('dq-push-later')) return;
   const b = document.createElement('button'); b.className = 'btn btn-amber btn-sm notify-ask'; b.innerHTML = 'فعّل إشعارات الطلبات على الجهاز ده <i data-later aria-label="بعدين">×</i>';
   b.onclick = e => { if (e.target.closest('[data-later]')) { try { localStorage.setItem('dq-push-later', 1) } catch (er) {} b.remove(); return; } enablePush(); }; document.body.appendChild(b);
 }
@@ -1292,7 +1283,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028140154'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028140746'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 // fake alerts: every one plays the whole cash sound (Web Audio, so a new one never cuts the last one off), each starting a little after the one before
 let fkCtx = null, fkBuf = null, fkAt = 0;
@@ -1323,12 +1314,12 @@ function renderTabs() {
 document.addEventListener('click', e => { const t = e.target.closest('[data-tab]'); if (t) { document.body.classList.remove('side-open'); go(t.dataset.tab); }
   if (e.target.closest('#mobMenu')) document.body.classList.add('side-open'); else if (e.target.closest('#sideBg')) document.body.classList.remove('side-open'); });
 function go(t, keepScroll) {
+  if (!TABS.some(x => x[0] === t)) t = 'overview';   // an old link to a page that's gone (e.g. #security)
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
   if (t !== 'tracking') { trkCharts.forEach(c => c.destroy()); trkCharts = []; }
   if (t !== 'fake') { clearInterval(fkTick); fkTick = 0; }
-  if (t !== 'security') { clearInterval(secTick); secTick = 0; }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, security: renderSecurity, fake: renderFake}[t] || renderDash)();
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, fake: renderFake}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
@@ -1872,7 +1863,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028140154" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028140746" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1906,7 +1897,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028140154" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028140746" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1947,7 +1938,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028140154'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028140154')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028140746'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028140746')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3153,7 +3144,7 @@ function renderFake() {
     const base = orders.reduce((x, o) => Math.max(x, +o.seq || 0), 0);   // fake order numbers carry on after the last real one
     const nf = { on: true, at: Math.round(RC.now()), min: m, n: k, to: fkIn.to, base, cities: AV(), dev: FK_DEV, seed: 1 + Math.floor(Math.random() * 2147483646) };
     if (RC.fakeTo(nf, 'admin')) {   // queue them on the server so each one arrives as a real notification, phone locked or not
-      // no endpoint = every device with order notifications on (a device muted in Security isn't in shop_push_subs)
+      // no endpoint = every device with order notifications on
       const items = RC.fakePlan(nf, products).map(e => { const x = fkMsg(nf, e); return x && { at: Math.round(e.t), title: x.title, body: x.body, tag: x.tag }; }).filter(Boolean);
       let ok = false; try { const r = await sb.rpc('shop_fake_push', { items }); ok = !r.error; } catch (e) {}
       nf.srv = ok; if (!ok) toast('الإشعارات على الموبايل وهو مقفول محتاجة تحديث في Supabase — دلوقتي هتشتغل على الأجهزة اللي فاتحة الصفحة بس', 'err');
@@ -3173,7 +3164,7 @@ async function fkSave(fake, ok) {
 }
 /* the same plan as fake order alerts on every open dashboard (f.to admin / both): cash sound + «طلب جديد» toast + a device notification — nothing is saved */
 let fkAdmKey = '', fkAdmT = 0;
-// whoever presses «ابدأ», a run alerts every dashboard (except a device muted in Security); f.dev just records who started it
+// whoever presses «ابدأ», a run alerts every dashboard; f.dev just records who started it
 const FK_DEV = (() => { try { let d = localStorage.getItem('dq-dev'); if (!d) { d = Math.random().toString(36).slice(2, 12); localStorage.setItem('dq-dev', d); } return d; } catch (e) { return 'x'; } })();
 const fkAdmSeen = () => { try { const v = JSON.parse(sessionStorage.getItem('dq-fk-adm') || 'null'); return v && v.k === fkAdmKey ? v.i : []; } catch (e) { return []; } };
 const fkAdmMark = i => { try { sessionStorage.setItem('dq-fk-adm', JSON.stringify({ k: fkAdmKey, i: fkAdmSeen().concat(i) })); } catch (e) {} };
@@ -3198,123 +3189,16 @@ function fkMsg(f, e) {
 // and plays the sound only while it's on screen (a page playing audio in the background turns into a «now playing» player on the phone)
 function fkAdmFire(f, e) {
   const m = fkMsg(f, e); if (!m) return;
-  if (devPrefs.mute) return toast(`طلب جديد ${m.no}`, 'ok');
   if (!document.hidden) { fkCash(); toast(`طلب جديد ${m.no}`, 'ok'); }
   if (f.srv || !('Notification' in window) || Notification.permission !== 'granted') return;
   const opt = { body: m.body, tag: m.tag, renotify: true, icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: 'admin.html#orders' } };
   ('serviceWorker' in navigator ? navigator.serviceWorker.getRegistration().then(r => r ? r.showNotification(m.title, opt) : Promise.reject()) : Promise.reject())
     .catch(() => { try { new Notification(m.title, opt); } catch (er) {} });
 }
-/* ---------- Security: the devices that have this dashboard open right now (realtime presence, one key per device = FK_DEV)
-   and when each device last opened it (shop_admin_devices, supabase/admin-devices.sql). A device can be muted or signed out from here. ---------- */
-const devPrefs = (() => { try { return JSON.parse(localStorage.getItem('dq-dev-prefs') || '{}') || {}; } catch (e) { return {}; } })();   // {mute: true} = no order sound / notification on this device
-const devSavePrefs = () => { try { localStorage.setItem('dq-dev-prefs', JSON.stringify(devPrefs)); } catch (e) {} };
-const secT0 = Date.now();
-let secCh = null, secOn = {}, secRows = null, secDb = true, secTick = 0, secBeat = 0, secModel = '';
-function devInfo() {
-  const ua = navigator.userAgent, ipad = /iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-  const os = ipad ? 'iPadOS' : /iPhone|iPod/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /CrOS/.test(ua) ? 'ChromeOS' : /Mac OS X|Macintosh/.test(ua) ? 'macOS' : /Linux/.test(ua) ? 'Linux' : '';
-  const browser = /Edg(A|iOS)?\//.test(ua) ? 'Edge' : /SamsungBrowser/.test(ua) ? 'Samsung Internet' : /OPR\/|OPiOS/.test(ua) ? 'Opera' : /FxiOS|Firefox/.test(ua) ? 'Firefox' : /CriOS|Chrome/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : '';
-  const kind = ipad || (/Android/.test(ua) && !/Mobile/.test(ua)) ? 'tablet' : /iPhone|iPod|Mobile/.test(ua) ? 'phone' : 'computer';
-  const m = ua.match(/Android [\d.]+; (?:[a-z]{2}[-_][a-z]{2}; )?([^;)]+?)(?: Build|\))/i);
-  const model = secModel || (ipad ? 'iPad' : /iPhone/.test(ua) ? 'iPhone' : m && m[1] !== 'K' ? m[1].trim() : '');
-  return { kind, os, browser, model, app: standalone() };
-}
-// Chrome on Android hides the phone model in the user agent; it can still be asked for
-try { navigator.userAgentData && navigator.userAgentData.getHighEntropyValues(['model']).then(v => { if (v && v.model) { secModel = v.model; secTrack(); } }).catch(() => {}); } catch (e) {}
-const devName = d => [d.model || ({ phone: 'موبايل', tablet: 'تابلت', computer: 'كمبيوتر' })[d.kind], d.os && d.os !== d.model ? d.os : ''].filter(Boolean).join(' · ');
-const devAgo = ms => { const m = Math.max(0, Math.round(ms / 6e4)); return m < 1 ? 'دلوقتي' : m < 60 ? `من ${m} دقيقة` : m < 1440 ? `من ${Math.round(m / 60)} ساعة` : `من ${Math.round(m / 1440)} يوم`; };
-const DEV_IC = {
-  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>',
-  tablet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="2.5" width="16" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>',
-  computer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>'
-};
-async function secTrack() {
-  if (!secCh) return;
-  const { data: { session } } = await sb.auth.getSession();
-  secCh.track({ id: FK_DEV, ...devInfo(), email: session && session.user ? session.user.email : '', mute: !!devPrefs.mute, hidden: document.hidden, at: secT0 }).catch(() => {});
-}
-// last seen: written when the dashboard opens, comes back to the screen, and every 2 minutes while it's open
-async function secSeen() {
-  if (!secDb) return; const d = devInfo(), { data: { session } } = await sb.auth.getSession();
-  const { error } = await sb.from('shop_admin_devices').upsert({ id: FK_DEV, email: session && session.user ? session.user.email : null, kind: d.kind, os: d.os, browser: d.browser, model: d.model || null, last_seen: new Date().toISOString() });
-  if (error) secDb = false;
-}
-async function secLoad() { if (!secDb) return; const { data, error } = await sb.from('shop_admin_devices').select('*').order('last_seen', { ascending: false }).limit(100); if (error) secDb = false; else secRows = data || []; }
-function secStart() {
-  secStop();
-  secCh = sb.channel('dq-admins', { config: { presence: { key: FK_DEV } } });
-  secCh.on('presence', { event: 'sync' }, () => {
-    secOn = {}; Object.entries(secCh.presenceState()).forEach(([k, l]) => { const x = l[l.length - 1]; secOn[k] = { ...x, tabs: l.length, hidden: l.every(y => y.hidden) }; });
-    if (tab === 'security') renderSecurity();
-  }).on('broadcast', { event: 'dev' }, ({ payload: p }) => {
-    // another device muted / signed out this one
-    if (!p || (p.id !== FK_DEV && !(p.id === '*' && p.from !== FK_DEV))) return;
-    if (p.act === 'mute') { devPrefs.mute = !!p.on; devSavePrefs(); devPush(); secTrack(); toast(p.on ? 'إشعارات الطلبات اتقفلت على الجهاز ده من جهاز تاني' : 'إشعارات الطلبات اشتغلت تاني على الجهاز ده', 'ok'); if (tab === 'security') renderSecurity(); }
-    if (p.act === 'out') { toast('اتعمل تسجيل خروج للجهاز ده من صفحة Security', 'err'); $('#logoutBtn').click(); }
-  }).subscribe(st => { if (st === 'SUBSCRIBED') secTrack(); });
-  secSeen(); secBeat = setInterval(secSeen, 12e4);
-}
-function secStop() { clearInterval(secBeat); secBeat = 0; if (secCh) { try { secCh.untrack(); } catch (e) {} sb.removeChannel(secCh); secCh = null; } secOn = {}; }
-document.addEventListener('visibilitychange', () => { if (!secCh) return; secTrack(); if (!document.hidden) secSeen(); });
-// muted = this device's push subscription leaves shop_push_subs (the browser keeps it, so turning it back on needs no new permission)
-async function devPush() {
-  try {
-    if (!pushReady()) return; const r = await swReg(), s = await r.pushManager.getSubscription(); if (!s) return askNotify();
-    const j = s.toJSON();
-    if (devPrefs.mute) await sb.from('shop_push_subs').delete().eq('endpoint', j.endpoint);
-    else if (Notification.permission === 'granted') await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB') });
-  } catch (e) {}
-  askNotify();
-}
-function secSend(id, act, on) { if (secCh) secCh.send({ type: 'broadcast', event: 'dev', payload: { id, act, on, from: FK_DEV } }); }
-function renderSecurity() {
-  if (secRows === null && secDb) secLoad().then(() => tab === 'security' && renderSecurity());
-  const me = secOn[FK_DEV] || { id: FK_DEV, ...devInfo(), mute: !!devPrefs.mute, at: secT0, tabs: 1 };
-  const live = [me, ...Object.values(secOn).filter(d => d.id !== FK_DEV).sort((a, b) => a.at - b.at)];
-  const past = (secRows || []).filter(r => !secOn[r.id]);
-  const card = (d, on) => { const self = d.id === FK_DEV, mute = self ? !!devPrefs.mute : !!d.mute;
-    return `<div class="sec-dev ${on ? 'is-on' : ''}">
-      <span class="sec-ic">${DEV_IC[d.kind] || DEV_IC.computer}${on ? '<i></i>' : ''}</span>
-      <div class="sec-tx"><b>${esc(devName(d))}${self ? ' <em>الجهاز ده</em>' : ''}</b>
-        <small class="en" dir="ltr">${esc([d.browser, d.app ? 'Home Screen' : ''].filter(Boolean).join(' · ') || '—')}</small>
-        <small>${on ? `${d.hidden ? 'فاتح في الخلفية' : 'فاتح دلوقتي'} · ${Date.now() - d.at < 6e4 ? 'لسه فاتح' : 'فتح ' + devAgo(Date.now() - d.at)}${d.tabs > 1 ? ` · ${d.tabs} تابات` : ''}` : `آخر ظهور ${devAgo(Date.now() - new Date(d.last_seen))} · ${RC.when ? RC.when(new Date(d.last_seen)) : new Date(d.last_seen).toLocaleString()}`}${d.email ? ` · <span class="en">${esc(d.email)}</span>` : ''}</small></div>
-      ${on ? `<div class="sec-acts"><label class="sec-sw"><span>${mute ? 'الإشعارات مقفولة' : 'إشعارات الطلبات'}</span><button type="button" class="switch ${mute ? '' : 'on'}" data-secmute="${esc(d.id)}" aria-label="إشعارات الطلبات على الجهاز ده"></button></label>
-        ${self ? '' : `<button type="button" class="btn btn-ghost btn-sm" data-secout="${esc(d.id)}">تسجيل خروج</button>`}</div>` : ''}
-    </div>`; };
-  $('#main').innerHTML = `
-    <div class="head"><div><h1>Security</h1><div class="sub">الأجهزة اللي فاتحة لوحة التحكم. كل جهاز مستقل: الخروج من جهاز مش بيخرّج التاني، وتقدر تقفل إشعارات الطلبات على أي جهاز</div></div></div>
-    <div class="panel set-card">
-      <div class="set-h"><span class="set-ic">${ICONS.security}</span><div><h2>فاتحين دلوقتي</h2><small>${live.length === 1 ? 'جهاز واحد' : `<span class="en">${live.length}</span> أجهزة`} · بيتحدث لوحده أول ما جهاز يفتح أو يقفل</small></div></div>
-      <div class="sec-list">${live.map(d => card(d, true)).join('')}</div>
-    </div>
-    <div class="panel set-card sec-past">
-      <div class="set-h"><span class="set-ic">${DEV_IC.computer}</span><div><h2>أجهزة دخلت قبل كدا</h2><small>آخر مرة كل جهاز فتح لوحة التحكم</small></div></div>
-      ${!secDb ? '<div class="fk-note bad">آخر ظهور محتاج تشغّل ملف <b class="en">supabase/admin-devices.sql</b> مرة واحدة في Supabase ← SQL Editor.</div>'
-        : secRows === null ? '<div class="fk-note">جاري التحميل…</div>' : past.length ? `<div class="sec-list">${past.map(d => card(d, false)).join('')}</div>` : '<div class="fk-note">مفيش أجهزة تانية.</div>'}
-    </div>
-    <div class="panel set-card">
-      <div class="set-h"><span class="set-ic">${ICONS.security}</span><div><h2>حد غريب دخل؟</h2><small>غيّر الباسورد، وبعدين اخرج من كل الأجهزة التانية. الجهاز ده هيفضل داخل</small></div></div>
-      <div class="set-acts"><button type="button" class="btn btn-danger" id="secAll">اخرج من كل الأجهزة التانية</button><button type="button" class="btn btn-ghost" id="secPw">تغيير الباسورد</button></div>
-    </div>`;
-  $('#main').querySelectorAll('[data-secmute]').forEach(b => b.onclick = () => {
-    const id = b.dataset.secmute, d = id === FK_DEV ? null : secOn[id], on = id === FK_DEV ? !devPrefs.mute : !d.mute;
-    if (id === FK_DEV) { devPrefs.mute = on; devSavePrefs(); devPush(); secTrack(); }
-    else { if (!d) return; d.mute = on; secSend(id, 'mute', on); }
-    toast(on ? 'اتقفلت إشعارات الطلبات على الجهاز ده (الطلبات هتفضل توصل في القايمة)' : 'إشعارات الطلبات اشتغلت ✓', 'ok'); renderSecurity();
-  });
-  $('#main').querySelectorAll('[data-secout]').forEach(b => b.onclick = async () => {
-    const d = secOn[b.dataset.secout]; if (!d || !(await confirmBox(`تعمل تسجيل خروج لـ ${devName(d)}؟`, 'خروج'))) return;
-    secSend(d.id, 'out'); toast('اتبعت ✓', 'ok');
-  });
-  $('#secPw').onclick = () => $('#pwBtn').click();
-  $('#secAll').onclick = () => once('secAll', async () => {
-    if (!(await confirmBox('تخرج من كل الأجهزة التانية؟ هيحتاجوا يدخلوا بالإيميل والباسورد تاني', 'خروج'))) return;
-    secSend('*', 'out'); const { error } = await sb.auth.signOut({ scope: 'others' });
-    toast(error ? error.message : 'اتعمل تسجيل خروج لكل الأجهزة التانية ✓', error ? 'err' : 'ok');
-  });
-  clearInterval(secTick); secTick = setInterval(() => { if (tab !== 'security') { clearInterval(secTick); secTick = 0; return; } const y = scrollY; renderSecurity(); scrollTo(0, y); }, 3e4);
-}
+// the Security page is gone: a device that was muted there gets its order notifications back
+try { if (JSON.parse(localStorage.getItem('dq-dev-prefs') || '{}').mute) { localStorage.removeItem('dq-dev-prefs');
+  setTimeout(async () => { try { if (!pushReady() || Notification.permission !== 'granted') return; const s = await (await swReg()).pushManager.getSubscription(); if (!s) return; const j = s.toJSON();
+    await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB') }); } catch (e) {} }, 3000); } } catch (e) {}
 function renderSettings() {
   const s = settings;
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
