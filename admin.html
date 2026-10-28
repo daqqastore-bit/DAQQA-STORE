@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028155317">
+<link rel="stylesheet" href="assets/base.css?v=20261028160802">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -102,6 +102,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @keyframes fresh{0%,40%{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}}
 .o-top{display:grid;grid-template-columns:178px 1fr 120px 130px 150px 24px;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
 .o-id{display:flex;align-items:center;gap:10px;min-width:0}.o-sel{display:grid;place-items:center;padding:4px;margin:-4px;cursor:pointer}.o-sel input{width:18px;height:18px;accent-color:var(--amber);cursor:pointer}
+.p-sel,.p-sel-h{width:34px;padding-inline-end:0!important}.p-sel input{width:17px;height:17px;accent-color:var(--amber);cursor:pointer}.p-bulk select{height:34px;width:auto;min-width:140px;padding:0 12px;font-size:13px}
 .o-bulk #oBulkSt{height:34px;width:auto;min-width:150px;padding:0 12px;font-size:13px}.o-bulk .inv-acts{display:flex;gap:8px;align-items:center;margin-inline-start:auto}
 .o-top .code{font:600 12px var(--f-ui);direction:ltr;text-align:right}
 .o-top .date{font-size:11px;color:var(--muted-2)}
@@ -767,6 +768,10 @@ html{--z:1}
   .inv-bar{flex-wrap:nowrap}.inv-all span{font-size:0}.inv-all i{font-size:13px;font-style:normal}
   .inv-acts{gap:6px}.inv-acts .btn{height:40px;padding:0 12px;font-size:13px}
   .inv-row{grid-template-columns:auto 1fr;padding:12px}
+  /* bulk bar on phones: compact until something is ticked, then the actions get their own full-width row */
+  .o-bulk{flex-wrap:wrap}.o-bulk .inv-n{display:inline;font-size:12px}.o-bulk:not(.has) .inv-acts{display:none}
+  .o-bulk .inv-acts{width:100%;margin:0}.o-bulk .inv-acts select{flex:1;min-width:0!important}
+  #main:has(.o-bulk){padding-bottom:150px}
   .inv-r{grid-column:2;flex-direction:row;justify-content:space-between;align-items:center}
 }
 
@@ -1027,7 +1032,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028155317"></script>
+<script src="assets/config.js?v=20261028160802"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1292,7 +1297,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261028155317'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028160802'); orderSnd.preload = 'auto';
 // one alert per order per device: every open tab / window of the dashboard hears the same order, and the live connection and the push
 // both report it. Only one tab rings (it holds the «dq-alert-lead» lock; when it closes the next tab takes over), and it rings once
 // per order even after a reload (claimed keys are kept for 10 minutes).
@@ -1346,7 +1351,8 @@ function go(t, keepScroll) {
   ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, fake: renderFake}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
-  if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
+  // the class comes off once the entrance is over, or every re-render on the page (a filter, a checkbox…) would replay it and look like a reload
+  if (moved) { const m = $('#main'); clearTimeout(m._pg); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); m._pg = setTimeout(() => m.classList.remove('pg-in'), 600); }
 }
 
 /* ---------- overview: the whole shop at a glance ---------- */
@@ -1847,7 +1853,7 @@ function renderOrders() {
       ${osel('pcs', 'عدد القطع', [['', 'الكل'], ['1', 'قطعة واحدة'], ['2', 'أكتر من قطعة']])}
       <div class="pf-end"><button type="button" class="vo-mini pf-tg" id="ofTg">${OF.open ? 'اقفل الفلاتر' : 'فلاتر أكتر'}${nOn ? ` (${nOn})` : ''}</button><span class="pf-n"><b class="en">${list.length}</b> من <span class="en">${byQ.length}</span></span>${nOn ? `<button type="button" class="vo-mini" id="ofReset">× امسح الفلاتر (${nOn})</button>` : ''}</div>
     </div>
-    ${list.length ? `<div class="inv-bar o-bulk">
+    ${list.length ? `<div class="inv-bar o-bulk${nSel ? ' has' : ''}">
       <label class="inv-all"><input type="checkbox" id="oAll" ${list.every(o => ordSel.has(o.id)) ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
       <span class="inv-n">${nSel ? `<b class="en">${nSel}</b> متحدد` : 'علّم على الطلبات عشان تغيّر حالتها أو تمسحها مع بعض'}</span>
       <div class="inv-acts"><select class="input" id="oBulkSt" ${nSel ? '' : 'disabled'} aria-label="الحالة الجديدة"><option value="">نقل لحالة…</option>${STATUS_KEYS.map(k => `<option value="${k}">${statuses[k]}</option>`).join('')}</select>
@@ -1945,7 +1951,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028155317" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028160802" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1979,7 +1985,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028155317" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028160802" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2020,7 +2026,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028155317'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028155317')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028160802'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028160802')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2168,11 +2174,15 @@ async function bulkSoon(list, on, el) {
   products.forEach(p => { if (ids.includes(p.id)) p.coming_soon = on; });
   toast(on ? `${ids.length} منتج بقوا Coming Soon` : `${ids.length} منتج رجعوا زي ما كانوا`, 'ok'); renderProducts();
 }
+// ticked products (bulk status / show-hide / delete); kept while filtering
+const prodSel = new Set();
 function renderProducts() {
   document.querySelectorAll(".stk-menu").forEach(m => m.remove());
   const SC = SCOPES[tab] || SCOPES.products, list = products.filter(SC.test);
   const inKind = list.filter(p => pKind === 'all' || RC.kindOf(p) === pKind), shown = pfApply(inKind), nOn = pfOn();
   const styles = [...new Set(inKind.map(p => p.style).filter(Boolean))].sort();
+  [...prodSel].forEach(id => !products.some(p => p.id === id) && prodSel.delete(id));
+  const pSel = shown.filter(p => prodSel.has(p.id)), nSel = pSel.length;
   const sel = (k, label, opts) => `<label class="pf-f"><span>${label}</span><select class="input" data-pf="${k}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${PF[k] === v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
   $('#main').innerHTML = `
     <div class="head"><div><h1 ${tab === 'lux' ? 'class="en lux-h"' : ''}>${SC.title}</h1><div class="sub">${SC.sub}</div></div>
@@ -2194,8 +2204,15 @@ function renderProducts() {
       <div class="pf-end"><button type="button" class="vo-mini pf-tg" id="pfTg">${PF.open ? 'اقفل الفلاتر' : 'فلاتر أكتر'}${nOn ? ` (${nOn})` : ''}</button><span class="pf-n"><b class="en">${shown.length}</b> من <span class="en">${inKind.length}</span></span>${nOn ? `<button type="button" class="vo-mini" id="pfReset">× امسح الفلاتر (${nOn})</button>` : ''}</div>
     </div>
     ${COLS.kind ? '' : `<div class="panel" style="margin-bottom:14px;border-color:var(--accent-2);color:var(--muted);font-size:13px">الأقسام (ساعات / نضارات / اكسسوارات) والأنواع والألوان محتاجين تفعيل مرة واحدة: شغّل ملف <b class="en">daqqa-update.sql</b> في Supabase ← SQL Editor. لحد ما تعمل كده كل المنتجات بتظهر في قسم الساعات.</div>`}
-    <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${shown.length ? `<table class="ptable"><thead><tr><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
+    ${shown.length ? `<div class="inv-bar o-bulk p-bulk${nSel ? ' has' : ''}">
+      <label class="inv-all"><input type="checkbox" id="pAll" ${shown.every(p => prodSel.has(p.id)) ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
+      <span class="inv-n">${nSel ? `<b class="en">${nSel}</b> متحدد` : 'علّم على المنتجات عشان تغيّرها أو تمسحها مع بعض'}</span>
+      <div class="inv-acts"><select class="input" id="pBulkSt" ${nSel ? '' : 'disabled'} aria-label="الحالة الجديدة"><option value="">الحالة…</option><option value="in">Stock</option><option value="out">Out of Stock</option>${COLS.coming_soon ? '<option value="soon">Coming Soon</option>' : ''}</select>
+        <select class="input" id="pBulkVis" ${nSel ? '' : 'disabled'} aria-label="ظاهر"><option value="">ظاهر…</option><option value="on">إظهار في المتجر</option><option value="off">إخفاء من المتجر</option></select>
+        <button type="button" class="btn btn-danger btn-sm" id="pBulkDel" ${nSel ? '' : 'disabled'}>حذف${nSel ? ` <span class="en">(${nSel})</span>` : ''}</button></div></div>` : ''}
+    <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${shown.length ? `<table class="ptable"><thead><tr><th class="p-sel-h"></th><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
       ${shown.map(p => { const off = rawOff(p), st = pStatus(p); return `<tr data-edit="${p.id}"${st === 'out' ? ' class="row-out"' : ''}>
+        <td class="p-sel"><input type="checkbox" data-psel="${p.id}" ${prodSel.has(p.id) ? 'checked' : ''} aria-label="تحديد ${esc(p.name)}"></td>
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
         <td class="en">${+p.price > 0 ? `<b>${money(rawFinal(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
@@ -2204,6 +2221,25 @@ function renderProducts() {
         <td><button type="button" class="p-del" data-pdel="${p.id}" aria-label="حذف ${esc(p.name)}" title="حذف المنتج"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg></button></td></tr>`; }).join('')}
       </tbody></table>` : `<div class="empty">${inKind.length ? 'مفيش منتجات بالفلاتر دي. <button type="button" class="vo-mini" data-pfclear>امسح الفلاتر</button>' : 'مفيش منتجات هنا لسه. دوس «+ منتج جديد».'}</div>`}</div>`;
   $('#newP').onclick = () => openEditor(null, SC.init);
+  const m = $('#main');
+  m.querySelectorAll('[data-psel]').forEach(c => c.onchange = () => { const id = +c.dataset.psel; c.checked ? prodSel.add(id) : prodSel.delete(id); renderProducts(); });
+  if ($('#pAll')) $('#pAll').onchange = e => { shown.forEach(p => e.target.checked ? prodSel.add(p.id) : prodSel.delete(p.id)); renderProducts(); };
+  const nm = n => n === 1 ? 'المنتج ده' : n + ' منتجات';
+  if ($('#pBulkSt')) $('#pBulkSt').onchange = e => once('pBulkSt', async () => { const to = e.target.value; e.target.value = ''; if (!to || !nSel) return;
+    const T = { in: 'Stock', out: 'Out of Stock', soon: 'Coming Soon' }[to], l = pSel.filter(p => pStatus(p) !== to), noPrice = to === 'soon' ? [] : l.filter(p => !(+p.price > 0)), go_ = l.filter(p => !noPrice.includes(p));
+    if (!go_.length) { toast(noPrice.length ? 'المنتجات دي محتاجة سعر الأول' : `كلهم ${T} أصلاً`, noPrice.length ? 'err' : 'ok'); return renderProducts(); }
+    if (!(await confirmBox(`تخلي ${nm(go_.length)} «${T}»؟${noPrice.length ? ` (${noPrice.length} من غير سعر هيفضلوا زي ما هم)` : ''}`, 'تأكيد'))) return renderProducts();
+    let ok = 0; for (const p of go_) if (await pSetStatus(p, to)) ok++;
+    prodSel.clear(); toast(`${ok} منتج بقوا ${T}`, 'ok'); renderProducts(); });
+  if ($('#pBulkVis')) $('#pBulkVis').onchange = e => once('pBulkVis', async () => { const on = e.target.value === 'on'; if (!e.target.value || !nSel) return; e.target.value = '';
+    const ids = pSel.filter(p => !!p.active !== on).map(p => p.id); if (!ids.length) { toast(on ? 'كلهم ظاهرين أصلاً' : 'كلهم مخفيين أصلاً', 'ok'); return renderProducts(); }
+    const {error} = await sb.from('shop_products').update({ active: on }).in('id', ids); if (error) return toast(error.message, 'err');
+    products.forEach(p => { if (ids.includes(p.id)) p.active = on; }); prodSel.clear(); toast(`${ids.length} منتج ${on ? 'بقوا ظاهرين' : 'اتخفوا من المتجر'}`, 'ok'); renderProducts(); });
+  if ($('#pBulkDel')) $('#pBulkDel').onclick = () => once('pBulkDel', async () => { const l = pSel; if (!l.length) return;
+    if (!(await confirmBox(`تحذف ${nm(l.length)} نهائياً؟ لو عاوز تخفيهم بس اختار «إخفاء من المتجر».`, 'حذف'))) return;
+    const ids = l.map(p => p.id), {error} = await sb.from('shop_products').delete().in('id', ids); if (error) return toast(error.message, 'err');
+    const paths = l.flatMap(p => (p.images || []).map(u => u.split(`/object/public/${RC.bucket}/`)[1]).filter(Boolean)); if (paths.length) sb.storage.from(RC.bucket).remove(paths);
+    prodSel.clear(); await loadProducts(); renderProducts(); toast(`اتحذف ${ids.length === 1 ? 'المنتج' : ids.length + ' منتجات'}`); });
   // filters: typing keeps the cursor in the search box; dropdowns/prices re-render right away
   let pfT; const pfGo = (k, v) => { PF[k] = v; pfSave(); const a = document.activeElement, f = a && a.dataset && a.dataset.pf, pos = a && a.selectionStart; renderProducts();
     if (f === 'q' || f === 'min' || f === 'max') { const el = $(`[data-pf="${f}"]`); el.focus(); try { el.setSelectionRange(pos, pos); } catch (er) {} } };
@@ -2215,17 +2251,22 @@ function renderProducts() {
   if ($('#bulkSoon')) $('#bulkSoon').onchange = e => bulkSoon(list, e.target.checked, e.target);
   $('#kindSeg').onclick = e => { const b = e.target.closest('[data-pk]'); if (b) { pKind = b.dataset.pk; renderProducts(); } };
 }
+// Stock / Out of Stock / Coming Soon for one product (the last count is remembered and comes back when it's back in stock)
+async function pSetStatus(p, to) {
+  let mem = {}; try { mem = JSON.parse(localStorage.getItem('dq-stk-mem') || '{}') } catch (er) {}
+  const up = {}; if (COLS.coming_soon) up.coming_soon = to === 'soon';
+  if (to === 'out') { if (p.stock) mem[p.id] = p.stock; up.stock = 0; } else if (to === 'in' && p.stock === 0) up.stock = mem[p.id] > 0 ? mem[p.id] : null;
+  const {error} = await sb.from('shop_products').update(up).eq('id', p.id); if (error) { toast(error.message, 'err'); return false; }
+  try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} const prev = p.stock; Object.assign(p, up); if ('stock' in up) lowMail(p, prev);
+  return true;
+}
 document.addEventListener('click', async e => {
+  if (e.target.closest('.p-sel')) return;   // the row tick box doesn't open the editor
   // status pill → small menu: Stock / Out of Stock / Coming Soon (the last count is remembered and comes back; none = unlimited)
   const sm = e.target.closest('[data-stset]');
   if (sm) { e.stopPropagation(); const p = products.find(x => x.id === +sm.closest('.stk-menu').dataset.p), to = sm.dataset.stset; document.querySelectorAll('.stk-menu').forEach(m => m.remove()); if (!p || to === pStatus(p)) return;
     if (to !== 'soon' && !(+p.price > 0)) return toast('حط سعر للمنتج الأول (من صفحة المنتج)', 'err');
-    let mem = {}; try { mem = JSON.parse(localStorage.getItem('dq-stk-mem') || '{}') } catch (er) {}
-    const up = {}; if (COLS.coming_soon) up.coming_soon = to === 'soon';
-    if (to === 'out') { if (p.stock) mem[p.id] = p.stock; up.stock = 0; } else if (to === 'in' && p.stock === 0) up.stock = mem[p.id] > 0 ? mem[p.id] : null;
-    const {error} = await sb.from('shop_products').update(up).eq('id', p.id); if (error) return toast(error.message, 'err');
-    try { localStorage.setItem('dq-stk-mem', JSON.stringify(mem)) } catch (er) {} const prev = p.stock; Object.assign(p, up); if ('stock' in up) lowMail(p, prev);
-    toast(to === 'soon' ? 'بقى Coming Soon' : to === 'out' ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
+    if (await pSetStatus(p, to)) toast(to === 'soon' ? 'بقى Coming Soon' : to === 'out' ? 'بقى Out of Stock' : 'رجع In Stock', 'ok'); renderProducts(); return; }
   const sk = e.target.closest('[data-stk]');
   document.querySelectorAll('.stk-menu').forEach(m => { if (!sk || m.dataset.p !== sk.dataset.stk) m.remove(); });
   if (sk) { e.stopPropagation(); const open = document.querySelector(`.stk-menu[data-p="${sk.dataset.stk}"]`); if (open) return open.remove();
