@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028143259">
+<link rel="stylesheet" href="assets/base.css?v=20261028153109">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028143259"></script>
+<script src="assets/config.js?v=20261028153109"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1282,15 +1282,22 @@ function desktopNotify(o) {
   const n = new Notification(`طلب جديد ${oLbl(o)} — DAQQA`, { body: `${o.customer_name || ''} · ${o.city || ''}\nالإجمالي: ${money(o.total || 0)}`, icon: 'assets/icon-512.png', tag: o.code, requireInteraction: true, silent: true });   // the page already plays the cash sound
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
-// New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028143259'); orderSnd.preload = 'auto';
+// New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
+const orderSnd = new Audio('assets/order.mp3?v=20261028153109'); orderSnd.preload = 'auto';
 // one cash sound per alert: a push for an order the live connection (or a fake alert) already rang for stays quiet
 const sndSeen = new Map();
 function sndOnce(tag) { const now = Date.now(); sndSeen.forEach((t, k) => now - t > 6e4 && sndSeen.delete(k)); if (tag && sndSeen.has(tag)) return; if (tag) sndSeen.set(tag, now); cash(); }
-function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
+// one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
+function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
-let fkAt = 0;
-function fkCash() { const now = Date.now(), at = Math.max(now, fkAt); fkAt = at + 1100; setTimeout(cash, at - now); }
+let fkAt = 0, fkSnd = [];
+function fkCash() { const now = Date.now(), at = Math.max(now, fkAt); fkAt = at + 1100; fkSnd.push(setTimeout(cash, at - now)); }
+// a new run (or a stop) wipes the last one: its sounds still waiting and its notifications on the screen
+function fkClear() {
+  fkSnd.forEach(clearTimeout); fkSnd = []; fkAt = 0; try { orderSnd.pause(); orderSnd.currentTime = 0; } catch (e) {}
+  try { sessionStorage.removeItem('dq-fk-adm'); } catch (e) {}
+  if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration().then(r => r && r.getNotifications()).then(l => (l || []).forEach(n => /^dq-fk-/.test(n.tag) && n.close())).catch(() => {});
+}
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
 const oNum = o => o && o.seq ? '#' + o.seq : '';
@@ -1859,7 +1866,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028143259" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028153109" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1893,7 +1900,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028143259" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028153109" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1934,7 +1941,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028143259'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028143259')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028153109'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028153109')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3169,7 +3176,7 @@ const fkAdmMark = i => { try { sessionStorage.setItem('dq-fk-adm', JSON.stringif
 function fkAdmRun() {
   const f = RC.fakeLive(settings, RC.now(), 'admin');
   const key = f ? [f.seed, f.at, f.min, f.n].join(':') : '';
-  if (key === fkAdmKey) return; fkAdmKey = key; clearTimeout(fkAdmT);
+  if (key === fkAdmKey) return; if (fkAdmKey && (key || !(RC.fakeCfg(settings) || {}).on)) fkClear(); fkAdmKey = key;   // a run that just ran out keeps its notifications clearTimeout(fkAdmT);
   if (f) RC.syncClock().then(() => { if (fkAdmKey === key) fkAdmNext(); });
 }
 function fkAdmNext() {

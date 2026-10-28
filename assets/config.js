@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028143259';
+RC.build = '20261028153109';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -240,8 +240,15 @@ RC.policyLine = (x, vals) => { let h = RC.esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$
   for (const [k, v] of Object.entries(vals || {})) { if (h.includes('[' + k + ']')) { if (!v) return ''; h = h.split('[' + k + ']').join(v); } } return h; };
 // fake "someone just ordered" pop-ups (Admin → «نوتفكشن وهمية»), display only — no order is made.
 // settings.perks.fake = {on, at (start, ms), min (minutes), n (how many), seed}; admin and store build the same plan from it
-RC.FAKE_NAMES = { m: ['أحمد', 'محمد', 'محمود', 'مصطفى', 'عمر', 'يوسف', 'كريم', 'إسلام', 'حسن', 'علي', 'مينا', 'عمرو', 'خالد', 'طارق', 'شريف', 'إبراهيم', 'زياد', 'مازن', 'سيف', 'بيتر', 'هشام', 'وليد', 'أدهم', 'مروان', 'ياسين', 'عبدالرحمن', 'أنس', 'رامي', 'تامر'],
-  f: ['مريم', 'سارة', 'نور', 'منة', 'آية', 'هبة', 'ياسمين', 'دينا', 'رنا', 'سلمى', 'فرح', 'ملك', 'شهد', 'روان', 'نادين', 'مي', 'إسراء', 'رحمة', 'هاجر', 'جنى', 'مارينا', 'ندى', 'بسمة', 'دعاء', 'لمياء'] };
+// names come as a pair that fits together: first name + father's name from the same set (Muslim / Christian; the shared ones like يوسف or مريم sit in both)
+RC.FAKE_NAMES = {
+  mu: { m: ['أحمد', 'محمد', 'محمود', 'مصطفى', 'عمر', 'يوسف', 'كريم', 'إسلام', 'حسن', 'علي', 'عمرو', 'خالد', 'طارق', 'شريف', 'إبراهيم', 'زياد', 'مازن', 'سيف', 'هشام', 'وليد', 'أدهم', 'مروان', 'ياسين', 'عبدالرحمن', 'أنس', 'رامي', 'تامر'],
+    f: ['مريم', 'سارة', 'نور', 'منة', 'آية', 'هبة', 'ياسمين', 'دينا', 'رنا', 'سلمى', 'فرح', 'ملك', 'شهد', 'روان', 'نادين', 'مي', 'إسراء', 'رحمة', 'هاجر', 'جنى', 'ندى', 'بسمة', 'دعاء', 'لمياء'],
+    last: ['محمد', 'أحمد', 'محمود', 'مصطفى', 'حسن', 'علي', 'إبراهيم', 'خالد', 'عبدالله', 'عمر', 'السيد', 'طارق', 'عبدالرحمن', 'حسين', 'سعيد', 'أشرف'] },
+  ch: { m: ['مينا', 'بيتر', 'مارك', 'كيرلس', 'بيشوي', 'أبانوب', 'جورج', 'مايكل', 'فادي', 'رامي', 'شريف', 'يوسف', 'كريم', 'أندرو'],
+    f: ['مارينا', 'مريم', 'كريستين', 'ماريان', 'إيريني', 'مونيكا', 'نانسي', 'ساندرا', 'دميانة', 'فيرونيكا', 'سارة', 'نادين', 'مي'],
+    last: ['جرجس', 'عادل', 'مجدي', 'سمير', 'هاني', 'فادي', 'بطرس', 'حنا', 'صبحي', 'نبيل', 'رأفت', 'عماد', 'مينا', 'ميلاد', 'عزيز'] }
+};
 RC.FAKE_CITIES = ['القاهرة', 'القاهرة', 'القاهرة', 'الجيزة', 'الجيزة', 'الإسكندرية', 'الإسكندرية', 'القليوبية', 'الشرقية', 'الدقهلية', 'الغربية', 'المنوفية', 'البحيرة', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'الفيوم', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'الغردقة'];
 RC.fakeCfg = s => { const f = ((s && s.perks) || {}).fake; return f && typeof f === 'object' ? f : null; };
 // f.to: 'admin' = order alerts in the dashboard only, 'site' = pop-ups for visitors, 'both' (older runs had no f.to = site)
@@ -258,8 +265,8 @@ RC.fakePlan = (f, prods) => {
   // cities: the governorates the shop ships to, saved with the run (f.cities); the big ones come up more often
   const C = Array.isArray(f.cities) && f.cities.length ? f.cities.flatMap(c => /^(القاهرة|الجيزة|الإسكندرية)$/.test(c) ? [c, c, c] : [c]) : RC.FAKE_CITIES;
   let deck = [];
-  return at.map((t, i) => { if (!deck.length) deck = shuf(pool); const g = rnd() < .62 ? 'm' : 'f', L = RC.FAKE_NAMES[g];
-    return { i, t: +f.at + 1500 + t, g, name: L[Math.floor(rnd() * L.length)], last: RC.FAKE_NAMES.m[Math.floor(rnd() * RC.FAKE_NAMES.m.length)], city: C[Math.floor(rnd() * C.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
+  return at.map((t, i) => { if (!deck.length) deck = shuf(pool); const g = rnd() < .62 ? 'm' : 'f', N = RC.FAKE_NAMES[rnd() < .85 ? 'mu' : 'ch'], L = N[g];
+    return { i, t: +f.at + 1500 + t, g, name: L[Math.floor(rnd() * L.length)], last: N.last[Math.floor(rnd() * N.last.length)], city: C[Math.floor(rnd() * C.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
 };
 // a visitor's clock can be minutes off: the site's own server time (Date header of version.json) keeps everyone on the admin's schedule
 RC.skew = 0; RC.now = () => Date.now() + RC.skew;
