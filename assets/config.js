@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028133627';
+RC.build = '20261028134300';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -255,9 +255,11 @@ RC.fakePlan = (f, prods) => {
   const n = Math.max(0, Math.round(+f.n || 0)), T = Math.max(1000, (+f.min || 0) * 6e4), span = T - 2500;
   const pool = RC.fakePool(prods), shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const at = Array.from({ length: n }, () => rnd() * Math.max(0, span)).sort((a, b) => a - b);
+  // cities: the governorates the shop ships to, saved with the run (f.cities); the big ones come up more often
+  const C = Array.isArray(f.cities) && f.cities.length ? f.cities.flatMap(c => /^(القاهرة|الجيزة|الإسكندرية)$/.test(c) ? [c, c, c] : [c]) : RC.FAKE_CITIES;
   let deck = [];
   return at.map((t, i) => { if (!deck.length) deck = shuf(pool); const g = rnd() < .62 ? 'm' : 'f', L = RC.FAKE_NAMES[g];
-    return { i, t: +f.at + 1500 + t, g, name: L[Math.floor(rnd() * L.length)], last: RC.FAKE_NAMES.m[Math.floor(rnd() * RC.FAKE_NAMES.m.length)], city: RC.FAKE_CITIES[Math.floor(rnd() * RC.FAKE_CITIES.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
+    return { i, t: +f.at + 1500 + t, g, name: L[Math.floor(rnd() * L.length)], last: RC.FAKE_NAMES.m[Math.floor(rnd() * RC.FAKE_NAMES.m.length)], city: C[Math.floor(rnd() * C.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
 };
 // a visitor's clock can be minutes off: the site's own server time (Date header of version.json) keeps everyone on the admin's schedule
 RC.skew = 0; RC.now = () => Date.now() + RC.skew;
