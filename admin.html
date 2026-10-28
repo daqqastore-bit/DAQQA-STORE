@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028201754">
+<link rel="stylesheet" href="assets/base.css?v=20261028233122">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -239,6 +239,27 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .off-opt img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--surface-2)}
 .off-opt b{font-size:12.5px;color:var(--muted)}
 .off-none{padding:12px;font-size:12.5px;color:var(--muted)}
+/* suppliers */
+.sup-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.sup-stats .ov-c.on{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}.sup-stats .ov-c.warn b{color:var(--red)}.sup-stats div.ov-c:hover{border-color:var(--line)}
+.sup-bar{margin-bottom:14px}.sup-bar .input{max-width:420px}
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px;align-items:start}
+.sup-card{display:flex;flex-direction:column;gap:12px}.sup-t{flex:1;min-width:0}.sup-t h2{font-size:16px;overflow-wrap:anywhere}.sup-t small{color:var(--muted);font-size:12.5px}.sup-acts{display:flex;gap:6px}
+.sup-line{font-size:13.5px;line-height:1.7;overflow-wrap:anywhere}.sup-line span{display:block;font-size:11.5px;color:var(--muted)}
+.sup-its,.sup-none{display:flex;flex-direction:column;gap:2px}.sup-none{padding:8px}
+.sup-it{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;padding:8px;border-radius:10px}.sup-it:nth-child(odd){background:var(--surface-2)}
+.sup-it img,.sup-noimg{width:42px;height:42px;border-radius:9px;object-fit:cover;background:var(--surface-2);display:block}.off-opt .sup-noimg{width:38px;height:38px}
+.sup-it b{font-size:13.5px;display:block;overflow-wrap:anywhere}.sup-it small{font-size:12px;color:var(--muted)}
+.sup-c{text-align:left;display:grid;justify-items:end}.sup-c b{font-size:14px}.sup-c em{font-style:normal;color:var(--green)}.sup-c em.neg{color:var(--red)}
+.sup-foot{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--line)}.sup-foot small{flex:1;color:var(--muted-2);font-size:11.5px}
+.sup-box{width:min(600px,100%)}.sup-sel{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.sup-sel:empty{display:none}
+.sup-row{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.sup-row img,.sup-row .sup-noimg{width:48px;height:48px;border-radius:9px;object-fit:cover}.sup-rf{display:grid;gap:2px;min-width:0}.sup-rf b{font-size:13.5px;overflow-wrap:anywhere}.sup-rf small{font-size:12px;color:var(--muted)}
+.sup-ri{display:grid;grid-template-columns:130px 1fr;gap:6px;margin-top:6px}.sup-ri .input{height:38px;font-size:13px;min-width:0}
+.sup-x{width:30px;height:30px;border-radius:50%;font-size:18px;line-height:1;color:var(--muted);border:1px solid var(--line)}.sup-x:hover{color:var(--red);border-color:var(--red)}
+.sup-pick{max-height:240px;overflow:auto;margin-top:6px;padding:4px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:2px}
+.sup-pick .off-opt{min-height:46px;padding:4px 8px;border-radius:9px;font-size:13.5px;color:var(--ink)}.sup-pick .off-opt:hover{background:var(--surface-2)}.sup-pick .off-opt small{color:var(--muted);font-size:11.5px}.sup-pick .off-opt b{color:var(--amber);font-size:16px}
+@media (max-width:600px){.sup-grid{grid-template-columns:1fr}.sup-stats{gap:6px}.sup-stats .ov-c b{font-size:19px}.sup-stats .ov-c span{font-size:11px;text-align:center}.sup-bar .input{max-width:none}.sup-ri{grid-template-columns:1fr 1.3fr}.sup-card .set-h{flex-wrap:wrap}.sup-acts{width:100%}.sup-acts .btn{flex:1;text-align:center}}
+
 .off-hint{font-size:12px;color:var(--amber);min-height:1em}
 .who-pays button{min-height:56px;border:1px solid var(--line-2);border-radius:12px;padding:8px 12px;text-align:right;display:flex;flex-direction:column;gap:2px;transition:border-color .2s,background .2s}
 .who-pays button b{font-size:14px}.who-pays button small{font-size:11.5px;color:var(--muted)}
@@ -1034,7 +1055,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028201754"></script>
+<script src="assets/config.js?v=20261028233122"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1069,10 +1090,11 @@ const ICONS = {
   women: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="9" r="6"/><path d="M12 15v7M9 19h6"/></svg>',
   covers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15-5-5L5 20"/></svg>',
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
+  suppliers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
   fake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/><path d="M19 3.5l1.5-1M21 7h1.5"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['invoices','طباعة الفواتير'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['suppliers','الموردين'], ['invoices','طباعة الفواتير'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات'], ['_h',''], ['fake','نوتفكشن وهمية']];
@@ -1224,7 +1246,7 @@ $('#logoutBtn').onclick = async () => { $('#appView').classList.add('hidden'); a
 
 /* ---------- data ---------- */
 async function detectCols() { await Promise.all(Object.keys(COLS).map(async c => { const { error } = await sb.from('shop_products').select(c).limit(1); COLS[c] = !error; })); }
-async function loadAll() { await Promise.all([loadProducts(), loadOrders(), loadSettings(), detectCols(), loadFin(), loadUsers()]); }
+async function loadAll() { await Promise.all([loadProducts(), loadOrders(), loadSettings(), detectCols(), loadFin(), loadUsers(), loadSups()]); }
 // the site's accounts: every order placed while signed in shows that account's email
 async function loadUsers() { try { const { data, error } = await sb.rpc('shop_admin_users'); if (!error) users = data || []; } catch (e) {} }
 const mailOf = id => { const u = id && (users || []).find(x => x.id === id); return u ? u.email || u.phone || '' : ''; };
@@ -1293,7 +1315,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261028201754'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028233122'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1333,7 +1355,7 @@ function go(t, keepScroll) {
   if (chart) { chart.destroy(); chart = null; }
   if (t !== 'tracking') { trkCharts.forEach(c => c.destroy()); trkCharts = []; }
   if (t !== 'fake') { clearInterval(fkTick); fkTick = 0; }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, fake: renderFake}[t] || renderDash)();
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, suppliers: renderSuppliers, fake: renderFake}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   // the class comes off once the entrance is over, or every re-render on the page (a filter, a checkbox…) would replay it and look like a reload
@@ -1936,7 +1958,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028201754" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028233122" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1970,7 +1992,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028201754" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028233122" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2011,7 +2033,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028201754'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028201754')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028233122'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028233122')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3313,6 +3335,109 @@ function fkAdmFire(f, e) {
 try { if (JSON.parse(localStorage.getItem('dq-dev-prefs') || '{}').mute) { localStorage.removeItem('dq-dev-prefs');
   setTimeout(async () => { try { if (!pushReady() || Notification.permission !== 'granted') return; const s = await (await swReg()).pushManager.getSubscription(); if (!s) return; const j = s.toJSON();
     await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB') }); } catch (e) {} }, 3000); } } catch (e) {}
+/* ---------- suppliers: who we buy each watch from and what it costs us (admin only, every field optional) ---------- */
+let sups = [], SUP_OK = true, supUI = { q: '', v: 'all' };
+try { Object.assign(supUI, JSON.parse(localStorage.getItem('dq-sup') || '{}')); } catch (e) {}
+const supSave = () => { try { localStorage.setItem('dq-sup', JSON.stringify(supUI)); } catch (e) {} };
+async function loadSups() { try { const { data, error } = await sb.from('shop_suppliers').select('*').order('id', { ascending: false }); SUP_OK = !error; sups = data || []; } catch (e) { SUP_OK = false; } }
+const supItems = s => (Array.isArray(s.items) ? s.items : []).filter(i => products.some(p => p.id === +i.p));
+const supsOf = pid => sups.filter(s => supItems(s).some(i => +i.p === pid));
+// Egyptian mobile → WhatsApp number (01xxxxxxxxx → 201xxxxxxxxx)
+const supWa = ph => { let d = String(ph || '').replace(/\D/g, ''); if (/^01\d{9}$/.test(d)) d = '2' + d; return d.length >= 10 ? d : ''; };
+const SUP_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>';
+function renderSuppliers() {
+  renderTabs();
+  const head = `<div class="head"><div><h1>الموردين</h1><div class="sub">بنجيب كل ساعة منين وبكام. كل الخانات اختيارية.</div></div>${SUP_OK ? '<button type="button" class="btn btn-amber" data-supnew>+ مورد جديد</button>' : ''}</div>`;
+  if (!SUP_OK) { $('#main').innerHTML = head + `<div class="panel" style="color:var(--muted);line-height:1.8">الصفحة محتاجة جدول الموردين في Supabase.<br>افتح Supabase ← SQL Editor والصق ملف <b class="en">supabase/suppliers.sql</b> ودوس Run، وبعدين اعمل ريفريش.</div>`; return; }
+  const linked = new Set(sups.flatMap(s => supItems(s).map(i => +i.p))), none = products.filter(p => !linked.has(p.id));
+  $('#main').innerHTML = head + `<div class="sup-stats">
+      <button type="button" class="ov-c ${supUI.v === 'all' ? 'on' : ''}" data-supv="all"><b class="en">${sups.length}</b><span>مورد</span></button>
+      <div class="ov-c"><b class="en">${linked.size}</b><span>منتج ليه مورد</span></div>
+      <button type="button" class="ov-c ${supUI.v === 'none' ? 'on' : ''} ${none.length ? 'warn' : ''}" data-supv="none"><b class="en">${none.length}</b><span>منتج من غير مورد</span></button></div>
+    <div class="sup-bar"><input class="input" id="supQ" placeholder="${supUI.v === 'none' ? 'دوّر باسم المنتج' : 'دوّر باسم المورد أو رقمه أو منتج'}" value="${esc(supUI.q)}" autocomplete="off"></div>
+    <div id="supList"></div>`;
+  $('#supQ').oninput = e => { supUI.q = e.target.value; supSave(); supList(); };
+  supList();
+}
+function supList() {
+  const q = supUI.q.trim().toLowerCase(), has = v => String(v || '').toLowerCase().includes(q), L = $('#supList'); if (!L) return;
+  const img = p => p && p.images && p.images[0] ? `<img src="${esc(RC.thumb(p.images[0]))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<span class="sup-noimg"></span>';
+  if (supUI.v === 'none') {
+    const linked = new Set(sups.flatMap(s => supItems(s).map(i => +i.p))), l = products.filter(p => !linked.has(p.id) && (!q || has(p.name)));
+    L.innerHTML = l.length ? `<div class="panel sup-none">${l.map(p => `<div class="sup-it">${img(p)}<div><b>${esc(p.name)}</b><small>${RC.kindOf && RC.kinds[RC.kindOf(p)] ? esc(RC.kinds[RC.kindOf(p)].ar) + ' · ' : ''}بيتباع بـ ${money(finalPrice(p))}</small></div><button type="button" class="btn btn-ghost btn-sm" data-suplink="${p.id}">اربطه بمورد</button></div>`).join('')}</div>`
+      : `<div class="empty">${q ? 'مفيش منتج بالاسم ده.' : 'كل المنتجات ليها مورد ✓'}</div>`;
+    return;
+  }
+  const l = sups.filter(s => !q || has(s.name) || has(s.phone) || has(s.address) || has(s.note) || supItems(s).some(i => has((products.find(p => p.id === +i.p) || {}).name)));
+  if (!l.length) { L.innerHTML = `<div class="empty">${q ? 'مفيش نتيجة.' : 'لسه مفيش موردين. دوس «+ مورد جديد».'}</div>`; return; }
+  L.innerHTML = `<div class="sup-grid">${l.map(s => { const it = supItems(s), wa = supWa(s.phone);
+    return `<div class="panel sup-card"><div class="set-h"><span class="set-ic">${SUP_IC}</span><div class="sup-t"><h2>${esc(s.name || 'مورد من غير اسم')}</h2><small>${it.length} منتج${s.phone ? ` · <span class="en" dir="ltr">${esc(s.phone)}</span>` : ''}</small></div>
+        <div class="sup-acts">${s.phone ? `<a class="btn btn-ghost btn-sm" href="tel:${esc(String(s.phone).replace(/[^\d+]/g, ''))}" aria-label="اتصال">اتصال</a>` : ''}${wa ? `<a class="btn btn-ghost btn-sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">واتساب</a>` : ''}</div></div>
+      ${s.address ? `<div class="sup-line"><span>العنوان</span>${esc(s.address)}</div>` : ''}${s.note ? `<div class="sup-line"><span>ملاحظات</span>${esc(s.note).replace(/\n/g, '<br>')}</div>` : ''}
+      ${it.length ? `<div class="sup-its">${it.map(i => { const p = products.find(x => x.id === +i.p), c = i.c !== '' && i.c != null ? +i.c : null, pr = finalPrice(p), m = c != null && pr ? pr - c : null;
+        return `<div class="sup-it">${img(p)}<div><b>${esc(p.name)}</b><small>بيتباع بـ ${money(pr)}${i.n ? ` · ${esc(i.n)}` : ''}</small></div><div class="sup-c"><b class="en">${c != null ? money(c) : '—'}</b><small>${m != null ? `ربح <em class="${m < 0 ? 'neg' : ''}">${money(m)}</em>` : 'التكلفة'}</small></div></div>`; }).join('')}</div>` : '<div class="sup-line" style="color:var(--muted)">لسه مفيش منتجات متربطة بيه.</div>'}
+      <div class="sup-foot"><small>${s.updated_at ? 'آخر تعديل ' + fmtDate(s.updated_at) : ''}</small><button type="button" class="btn btn-ghost btn-sm" data-supedit="${s.id}">تعديل</button><button type="button" class="btn btn-danger btn-sm" data-supdel="${s.id}">مسح</button></div></div>`; }).join('')}</div>`;
+}
+function supBox(ed, addPid) {
+  const m = document.createElement('div'); m.className = 'fin-m';
+  let items = (ed ? supItems(ed) : []).map(i => ({ p: +i.p, c: i.c ?? '', n: i.n || '' }));
+  if (addPid && !items.some(i => i.p === addPid)) items.push({ p: addPid, c: pcosts[addPid] ?? '', n: '' });
+  const opt = '<small style="color:var(--muted-2);font-weight:400">(اختياري)</small>';
+  m.innerHTML = `<form class="fin-box sup-box" novalidate><h3>${ed ? 'تعديل مورد' : 'مورد جديد'}</h3>
+    <p class="fsub">كل الخانات اختيارية، اكتب اللي تعرفه والباقي يتكمل بعدين.</p>
+    <div class="field"><label>اسم المورد أو المكتب ${opt}</label><input class="input" name="name" value="${esc(ed ? ed.name || '' : '')}" placeholder="مثلاً: مكتب الحسين للساعات" maxlength="80"></div>
+    <div class="two"><div class="field"><label>رقم التليفون ${opt}</label><input class="input en" name="phone" dir="ltr" inputmode="tel" value="${esc(ed ? ed.phone || '' : '')}" placeholder="01xxxxxxxxx" maxlength="30"></div>
+      <div class="field"><label>العنوان ${opt}</label><input class="input" name="address" value="${esc(ed ? ed.address || '' : '')}" placeholder="مثلاً: العتبة" maxlength="120"></div></div>
+    <div class="field"><label>ملاحظات ${opt}</label><textarea class="input" name="note" rows="2" maxlength="600" placeholder="مواعيد، طريقة الدفع، أقل كمية…">${esc(ed ? ed.note || '' : '')}</textarea></div>
+    <div class="field"><label>المنتجات اللي بنجيبها منه ${opt}</label><div class="sup-sel" id="supSel"></div>
+      <input class="input" id="supPq" placeholder="دوّر واختار منتج من المعروض" autocomplete="off"><div class="sup-pick" id="supPick"></div></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">${ed ? 'حفظ التعديل' : 'حفظ المورد'}</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m);
+  const form = m.querySelector('form'), pq = m.querySelector('#supPq');
+  const thumb = p => p.images && p.images[0] ? `<img src="${esc(RC.thumb(p.images[0]))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<span class="sup-noimg"></span>';
+  const sel = () => { m.querySelector('#supSel').innerHTML = items.map((i, k) => { const p = products.find(x => x.id === i.p); if (!p) return '';
+    return `<div class="sup-row">${thumb(p)}<div class="sup-rf"><b>${esc(p.name)}</b><small>بيتباع بـ ${money(finalPrice(p))}</small>
+      <div class="sup-ri"><input class="input en" inputmode="decimal" data-ic="${k}" value="${esc(i.c)}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><input class="input" data-in="${k}" value="${esc(i.n)}" placeholder="ملاحظة (اختياري)" maxlength="120"></div></div>
+      <button type="button" class="sup-x" data-irm="${k}" aria-label="شيل">×</button></div>`; }).join(''); };
+  const pick = () => { const q = pq.value.trim().toLowerCase(), l = products.filter(p => !items.some(i => i.p === p.id) && (!q || p.name.toLowerCase().includes(q))).slice(0, 60);
+    m.querySelector('#supPick').innerHTML = l.map(p => { const o = supsOf(p.id).filter(s => !ed || s.id !== ed.id); return `<button type="button" class="off-opt" data-ip="${p.id}">${thumb(p)}<span>${esc(p.name)}${o.length ? `<small> · عند ${esc(o.map(s => s.name || 'مورد').join('، '))}</small>` : ''}</span><b class="en">+</b></button>`; }).join('') || '<div class="off-none">مفيش منتجات تانية</div>'; };
+  sel(); pick();
+  pq.oninput = pick;
+  m.addEventListener('input', e => { const d = e.target.dataset; if (d.ic != null) items[+d.ic].c = e.target.value.replace(/[^\d.]/g, ''); if (d.in != null) items[+d.in].n = e.target.value; });
+  m.onclick = e => { const a = e.target.closest('[data-ip]'), r = e.target.closest('[data-irm]');
+    if (a) { const pid = +a.dataset.ip; items.push({ p: pid, c: pcosts[pid] ?? '', n: '' }); sel(); pick(); const i = m.querySelector(`[data-ic="${items.length - 1}"]`); if (i && matchMedia('(hover:hover)').matches) i.focus(); }
+    if (r) { items.splice(+r.dataset.irm, 1); sel(); pick(); }
+    if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector('[type=submit]'), v = k => form.elements[k].value.trim() || null;
+    const it = items.map(i => ({ p: i.p, c: i.c === '' || isNaN(+i.c) ? null : +i.c, n: i.n.trim() || null }));
+    const row = { name: v('name'), phone: v('phone'), address: v('address'), note: v('note'), items: it, updated_at: new Date().toISOString() };
+    if (!row.name && !row.phone && !it.length) return toast('اكتب اسم المورد أو اختار منتج على الأقل', 'err');
+    btn.disabled = true;
+    const { data, error } = await (ed ? sb.from('shop_suppliers').update(row).eq('id', ed.id) : sb.from('shop_suppliers').insert(row)).select().single();
+    if (error) { btn.disabled = false; return toast(error.message, 'err'); }
+    if (ed) sups = sups.map(x => x.id === data.id ? data : x); else sups.unshift(data);
+    // the cost written here also becomes the product's cost in Accounts (filled in by itself on the next order)
+    const pc = it.filter(i => i.c != null && i.c > 0 && +pcosts[i.p] !== i.c).map(i => ({ product_id: i.p, cost: i.c, updated_at: row.updated_at }));
+    if (pc.length) { const { error: ce } = await sb.from('shop_product_costs').upsert(pc); if (!ce) pc.forEach(r => pcosts[r.product_id] = r.cost); }
+    m.remove(); toast(ed ? 'اتعدل المورد ✓' : 'اتضاف المورد ✓', 'ok'); if (tab === 'suppliers') renderSuppliers(); };
+  setTimeout(() => form.elements.name.focus(), 60);
+}
+document.addEventListener('click', async e => {
+  if (e.target.closest('[data-supnew]')) return supBox();
+  const v = e.target.closest('[data-supv]'); if (v) { supUI.v = v.dataset.supv; supUI.q = ''; supSave(); return renderSuppliers(); }
+  const ed = e.target.closest('[data-supedit]'); if (ed) { const s = sups.find(x => x.id === +ed.dataset.supedit); if (s) supBox(s); return; }
+  const ln = e.target.closest('[data-suplink]'); if (ln) { const pid = +ln.dataset.suplink;   // pick which supplier (or a new one)
+    if (!sups.length) return supBox(null, pid);
+    const d = document.createElement('div'); d.className = 'fin-m';
+    d.innerHTML = `<div class="fin-box"><h3>اربطه بمورد</h3><div class="sup-pick">${sups.map(s => `<button type="button" class="off-opt" data-lk="${s.id}"><span class="sup-noimg"></span><span>${esc(s.name || 'مورد من غير اسم')}</span><b class="en">${supItems(s).length}</b></button>`).join('')}<button type="button" class="off-opt" data-lk="new"><span class="sup-noimg"></span><span style="color:var(--amber)">+ مورد جديد</span><b></b></button></div><div class="fin-acts"><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></div>`;
+    document.body.appendChild(d);
+    d.onclick = ev => { const b = ev.target.closest('[data-lk]'); if (b) { d.remove(); return supBox(b.dataset.lk === 'new' ? null : sups.find(s => s.id === +b.dataset.lk), pid); } if (ev.target === d || ev.target.closest('[data-later]')) d.remove(); };
+    return; }
+  const dl = e.target.closest('[data-supdel]'); if (dl) { const s = sups.find(x => x.id === +dl.dataset.supdel); if (!s || !await confirmBox(`تمسح المورد «${s.name || 'من غير اسم'}»؟`, 'مسح')) return;
+    const { error } = await sb.from('shop_suppliers').delete().eq('id', s.id); if (error) return toast(error.message, 'err');
+    sups = sups.filter(x => x.id !== s.id); toast('اتمسح المورد', 'ok'); renderSuppliers(); }
+});
+
 function renderSettings() {
   const s = settings;
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
