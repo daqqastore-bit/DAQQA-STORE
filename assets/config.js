@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028161954';
+RC.build = '20261028200700';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -272,3 +272,18 @@ RC.fakePlan = (f, prods) => {
 RC.skew = 0; RC.now = () => Date.now() + RC.skew;
 RC.syncClock = () => RC._clk || (RC._clk = (async () => { try { const t0 = Date.now(), r = await fetch('version.json?t=' + t0, { cache: 'no-store' }), d = Date.parse(r.headers.get('date'));
   const k = d ? d + 500 - (t0 + Date.now()) / 2 : 0; if (Math.abs(k) > 3000) RC.skew = k; } catch (e) {} })());
+// save a photo from a viewer: phones (iPhone home-screen app ignores <a download>) get the share sheet → «Save Image»; desktop downloads the file.
+// RC.imgBlob(url) warms the file while the photo is on screen, so the share runs right on the tap (iOS drops share() after a slow await)
+RC._ib = {};
+RC.imgBlob = url => RC._ib[url] || (RC._ib[url] = fetch(url, { mode: 'cors' }).then(r => { if (!r.ok) throw 0; return r.blob(); }).catch(e => { delete RC._ib[url]; throw e; }));
+RC.saveImg = async (url, name) => {
+  const base = String(name || 'daqqa').replace(/[\\/:*?"<>|]+/g, ' ').trim().slice(0, 60) || 'daqqa';
+  let b; try { b = await RC.imgBlob(url); } catch (e) { open(url, '_blank'); return; }
+  const ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/avif': 'avif' })[b.type] || (String(url).split('?')[0].match(/\.(\w{3,4})$/) || [, 'jpg'])[1];
+  const file = new File([b], `${base}.${ext}`, { type: b.type || 'image/jpeg' });
+  if (matchMedia('(pointer:coarse)').matches && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file] }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a'), u = URL.createObjectURL(b); a.href = u; a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+};
+RC.DL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>';

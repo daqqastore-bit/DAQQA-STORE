@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028161954">
-<link rel="stylesheet" href="assets/store.css?v=20261028161954">
+<link rel="stylesheet" href="assets/base.css?v=20261028200700">
+<link rel="stylesheet" href="assets/store.css?v=20261028200700">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -65,6 +65,7 @@
 .pv-zoom{position:absolute;bottom:20px;left:50%;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;border:1px solid rgb(255 255 255/.16);background:rgb(255 255 255/.06);color:#EDE3D3}
 .pv-zoom button{width:40px;height:40px;border-radius:50%;color:#fff;font-size:22px;line-height:1}
 .pv-zoom span{min-width:52px;text-align:center;font-size:13px}
+.pv-zoom .pv-dl{width:auto;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border-radius:99px;font-size:13px}.pv-dl svg{width:17px;height:17px}.pv-zoom .pv-dl span{min-width:0}
 @media (max-width:900px){.pv-stage{inset:64px 0 84px}.pv-nav{display:none}}
 .dots{display:none;justify-content:center;gap:6px}
 .dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s,width .2s}
@@ -199,8 +200,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261028161954"></script>
-<script src="assets/app.js?v=20261028161954"></script>
+<script src="assets/config.js?v=20261028200700"></script>
+<script src="assets/app.js?v=20261028200700"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -210,18 +211,19 @@ function viewer(list, start, name) {
   box.innerHTML = `<div class="pv-stage"><img alt=""></div>
     <div class="pv-top"><span class="pv-n en"></span><button class="pv-x" aria-label="قفل">×</button></div>
     ${list.length > 1 ? '<button class="pv-nav pv-prev" aria-label="الصورة اللي قبل">‹</button><button class="pv-nav pv-next" aria-label="الصورة اللي بعد">›</button>' : ''}
-    <div class="pv-zoom"><button data-z="-1" aria-label="تصغير">−</button><span class="en">100%</span><button data-z="1" aria-label="تكبير">+</button></div>`;
+    <div class="pv-zoom"><button data-z="-1" aria-label="تصغير">−</button><span class="en">100%</span><button data-z="1" aria-label="تكبير">+</button><button class="pv-dl" aria-label="حمّل الصورة">${RC.DL_ICON}<span>حمّل</span></button></div>`;
   document.body.appendChild(box); document.body.style.overflow = 'hidden';
   const img = box.querySelector('img'), stage = box.querySelector('.pv-stage'), lbl = box.querySelector('.pv-zoom span');
   const clamp = () => { const r = stage.getBoundingClientRect(), mx = r.width * (z - 1) / 2, my = r.height * (z - 1) / 2; x = Math.max(-mx, Math.min(mx, x)); y = Math.max(-my, Math.min(my, y)); };
   const paint = (anim) => { clamp(); img.style.transition = anim ? 'transform .25s ease' : 'none'; img.style.transform = `translate(${x}px,${y}px) scale(${z})`; lbl.textContent = Math.round(z * 100) + '%'; box.classList.toggle('zoomed', z > 1); };
   const zoom = (to, anim = true) => { z = Math.max(1, Math.min(5, to)); if (z === 1) x = y = 0; paint(anim); };
-  const show = k => { i = (k + list.length) % list.length; img.src = list[i]; z = 1; x = y = 0; paint(false); box.querySelector('.pv-n').textContent = list.length > 1 ? `${i + 1} / ${list.length}` : ''; };
+  const show = k => { i = (k + list.length) % list.length; img.src = list[i]; RC.imgBlob(list[i]).catch(() => {}); z = 1; x = y = 0; paint(false); box.querySelector('.pv-n').textContent = list.length > 1 ? `${i + 1} / ${list.length}` : ''; };
   const close = () => { box.remove(); document.body.style.overflow = ''; removeEventListener('keydown', key); };
   const key = e => { if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') show(i + 1); if (e.key === 'ArrowRight') show(i - 1); if (e.key === '+' || e.key === '=') zoom(z + .5); if (e.key === '-') zoom(z - .5); };
   addEventListener('keydown', key);
   box.querySelector('.pv-x').onclick = close;
-  box.querySelectorAll('.pv-zoom button').forEach(b => b.onclick = () => zoom(z + (+b.dataset.z) * .5));
+  box.querySelectorAll('.pv-zoom [data-z]').forEach(b => b.onclick = () => zoom(z + (+b.dataset.z) * .5));
+  box.querySelector('.pv-dl').onclick = () => RC.saveImg(list[i], (name || 'DAQQA') + (list.length > 1 ? ' ' + (i + 1) : ''));
   if (list.length > 1) { box.querySelector('.pv-prev').onclick = () => show(i - 1); box.querySelector('.pv-next').onclick = () => show(i + 1); }
   stage.addEventListener('wheel', e => { e.preventDefault(); zoom(z * (e.deltaY < 0 ? 1.15 : 1 / 1.15), false); }, { passive: false });
   stage.ondblclick = () => zoom(z > 1 ? 1 : 2.5);
