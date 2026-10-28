@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028132241">
+<link rel="stylesheet" href="assets/base.css?v=20261028132642">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1025,7 +1025,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028132241"></script>
+<script src="assets/config.js?v=20261028132642"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1279,7 +1279,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028132241'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028132642'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1848,7 +1848,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028132241" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028132642" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1882,7 +1882,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028132241" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028132642" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1923,7 +1923,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028132241'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028132241')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028132642'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028132642')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3082,15 +3082,13 @@ function ogInit() {
 let fkTick = 0;
 const fkIn = (() => { let v = null; try { v = JSON.parse(localStorage.getItem('dq-fake-in') || 'null'); } catch (e) {} v = v || { u: 'm', v: 5, n: 10 }; if (!v.u) { v.u = 'm'; v.v = v.min; } return v; })();   // u = 's' seconds | 'm' minutes
 const fkSaveIn = () => { try { localStorage.setItem('dq-fake-in', JSON.stringify(fkIn)); } catch (e) {} };
-const fkMax = min => Math.max(1, Math.floor(min * 60 / 2));   // at most one every 2 seconds on average
 const fkMins = () => fkIn.u === 's' ? (+fkIn.v || 0) / 60 : +fkIn.v || 0;
 const fkDur = min => { const t = Math.round(min * 60); return t < 60 ? `${t} ثانية` : t % 60 ? `${fkClock(t * 1000)} دقيقة` : `${t / 60} دقيقة`; };
 const fkClock = ms => { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
 function renderFake() {
   if (!RC._clk) RC.syncClock().then(() => tab === 'fake' && renderFake());
   const pool = RC.fakePool(products), f = RC.fakeCfg(settings), now = RC.now(), end = f ? +f.at + f.min * 6e4 : 0, run = !!(f && f.on && now < end);
-  const min = fkMins(), n = +fkIn.n || 0, bad = !min || !n ? 'اكتب المدة والعدد' : n > fkMax(min) ? `أقصى عدد لـ ${fkDur(min)} هو ${fkMax(min)} (واحدة كل ثانيتين)` : !pool.length ? 'مفيش منتجات متاحة بصور تتوزع عليها' : '';
-  const every = min && n ? Math.round(min * 60 / n) : 0;
+  const min = fkMins(), n = +fkIn.n || 0, bad = !min || !n ? 'اكتب المدة والعدد' : !pool.length ? 'مفيش منتجات متاحة بصور تتوزع عليها' : '';
   const chips = (k, L, suf) => `<div class="fk-q">${L.map(v => `<button type="button" class="gchip ${+fkIn[k] === v ? 'on' : ''}" data-fq="${k}" data-v="${v}">${v}${suf}</button>`).join('')}</div>`;
   let live = '';
   if (f && +f.n) {
@@ -3111,7 +3109,7 @@ function renderFake() {
         <div class="field"><label class="fk-lb">المدة <span class="fk-u"><button type="button" data-fu="s" class="${fkIn.u === 's' ? 'on' : ''}">ثواني</button><button type="button" data-fu="m" class="${fkIn.u === 's' ? '' : 'on'}">دقايق</button></span></label><input class="input en" id="fkMin" type="number" inputmode="numeric" min="1" max="${fkIn.u === 's' ? 3600 : 240}" value="${+fkIn.v || ''}">${fkIn.u === 's' ? chips('v', [10, 15, 20, 30, 45, 60, 90], ' ث') : chips('v', [1, 2, 5, 10, 15, 30, 60], ' د')}</div>
         <div class="field"><label>عدد النوتفكشنز</label><input class="input en" id="fkN" type="number" inputmode="numeric" min="1" max="500" value="${n || ''}">${chips('n', [3, 5, 10, 15, 20, 30], '')}</div>
       </div>
-      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيظهر <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (حوالي واحدة كل ${every < 60 ? every + ' ثانية' : Math.round(every / 6) / 10 + ' دقيقة'})، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج متاح. اللي فاتح الموقع بس هو اللي بيشوفها.`}</div>
+      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيظهر <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${fkDur(min)}</b> (ممكن أكتر من واحدة تطلع مع بعض)، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج متاح. اللي فاتح الموقع بس هو اللي بيشوفها.`}</div>
       <div class="set-acts"><button class="btn btn-primary" type="button" id="fkGo" ${bad ? 'disabled' : ''}>${run ? 'ابدأ من جديد' : 'ابدأ'}</button></div>
     </div>
     ${live}`;
@@ -3122,7 +3120,7 @@ function renderFake() {
   $('#main').querySelectorAll('[data-fq]').forEach(b => b.onclick = () => { fkIn[b.dataset.fq] = +b.dataset.v; upd(); });
   $('#fkGo').onclick = () => once('fkGo', async () => {
     fkIn.v = Math.round(+$('#fkMin').value || 0); const m = fkMins(), k = Math.round(+$('#fkN').value || 0); fkIn.n = k; fkSaveIn();
-    if (!m || !k || k > fkMax(m) || !pool.length) return renderFake();
+    if (!m || !k || !pool.length) return renderFake();
     if (run && !(await confirmBox('فيه نوتفكشنز شغالة دلوقتي. تبدأ من جديد؟', 'ابدأ'))) return;
     await RC.syncClock();
     await fkSave({ on: true, at: Math.round(RC.now()), min: m, n: k, seed: 1 + Math.floor(Math.random() * 2147483646) }, 'اشتغلت ✓ النوتفكشنز هتبدأ تظهر في الموقع');
