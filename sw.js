@@ -25,7 +25,7 @@ self.addEventListener('push', e => {
     admin.forEach(w => w.postMessage({ type: 'dq-push', tag: d.tag }));
     // only a dashboard that's actually on screen counts: on iPhone the home-screen app stays «open» in the background, where it can't play anything
     const open = admin.filter(w => w.visibilityState === 'visible');
-    return self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: !open.length, requireInteraction: true, silent: open.length > 0,
+    return self.registration.showNotification(d.title || 'DAQQA — طلب جديد', { body: d.body || '', tag: d.tag || 'dq', renotify: true, requireInteraction: true, silent: open.length > 0,
       icon: 'assets/icon-512.png', badge: 'assets/icon-512.png', data: { url: d.url || 'admin.html#orders' } });
   }));
 });
