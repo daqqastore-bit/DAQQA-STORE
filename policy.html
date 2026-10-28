@@ -20,8 +20,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028014234">
-<link rel="stylesheet" href="assets/store.css?v=20261028014234">
+<link rel="stylesheet" href="assets/base.css?v=20261028101831">
+<link rel="stylesheet" href="assets/store.css?v=20261028101831">
 <style>
 .po-page{padding:48px 0 30px;background:radial-gradient(ellipse at 50% 0%,rgb(var(--accent-rgb)/.12),transparent 60%)}
 .po-in{width:min(820px,100%);margin:0 auto}
@@ -40,7 +40,7 @@
 .po-sec li{position:relative;padding-inline-start:16px;line-height:1.85;color:var(--muted);font-size:14.5px}
 .po-sec li::before{content:"";position:absolute;inset-inline-start:0;top:.8em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .po-sec li b{color:var(--ink);font-weight:600}
-.po-help{text-align:center;padding:24px 18px;border:1px dashed rgb(var(--accent-rgb)/.4);border-radius:20px;margin-top:6px}
+.po-help{scroll-margin-top:96px;text-align:center;padding:24px 18px;border:1px dashed rgb(var(--accent-rgb)/.4);border-radius:20px;margin-top:6px}
 .po-help p{color:var(--muted);margin-bottom:14px}
 .po-help .btn{display:inline-flex;gap:8px;align-items:center}
 .po-upd{text-align:center;color:var(--muted);font-size:12.5px;margin-top:18px}
@@ -92,50 +92,26 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261028014234"></script>
-<script src="assets/app.js?v=20261028014234"></script>
+<script src="assets/config.js?v=20261028101831"></script>
+<script src="assets/app.js?v=20261028101831"></script>
 <script>
-// shipping, payment, exchange, cancellation and privacy — the shipping part follows the admin's own areas and prices
+// shipping, payment, exchange, cancellation, privacy… — the words and sections come from Admin → Settings → السياسة; the shipping areas follow the admin's own areas and prices
 DQ.start(null, () => {
-  const S = DQ.settings || {}, esc = RC.esc, I = RC.PERK_IC;
+  const S = DQ.settings || {}, esc = RC.esc, P = RC.policy(S);
   const govs = Array.isArray(S.ship_govs) && S.ship_govs.length ? S.ship_govs : null;
   const zones = (Array.isArray(S.shipping_zones) ? S.shipping_zones : []).filter(z => z && Array.isArray(z.cities) && z.cities.length);
   const fee = c => { const z = zones.find(z => z.cities.includes(c)); return z ? +z.price : +(S.shipping_fee || 0); };
-  const where = govs ? govs.map(c => `<b>${esc(c)}</b>${fee(c) ? ` (${RC.money(fee(c))})` : ' (مجاني)'}`).join('، ') : 'كل محافظات مصر';
-  const free = S.free_shipping_over ? `<li>الشحن <b>مجاني</b> لأي طلب منتجاته بـ ${RC.money(S.free_shipping_over)} أو أكتر.</li>` : '';
+  const vals = { 'المحافظات': govs ? govs.map(c => `<b>${esc(c)}</b>${fee(c) ? ` (${RC.money(fee(c))})` : ' (مجاني)'}`).join('، ') : 'كل محافظات مصر',
+    'حد الشحن المجاني': S.free_shipping_over ? RC.money(S.free_shipping_over) : '' };
   const wa = DQ.wa ? DQ.wa() : '';
-  const sec = (id, ic, t, items) => `<section class="po-sec op" id="${id}"><span class="po-ic">${ic}</span><div><h2>${t}</h2><ul>${items.map(x => `<li>${x}</li>`).join('')}</ul></div></section>`;
-  const lock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
-  const xIc = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg>';
+  const secs = P.sections.map(x => ({ ...x, lines: x.items.map(i => RC.policyLine(i, vals)).filter(Boolean) })).filter(x => x.t.trim() || x.lines.length);
+  const sec = x => `<section class="po-sec op" id="${esc(x.id)}"><span class="po-ic">${RC.POLICY_IC[x.icon] || RC.POLICY_IC.doc}</span><div><h2>${esc(x.t)}</h2>${x.lines.length ? `<ul>${x.lines.map(l => `<li>${l}</li>`).join('')}</ul>` : ''}</div></section>`;
   document.querySelector('#page').innerHTML = `<section class="po-page"><div class="wrap po-in">
-    <div class="po-hero op"><div class="lbl en">POLICY</div><h1>سياسات المتجر</h1><p>كل اللي محتاج تعرفه عن الشحن والدفع والاستبدال والإلغاء وبياناتك، بكلام واضح.</p></div>
-    <nav class="po-nav op" aria-label="أقسام الصفحة"><a href="#shipping">الشحن</a><a href="#payment">الدفع</a><a href="#exchange">الاستبدال والاسترجاع</a><a href="#cancel">إلغاء الطلب</a><a href="#privacy">الخصوصية</a></nav>
-    ${sec('shipping', I.ship, 'الشحن والتوصيل', [
-      `بنوصّل لـ ${where}.`,
-      'الطلب بيوصلك خلال <b>2 لـ 5 أيام عمل</b> من تأكيده.',
-      'بعد ما تطلب هنكلمك على الموبايل أو الواتساب نأكد معاك الطلب والعنوان قبل الشحن.',
-      'سعر الشحن بيظهرلك في السلة قبل ما تأكد الطلب، ومفيش أي رسوم تانية.', free].filter(Boolean))}
-    ${sec('payment', I.cash, 'الدفع', [
-      'الدفع <b>كاش عند الاستلام</b>.',
-      'من حقك تفتح الطلب وتفحصه قدام المندوب قبل ما تدفع.',
-      'لو المنتج مش زي ما اتعرض على الموقع، ترجعه مع المندوب ومتدفعش غير الشحن.'])}
-    ${sec('exchange', I.swap, 'الاستبدال والاسترجاع', [
-      'تقدر <b>تستبدل خلال 14 يوم</b> من يوم الاستلام.',
-      'لازم المنتج يكون بحالته: مش مستعمل، ومعاه العلبة وكل حاجة جت معاه.',
-      'لو فيه عيب صناعة أو وصلك منتج غلط، الاستبدال والشحن علينا.',
-      'لو عاوز تستبدل لسبب تاني (المقاس أو اللون مثلاً)، مصاريف الشحن عليك.',
-      'كلّمنا على الواتساب بكود الطلب وهنرتب معاك الاستبدال.'])}
-    ${sec('cancel', xIc, 'إلغاء الطلب', [
-      'تقدر تلغي طلبك بنفسك من صفحة «طلباتي» أو من صفحة تأكيد الطلب، <b>طول ما الطلب لسه ماخرجش للشحن</b>.',
-      'بعد ما الطلب يخرج للشحن مينفعش يتلغي من الموقع، كلّمنا على الواتساب.'])}
-    ${sec('privacy', lock, 'الخصوصية وبياناتك', [
-      'بناخد منك الاسم ورقم الموبايل والعنوان (والموقع على الخريطة لو بعته) عشان نوصّلك الطلب بس.',
-      'بياناتك <b>مش بتتباع ولا بتتشارك</b> مع حد غير شركة الشحن اللي هتوصّلك الطلب.',
-      'لو عملت حساب، الإيميل والباسورد محفوظين بأمان ومحدش عندنا يقدر يشوف الباسورد.',
-      'المفضلة والسلة بيتحفظوا على جهازك عشان ترجعلهم بعدين.',
-      'لو عاوز نمسح بياناتك أو حسابك، كلّمنا وهنمسحها.'])}
-    <div class="po-help op"><p>عندك سؤال مش موجود هنا؟</p>${wa ? `<a class="btn btn-primary" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">كلّمنا على واتساب</a>` : '<a class="btn btn-primary" href="social.html">تواصل معانا</a>'}</div>
-    <p class="po-upd">آخر تحديث: أكتوبر 2026</p>
+    <div class="po-hero op">${P.lbl.trim() ? `<div class="lbl en">${esc(P.lbl)}</div>` : ''}<h1>${esc(P.title)}</h1>${P.intro.trim() ? `<p>${esc(P.intro)}</p>` : ''}</div>
+    ${secs.length > 1 ? `<nav class="po-nav op" aria-label="أقسام الصفحة">${secs.map(x => `<a href="#${esc(x.id)}">${esc(x.t)}</a>`).join('')}</nav>` : ''}
+    ${secs.map(sec).join('')}
+    ${P.help.trim() || P.btn.trim() ? `<div class="po-help op" id="help">${P.help.trim() ? `<p>${esc(P.help)}</p>` : ''}${P.btn.trim() ? (wa ? `<a class="btn btn-primary" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">${esc(P.btn)}</a>` : `<a class="btn btn-primary" href="social.html">${esc(P.btn)}</a>`) : ''}</div>` : ''}
+    ${P.upd.trim() ? `<p class="po-upd">${esc(P.upd)}</p>` : ''}
   </div></section>`;
   DQ.reveal && DQ.reveal();
   // first paint only: live refreshes re-render the page and must not yank the reader back to the #section

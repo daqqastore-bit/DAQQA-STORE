@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028014234">
+<link rel="stylesheet" href="assets/base.css?v=20261028101831">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -458,7 +458,7 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .pk-ics button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center}
 .pk-ics button svg{width:18px;height:18px}.bd-ics{max-width:260px}#bdK{margin:4px 0 14px}.pk-ics button.on{border-color:var(--amber);background:var(--amber);color:#fff}
 .pk-tx{flex:1;min-width:240px}
-.pk-hrow{display:flex;align-items:center;gap:10px;padding:6px 0}.pk-hrow .input{flex:1}.pk-hrow .soc-del{width:40px;height:40px}
+.pk-hrow{display:flex;align-items:center;gap:10px;padding:6px 0}.pk-hrow .input{flex:1}.pk-hf{flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,240px);gap:8px}.pk-hl{display:flex;align-items:center;gap:8px;min-width:0}.pk-hl span{font-size:12px;color:var(--muted);white-space:nowrap}.pk-hl select{min-width:0;font-size:13px}@media (max-width:700px){.pk-hf{grid-template-columns:1fr}.pk-hrow{align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line)}}.pk-hrow .soc-del{width:40px;height:40px}
 .soc-del{width:44px;height:44px;flex:none;border-radius:12px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center;margin-bottom:2px}
 .soc-del:hover{color:var(--red);border-color:var(--red)}.soc-del svg{width:18px;height:18px}
 .soc-row .f-err{display:block;color:var(--red);font-size:12px;margin-top:5px}.soc-row .field.bad .input{border-color:var(--red)}
@@ -951,6 +951,7 @@ html{--z:1}
   .trk-time h2{flex-wrap:wrap}.trk-time h2 small{order:3;flex:1 1 100%}
   .trk-sel::after{left:11px}
 }
+.pol-form{gap:14px}.pol-sec{display:grid;gap:10px;padding:16px 0;border-bottom:1px dashed var(--line)}.pol-sec:last-child{border-bottom:0}.pol-top{display:flex;align-items:flex-end;gap:10px}.pol-sec textarea{line-height:1.8;resize:vertical}.pol-link{font-size:11.5px;color:var(--muted)}.pol-link a{color:var(--amber)}.pol-acts{position:sticky;bottom:12px;z-index:5;flex-direction:row;justify-content:flex-end;padding:12px;box-shadow:0 10px 30px -12px rgb(0 0 0/.5)}@media (max-width:760px){.pol-acts{bottom:calc(76px + env(safe-area-inset-bottom))}.pol-acts .btn{flex:1}}
 </style>
 </head>
 <body>
@@ -1011,7 +1012,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028014234"></script>
+<script src="assets/config.js?v=20261028101831"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1264,7 +1265,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028014234'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028101831'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1832,7 +1833,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028014234" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028101831" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1866,7 +1867,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028014234" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028101831" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1907,7 +1908,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028014234'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028014234')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028101831'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028101831')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2721,7 +2722,7 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="pages" class="${setTab === 'pages' ? 'on' : ''}">رجالي وحريمي</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="policy" class="${setTab === 'policy' ? 'on' : ''}">السياسة</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="pages" class="${setTab === 'pages' ? 'on' : ''}">رجالي وحريمي</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
 /* ---------- settings → men / women pages: show or hide each page + its texts (empty = the default) ---------- */
 let pgDraft = null;   // unsaved texts survive the re-render after a cover photo upload
 function renderPagesCfg(s) {
@@ -2817,7 +2818,9 @@ function renderSocial() {
 }
 /* ---------- settings → perk cards on the product page + footer HELP list + footer about text ---------- */
 function renderPerks(s) {
-  const P = RC.perks(s), cards = P.cards.map(c => ({ ...c })), help = [...P.help];
+  const P = RC.perks(s), cards = P.cards.map(c => ({ ...c })), help = P.help.map(x => ({ ...x }));
+  // where each footer line can lead: any section of the policy page, its bottom box, or just the page
+  const POL = RC.policy(s), dests = [['', 'تلقائي (حسب الكلام)'], ...POL.sections.map(x => [x.id, x.t || 'سكشن من غير عنوان']), ['help', 'آخر الصفحة (عندك سؤال؟)'], ['top', 'أول الصفحة']];
   const MAXC = 6, MAXH = 8;
   const cardRow = (c, i) => `<div class="pk-row" data-ci="${i}">
     <span class="soc-mv"><button type="button" data-cmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-cmv="${i}" data-to="${i + 1}" ${i < cards.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
@@ -2826,7 +2829,7 @@ function renderPerks(s) {
       <div class="field"><label>السطر الصغير</label><input class="input" data-cs="${i}" value="${esc(c.s || '')}" placeholder="مثلاً: خلال 2–5 أيام"></div></div>
     <button type="button" class="soc-del" data-cdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`;
   const helpRow = (h, i) => `<div class="pk-hrow"><span class="soc-mv"><button type="button" data-hmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-hmv="${i}" data-to="${i + 1}" ${i < help.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
-    <input class="input" data-hv="${i}" value="${esc(h)}" placeholder="مثلاً: ضمان على الماكينة"><button type="button" class="soc-del" data-hdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`;
+    <div class="pk-hf"><input class="input" data-hv="${i}" value="${esc(h.t)}" placeholder="مثلاً: ضمان على الماكينة"><label class="pk-hl"><span>يودّي على</span><select class="input" data-hl="${i}">${dests.map(([v, l]) => `<option value="${esc(v)}" ${v === (h.l || '') ? 'selected' : ''}>${esc(l)}${!v && !h.l && RC.helpLink(h).l ? ` ← ${esc((POL.sections.find(x => x.id === RC.helpLink(h).l) || {}).t || '')}` : ''}</option>`).join('')}</select></label></div><button type="button" class="soc-del" data-hdel="${i}" aria-label="حذف"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`;
   const ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7"/></svg>';
   $('#main').innerHTML = `
     <div class="head"><div><h1>الإعدادات</h1><div class="sub">${setTab === 'footer' ? 'الكلام اللي في آخر الموقع' : 'الكروت اللي بتظهر في صفحة كل منتج'}</div></div></div>
@@ -2835,7 +2838,7 @@ function renderPerks(s) {
       <div class="pk-part" ${setTab === 'footer' ? 'hidden' : ''}><div class="set-h"><span class="set-ic">${ic}</span><div><h2>كروت صفحة المنتج</h2><small>اللي بتظهر تحت زرار الطلب (كاش عند الاستلام، شحن، استبدال...). لحد ${MAXC} كروت، ولو مسحتهم كلهم مش هيظهر حاجة.</small></div></div>
       <div id="pkCards"></div>
       <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddC">+ كارت</button></div></div>
-      <div class="pk-part" ${setTab === 'footer' ? '' : 'hidden'}><div class="set-h"><span class="set-ic">${ic}</span><div><h2>قائمة HELP في الفوتر</h2><small>السطور اللي تحت كلمة HELP في آخر الموقع.</small></div></div>
+      <div class="pk-part" ${setTab === 'footer' ? '' : 'hidden'}><div class="set-h"><span class="set-ic">${ic}</span><div><h2>قائمة POLICY في الفوتر</h2><small>السطور اللي تحت كلمة POLICY في آخر الموقع. كل سطر اختار هو يفتح أنهي جزء في <a href="policy.html" target="_blank" style="color:var(--amber)">صفحة السياسة</a> (تعدّل كلامها من تبويبة «السياسة»).</small></div></div>
       <div id="pkHelp"></div>
       <div><button type="button" class="btn btn-ghost btn-sm" id="pkAddH">+ سطر</button></div>
       <div class="set-h" style="margin-top:10px"><span class="set-ic">${ic}</span><div><h2>وصف المتجر في الفوتر</h2><small>الكلام اللي تحت لوجو DAQQA في آخر الموقع. فاضي = مش هيظهر.</small></div></div>
@@ -2844,25 +2847,74 @@ function renderPerks(s) {
     </form>`;
   bindSetTabs();
   const draw = () => { $('#pkCards').innerHTML = cards.length ? cards.map(cardRow).join('') : '<div class="empty" style="padding:14px">مفيش كروت. الجزء ده مش هيظهر في صفحة المنتج.</div>';
-    $('#pkHelp').innerHTML = help.length ? help.map(helpRow).join('') : '<div class="empty" style="padding:14px">فاضية. قائمة HELP مش هتظهر.</div>';
+    $('#pkHelp').innerHTML = help.length ? help.map(helpRow).join('') : '<div class="empty" style="padding:14px">فاضية. قائمة POLICY مش هتظهر.</div>';
     $('#pkAddC').disabled = cards.length >= MAXC; $('#pkAddH').disabled = help.length >= MAXH; };
   draw();
   const mv = (a, f, t) => { if (t < 0 || t >= a.length) return; a.splice(t, 0, a.splice(f, 1)[0]); draw(); };
   const f = $('#pkForm');
   f.oninput = e => { const d = e.target.dataset;
-    if (d.ct != null) cards[+d.ct].t = e.target.value; if (d.cs != null) cards[+d.cs].s = e.target.value; if (d.hv != null) help[+d.hv] = e.target.value; };
+    if (d.ct != null) cards[+d.ct].t = e.target.value; if (d.cs != null) cards[+d.cs].s = e.target.value; if (d.hv != null) help[+d.hv].t = e.target.value; if (d.hl != null) help[+d.hl].l = e.target.value; };
   f.onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
     if (d.cic != null) { cards[+d.cic].icon = d.k; draw(); }
     else if (d.cmv != null) mv(cards, +d.cmv, +d.to); else if (d.hmv != null) mv(help, +d.hmv, +d.to);
     else if (d.cdel != null) { cards.splice(+d.cdel, 1); draw(); } else if (d.hdel != null) { help.splice(+d.hdel, 1); draw(); }
     else if (b.id === 'pkAddC' && cards.length < MAXC) { cards.push({ icon: 'star', t: '', s: '' }); draw(); $(`[data-ct="${cards.length - 1}"]`).focus(); }
-    else if (b.id === 'pkAddH' && help.length < MAXH) { help.push(''); draw(); $(`[data-hv="${help.length - 1}"]`).focus(); }
-    else if (b.id === 'pkReset') { const D = RC.PERKS_DEF; if (setTab === 'footer') { help.splice(0, help.length, ...D.help); $('#pkAbout').value = D.about; } else cards.splice(0, cards.length, ...D.cards.map(c => ({ ...c }))); draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
+    else if (b.id === 'pkAddH' && help.length < MAXH) { help.push({ t: '', l: '' }); draw(); $(`[data-hv="${help.length - 1}"]`).focus(); }
+    else if (b.id === 'pkReset') { const D = RC.PERKS_DEF; if (setTab === 'footer') { help.splice(0, help.length, ...D.help.map(t => ({ t, l: '' }))); $('#pkAbout').value = D.about; } else cards.splice(0, cards.length, ...D.cards.map(c => ({ ...c }))); draw(); toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); } };
   f.onsubmit = async e => { e.preventDefault();
-    const perks = { cards: cards.map(c => ({ icon: c.icon, t: String(c.t || '').trim(), s: String(c.s || '').trim() })).filter(c => c.t || c.s), help: help.map(x => String(x).trim()).filter(Boolean), about: $('#pkAbout').value.trim() };
+    const perks = { ...(settings.perks || {}), cards: cards.map(c => ({ icon: c.icon, t: String(c.t || '').trim(), s: String(c.s || '').trim() })).filter(c => c.t || c.s), help: help.map(x => ({ t: String(x.t || '').trim(), l: x.l || '' })).filter(x => x.t), about: $('#pkAbout').value.trim() };
     const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
     if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
     settings.perks = perks; toast('اتحفظ ✓', 'ok'); renderPerks(settings); };
+}
+/* ---------- settings › السياسة: every word and section of policy.html (saved in settings.perks.policy) ---------- */
+let polDraft = null;
+function renderPolicy(s) {
+  const P = polDraft = polDraft || RC.policy(s);
+  const ic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>';
+  const secRow = (x, i) => `<div class="pol-sec" data-pi="${i}">
+    <div class="pol-top"><span class="soc-mv"><button type="button" data-pmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-pmv="${i}" data-to="${i + 1}" ${i < P.sections.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
+      <div class="field" style="flex:1;min-width:0;margin:0"><label>عنوان السكشن ${i + 1}</label><input class="input" data-pt="${i}" value="${esc(x.t)}" placeholder="مثلاً: الضمان"></div>
+      <button type="button" class="soc-del" data-pdel="${i}" aria-label="حذف السكشن"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>
+    <div class="pk-ics">${Object.entries(RC.POLICY_IC).map(([k, svg]) => `<button type="button" class="${x.icon === k ? 'on' : ''}" data-pic="${i}" data-k="${k}" aria-label="${k}">${svg}</button>`).join('')}</div>
+    <div class="field" style="margin:0"><label>الكلام <small style="color:var(--muted);font-weight:400">(كل سطر = نقطة)</small></label><textarea class="input" data-pl="${i}" rows="${Math.min(9, Math.max(3, x.items.length + 1))}" dir="rtl" placeholder="اكتب كل نقطة في سطر">${esc(x.items.join('\n'))}</textarea></div>
+    <small class="pol-link">اللينك: <a class="en" dir="ltr" href="policy.html#${esc(x.id)}" target="_blank">policy.html#${esc(x.id)}</a></small></div>`;
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">كل الكلام اللي في صفحة السياسة · <a href="policy.html" target="_blank" style="color:var(--amber)">افتح الصفحة</a></div></div></div>
+    ${setTabs()}
+    <form class="set-card pol-form" id="polForm" novalidate>
+      <div class="panel set-card"><div class="set-h"><span class="set-ic">${ic}</span><div><h2>أول الصفحة</h2><small>العنوان والكلام اللي فوق السكاشن.</small></div></div>
+        <div class="two"><div class="field"><label>الكلمة الصغيرة بالإنجليزي</label><input class="input en" dir="ltr" id="polLbl" value="${esc(P.lbl)}" placeholder="POLICY"></div>
+          <div class="field"><label>العنوان</label><input class="input" id="polTitle" value="${esc(P.title)}" placeholder="سياسات المتجر"></div></div>
+        <div class="field"><label>الكلام اللي تحت العنوان</label><textarea class="input" id="polIntro" rows="2" dir="rtl">${esc(P.intro)}</textarea></div></div>
+      <div class="panel set-card"><div class="set-h"><span class="set-ic">${ic}</span><div><h2>السكاشن <span class="en" style="color:var(--muted);font-weight:500">${P.sections.length}</span></h2><small><b>**كلمة**</b> = بولد · <b>[المحافظات]</b> بتتكتب لوحدها من أماكن الشحن · <b>[حد الشحن المجاني]</b> بيتكتب لوحده، والسطر بيختفي لو مفيش شحن مجاني.</small></div></div>
+        <div id="polSecs">${P.sections.length ? P.sections.map(secRow).join('') : '<div class="empty" style="padding:14px">مفيش سكاشن.</div>'}</div>
+        <div><button type="button" class="btn btn-ghost btn-sm" id="polAdd">+ سكشن جديد</button></div></div>
+      <div class="panel set-card"><div class="set-h"><span class="set-ic">${ic}</span><div><h2>آخر الصفحة</h2><small>المربع اللي تحت خالص. فاضي = مش هيظهر. لينكه: <a class="en" dir="ltr" href="policy.html#help" target="_blank" style="color:var(--amber)">policy.html#help</a></small></div></div>
+        <div class="two"><div class="field"><label>السؤال</label><input class="input" id="polHelp" value="${esc(P.help)}" placeholder="عندك سؤال مش موجود هنا؟"></div>
+          <div class="field"><label>كلام الزرار <small style="color:var(--muted);font-weight:400">(بيفتح الواتساب)</small></label><input class="input" id="polBtn" value="${esc(P.btn)}" placeholder="كلّمنا على واتساب"></div></div>
+        <div class="field"><label>سطر آخر تحديث</label><input class="input" id="polUpd" value="${esc(P.upd)}" placeholder="آخر تحديث: أكتوبر 2026"></div></div>
+      <div class="panel set-acts pol-acts"><button type="button" class="btn btn-ghost" id="polReset">رجّع الكلام الأصلي</button><button class="btn btn-primary" type="submit">حفظ</button></div>
+    </form>`;
+  bindSetTabs();
+  const f = $('#polForm'), keep = () => { const g = id => $(id).value; Object.assign(P, { lbl: g('#polLbl'), title: g('#polTitle'), intro: g('#polIntro'), help: g('#polHelp'), btn: g('#polBtn'), upd: g('#polUpd') }); };
+  f.oninput = e => { const d = e.target.dataset; if (d.pt != null) P.sections[+d.pt].t = e.target.value; else if (d.pl != null) P.sections[+d.pl].items = e.target.value.split('\n'); else keep(); };
+  f.onclick = e => { const b = e.target.closest('button'); if (!b) return; const d = b.dataset, y = scrollY;
+    if (d.pic != null) P.sections[+d.pic].icon = d.k;
+    else if (d.pmv != null) { const a = +d.pmv, t = +d.to; if (t < 0 || t >= P.sections.length) return; P.sections.splice(t, 0, P.sections.splice(a, 1)[0]); }
+    else if (d.pdel != null) { const x = P.sections[+d.pdel]; if (!confirm(`تمسح سكشن «${x.t || 'من غير عنوان'}»؟`)) return; P.sections.splice(+d.pdel, 1); }
+    else if (b.id === 'polAdd') { P.sections.push({ id: 's' + Date.now().toString(36), icon: 'doc', t: '', items: [] }); renderPolicy(s); const n = $(`[data-pt="${P.sections.length - 1}"]`); n.scrollIntoView({ block: 'center' }); n.focus(); return; }
+    else if (b.id === 'polReset') { if (!confirm('ترجّع كل كلام صفحة السياسة للأصلي؟ (مش هيتحفظ غير لما تدوس حفظ)')) return; polDraft = RC.policy({}); renderPolicy(s); return toast('رجع الكلام الأصلي، دوس حفظ عشان يتطبق'); }
+    else return;
+    renderPolicy(s); scrollTo(0, y); };
+  f.onsubmit = async e => { e.preventDefault(); keep();
+    const policy = { lbl: P.lbl.trim(), title: P.title.trim(), intro: P.intro.trim(), help: P.help.trim(), btn: P.btn.trim(), upd: P.upd.trim(),
+      sections: P.sections.map(x => ({ id: x.id, icon: x.icon, t: String(x.t || '').trim(), items: x.items.map(v => v.trim()).filter(Boolean) })).filter(x => x.t || x.items.length) };
+    const perks = { ...(settings.perks || {}), policy };
+    if (!Array.isArray(perks.help)) { const D = RC.perks(settings); Object.assign(perks, { cards: D.cards, help: D.help, about: D.about }); }   // first save keeps the footer/cards as they look now
+    const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
+    settings.perks = perks; polDraft = null; toast('اتحفظت صفحة السياسة ✓', 'ok'); renderPolicy(settings); };
 }
 /* ---------- settings › السكاشن: the feature strip under each section (title + icons + words) ---------- */
 let bandK = 'watches', bandDraft = null;   // the draft survives the re-render after a photo upload
@@ -3016,6 +3068,7 @@ function renderSettings() {
   if (setTab === 'perks' || setTab === 'footer') return renderPerks(s);
   if (setTab === 'coupons') return renderCoupons();
   if (setTab === 'bands') return renderBands(s);
+  if (setTab === 'policy') return renderPolicy(s);
   if (setTab === 'pages') return renderPagesCfg(s);
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));

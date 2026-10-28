@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028014234';
+RC.build = '20261028101831';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -211,5 +211,30 @@ RC.PERK_IC = {
 RC.PERKS_DEF = { cards: [{ icon: 'cash', t: 'كاش عند الاستلام', s: 'افحص وادفع' }, { icon: 'ship', t: 'شحن سريع', s: 'خلال 2–5 أيام' }, { icon: 'swap', t: 'استبدال', s: 'خلال 14 يوم' }],
   help: ['الدفع عند الاستلام', 'شحن 2–5 أيام', 'استبدال خلال 14 يوم', 'ضمان على الماكينة'],
   about: 'DAQQA | دقّة — منتجات مختارة بعناية وجودة تستاهل، بأسعار واضحة. الدفع عند الاستلام بعد ما تفحص طلبك.' };
+// footer POLICY lines: plain text (old) or {t, l}; l = the policy-page section it opens ('' = guessed from the words)
+RC.helpLink = x => { const t = typeof x === 'string' ? x : String((x && x.t) || ''), l = typeof x === 'string' ? '' : String((x && x.l) || '');
+  return { t, l: l || (/دفع|كاش/.test(t) ? 'payment' : /شحن|توصيل/.test(t) ? 'shipping' : /استبدال|استرجاع|ضمان/.test(t) ? 'exchange' : /إلغاء|الغاء/.test(t) ? 'cancel' : /خصوصي|بيانات/.test(t) ? 'privacy' : '') }; };
 RC.perks = (settings) => { const p = (settings && settings.perks) || {}, D = RC.PERKS_DEF;
-  return { cards: Array.isArray(p.cards) ? p.cards.filter(c => c && (c.t || c.s)) : D.cards, help: Array.isArray(p.help) ? p.help.filter(Boolean) : D.help, about: typeof p.about === 'string' ? p.about : D.about }; };
+  return { cards: Array.isArray(p.cards) ? p.cards.filter(c => c && (c.t || c.s)) : D.cards, help: (Array.isArray(p.help) ? p.help : D.help).map(x => typeof x === 'string' ? { t: x, l: '' } : { t: String((x && x.t) || ''), l: String((x && x.l) || '') }).filter(x => x.t.trim()), about: typeof p.about === 'string' ? p.about : D.about }; };
+// policy page (Admin → Settings → السياسة); saved in settings.perks.policy = {lbl, title, intro, sections:[{id, icon, t, items:[…]}], help, btn, upd}
+// in a line: **word** = bold, [المحافظات] = the shipping areas and prices, [حد الشحن المجاني] = the free-shipping amount (the line hides when there is none)
+RC.POLICY_IC = { ...RC.PERK_IC,
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></svg>',
+  doc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>' };
+RC.POLICY_DEF = { lbl: 'POLICY', title: 'سياسات المتجر', intro: 'كل اللي محتاج تعرفه عن الشحن والدفع والاستبدال والإلغاء وبياناتك، بكلام واضح.',
+  sections: [
+    { id: 'shipping', icon: 'ship', t: 'الشحن والتوصيل', items: ['بنوصّل لـ [المحافظات].', 'الطلب بيوصلك خلال **2 لـ 5 أيام عمل** من تأكيده.', 'بعد ما تطلب هنكلمك على الموبايل أو الواتساب نأكد معاك الطلب والعنوان قبل الشحن.', 'سعر الشحن بيظهرلك في السلة قبل ما تأكد الطلب، ومفيش أي رسوم تانية.', 'الشحن **مجاني** لأي طلب منتجاته بـ [حد الشحن المجاني] أو أكتر.'] },
+    { id: 'payment', icon: 'cash', t: 'الدفع', items: ['الدفع **كاش عند الاستلام**.', 'من حقك تفتح الطلب وتفحصه قدام المندوب قبل ما تدفع.', 'لو المنتج مش زي ما اتعرض على الموقع، ترجعه مع المندوب ومتدفعش غير الشحن.'] },
+    { id: 'exchange', icon: 'swap', t: 'الاستبدال والاسترجاع', items: ['تقدر **تستبدل خلال 14 يوم** من يوم الاستلام.', 'لازم المنتج يكون بحالته: مش مستعمل، ومعاه العلبة وكل حاجة جت معاه.', 'لو فيه عيب صناعة أو وصلك منتج غلط، الاستبدال والشحن علينا.', 'لو عاوز تستبدل لسبب تاني (المقاس أو اللون مثلاً)، مصاريف الشحن عليك.', 'كلّمنا على الواتساب بكود الطلب وهنرتب معاك الاستبدال.'] },
+    { id: 'cancel', icon: 'x', t: 'إلغاء الطلب', items: ['تقدر تلغي طلبك بنفسك من صفحة «طلباتي» أو من صفحة تأكيد الطلب، **طول ما الطلب لسه ماخرجش للشحن**.', 'بعد ما الطلب يخرج للشحن مينفعش يتلغي من الموقع، كلّمنا على الواتساب.'] },
+    { id: 'privacy', icon: 'lock', t: 'الخصوصية وبياناتك', items: ['بناخد منك الاسم ورقم الموبايل والعنوان (والموقع على الخريطة لو بعته) عشان نوصّلك الطلب بس.', 'بياناتك **مش بتتباع ولا بتتشارك** مع حد غير شركة الشحن اللي هتوصّلك الطلب.', 'لو عملت حساب، الإيميل والباسورد محفوظين بأمان ومحدش عندنا يقدر يشوف الباسورد.', 'المفضلة والسلة بيتحفظوا على جهازك عشان ترجعلهم بعدين.', 'لو عاوز نمسح بياناتك أو حسابك، كلّمنا وهنمسحها.'] }],
+  help: 'عندك سؤال مش موجود هنا؟', btn: 'كلّمنا على واتساب', upd: 'آخر تحديث: أكتوبر 2026' };
+RC.policy = (settings) => { const p = ((settings && settings.perks) || {}).policy, D = RC.POLICY_DEF; if (!p || typeof p !== 'object') return JSON.parse(JSON.stringify(D));
+  const str = (k) => typeof p[k] === 'string' ? p[k] : D[k];
+  return { lbl: str('lbl'), title: str('title'), intro: str('intro'), help: str('help'), btn: str('btn'), upd: str('upd'),
+    sections: (Array.isArray(p.sections) ? p.sections : D.sections).filter(x => x && x.id).map(x => ({ id: String(x.id), icon: RC.POLICY_IC[x.icon] ? x.icon : 'doc', t: String(x.t || ''), items: (Array.isArray(x.items) ? x.items : []).map(String).filter(v => v.trim()) })) }; };
+// one line of policy text → safe HTML (escaped, then **bold** and the auto values)
+RC.policyLine = (x, vals) => { let h = RC.esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  for (const [k, v] of Object.entries(vals || {})) { if (h.includes('[' + k + ']')) { if (!v) return ''; h = h.split('[' + k + ']').join(v); } } return h; };

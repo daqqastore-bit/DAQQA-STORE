@@ -407,8 +407,10 @@
     const ft = $('#ftContact'); if (ft) { ft.hidden = !list.length; $('#ftSoc').innerHTML = list.map(x => `<li>${socLink(x, 'ft-ic')}</li>`).join(''); }
     const pk = RC.perks(DQ.settings), ab = $('#ftAbout'), hb = $('#ftHelpBox');
     if (ab) { ab.hidden = !pk.about.trim(); ab.textContent = pk.about; }
-    if (hb) { hb.hidden = !pk.help.length; const at = x => /دفع|كاش/.test(x) ? 'payment' : /شحن|توصيل/.test(x) ? 'shipping' : /استبدال|استرجاع|ضمان/.test(x) ? 'exchange' : /إلغاء|الغاء/.test(x) ? 'cancel' : '';
-      $('#ftHelp').innerHTML = pk.help.map(x => `<li><a href="policy.html${at(x) ? '#' + at(x) : ''}">${esc(x)}</a></li>`).join('') + '<li><a href="policy.html#privacy">الخصوصية</a></li>'; }
+    // each POLICY line opens the policy-page section the admin picked (or the one its words point to)
+    if (hb) { hb.hidden = !pk.help.length; const ids = new Set(RC.policy(DQ.settings).sections.map(x => x.id).concat('help')), L = pk.help.map(RC.helpLink);
+      const href = l => 'policy.html' + (ids.has(l) ? '#' + l : '');
+      $('#ftHelp').innerHTML = L.map(x => `<li><a href="${href(x.l)}">${esc(x.t)}</a></li>`).join('') + (ids.has('privacy') && !L.some(x => x.l === 'privacy') ? '<li><a href="policy.html#privacy">الخصوصية</a></li>' : ''); }
     const all = $('#ftAll'); if (all) { all.hidden = !list.length; const seen = new Set(); $('#ftAllIc').innerHTML = list.filter(x => !seen.has(x.type) && seen.add(x.type)).slice(0, 6).map(x => RC.SOCIAL[x.type].icon).join(''); }
   }
 
