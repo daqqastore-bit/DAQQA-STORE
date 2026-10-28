@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261028133221';
+RC.build = '20261028133627';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -244,7 +244,9 @@ RC.FAKE_NAMES = { m: ['أحمد', 'محمد', 'محمود', 'مصطفى', 'عم�
   f: ['مريم', 'سارة', 'نور', 'منة', 'آية', 'هبة', 'ياسمين', 'دينا', 'رنا', 'سلمى', 'فرح', 'ملك', 'شهد', 'روان', 'نادين', 'مي', 'إسراء', 'رحمة', 'هاجر', 'جنى', 'مارينا', 'ندى', 'بسمة', 'دعاء', 'لمياء'] };
 RC.FAKE_CITIES = ['القاهرة', 'القاهرة', 'القاهرة', 'الجيزة', 'الجيزة', 'الإسكندرية', 'الإسكندرية', 'القليوبية', 'الشرقية', 'الدقهلية', 'الغربية', 'المنوفية', 'البحيرة', 'كفر الشيخ', 'دمياط', 'بورسعيد', 'الإسماعيلية', 'السويس', 'الفيوم', 'بني سويف', 'المنيا', 'أسيوط', 'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'الغردقة'];
 RC.fakeCfg = s => { const f = ((s && s.perks) || {}).fake; return f && typeof f === 'object' ? f : null; };
-RC.fakeLive = (s, now = Date.now()) => { const f = RC.fakeCfg(s); return f && f.on && +f.n > 0 && +f.min > 0 && now < +f.at + f.min * 6e4 + 1e4 ? f : null; };
+// f.to: 'admin' = order alerts in the dashboard only, 'site' = pop-ups for visitors, 'both' (older runs had no f.to = site)
+RC.fakeTo = (f, w) => { const t = (f && f.to) || 'site'; return t === 'both' || t === w; };
+RC.fakeLive = (s, now = Date.now(), w) => { const f = RC.fakeCfg(s); return f && f.on && (!w || RC.fakeTo(f, w)) && +f.n > 0 && +f.min > 0 && now < +f.at + f.min * 6e4 + 1e4 ? f : null; };
 // pieces a pop-up can name: on the site, with a photo, orderable (same list on both sides: sorted by id)
 RC.fakePool = prods => (prods || []).filter(p => p.active !== false && p.images && p.images.length && !RC.soon(p) && !p.soon && (p.stock == null || p.stock > 0)).sort((a, b) => a.id - b.id);
 // n moments at random anywhere in the window (some can land together, like real orders), each with a name, a city and a product (every product before any repeats)
@@ -255,7 +257,7 @@ RC.fakePlan = (f, prods) => {
   const at = Array.from({ length: n }, () => rnd() * Math.max(0, span)).sort((a, b) => a - b);
   let deck = [];
   return at.map((t, i) => { if (!deck.length) deck = shuf(pool); const g = rnd() < .62 ? 'm' : 'f', L = RC.FAKE_NAMES[g];
-    return { i, t: +f.at + 1500 + t, g, name: L[Math.floor(rnd() * L.length)], city: RC.FAKE_CITIES[Math.floor(rnd() * RC.FAKE_CITIES.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
+    return { i, t: +f.at + 1500 + t, g, name: L[Math.floor(rnd() * L.length)], last: RC.FAKE_NAMES.m[Math.floor(rnd() * RC.FAKE_NAMES.m.length)], city: RC.FAKE_CITIES[Math.floor(rnd() * RC.FAKE_CITIES.length)], pid: (deck.pop() || {}).id, ago: Math.floor(rnd() * 4) }; });
 };
 // a visitor's clock can be minutes off: the site's own server time (Date header of version.json) keeps everyone on the admin's schedule
 RC.skew = 0; RC.now = () => Date.now() + RC.skew;
