@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028115755">
+<link rel="stylesheet" href="assets/base.css?v=20261028131839">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -477,6 +477,18 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .soc-pick b small{font-weight:400;color:var(--muted);font-size:12px}
 .soc-pick-acts{display:flex;gap:8px}
 .set-card{display:flex;flex-direction:column;gap:14px}
+.fk-in{display:grid;grid-template-columns:1fr 1fr;gap:16px}.fk-in .field{margin:0}.fk-in .input{height:46px;font:600 17px var(--f-ui);text-align:center}
+.fk-q{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.fk-q .gchip{padding:5px 11px;font-size:12.5px;font-family:var(--f-ui)}
+.fk-note{font-size:13px;color:var(--muted);line-height:1.7}.fk-note b{color:var(--ink)}.fk-note.bad{color:var(--red)}
+.fk-live{margin-top:14px}.fk-live.is-run{border-color:#2f9e5b}.fk-live .set-h>div{flex:1}.fk-live.is-run .set-h small{color:#2f9e5b;font-weight:600}
+.fk-bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}.fk-bar i{display:block;height:100%;background:#2f9e5b;border-radius:inherit;transition:width .9s linear}
+.fk-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.fk-nums div{background:var(--surface-2);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.fk-nums b{font:700 20px var(--f-ui)}.fk-nums span{font-size:12px;color:var(--muted)}
+.fk-list{display:grid;gap:6px;max-height:420px;overflow-y:auto;overscroll-behavior:contain}
+.fk-row{display:grid;grid-template-columns:62px 40px minmax(0,1fr);gap:10px;align-items:center;padding:6px 8px;border-radius:12px;border:1px solid var(--line)}
+.fk-row img{width:40px;height:40px;border-radius:9px;object-fit:cover;background:var(--surface-2)}.fk-row time{font:600 13px var(--f-ui);color:var(--muted);text-align:center}
+.fk-row div{display:grid;min-width:0;font-size:13px}.fk-row div b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;font-family:var(--f-ui)}.fk-row div small{color:var(--muted)}
+.fk-row.done{opacity:.5}.fk-row.done time{color:#2f9e5b}.fk-row.next{border-color:#2f9e5b;box-shadow:0 0 0 2px rgb(47 158 91/.18)}
+@media (max-width:640px){.fk-in{grid-template-columns:1fr;gap:14px}.fk-nums b{font-size:17px}}
 .og-prev{position:relative;width:100%;max-width:520px;aspect-ratio:1200/630;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg2,rgba(127,127,127,.08));display:grid;place-items:center}.og-prev img{width:100%;height:100%;object-fit:cover;display:block}.og-prev span{padding:16px;text-align:center;color:var(--muted);font-size:13px}.og-prev img[hidden],.og-prev span[hidden]{display:none}.og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:320px;overflow:auto}.og-grid[hidden]{display:none}.og-grid button{padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:none;cursor:pointer;aspect-ratio:1}.og-grid button:hover{border-color:var(--amber,#C9A96E)}.og-grid img{width:100%;height:100%;object-fit:cover;display:block}.og-card .btn,#ogCard label.btn{cursor:pointer}
 .web-ord{margin-bottom:14px}.oc-card.is-off{border-color:var(--red,#B04834)}.oc-card.is-off #ocTxt{color:var(--red,#B04834);font-weight:600}.oc-msg{margin-top:12px}.oc-card .set-acts{margin-top:8px}.web-ord .set-h{align-items:center}.web-ord .set-h>div{flex:1}.wo-warn{color:var(--red,#B04834);font-size:12.5px}
 .set-h{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -1012,7 +1024,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028115755"></script>
+<script src="assets/config.js?v=20261028131839"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1047,12 +1059,13 @@ const ICONS = {
   women: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="9" r="6"/><path d="M12 15v7M9 19h6"/></svg>',
   covers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15-5-5L5 20"/></svg>',
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
+  fake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/><path d="M19 3.5l1.5-1M21 7h1.5"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
 const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['invoices','طباعة الفواتير'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
-  ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات']];
+  ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات'], ['_h',''], ['fake','نوتفكشن وهمية']];
 const MOB_TABS = ['overview','accounts','orders','products','lux-orders'];
 // an order counts as Luxury when any of its pieces is a Luxury product
 const isLuxOrder = o => (o.shop_order_items || []).some(i => { const p = products.find(x => x.id === i.product_id); return p && RC.isLuxury(p); });
@@ -1265,7 +1278,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028115755'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028131839'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1289,7 +1302,8 @@ function go(t, keepScroll) {
   const moved = t !== tab || !keepScroll; tab = t; history.replaceState(null, '', '#' + t); renderTabs();
   if (chart) { chart.destroy(); chart = null; }
   if (t !== 'tracking') { trkCharts.forEach(c => c.destroy()); trkCharts = []; }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings}[t] || renderDash)();
+  if (t !== 'fake') { clearInterval(fkTick); fkTick = 0; }
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, fake: renderFake}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   if (moved) { const m = $('#main'); m.classList.remove('pg-in'); void m.offsetWidth; m.classList.add('pg-in'); }
@@ -1833,7 +1847,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028115755" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028131839" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1867,7 +1881,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028115755" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028131839" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1908,7 +1922,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028115755'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028115755')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028131839'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028131839')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3062,6 +3076,62 @@ function ogInit() {
     const { data, error } = await sb.storage.from(RC.bucket).remove([OG_PATH]); if (error) return ogErr(error);
     if (!data || !data.length) return ogErr(new Error('policy'));
     toast('اتشالت ✓', 'ok'); ogShow(); });
+}
+/* ---------- نوتفكشن وهمية: «فلان طلب …» pop-ups on the store for a set time, display only (settings.perks.fake, plan in RC.fakePlan) ---------- */
+let fkTick = 0;
+const fkIn = (() => { try { return JSON.parse(localStorage.getItem('dq-fake-in') || 'null') || { min: 5, n: 10 }; } catch (e) { return { min: 5, n: 10 }; } })();
+const fkSaveIn = () => { try { localStorage.setItem('dq-fake-in', JSON.stringify(fkIn)); } catch (e) {} };
+const fkMax = min => Math.floor(min * 60 / 2);   // at most one every 2 seconds on average
+const fkClock = ms => { const t = Math.max(0, Math.round(ms / 1000)); return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`; };
+function renderFake() {
+  if (!RC._clk) RC.syncClock().then(() => tab === 'fake' && renderFake());
+  const pool = RC.fakePool(products), f = RC.fakeCfg(settings), now = RC.now(), end = f ? +f.at + f.min * 6e4 : 0, run = !!(f && f.on && now < end);
+  const min = +fkIn.min || 0, n = +fkIn.n || 0, bad = !min || !n ? 'اكتب المدة والعدد' : n > fkMax(min) ? `أقصى عدد لـ ${min} دقيقة هو ${fkMax(min)} (واحدة كل ثانيتين)` : !pool.length ? 'مفيش منتجات متاحة بصور تتوزع عليها' : '';
+  const every = min && n ? Math.round(min * 60 / n) : 0;
+  const chips = (k, L, suf) => `<div class="fk-q">${L.map(v => `<button type="button" class="gchip ${+fkIn[k] === v ? 'on' : ''}" data-fq="${k}" data-v="${v}">${v}${suf}</button>`).join('')}</div>`;
+  let live = '';
+  if (f && +f.n) {
+    const plan = RC.fakePlan(f, products), upTo = f.on ? now : Math.min(now, +f.stop || now), shown = plan.filter(e => e.t <= upTo).length, nx = plan.find(e => e.t > now);
+    const pct = run ? Math.min(100, (now - f.at) / (end - f.at) * 100) : 100;
+    live = `<div class="panel set-card fk-live ${run ? 'is-run' : ''}" id="fkLive">
+      <div class="set-h"><span class="set-ic">${ICONS.fake}</span><div><h2>${run ? 'شغالة دلوقتي' : f.on ? 'خلصت' : 'اتوقفت'}</h2><small>${run ? `فاضل ${fkClock(end - now)} دقيقة` : `آخر مرة: ${f.n} نوتفكشن في ${f.min} دقيقة · ${RC.when ? RC.when(new Date(+f.at)) : new Date(+f.at).toLocaleString()}`}</small></div>
+        ${run ? '<button type="button" class="btn btn-danger btn-sm" id="fkStop">وقّف</button>' : ''}</div>
+      ${run ? `<div class="fk-bar"><i style="width:${pct}%"></i></div>` : ''}
+      <div class="fk-nums"><div><b class="en">${run ? shown : f.on ? f.n : shown}</b><span>اتعرض</span></div><div><b class="en">${run ? f.n - shown : 0}</b><span>فاضل</span></div><div><b class="en">${run && nx ? fkClock(nx.t - now) : '—'}</b><span>الجاية بعد</span></div></div>
+      <div class="fk-list">${plan.map(e => { const p = products.find(x => x.id === e.pid); return `<div class="fk-row ${e.t <= upTo ? 'done' : run && nx && nx.i === e.i ? 'next' : ''}"><time class="en" dir="ltr">${e.t <= upTo ? '✓ ' : ''}${fkClock(e.t - f.at)}</time>${p && p.images && p.images[0] ? `<img src="${esc(RC.thumb(p.images[0]))}" alt="" loading="lazy">` : '<span></span>'}<div><b>${esc(p ? p.name : '—')}</b><small>${esc(e.name)} من ${esc(e.city)} ${e.g === 'f' ? 'طلبت' : 'طلب'}</small></div></div>`; }).join('')}</div>
+    </div>`;
+  }
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>نوتفكشن وهمية</h1><div class="sub">إشعارات «فلان من القاهرة طلب …» بتظهر لكل اللي فاتحين الموقع في الوقت اللي تحدده — عرض بس، مفيش أي طلب بيتعمل</div></div></div>
+    <div class="panel set-card">
+      <div class="fk-in">
+        <div class="field"><label>المدة (بالدقايق)</label><input class="input en" id="fkMin" type="number" inputmode="numeric" min="1" max="240" value="${min || ''}">${chips('min', [1, 2, 5, 10, 15, 30, 60], ' د')}</div>
+        <div class="field"><label>عدد النوتفكشنز</label><input class="input en" id="fkN" type="number" inputmode="numeric" min="1" max="500" value="${n || ''}">${chips('n', [3, 5, 10, 15, 20, 30], '')}</div>
+      </div>
+      <div class="fk-note ${bad ? 'bad' : ''}" id="fkNote">${bad || `هيظهر <b>${n}</b> نوتفكشن في أوقات عشوائية خلال <b>${min}</b> دقيقة (حوالي واحدة كل ${every < 60 ? every + ' ثانية' : Math.round(every / 6) / 10 + ' دقيقة'})، بأسامي مختلفة وموزعة على <b>${pool.length}</b> منتج متاح. اللي فاتح الموقع بس هو اللي بيشوفها.`}</div>
+      <div class="set-acts"><button class="btn btn-primary" type="button" id="fkGo" ${bad ? 'disabled' : ''}>${run ? 'ابدأ من جديد' : 'ابدأ'}</button></div>
+    </div>
+    ${live}`;
+  const upd = () => { fkSaveIn(); renderFake(); };
+  $('#fkMin').onchange = e => { fkIn.min = Math.max(0, Math.min(240, Math.round(+e.target.value || 0))); upd(); };
+  $('#fkN').onchange = e => { fkIn.n = Math.max(0, Math.min(500, Math.round(+e.target.value || 0))); upd(); };
+  $('#main').querySelectorAll('[data-fq]').forEach(b => b.onclick = () => { fkIn[b.dataset.fq] = +b.dataset.v; upd(); });
+  $('#fkGo').onclick = () => once('fkGo', async () => {
+    const m = Math.round(+$('#fkMin').value || 0), k = Math.round(+$('#fkN').value || 0); fkIn.min = m; fkIn.n = k; fkSaveIn();
+    if (!m || !k || k > fkMax(m) || !pool.length) return renderFake();
+    if (run && !(await confirmBox('فيه نوتفكشنز شغالة دلوقتي. تبدأ من جديد؟', 'ابدأ'))) return;
+    await RC.syncClock();
+    await fkSave({ on: true, at: Math.round(RC.now()), min: m, n: k, seed: 1 + Math.floor(Math.random() * 2147483646) }, 'اشتغلت ✓ النوتفكشنز هتبدأ تظهر في الموقع');
+  });
+  const st = $('#fkStop'); if (st) st.onclick = () => once('fkStop', () => fkSave({ ...f, on: false, stop: Math.round(RC.now()) }, 'اتوقفت'));
+  clearInterval(fkTick); fkTick = 0;
+  if (run) fkTick = setInterval(() => { if (tab !== 'fake') { clearInterval(fkTick); fkTick = 0; return; } if (document.activeElement && /^(INPUT)$/.test(document.activeElement.tagName)) return; const y = scrollY, L = $('.fk-list'), ly = L ? L.scrollTop : 0; renderFake(); scrollTo(0, y); const L2 = $('.fk-list'); if (L2) L2.scrollTop = ly; }, 1000);
+}
+async function fkSave(fake, ok) {
+  const perks = { ...(settings.perks || {}), fake };
+  const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+  if (error) return toast(/perks/.test(error.message) ? 'الجزء ده محتاج تحديث في Supabase' : error.message, 'err');
+  settings.perks = perks; toast(ok, 'ok'); renderFake();
 }
 function renderSettings() {
   const s = settings;
