@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028154854">
+<link rel="stylesheet" href="assets/base.css?v=20261028155317">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -100,7 +100,9 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .order{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .2s}
 .order.fresh{animation:fresh 2.5s}
 @keyframes fresh{0%,40%{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}}
-.o-top{display:grid;grid-template-columns:150px 1fr 120px 130px 150px 24px;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
+.o-top{display:grid;grid-template-columns:178px 1fr 120px 130px 150px 24px;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
+.o-id{display:flex;align-items:center;gap:10px;min-width:0}.o-sel{display:grid;place-items:center;padding:4px;margin:-4px;cursor:pointer}.o-sel input{width:18px;height:18px;accent-color:var(--amber);cursor:pointer}
+.o-bulk #oBulkSt{height:34px;width:auto;min-width:150px;padding:0 12px;font-size:13px}.o-bulk .inv-acts{display:flex;gap:8px;align-items:center;margin-inline-start:auto}
 .o-top .code{font:600 12px var(--f-ui);direction:ltr;text-align:right}
 .o-top .date{font-size:11px;color:var(--muted-2)}
 .o-no{font:700 1.05em var(--f-ui);color:var(--amber);direction:ltr;unicode-bidi:isolate;margin-inline-end:6px}
@@ -151,7 +153,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .pf-f{display:grid;gap:5px;min-width:0}.pf-f>span:first-child{font-size:11.5px;color:var(--muted)}.pf-f .input{height:38px;font-size:13px}
 .pf-q{grid-column:span 2}.pf-rng{display:flex;align-items:center;gap:6px}.pf-rng .input{min-width:0;flex:1;text-align:center}.pf-rng i{color:var(--muted);font-style:normal}
 .pf-end{display:flex;align-items:center;gap:10px;justify-content:space-between;min-height:38px}.pf-n{font-size:12.5px;color:var(--muted)}.pf-n b{color:var(--ink)}
-.pf-tg{display:none}
+.pf-tg{display:none}.o-fb .pf-q{grid-column:auto}
 .bulk-soon{margin:0 0 14px}
 @media (max-width:600px){.pf-bar{grid-template-columns:1fr 1fr;padding:10px}.pf-q,.pf-end{grid-column:1/-1}.pf-tg{display:inline-block}.pf-bar:not(.open)>.pf-f:not(.pf-q){display:none}}
 /* out of stock: the whole row is marked red so it stands out in the list */
@@ -1025,7 +1027,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028154854"></script>
+<script src="assets/config.js?v=20261028155317"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1261,15 +1263,22 @@ async function enablePush() {
   if (perm !== 'granted') return toast('الإشعارات مقفولة، فعّلها من إعدادات المتصفح للموقع ده', 'err');
   try {
     const r = await swReg(); const sub = (await r.pushManager.getSubscription()) || await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID) });
-    const j = sub.toJSON(), dev = (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB');
-    const { error } = await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: dev });
+    const { error } = await pushSave(sub);
     if (error) throw error;
     await sb.rpc('shop_push_test'); toast('اتفعّلت ✓ هيوصلك إشعار تجربة دلوقتي', 'ok'); askNotify();
   } catch (e) { toast('معرفناش نفعّل الإشعارات: ' + (e.message || e), 'err'); }
 }
+// this browser's push address, saved with its device id: an older address of the same browser is dropped, so one phone never gets an alert twice
+const pushDev = () => (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB') + ' · ' + FK_DEV;
+async function pushSave(sub) {
+  const j = sub.toJSON(), r = await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: pushDev() });
+  if (!r.error) await sb.from('shop_push_subs').delete().like('device', '% · ' + FK_DEV).neq('endpoint', j.endpoint);
+  return r;
+}
 async function askNotify() {
   document.querySelectorAll('.notify-ask').forEach(b => b.remove());
-  const on = pushActive = await pushOn(); const sb_ = $('#pushBtn'); if (sb_) sb_.querySelector('span').textContent = on ? 'الإشعارات شغالة ✓ (جرّب)' : 'إشعارات الطلبات';
+  const on = pushActive = await pushOn();
+  if (on) try { const s = await (await swReg()).pushManager.getSubscription(); if (s) pushSave(s); } catch (e) {} const sb_ = $('#pushBtn'); if (sb_) sb_.querySelector('span').textContent = on ? 'الإشعارات شغالة ✓ (جرّب)' : 'إشعارات الطلبات';
   if (on || localStorage.getItem('dq-push-later')) return;
   const b = document.createElement('button'); b.className = 'btn btn-amber btn-sm notify-ask'; b.innerHTML = 'فعّل إشعارات الطلبات على الجهاز ده <i data-later aria-label="بعدين">×</i>';
   b.onclick = e => { if (e.target.closest('[data-later]')) { try { localStorage.setItem('dq-push-later', 1) } catch (er) {} b.remove(); return; } enablePush(); }; document.body.appendChild(b);
@@ -1283,7 +1292,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261028154854'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028155317'); orderSnd.preload = 'auto';
 // one alert per order per device: every open tab / window of the dashboard hears the same order, and the live connection and the push
 // both report it. Only one tab rings (it holds the «dq-alert-lead» lock; when it closes the next tab takes over), and it rings once
 // per order even after a reload (claimed keys are kept for 10 minutes).
@@ -1787,14 +1796,39 @@ function renderTracking() {
 }
 
 /* ---------- orders ---------- */
+// ticked orders (bulk status change / delete); kept while moving between filters
+const ordSel = new Set();
+// orders filters + sort (kept after a reload), same bar as the products page
+const OF0 = { sort: '', city: '', min: '', max: '', from: '', to: '', pcs: '' };
+let OF = { ...OF0 }; try { OF = { ...OF0, ...JSON.parse(localStorage.getItem('dq-of') || '{}') }; } catch (er) {}
+const ofSave = () => { try { localStorage.setItem('dq-of', JSON.stringify(OF)); } catch (er) {} };
+const ofOn = () => Object.keys(OF0).filter(k => k !== 'sort' && OF[k] !== '').length + (OF.sort ? 1 : 0);
+const oPcs = o => (o.shop_order_items || []).reduce((a, i) => a + (+i.qty || 0), 0);
+function ofApply(list, q) {
+  const min = OF.min === '' ? null : +OF.min, max = OF.max === '' ? null : +OF.max;
+  const day = o => { const d = new Date(o.created_at); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  // an order opened by its code (from a notification / other page) always shows, whatever the filters
+  const out = list.filter(o => (q && String(o.code).toLowerCase() === q) || ((!OF.city || (o.city || '') === OF.city)
+    && (min == null || +o.total >= min) && (max == null || +o.total <= max)
+    && (!OF.from || day(o) >= OF.from) && (!OF.to || day(o) <= OF.to)
+    && (!OF.pcs || (OF.pcs === '1' ? oPcs(o) === 1 : oPcs(o) > 1))));
+  const t = o => new Date(o.created_at).getTime();
+  const by = { old: (a, b) => t(a) - t(b), high: (a, b) => b.total - a.total, low: (a, b) => a.total - b.total, pcs: (a, b) => oPcs(b) - oPcs(a) || t(b) - t(a), name: (a, b) => String(a.customer_name || '').localeCompare(String(b.customer_name || ''), 'ar') }[OF.sort];
+  return by ? out.sort(by) : out;
+}
 function renderOrders() {
   const LUXT = tab === 'lux-orders', ORD0 = orders.filter(o => isLuxOrder(o) === LUXT), ORD = ORD0.filter(o => (orderKind === 'all' || orderHasKind(o, orderKind)) && (orderGen === 'all' || orderHasGen(o, orderGen)) && (orderProd === 'all' || (o.shop_order_items || []).some(i => String(i.product_id) === orderProd)));
   // every product that was ever ordered here, most ordered first (deleted products keep the name saved on the order)
   const PROD = {}; ORD0.forEach(o => new Set((o.shop_order_items || []).map(i => String(i.product_id))).forEach(id => { const it = o.shop_order_items.find(i => String(i.product_id) === id); PROD[id] = PROD[id] || { name: (products.find(p => String(p.id) === id) || it).name, n: 0 }; PROD[id].n++; }));
   const prodOpts = Object.entries(PROD).sort((a, b) => b[1].n - a[1].n);
   const q = orderQuery.trim().toLowerCase();
-  const list = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, oNum(o), o.customer_name, o.phone, o.city, mailOf(o.user_id), ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
+  const byQ = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, oNum(o), o.customer_name, o.phone, o.city, mailOf(o.user_id), ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
+  const list = ofApply(byQ, q), nOn = ofOn();
+  const cities = [...new Set(ORD.map(o => o.city).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ar'));
+  const osel = (k, label, opts, cls = '') => `<label class="pf-f${cls}"><span>${label}</span><select class="input" data-ofl="${k}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${OF[k] === v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
   const counts = Object.fromEntries(ALL_ST.map(k => [k, ORD.filter(o => o.status === k).length]));
+  [...ordSel].forEach(id => !orders.some(o => o.id === id) && ordSel.delete(id));
+  const nSel = list.filter(o => ordSel.has(o.id)).length;
   $('#main').innerHTML = `
     <div class="head"><div><h1 ${LUXT ? 'class="en lux-h"' : ''}>${LUXT ? 'Luxury Orders' : 'الطلبات'}</h1><div class="sub">${ORD.length} طلب · بيوصلك إشعار وصوت مع كل طلب جديد</div></div></div>
     <div class="toolbar ord-scope"><div class="seg" id="okSeg"><button data-ok="all" class="${orderKind==='all'?'on':''}">كل الأقسام <span class="en">${ORD0.length}</span></button>${Object.entries(RC.kinds).map(([k, v]) => `<button data-ok="${k}" class="${orderKind===k?'on':''}">${v.ar} <span class="en">${ORD0.filter(o => orderHasKind(o, k)).length}</span></button>`).join('')}</div>
@@ -1804,7 +1838,40 @@ function renderOrders() {
       <div class="seg" id="ordSeg"><button data-of="all" class="${orderFilter==='all'?'on':''}">الكل</button>${stShown(ORD).map(k => `<button data-of="${k}" class="${orderFilter===k?'on':''}">${statuses[k]} <span class="en">${counts[k]}</span></button>`).join('')}</div>
       <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="oq" placeholder="بحث بالاسم أو الرقم أو الكود أو المنتج" value="${esc(orderQuery)}"></label>
     </div>
-    <div class="orders">${list.length ? list.map(orderHTML).join('') : '<div class="panel empty">مفيش طلبات هنا.</div>'}</div>`;
+    <div class="pf-bar o-fb${OF.open ? ' open' : ''}">
+      ${osel('sort', 'الترتيب', [['', 'الأحدث الأول'], ['old', 'الأقدم الأول'], ['high', 'الإجمالي: الأعلى'], ['low', 'الإجمالي: الأقل'], ['pcs', 'عدد القطع: الأكتر'], ['name', 'اسم العميل']], ' pf-q')}
+      ${cities.length ? osel('city', 'المحافظة', [['', 'الكل'], ...cities.map(c => [c, c])]) : ''}
+      <label class="pf-f pf-pr"><span>الإجمالي</span><span class="pf-rng"><input class="input en" data-ofl="min" inputmode="numeric" value="${esc(OF.min)}" placeholder="من" dir="ltr"><i>–</i><input class="input en" data-ofl="max" inputmode="numeric" value="${esc(OF.max)}" placeholder="لحد" dir="ltr"></span></label>
+      <label class="pf-f"><span>من يوم</span><input class="input en" type="date" data-ofl="from" value="${esc(OF.from)}" dir="ltr"></label>
+      <label class="pf-f"><span>لحد يوم</span><input class="input en" type="date" data-ofl="to" value="${esc(OF.to)}" dir="ltr"></label>
+      ${osel('pcs', 'عدد القطع', [['', 'الكل'], ['1', 'قطعة واحدة'], ['2', 'أكتر من قطعة']])}
+      <div class="pf-end"><button type="button" class="vo-mini pf-tg" id="ofTg">${OF.open ? 'اقفل الفلاتر' : 'فلاتر أكتر'}${nOn ? ` (${nOn})` : ''}</button><span class="pf-n"><b class="en">${list.length}</b> من <span class="en">${byQ.length}</span></span>${nOn ? `<button type="button" class="vo-mini" id="ofReset">× امسح الفلاتر (${nOn})</button>` : ''}</div>
+    </div>
+    ${list.length ? `<div class="inv-bar o-bulk">
+      <label class="inv-all"><input type="checkbox" id="oAll" ${list.every(o => ordSel.has(o.id)) ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
+      <span class="inv-n">${nSel ? `<b class="en">${nSel}</b> متحدد` : 'علّم على الطلبات عشان تغيّر حالتها أو تمسحها مع بعض'}</span>
+      <div class="inv-acts"><select class="input" id="oBulkSt" ${nSel ? '' : 'disabled'} aria-label="الحالة الجديدة"><option value="">نقل لحالة…</option>${STATUS_KEYS.map(k => `<option value="${k}">${statuses[k]}</option>`).join('')}</select>
+        <button type="button" class="btn btn-danger btn-sm" id="oBulkDel" ${nSel ? '' : 'disabled'}>حذف${nSel ? ` <span class="en">(${nSel})</span>` : ''}</button></div></div>` : ''}
+    <div class="orders">${list.length ? list.map(orderHTML).join('') : `<div class="panel empty">${byQ.length ? 'مفيش طلبات بالفلاتر دي. <button type="button" class="vo-mini" data-ofclear>امسح الفلاتر</button>' : 'مفيش طلبات هنا.'}</div>`}</div>`;
+  let ofT; const ofGo = (k, v) => { OF[k] = v; ofSave(); const a = document.activeElement, f = a && a.dataset && a.dataset.ofl, pos = a && a.selectionStart; renderOrders();
+    if (f === 'min' || f === 'max') { const el = $(`[data-ofl="${f}"]`); el.focus(); try { el.setSelectionRange(pos, pos); } catch (er) {} } };
+  $('#main').querySelectorAll('[data-ofl]').forEach(el => { const k = el.dataset.ofl;
+    if (k === 'min' || k === 'max') el.oninput = () => { clearTimeout(ofT); ofT = setTimeout(() => ofGo(k, el.value.replace(/[^\d.]/g, '')), 250); };
+    else el.onchange = () => ofGo(k, el.value); });
+  $('#ofTg').onclick = () => { OF.open = !OF.open; ofSave(); renderOrders(); };
+  $('#main').querySelectorAll('#ofReset,[data-ofclear]').forEach(b => b.onclick = e => { e.stopPropagation(); OF = { ...OF0, open: OF.open }; ofSave(); renderOrders(); });
+  const picked = () => list.filter(o => ordSel.has(o.id));
+  $('#main').querySelectorAll('[data-osel]').forEach(c => c.onchange = () => { const id = +c.dataset.osel; c.checked ? ordSel.add(id) : ordSel.delete(id); renderOrders(); });
+  if ($('#oAll')) $('#oAll').onchange = e => { list.forEach(o => e.target.checked ? ordSel.add(o.id) : ordSel.delete(o.id)); renderOrders(); };
+  if ($('#oBulkSt')) $('#oBulkSt').onchange = e => once('oBulkSt', async () => { const st = e.target.value, l = picked(); e.target.value = ''; if (!st || !l.length) return;
+    if (!(await confirmBox(`تنقل ${l.length === 1 ? 'الطلب ده' : l.length + ' طلبات'} لـ «${statuses[st]}»؟`, 'نقل'))) return;
+    for (const o of l) await setStatus(o.id, st);
+    ordSel.clear(); if (tab === 'orders' || tab === 'lux-orders') renderOrders(); });
+  if ($('#oBulkDel')) $('#oBulkDel').onclick = () => once('oBulkDel', async () => { const l = picked(); if (!l.length) return;
+    if (!(await confirmBox(`تحذف ${l.length === 1 ? 'الطلب ده' : l.length + ' طلبات'} نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالتهم لـ "مرتجع" الأول)`, 'حذف'))) return;
+    const ids = l.map(o => o.id), { error } = await sb.from('shop_orders').delete().in('id', ids); if (error) return toast(error.message, 'err');
+    l.forEach(o => sheetSend({ action: 'delete', sheet: 'orders', id: o.code }));
+    orders = orders.filter(o => !ids.includes(o.id)); ordSel.clear(); toast(`اتحذف ${ids.length === 1 ? 'الطلب' : ids.length + ' طلبات'}`); renderTabs(); renderOrders(); });
   $('#okSeg').onclick = e => { const x = e.target.closest('[data-ok]'); if (x) { orderKind = x.dataset.ok; renderOrders(); } };
   $('#opSel').onchange = e => { orderProd = e.target.value; renderOrders(); };
   $('#ogSeg').onclick = e => { const x = e.target.closest('[data-og]'); if (x) { orderGen = x.dataset.og; renderOrders(); } };
@@ -1878,7 +1945,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028154854" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028155317" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1912,7 +1979,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028154854" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028155317" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1953,7 +2020,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028154854'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028154854')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028155317'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028155317')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2028,7 +2095,7 @@ function orderHTML(o) {
   const msg = encodeURIComponent(`أهلاً ${o.customer_name}\nمعاك DAQQA بخصوص طلبك ${o.code} بإجمالي ${money(o.total)}.\nممكن نأكد العنوان: ${o.city} - ${o.address}؟`);
   return `<div class="order ${openOrders.has(o.id)?'open':''} ${freshIds.has(o.id)?'fresh':''}" data-oid="${o.id}">
     <div class="o-top" data-toggle>
-      <div><div class="code">${oNo(o)}${esc(o.code)}</div><div class="date">${fmtDate(o.created_at)}</div></div>
+      <div class="o-id"><label class="o-sel" title="تحديد"><input type="checkbox" data-osel="${o.id}" ${ordSel.has(o.id) ? 'checked' : ''}></label><div><div class="code">${oNo(o)}${esc(o.code)}</div><div class="date">${fmtDate(o.created_at)}</div></div></div>
       <div class="who"><b>${esc(o.customer_name)}</b><span>${esc(o.phone)}</span>${o.user_id ? `<span class="o-mail" title="طلب وهو مسجّل دخول بالحساب ده">${esc(mailOf(o.user_id) || 'حساب مسجّل')}</span>` : '<span class="o-guest" title="طلب من غير ما يسجّل دخول">من غير حساب</span>'}${custOrders(o).length > 1 ? `<em class="rep-chip">طلب ${custOrders(o).length} مرات</em>` : ''}${pastCancels(o).length ? `<em class="warn-chip" title="الرقم ده عليه طلبات اتلغت قبل كدا">⚠ اتلغى له قبل كدا (${pastCancels(o).length})</em>` : ''}</div>
       <div class="city" style="color:var(--muted)">${esc(o.city)}</div>
       <div class="total en">${money(o.total)}</div>
@@ -2058,7 +2125,7 @@ function orderHTML(o) {
 }
 document.addEventListener('click', async e => {
   const tg = e.target.closest('[data-toggle]');
-  if (tg) { const el = tg.closest('.order'), id = +el.dataset.oid; el.classList.toggle('open'); openOrders.has(id) ? openOrders.delete(id) : openOrders.add(id); }
+  if (tg && !e.target.closest('.o-sel')) { const el = tg.closest('.order'), id = +el.dataset.oid; el.classList.toggle('open'); openOrders.has(id) ? openOrders.delete(id) : openOrders.add(id); }
   const del = e.target.closest('[data-del-order]');
   if (del) await once('delo' + del.dataset.delOrder, async () => { const id = +del.dataset.delOrder; if (!(await confirmBox('تحذف الطلب ده نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالته لـ "مرتجع" الأول)', 'حذف'))) return;
     const {error} = await sb.from('shop_orders').delete().eq('id', id); if (error) return toast(error.message, 'err');
