@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261028115227">
+<link rel="stylesheet" href="assets/base.css?v=20261028115755">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -277,7 +277,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .cat-pop button:hover{background:var(--surface-2)}.cat-pop button.on{background:var(--surface-2);font-weight:700}
 .cat-pop button.new{color:var(--amber)}.cat-pop button.new b{color:var(--ink)}
 .dd .cat-pop button{justify-content:space-between}.dd .cat-pop button small{color:var(--muted);font-size:12.5px;font-weight:400}
-.dd .cat-pop button.hi{background:var(--surface-2)}.dd-sel select{display:none}.dd-none{padding:10px 12px;font-size:13px;color:var(--muted)}
+.dd input[readonly]{cursor:pointer;caret-color:transparent;user-select:none;-webkit-user-select:none}.dd .cat-pop button.hi{background:var(--surface-2)}.dd-sel select{display:none}.dd-none{padding:10px 12px;font-size:13px;color:var(--muted)}
 .dd-sel:has(.ord-prod){display:inline-block;max-width:280px}.dd-sel:has(.ord-prod) .cat-pop{min-width:240px}
 .fin-box:has(.dd.open),.modal:has(.dd.open) .field,.field:has(.dd.open){position:relative;z-index:30}
 .fx-list{display:grid;gap:8px}.fx-list:empty{display:none}.fx-row{display:grid;grid-template-columns:1fr 120px 40px;gap:8px;align-items:center}.fx-row .input{height:44px;font-family:var(--f-ui)}
@@ -1012,7 +1012,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261028115227"></script>
+<script src="assets/config.js?v=20261028115755"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1265,7 +1265,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it. Falls back to the beep.
-const orderSnd = new Audio('assets/order.mp3?v=20261028115227'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261028115755'); orderSnd.preload = 'auto';
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(beep); } catch (e) { beep(); } }
 ['pointerdown', 'keydown'].forEach(ev => addEventListener(ev, function unlock() { removeEventListener('pointerdown', unlock, true); removeEventListener('keydown', unlock, true); if (!orderSnd.paused) return; orderSnd.muted = true; const p = orderSnd.play(); const done = () => { orderSnd.pause(); orderSnd.currentTime = 0; orderSnd.muted = false; }; p && p.then ? p.then(done, () => { orderSnd.muted = false; }) : done(); }, true));
 // Running order number (#1, #2 …) from shop_orders.seq — admin only, customers keep the DQ- code
@@ -1833,7 +1833,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028115227" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261028115755" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1867,7 +1867,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028115227" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261028115755" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -1908,7 +1908,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028115227'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028115227')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261028115755'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261028115755')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3695,7 +3695,7 @@ boot();
     const pick = o => { onPick(o); typed = false; open(false); };
     const mark = () => pop.querySelectorAll('button').forEach((b, i) => { b.classList.toggle('hi', i === hi); if (i === hi) b.scrollIntoView({ block: 'nearest' }); });
     inp.addEventListener('focus', () => open(true));
-    inp.addEventListener('beforeinput', e => { if (isSel && !typed && /^insert/.test(e.inputType)) inp.value = ''; });   // typing in a select starts a fresh search
+    inp.addEventListener('beforeinput', e => { if (isSel && !typed && !inp.readOnly && /^insert/.test(e.inputType)) inp.value = ''; });   // typing in a select starts a fresh search
     inp.addEventListener('click', () => { if (!box.classList.contains('open')) open(true); });
     inp.addEventListener('input', () => { typed = true; open(true); });
     inp.addEventListener('keydown', e => { const L = box._list || [];
@@ -3716,7 +3716,8 @@ boot();
     const box = build(inp, () => [...sel.options].filter(o => !o.hidden).map(o => ({ v: o.value, t: o.text, l: '', on: o.selected, o })),
       o => { if (sel.value !== o.v) { VAL.set.call(sel, o.v); box._sync(); sel.dispatchEvent(new Event('input', { bubbles: true })); sel.dispatchEvent(new Event('change', { bubbles: true })); } else box._sync(); }, true);
     box.appendChild(sel);
-    box._sync = () => { const o = sel.options[sel.selectedIndex]; inp.value = o ? o.text : ''; inp.disabled = sel.disabled; inp.title = sel.title || ''; };
+    box._sync = () => { const o = sel.options[sel.selectedIndex]; inp.value = o ? o.text : ''; inp.disabled = sel.disabled; inp.readOnly = sel.options.length <= 8;   // short lists are pick-only (no typing / no phone keyboard); long ones keep search
+      inp.title = sel.title || ''; };
     Object.defineProperty(sel, 'value', { configurable: true, get() { return VAL.get.call(this); }, set(v) { VAL.set.call(this, v); box._sync(); } });
     sel.addEventListener('change', () => box._sync());
     box._sync();
