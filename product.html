@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029110938">
-<link rel="stylesheet" href="assets/store.css?v=20261029110938">
+<link rel="stylesheet" href="assets/base.css?v=20261029203735">
+<link rel="stylesheet" href="assets/store.css?v=20261029203735">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -53,20 +53,20 @@
 .ph-hint svg{width:16px;height:16px;color:var(--accent)}.ph-hint b{color:var(--ink);font-weight:600}
 .pv{position:fixed;inset:0;z-index:300;background:rgb(10 7 4/.94);backdrop-filter:blur(6px);animation:pvIn .25s ease}
 @keyframes pvIn{from{opacity:0}}
-.pv-stage{position:absolute;inset:64px 70px 84px;display:grid;place-items:center;overflow:hidden;touch-action:none;cursor:zoom-in}
+.pv-stage{position:absolute;inset:calc(64px + env(safe-area-inset-top)) 70px calc(84px + env(safe-area-inset-bottom));display:grid;place-items:center;overflow:hidden;touch-action:none;cursor:zoom-in}
 .pv.zoomed .pv-stage{cursor:grab}.pv.zoomed .pv-stage:active{cursor:grabbing}
 .pv-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transform-origin:center}
-.pv-top{position:absolute;top:0;inset-inline:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;color:#EDE3D3}
+.pv-top{position:absolute;top:env(safe-area-inset-top);inset-inline:0;height:64px;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:0 18px;color:#EDE3D3}
 .pv-n{font-size:13px;letter-spacing:.12em;opacity:.8}
-.pv-x{width:44px;height:44px;border-radius:50%;border:1px solid rgb(255 255 255/.18);color:#fff;font-size:26px;line-height:1}
+.pv-x{width:46px;height:46px;border-radius:50%;border:1px solid rgb(255 255 255/.22);background:rgb(255 255 255/.1);color:#fff;font-size:28px;line-height:1}
 .pv-nav{position:absolute;top:50%;translate:0 -50%;width:50px;height:50px;border-radius:50%;border:1px solid rgb(255 255 255/.18);background:rgb(255 255 255/.06);color:#fff;font-size:30px;line-height:1}
 .pv-prev{right:12px}.pv-next{left:12px}
 .pv-nav:hover,.pv-x:hover,.pv-zoom button:hover{background:rgb(255 255 255/.14)}
-.pv-zoom{position:absolute;bottom:20px;left:50%;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;border:1px solid rgb(255 255 255/.16);background:rgb(255 255 255/.06);color:#EDE3D3}
+.pv-zoom{position:absolute;bottom:calc(20px + env(safe-area-inset-bottom));z-index:2;left:50%;translate:-50% 0;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;border:1px solid rgb(255 255 255/.16);background:rgb(255 255 255/.06);color:#EDE3D3}
 .pv-zoom button{width:40px;height:40px;border-radius:50%;color:#fff;font-size:22px;line-height:1}
 .pv-zoom span{min-width:52px;text-align:center;font-size:13px}
 .pv-zoom .pv-dl{width:auto;display:inline-flex;align-items:center;gap:6px;padding:0 14px;border-radius:99px;font-size:13px}.pv-dl svg{width:17px;height:17px}.pv-zoom .pv-dl span{min-width:0}
-@media (max-width:900px){.pv-stage{inset:64px 0 84px}.pv-nav{display:none}}
+@media (max-width:900px){.pv-stage{inset:calc(64px + env(safe-area-inset-top)) 0 calc(84px + env(safe-area-inset-bottom))}.pv-nav{display:none}}
 .dots{display:none;justify-content:center;gap:6px}
 .dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s,width .2s}
 .dots i.on{background:var(--accent);width:20px;border-radius:9px}
@@ -200,8 +200,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261029110938"></script>
-<script src="assets/app.js?v=20261029110938"></script>
+<script src="assets/config.js?v=20261029203735"></script>
+<script src="assets/app.js?v=20261029203735"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -218,7 +218,11 @@ function viewer(list, start, name) {
   const paint = (anim) => { clamp(); img.style.transition = anim ? 'transform .25s ease' : 'none'; img.style.transform = `translate(${x}px,${y}px) scale(${z})`; lbl.textContent = Math.round(z * 100) + '%'; box.classList.toggle('zoomed', z > 1); };
   const zoom = (to, anim = true) => { z = Math.max(1, Math.min(5, to)); if (z === 1) x = y = 0; paint(anim); };
   const show = k => { i = (k + list.length) % list.length; img.src = list[i]; RC.imgBlob(list[i]).catch(() => {}); z = 1; x = y = 0; paint(false); box.querySelector('.pv-n').textContent = list.length > 1 ? `${i + 1} / ${list.length}` : ''; };
-  const close = () => { box.remove(); document.body.style.overflow = ''; removeEventListener('keydown', key); };
+  // the phone's back button / back swipe closes the viewer instead of leaving the page
+  history.pushState({ pv: 1 }, '');
+  let open = true; const shut = () => { if (!open) return; open = false; box.remove(); document.body.style.overflow = ''; removeEventListener('keydown', key); removeEventListener('popstate', shut); };
+  const close = () => { if (history.state && history.state.pv) history.back(); else shut(); };
+  addEventListener('popstate', shut);
   const key = e => { if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') show(i + 1); if (e.key === 'ArrowRight') show(i - 1); if (e.key === '+' || e.key === '=') zoom(z + .5); if (e.key === '-') zoom(z - .5); };
   addEventListener('keydown', key);
   box.querySelector('.pv-x').onclick = close;
@@ -229,13 +233,27 @@ function viewer(list, start, name) {
   stage.ondblclick = () => zoom(z > 1 ? 1 : 2.5);
   // drag to look around, pinch to zoom, swipe to flip
   const pts = new Map(); let d0 = 0, z0 = 1, sx = 0, sy = 0, moved = false, lastTap = 0;
-  stage.onpointerdown = e => { stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = false; sx = e.clientX; sy = e.clientY;
+  // phones (iPhone Safari included): two-finger pinch, drag, swipe and double-tap from touch events, so the browser never zooms the page instead
+  box.addEventListener('gesturestart', e => e.preventDefault());
+  const tpts = t => [...t].map(p => [p.clientX, p.clientY]), dist = ([a, b]) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  let tl = null, tMoved = false, tsx = 0, tsy = 0;
+  stage.addEventListener('touchstart', e => { e.preventDefault(); const p = tpts(e.touches); tl = p;
+    if (p.length === 1) { tMoved = false; tsx = p[0][0]; tsy = p[0][1]; } else if (p.length === 2) { d0 = dist(p); z0 = z; tMoved = true; } }, { passive: false });
+  stage.addEventListener('touchmove', e => { e.preventDefault(); const p = tpts(e.touches); if (!tl) return;
+    if (p.length >= 2 && d0) zoom(z0 * dist(p) / d0, false);
+    else if (p.length === 1) { if (Math.abs(p[0][0] - tsx) + Math.abs(p[0][1] - tsy) > 6) tMoved = true; if (z > 1) { x += p[0][0] - tl[0][0]; y += p[0][1] - tl[0][1]; paint(false); } }
+    tl = p; }, { passive: false });
+  stage.addEventListener('touchend', e => { e.preventDefault(); if (e.touches.length) { tl = tpts(e.touches); d0 = 0; if (e.touches.length === 1) { tsx = tl[0][0]; tsy = tl[0][1]; } return; }
+    const c = e.changedTouches[0], dx = c.clientX - tsx; tl = null; d0 = 0;
+    if (z === 1 && tMoved && Math.abs(dx) > 60 && list.length > 1) return show(i + (dx < 0 ? 1 : -1));
+    if (!tMoved) { const t = Date.now(); if (t - lastTap < 300) { zoom(z > 1 ? 1 : 2.5); lastTap = 0; } else lastTap = t; } }, { passive: false });
+  stage.onpointerdown = e => { if (e.pointerType === 'touch') return; stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = false; sx = e.clientX; sy = e.clientY;
     if (pts.size === 2) { const [a, b] = [...pts.values()]; d0 = Math.hypot(a[0] - b[0], a[1] - b[1]); z0 = z; } };
-  stage.onpointermove = e => { if (!pts.has(e.pointerId)) return; const prev = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+  stage.onpointermove = e => { if (e.pointerType === 'touch' || !pts.has(e.pointerId)) return; const prev = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
     if (Math.abs(e.clientX - sx) + Math.abs(e.clientY - sy) > 6) moved = true;
     if (pts.size === 2) { const [a, b] = [...pts.values()]; zoom(z0 * Math.hypot(a[0] - b[0], a[1] - b[1]) / d0, false); }
     else if (z > 1) { x += e.clientX - prev[0]; y += e.clientY - prev[1]; paint(false); } };
-  stage.onpointerup = stage.onpointercancel = e => { pts.delete(e.pointerId); if (pts.size) return;
+  stage.onpointerup = stage.onpointercancel = e => { if (e.pointerType === 'touch') return; pts.delete(e.pointerId); if (pts.size) return;
     const dx = e.clientX - sx;
     if (z === 1 && moved && Math.abs(dx) > 60 && list.length > 1) return show(i + (dx < 0 ? 1 : -1));
     if (!moved && e.pointerType === 'touch') { const t = Date.now(); if (t - lastTap < 300) zoom(z > 1 ? 1 : 2.5); lastTap = t; }
