@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029230140">
+<link rel="stylesheet" href="assets/base.css?v=20261029231026">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -404,7 +404,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vg-ac{position:relative;flex:none;height:40px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border:1px dashed var(--line);border-radius:10px;font-size:12px;color:var(--muted);cursor:pointer}
 .vg-ac i{width:16px;height:16px;border-radius:50%;background:conic-gradient(#e74c3c,#f1c40f,#2ecc71,#3498db,#9b59b6,#e74c3c)}
 .vg-ac.on{border-style:solid;color:var(--ink)}.vg-ac.on i{box-shadow:0 0 0 1px var(--line)}
-.vg-ac input{position:absolute;inset:0;opacity:0;cursor:pointer}.vg-ac[hidden]{display:none}.vg-more{background:none;font:inherit}.vg-add .input{flex:1;min-width:0;height:40px}.vg-add .btn{flex:none}
+.vg-ac input{position:absolute;inset:0;opacity:0;cursor:pointer}.vg-cc[hidden],.vg-more[hidden]{display:none}.vg-more{background:none;font:inherit}.vg-cols{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}.vg-cc{position:relative;display:flex;flex-direction:column;gap:6px;width:112px;flex:none}.vg-cc .vg-ac{justify-content:center}.vg-add .vg-cc .vg-hex{flex:none!important;width:100%;height:32px;font-size:12px;text-align:center;padding:0 6px}.vg-rm{position:absolute;top:-7px;inset-inline-end:-7px;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);background:var(--bg-2);color:var(--muted);font-size:13px;line-height:1;display:grid;place-items:center;cursor:pointer;padding:0}.vg-rm:hover{color:var(--ink);border-color:var(--muted)}.vg-add{align-items:flex-start!important;flex-wrap:wrap}.vg-add [data-vn]{flex:1 1 180px!important}.vg-add .input{flex:1;min-width:0;height:40px}.vg-add .btn{flex:none}
 .vo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;align-items:start}
 .vo-ord{position:absolute;top:16px;inset-inline-end:16px;z-index:2;display:flex;align-items:center;gap:4px;padding:3px 4px 3px 8px;border-radius:999px;background:rgba(0,0,0,.72);color:#fff;font-size:11px}.vo-ord select{appearance:none;-webkit-appearance:none;border:0;background:var(--accent);color:#1a120b;font:700 12px var(--f-ui);width:24px;height:24px;border-radius:50%;text-align:center;text-align-last:center;cursor:pointer;padding:0}
 .vg-ord{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-inline-start:auto}.vg-ord select{appearance:none;-webkit-appearance:none;border:0;background:var(--accent);color:#1a120b;font:700 13px var(--f-ui);width:28px;height:28px;border-radius:50%;text-align:center;text-align-last:center;cursor:pointer;padding:0}
@@ -433,7 +433,7 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-dl button i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-dl button.all{font-weight:600}.vo-dl button.on{border-color:var(--amber);color:var(--ink);background:color-mix(in srgb,var(--amber) 14%,transparent)}
 .vo-hex{width:84px!important;height:30px!important;padding:0 8px!important;font-size:12px!important;text-align:center;text-transform:uppercase;letter-spacing:.03em}
 .vg-hex{flex:none!important;width:96px!important;text-align:center;text-transform:uppercase;letter-spacing:.03em}
-@media (max-width:600px){.vg-add{flex-wrap:wrap}.vg-add [data-vn]{flex:1 1 100%!important;order:-1}.vg-add .vg-hex{flex:1!important}}
+@media (max-width:600px){.vg-add{flex-wrap:wrap}.vg-cols{flex:1 1 100%}.vg-add [data-vn]{flex:1 1 100%!important;order:-1}.vg-add .vg-hex{flex:1!important}}
 .vo-c{position:relative;width:26px;height:26px;flex:none;cursor:pointer}.vo-c i{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 1px var(--line)}.vo-c input{position:absolute;inset:0;opacity:0;cursor:pointer}
 .vo-mini{white-space:nowrap;font-size:11.5px;color:var(--muted);padding:4px 8px;border:1px dashed var(--line);border-radius:99px}.vo-mini:hover{color:var(--ink);border-color:var(--amber)}
 .vo-out.on{color:#fff;background:var(--red);border:1px solid var(--red)}.vo-out.on:hover{color:#fff}
@@ -1067,7 +1067,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261029230140"></script>
+<script src="assets/config.js?v=20261029231026"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1331,7 +1331,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261029230140'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261029231026'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1974,7 +1974,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029230140" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029231026" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2008,7 +2008,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029230140" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029231026" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2049,7 +2049,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029230140'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029230140')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029231026'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029231026')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2498,7 +2498,7 @@ function renderEditor() {
               ${OG.length && draft._link === g.k + ':' + i ? OG.map(x => { const V2 = RC.varDef(x.k), l = (o.links || {})[x.k] || []; return `<div class="vo-dl"><b>${esc(x.ar || V2.ar)} المتاحة معاه</b><div><button type="button" class="all ${l.length ? '' : 'on'}" data-vlall="${x.k}">الكل · All</button>${x.o.filter(y => String(y.n || '').trim()).map(y => `<button type="button" class="${l.includes(y.n) ? 'on' : ''}" data-vlk="${x.k}" data-vln="${esc(y.n)}">${y.c ? `<i style="background:${esc(RC.sw(y))}"></i>` : ''}${esc(y.n)}</button>`).join('')}</div><small>${l.length ? 'العميل مش هيقدر يختاره مع الباقي' : 'مفيش تحديد = متاح مع الكل'}</small></div>`; }).join('') : ''}
               ${draft._pick === g.k + ':' + i ? `<div class="vo-pop"><b>اختار الصور اللي تظهر لما يختاره (تقدر تختار أكتر من صورة، زي نفس السوار مع كذا مينا)</b><div>${d.images.map(u => `<button type="button" class="${o.imgs.includes(u) ? 'on' : ''}" data-vimg="${esc(u)}"><img src="${esc(u)}" alt="">${o.imgs.includes(u) ? `<em class="en">${o.imgs.indexOf(u) + 1}</em>` : ''}</button>`).join('') || '<small>ارفع صور المنتج الأول.</small>'}</div><p class="vo-acts">${d.images.length > 1 && o.imgs.length < d.images.length ? '<button type="button" class="vo-mini" data-vimgall>كل الصور</button>' : ''}${o.imgs.length ? '<button type="button" class="vo-mini" data-vimg="">من غير صور</button>' : ''}<button type="button" class="btn btn-amber btn-sm" data-vdone>تم</button></p></div>` : ''}
             </div>`).join('')}</div>` : '<p class="vg-none">مفيش اختيارات، الخانة دي مش هتظهر للمشتري.</p>'}
-          <div class="vg-add"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"><label class="vg-ac vg-ax" hidden title="اللون التاني"><i></i><span>لون 2</span><input type="color" data-vnx value="#c9a96e"></label><label class="vg-ac vg-ax" hidden title="اللون التالت"><i></i><span>لون 3</span><input type="color" data-vnx value="#d8d8d8"></label><button type="button" class="vg-ac vg-more" data-vmore title="للساعات اللي فيها أكتر من لون (تو-تون)">+ لون تاني</button><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : g.k === 'back' ? 'مثلاً: ضهر شفاف' : V.x ? 'اسم الاختيار' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
+          <div class="vg-add"><div class="vg-cols"><div class="vg-cc"><label class="vg-ac" title="لون (اختياري)"><i></i><span>لون</span><input type="color" data-vnc value="#1b1b1b"></label><input class="input vg-hex en" data-vnh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون"></div><div class="vg-cc vg-ax" hidden><label class="vg-ac" title="اللون التاني"><i></i><span>لون 2</span><input type="color" data-vnx value="#c9a96e"></label><input class="input vg-hex en" data-vnxh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون 2"><button type="button" class="vg-rm" data-vnxrm title="شيل اللون ده" aria-label="شيل اللون ده">×</button></div><div class="vg-cc vg-ax" hidden><label class="vg-ac" title="اللون التالت"><i></i><span>لون 3</span><input type="color" data-vnx value="#d8d8d8"></label><input class="input vg-hex en" data-vnxh placeholder="#HEX" dir="ltr" maxlength="7" spellcheck="false" aria-label="كود اللون 3"><button type="button" class="vg-rm" data-vnxrm title="شيل اللون ده" aria-label="شيل اللون ده">×</button></div><button type="button" class="vg-ac vg-more" data-vmore title="للساعات اللي فيها أكتر من لون (تو-تون)">+ لون تاني</button></div><input class="input" data-vn placeholder="${g.k === 'dial' ? 'مثلاً: مينا سودا' : g.k === 'strap' ? 'مثلاً: ستانلس ستيل فضي' : g.k === 'case' ? 'مثلاً: مربع ستانلس' : g.k === 'back' ? 'مثلاً: ضهر شفاف' : V.x ? 'اسم الاختيار' : 'مثلاً: Automatic'}" dir="auto"><button type="button" class="btn btn-ghost btn-sm" data-vadd>+ إضافة</button></div>
           ${g.k === 'movement' || g.k === 'back' ? `<div class="vg-quick">${(g.k === 'back' ? ['ضهر مقفول', 'ضهر شفاف', 'ضهر محفور'] : ['Quartz (بطارية)', 'Automatic (أوتوماتيك)', 'Mechanical (تعبئة يدوية)']).filter(n => !g.o.some(o => o.n === n)).map(n => `<button type="button" data-vq="${esc(n)}">+ ${esc(n)}</button>`).join('')}</div>` : ''}
         </div>`; }).join('')}
         <button type="button" class="vg-new" data-vgnew>+ خانة اختيارات جديدة <small>زي العلبة، الحفر، المقاس…</small></button></section>
@@ -2570,6 +2570,7 @@ function renderEditor() {
   $('#specAdd').onclick = () => { syncDraft(); draft._specs.push(['', '']); renderEditor(); const ks = document.querySelectorAll('#specRows [data-sk]'); ks[ks.length - 1].focus(); };
   $('#specRows').onclick = e => { const b = e.target.closest('[data-srm]'); if (b) { syncDraft(); draft._specs.splice(+b.dataset.srm, 1); renderEditor(); } };
   // buyer options: each one is a card (name, optional colour, optional photo shown when the buyer picks it)
+  const vgNum = r => r.querySelectorAll('.vg-ax:not([hidden]) .vg-ac span').forEach((s, j) => { s.textContent = 'لون ' + (j + 2); });   // extra colours keep their numbers in order
   const vOpt = el => { const g = draft.variants.find(x => x.k === el.closest('.vg').dataset.vg), b = el.closest('[data-vi]'); return { g, i: b ? +b.dataset.vi : -1, o: b ? g.o[+b.dataset.vi] : null }; };
   const vAdd = (box, name) => { const g = draft.variants.find(x => x.k === box.dataset.vg), n = String(name || '').trim().slice(0, 60);
     if (!n) { box.querySelector('[data-vn]').focus(); return toast('اكتب اسم الاختيار', 'err'); }
@@ -2590,7 +2591,8 @@ function renderEditor() {
       if (g.o.length && !confirm(`تمسح خانة «${g.ar || 'اختيار إضافي'}» بكل اختياراتها؟`)) return;
       syncDraft(); draft.variants = draft.variants.filter(x => x !== g); draft.variants.forEach(x => x.o.forEach(y => { if (y.links) delete y.links[g.k]; })); draft._pick = draft._link = null; renderEditor(); return; }
     // «+ لون تاني» in the add row: shows the next colour picker (up to 3 colours in one option)
-    const mo = e.target.closest('[data-vmore]'); if (mo) { const r = mo.closest('.vg-add'), l = r.querySelector('.vg-ax[hidden]'); if (l) { const x = l.querySelector('[data-vnx]'); l.hidden = false; x.dataset.on = 1; l.classList.add('on'); l.querySelector('i').style.background = x.value; x.click(); } mo.hidden = !r.querySelector('.vg-ax[hidden]'); return; }
+    const mo = e.target.closest('[data-vmore]'); if (mo) { const r = mo.closest('.vg-add'), w = r.querySelector('.vg-ax[hidden]'); if (w) { const x = w.querySelector('[data-vnx]'), l = w.querySelector('.vg-ac'); w.hidden = false; x.dataset.on = 1; l.classList.add('on'); l.querySelector('i').style.background = x.value; w.querySelector('[data-vnxh]').value = x.value.toUpperCase(); } mo.hidden = !r.querySelector('.vg-ax[hidden]'); vgNum(r); return; }
+    const xr = e.target.closest('[data-vnxrm]'); if (xr) { const r = xr.closest('.vg-add'), w = xr.closest('.vg-ax'); w.hidden = true; delete w.querySelector('[data-vnx]').dataset.on; w.querySelector('[data-vnxh]').value = ''; r.querySelector('.vg-cols').append(w); r.querySelector('.vg-cols').append(r.querySelector('[data-vmore]')); r.querySelector('[data-vmore]').hidden = false; vgNum(r); return; }
     const { g, i, o } = vOpt(e.target);
     const ad = e.target.closest('[data-vadd]'), qk = e.target.closest('[data-vq]'), im = e.target.closest('[data-vimg]');
     if (ad) return vAdd(box, box.querySelector('[data-vn]').value);
@@ -2624,7 +2626,9 @@ function renderEditor() {
     if (e.target.matches('[data-vnc], [data-vnh]')) { const box = e.target.closest('.vg-add'), ci = box.querySelector('[data-vnc]'), hi = box.querySelector('[data-vnh]'), l = box.querySelector('.vg-ac');
       const c = e.target === ci ? ci.value.toUpperCase() : hex(hi.value); if (!c) return;
       ci.value = c.toLowerCase(); ci.dataset.on = 1; if (e.target === ci) hi.value = c; l.classList.add('on'); l.querySelector('i').style.background = c; return; }
-    if (e.target.matches('[data-vnx]')) { const x = e.target, l = x.closest('.vg-ac'); x.dataset.on = 1; l.classList.add('on'); l.querySelector('i').style.background = x.value; return; }
+    if (e.target.matches('[data-vnx], [data-vnxh]')) { const w = e.target.closest('.vg-cc'), x = w.querySelector('[data-vnx]'), h = w.querySelector('[data-vnxh]'), l = w.querySelector('.vg-ac');
+      const c = e.target === x ? x.value.toUpperCase() : hex(h.value); if (!c) return;
+      x.value = c.toLowerCase(); if (e.target === x) h.value = c; x.dataset.on = 1; l.classList.add('on'); l.querySelector('i').style.background = c; return; }
     if (e.target.matches('[data-vtar], [data-vten]')) { const g = draft.variants.find(x => x.k === e.target.closest('.vg').dataset.vg); g[e.target.matches('[data-vtar]') ? 'ar' : 'en'] = e.target.value; return; }
     const { g, o } = vOpt(e.target); if (!o) return;
     if (e.target.matches('[data-vname]')) { const was = o.n; o.n = e.target.value;
@@ -2676,7 +2680,7 @@ function renderEditor() {
   adds.forEach(a => { const r = document.querySelector(`#varSec .vg[data-vg="${a.k}"] .vg-add`); if (!r) return;
     r.querySelector('[data-vn]').value = a.n; r.querySelector('[data-vnh]').value = a.h; const ci = r.querySelector('[data-vnc]'); ci.value = a.c;
     if (a.on) { ci.dataset.on = 1; const l = r.querySelector('.vg-ac'); l.classList.add('on'); l.querySelector('i').style.background = a.c; }
-    r.querySelectorAll('[data-vnx]').forEach((x, j) => { if (!a.x[j]) return; const l = x.closest('.vg-ac'); x.value = a.x[j]; x.dataset.on = 1; l.hidden = false; l.classList.add('on'); l.querySelector('i').style.background = a.x[j]; });
+    r.querySelectorAll('[data-vnx]').forEach((x, j) => { if (!a.x[j]) return; const l = x.closest('.vg-ac'); x.value = a.x[j]; x.dataset.on = 1; x.closest('.vg-ax').hidden = false; x.closest('.vg-cc').querySelector('[data-vnxh]').value = a.x[j].toUpperCase(); l.classList.add('on'); l.querySelector('i').style.background = a.x[j]; });
     const mo = r.querySelector('[data-vmore]'); if (mo) mo.hidden = !r.querySelector('.vg-ax[hidden]'); });
   if (keepY) $('#editor .ed-body').scrollTop = keepY;
 }
