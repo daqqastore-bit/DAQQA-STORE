@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029231026">
+<link rel="stylesheet" href="assets/base.css?v=20261029233804">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -102,7 +102,10 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @keyframes fresh{0%,40%{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}}
 .o-top{display:grid;grid-template-columns:178px 1fr 120px 130px 150px 24px;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
 .o-id{display:flex;align-items:center;gap:10px;min-width:0}.o-sel{display:grid;place-items:center;padding:4px;margin:-4px;cursor:pointer}.o-sel input{width:18px;height:18px;accent-color:var(--amber);cursor:pointer}
-.p-sel,.p-sel-h{width:64px;padding-inline-end:0!important}.p-sel>div{display:flex;align-items:center;gap:10px}
+.p-sel,.p-sel-h{width:118px;padding-inline-end:0!important}
+.p-drag{width:22px;height:30px;flex:none;display:grid;place-items:center;padding:0;border:0;background:none;color:var(--muted-2);cursor:grab;touch-action:none}.p-drag:hover{color:var(--ink)}.p-drag svg{width:16px;height:16px}
+.p-rank{min-width:24px;height:24px;padding:0 6px;border-radius:999px;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);flex:none}
+.ptable tr.dragging{opacity:.85;outline:2px solid var(--amber);outline-offset:-2px;position:relative;z-index:2}.ptable tr.dragging td{background:var(--surface-2)!important}body:has(tr.dragging){cursor:grabbing;user-select:none}.p-sel>div{display:flex;align-items:center;gap:10px}
 .p-hl{width:20px;height:20px;flex:none;padding:0;border-radius:50%;border:1.5px dashed var(--muted-2);background:none;cursor:pointer;transition:transform .15s}.p-hl:hover{transform:scale(1.15);border-color:var(--muted)}.p-hl.on{border:0;background:var(--hl);box-shadow:0 0 0 3px color-mix(in srgb,var(--hl) 25%,transparent)}
 .hl-menu{position:fixed;z-index:60;display:flex;gap:8px;padding:8px;border-radius:14px;border:1px solid var(--line);background:var(--bg-2);box-shadow:0 14px 34px rgba(0,0,0,.35)}
 .hl-menu button{width:32px;height:32px;border-radius:50%;border:2px solid transparent;background:var(--hl);cursor:pointer;padding:0;transition:transform .15s}.hl-menu button:hover{transform:scale(1.1)}.hl-menu button.cur{border-color:var(--ink)}
@@ -186,6 +189,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
   .ptable td:nth-child(3) .price-old{display:inline;margin-inline-start:6px;font-size:12px}
   table.ptable tr.row-out td{background:none}.ptable tr.row-out{background:rgb(194 69 58/.1);box-shadow:inset -3px 0 0 #c2453a;border-radius:10px}.ptable tr.row-out td:first-child{box-shadow:none}
   .ptable .p-del{width:32px;height:32px}
+  table.ptable tr.dragging td{background:none!important}.ptable tr.dragging{background:var(--surface-2);border-radius:10px}
   table.ptable tr.hl td,table.ptable tr.hl:hover td{background:none}.ptable tr.hl{background:color-mix(in srgb,var(--hl) 13%,transparent);box-shadow:inset -3px 0 0 var(--hl);border-radius:10px}.ptable tr.hl td:first-child{box-shadow:none}}
 .o-line{color:var(--ink);font-weight:600}
 @media (max-width:600px){.o-item .q{align-items:flex-start}}
@@ -1067,7 +1071,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261029231026"></script>
+<script src="assets/config.js?v=20261029233804"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1331,7 +1335,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261029231026'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261029233804'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1974,7 +1978,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029231026" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029233804" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2008,7 +2012,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029231026" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029233804" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2049,7 +2053,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029231026'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029231026')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029233804'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029233804')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2210,7 +2214,8 @@ async function bulkSoon(list, on, el) {
 const prodSel = new Set();
 function renderProducts() {
   document.querySelectorAll(".stk-menu").forEach(m => m.remove());
-  const SC = SCOPES[tab] || SCOPES.products, list = products.filter(SC.test);
+  const SC = SCOPES[tab] || SCOPES.products, list = products.filter(SC.test).sort(bySort);
+  const rank = new Map(list.map((p, i) => [p.id, i + 1])), canDrag = !PF.sort;   // the number = its place on that store page
   const inKind = list.filter(p => pKind === 'all' || RC.kindOf(p) === pKind), shown = pfApply(inKind), nOn = pfOn();
   const styles = [...new Set(inKind.map(p => p.style).filter(Boolean))].sort();
   [...prodSel].forEach(id => !products.some(p => p.id === id) && prodSel.delete(id));
@@ -2246,7 +2251,7 @@ function renderProducts() {
         <button type="button" class="btn btn-danger btn-sm" id="pBulkDel" ${nSel ? '' : 'disabled'}>حذف${nSel ? ` <span class="en">(${nSel})</span>` : ''}</button></div></div>` : ''}
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${shown.length ? `<table class="ptable"><thead><tr><th class="p-sel-h"></th><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
       ${shown.map(p => { const off = rawOff(p), st = pStatus(p), hl = hlOf(p); return `<tr data-edit="${p.id}" class="${st === 'out' ? 'row-out' : ''}${hl ? ' hl' : ''}"${hl ? ` style="--hl:${HL[hl][0]}"` : ''}>
-        <td class="p-sel"><div><input type="checkbox" data-psel="${p.id}" ${prodSel.has(p.id) ? 'checked' : ''} aria-label="تحديد ${esc(p.name)}"><button type="button" class="p-hl${hl ? ' on' : ''}" data-hl="${p.id}" title="${hl ? 'هايلايت ' + HL[hl][1] + ' · دوس تغيّره' : 'هايلايت'}" aria-label="هايلايت"></button></div></td>
+        <td class="p-sel"><div>${canDrag ? `<button type="button" class="p-drag" data-pdrag="${p.id}" title="اسحب عشان تغيّر مكانه في الصفحة" aria-label="اسحب لتغيير الترتيب"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>` : ''}<span class="p-rank en" title="مكانه في صفحة ${esc(SC.title)}">${rank.get(p.id)}</span><input type="checkbox" data-psel="${p.id}" ${prodSel.has(p.id) ? 'checked' : ''} aria-label="تحديد ${esc(p.name)}"><button type="button" class="p-hl${hl ? ' on' : ''}" data-hl="${p.id}" title="${hl ? 'هايلايت ' + HL[hl][1] + ' · دوس تغيّره' : 'هايلايت'}" aria-label="هايلايت"></button></div></td>
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
         <td class="en">${+p.price > 0 ? `<b>${money(rawFinal(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
@@ -2257,6 +2262,17 @@ function renderProducts() {
   $('#newP').onclick = () => openEditor(null, SC.init);
   const m = $('#main');
   m.querySelectorAll('[data-psel]').forEach(c => c.onchange = () => { const id = +c.dataset.psel; c.checked ? prodSel.add(id) : prodSel.delete(id); renderProducts(); });
+  // drag handle: the row follows the finger/mouse, dropping saves the new order (works with filters on: only the shown ones swap places)
+  m.querySelectorAll('[data-pdrag]').forEach(h => h.onpointerdown = e => { e.preventDefault(); const tr = h.closest('tr'), tb = tr.parentElement; tr.classList.add('dragging');
+    const before = [...tb.children].map(r => +r.dataset.edit);
+    // listening on the window (not a captured pointer): moving the row in the page would drop a capture
+    const mv = ev => { ev.preventDefault(); const over = document.elementFromPoint(ev.clientX, ev.clientY), row = over && over.closest('tr[data-edit]');
+      if (ev.clientY < 60) scrollBy(0, -12); else if (ev.clientY > innerHeight - 60) scrollBy(0, 12);
+      if (!row || row === tr || row.parentElement !== tb) return;
+      const r = row.getBoundingClientRect(), ref = ev.clientY < r.top + r.height / 2 ? row : row.nextSibling; if (ref !== tr && ref !== tr.nextSibling) tb.insertBefore(tr, ref); };
+    const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); tr.classList.remove('dragging');
+      const after = [...tb.children].map(r => +r.dataset.edit); if (after.join() !== before.join()) pReorder(list, before, after); };
+    addEventListener('pointermove', mv, { passive: false }); addEventListener('pointerup', up); addEventListener('pointercancel', up); });
   if ($('#pAll')) $('#pAll').onchange = e => { shown.forEach(p => e.target.checked ? prodSel.add(p.id) : prodSel.delete(p.id)); renderProducts(); };
   const nm = n => n === 1 ? 'المنتج ده' : n + ' منتجات';
   if ($('#pBulkSt')) $('#pBulkSt').onchange = e => once('pBulkSt', async () => { const to = e.target.value; e.target.value = ''; if (!to || !nSel) return;
@@ -2335,6 +2351,19 @@ document.addEventListener('click', async e => {
 });
 
 let draft = null;
+// drag to reorder: the moved products swap places only among the ones shown, the rest of the page keeps its spots
+const bySort = (a, b) => (+a.sort || 0) - (+b.sort || 0) || a.id - b.id;
+async function pReorder(list, shownIds, newShown) {
+  const full = list.map(p => p.id), slots = full.map((id, i) => shownIds.includes(id) ? i : -1).filter(i => i >= 0);
+  slots.forEach((s, j) => { full[s] = newShown[j]; });
+  // the numbers this page already used, made strictly rising, are handed out again in the new order
+  const vals = list.map(p => +p.sort || 0).sort((x, y) => x - y); for (let i = 1; i < vals.length; i++) if (vals[i] <= vals[i - 1]) vals[i] = vals[i - 1] + 1;
+  const ch = full.map((id, i) => ({ p: products.find(x => x.id === id), v: vals[i] })).filter(x => x.p && (+x.p.sort || 0) !== x.v);
+  if (!ch.length) return renderProducts();
+  ch.forEach(x => { x.was = x.p.sort; x.p.sort = x.v; }); products.sort(bySort); renderProducts();
+  const res = await Promise.all(ch.map(x => sb.from('shop_products').update({ sort: x.v }).eq('id', x.p.id)));
+  const bad = res.find(r => r.error); if (bad) { ch.forEach(x => { x.p.sort = x.was; }); products.sort(bySort); renderProducts(); return toast(bad.error.message, 'err'); }
+  toast('اتغيّر الترتيب ✓', 'ok'); }
 const nextSort = lux => Math.max(0, ...products.filter(x => RC.isLuxury(x) === lux).map(x => +x.sort || 0)) + 1;
 // product page texts the admin edits as sections; defaults open pre-filled so he only changes what differs
 const SPEC_DEF = { watches: ['الماكينة', 'التصميم', 'الخامة', 'المميزات'], glasses: ['الإطار', 'العدسات', 'الحماية', 'المقاس'], accessories: ['الخامة', 'المقاس', 'اللون'] };
