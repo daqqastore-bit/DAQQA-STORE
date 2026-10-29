@@ -168,7 +168,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261029211406';
+RC.build = '20261029213018';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
@@ -278,12 +278,12 @@ RC._ib = {};
 RC.imgBlob = url => RC._ib[url] || (RC._ib[url] = fetch(url, { mode: 'cors' }).then(r => { if (!r.ok) throw 0; return r.blob(); }).catch(e => { delete RC._ib[url]; throw e; }));
 RC.saveImg = async (url, name) => {
   const base = String(name || 'daqqa').replace(/[\\/:*?"<>|]+/g, ' ').trim().slice(0, 60) || 'daqqa';
-  let b; try { b = await RC.imgBlob(url); } catch (e) { open(url, '_blank'); return; }
+  let b; try { b = await RC.imgBlob(url); } catch (e) { open(url, '_blank'); return 'opened'; }
   const ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/avif': 'avif' })[b.type] || (String(url).split('?')[0].match(/\.(\w{3,4})$/) || [, 'jpg'])[1];
   const file = new File([b], `${base}.${ext}`, { type: b.type || 'image/jpeg' });
   if (matchMedia('(pointer:coarse)').matches && navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file] }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.share({ files: [file] }); return 'shared'; } catch (e) { if (e && e.name === 'AbortError') return 'cancel'; }
   }
-  const a = document.createElement('a'), u = URL.createObjectURL(b); a.href = u; a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+  const a = document.createElement('a'), u = URL.createObjectURL(b); a.href = u; a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); return 'saved';
 };
 RC.DL_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19h14"/></svg>';
