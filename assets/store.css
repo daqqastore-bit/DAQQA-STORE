@@ -101,10 +101,6 @@ html,body{overflow-x:clip}
 .card .ph{position:relative;aspect-ratio:1;background:radial-gradient(circle at 50% 35%,var(--hero),var(--bg) 75%);overflow:hidden;display:block}
 .card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .4s}
 .card .ph img.alt{position:absolute;inset:0;opacity:0}
-/* a photo that isn't square (a wide group shot) shows whole instead of losing its sides: the photo fits the tile and a soft, blurred copy of it fills the rest */
-.card .ph.fit{background:#1b140d}
-.card .ph.fit::before{content:"";position:absolute;inset:-12%;background:var(--ph-bg) center/cover no-repeat;filter:blur(22px) brightness(.8) saturate(1.1);pointer-events:none}
-.card .ph.fit>img:not(.alt),.card .ph.fit>.ph-xf{position:relative;object-fit:contain;z-index:0}.card .ph.fit>.ph-xf{position:absolute;z-index:1}
 .card:hover .ph img{transform:scale(1.06)}
 .card:hover .ph img.alt{opacity:1}
 .card .ph .badge-off{position:absolute;top:12px;right:12px}
