@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029204934">
+<link rel="stylesheet" href="assets/base.css?v=20261029210337">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -435,7 +435,10 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .vo-soon.on{color:#fff;background:var(--amber);border:1px solid var(--amber)}.vo-soon.on:hover{color:#fff}.vo.is-soon{border-color:color-mix(in srgb,var(--amber) 55%,transparent)}.vo.is-soon .vo-ph{opacity:.7}
 .vo-x{margin-inline-start:auto;width:26px;height:26px;border-radius:50%;color:var(--muted);font-size:16px}.vo-x:hover{color:var(--red);background:var(--surface)}
 .vo-pop{grid-column:1/-1;border-top:1px solid var(--line);padding-top:8px;display:grid;gap:8px}.vo-pop b{font-size:11.5px;font-weight:500;color:var(--muted)}
-.vo-pop div{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.vo-pop div button{aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid transparent}.vo-pop div button.on{border-color:var(--amber)}.vo-pop img{width:100%;height:100%;object-fit:cover}
+.vo-pop div{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.vo-pop div button{aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid transparent}.vo-pop div button.on{border-color:var(--amber);box-shadow:0 0 0 2px var(--amber)}
+/* photos not picked for this option fade out, so it's obvious which ones are in and which were taken off */
+.vo-pop div button:not(.on) img{opacity:.28;filter:grayscale(1);transition:opacity .2s,filter .2s}.vo-pop div button:not(.on):hover img{opacity:.6;filter:none}
+.vo-pop div button:not(.on)::after{content:"+";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font:300 26px/1 var(--f-ui,system-ui);text-shadow:0 1px 4px rgba(0,0,0,.6)}.vo-pop img{width:100%;height:100%;object-fit:cover}
 .vg-quick{display:flex;flex-wrap:wrap;gap:6px}.vg-quick button{font-size:11.5px;padding:5px 10px;border:1px dashed var(--line);border-radius:99px;color:var(--muted)}.vg-quick button:hover{color:var(--ink);border-color:var(--amber)}
 .ed-foot{justify-content:center}.ed-foot>.btn-primary{max-width:520px}
 @media (max-width:900px){.ed-body{grid-template-columns:1fr;padding:16px 14px 30px!important}.ed-side{position:static}.ed-sec{padding:14px}}
@@ -1057,7 +1060,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261029204934"></script>
+<script src="assets/config.js?v=20261029210337"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1317,7 +1320,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261029204934'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261029210337'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1960,7 +1963,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029204934" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029210337" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -1994,7 +1997,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029204934" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029210337" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2035,7 +2038,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029204934'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029204934')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029210337'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029210337')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
