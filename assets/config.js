@@ -57,16 +57,18 @@ RC.variants = (p) => (Array.isArray(p && p.variants) ? p.variants : []).filter(g
 // an option marked coming soon (o.soon): shown with «قريبًا», also can't be picked or ordered (so optOut covers both)
 RC.optSoon = (o) => !!(o && o.soon && !o.out);
 RC.optOut = (o) => !!(o && (o.out || o.soon));
+// two-tone option (o.c2): the swatch is split diagonally, half each colour
+RC.sw = (o) => !o || !o.c ? '' : o.c2 ? `linear-gradient(135deg,${o.c} 50%,${o.c2} 50%)` : o.c;
 RC.optX = (o) => Math.max(0, Math.round(Number(o && o.x) || 0));
 RC.optExtra = (p, sel) => !sel ? 0 : RC.variants(p).reduce((s, g) => s + RC.optX(g.o.find(o => o.n === sel[g.k])), 0);
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
 // colour dots on a product card: the dial colours (or the first group that has colours), else the old colour list; off when the admin hides them
 RC.cardDots = (p) => { if (!p || p.show_colors === false) return [];
   const vs = RC.variants(p), g = vs.find(x => x.k === 'dial' && x.o.some(o => o.c)) || vs.find(x => x.o.filter(o => o.c).length > 1);
-  if (g) return g.o.filter(o => o.c).slice(0, 6).map(o => ({ c: o.c, n: o.n, img: RC.optImgs(p, o)[0] || null }));
+  if (g) return g.o.filter(o => o.c).slice(0, 6).map(o => ({ c: o.c, c2: o.c2 || null, n: o.n, img: RC.optImgs(p, o)[0] || null }));
   return RC.colors(p).map(c => ({ c, n: c.toUpperCase(), img: RC.colorImg(p, c) })); };
 RC.dotsHTML = (p, cls = 'sw') => { const d = RC.cardDots(p); if (!d.length) return '';
-  return `<div class="${cls}">${d.map(x => x.img ? `<button type="button" class="swb" data-pick="${RC.esc(x.c)}" data-img="${RC.esc(x.img)}" style="--c:${RC.esc(x.c)};background:${RC.esc(x.c)}" title="${RC.esc(x.n)}" aria-label="شوف ${RC.esc(x.n)}"></button>` : `<i style="--c:${RC.esc(x.c)};background:${RC.esc(x.c)}" title="${RC.esc(x.n)}"></i>`).join('')}</div>`; };
+  return `<div class="${cls}">${d.map(x => x.img ? `<button type="button" class="swb" data-pick="${RC.esc(x.c)}" data-img="${RC.esc(x.img)}" style="--c:${RC.esc(x.c)};background:${RC.esc(RC.sw(x))}" title="${RC.esc(x.n)}" aria-label="شوف ${RC.esc(x.n)}"></button>` : `<i style="--c:${RC.esc(x.c)};background:${RC.esc(RC.sw(x))}" title="${RC.esc(x.n)}"></i>`).join('')}</div>`; };
 RC.optImgs = (p, o) => !o ? [] : o.imgs && o.imgs.length ? o.imgs : o.c && RC.colorImg(p, o.c) ? [RC.colorImg(p, o.c)] : [];
 RC.optPhoto = (p, sel, last) => {
   const vs = RC.variants(p), sets = vs.map(g => RC.optImgs(p, g.o.find(o => o.n === (sel || {})[g.k]))).filter(s => s.length);
@@ -168,7 +170,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261029221118';
+RC.build = '20261029224816';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
