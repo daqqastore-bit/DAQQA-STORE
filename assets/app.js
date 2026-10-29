@@ -82,6 +82,16 @@
   const scanLoops = () => { if (!loopIO) return; clearTimeout(loopScan); loopScan = setTimeout(() => {
     document.querySelectorAll('.gold,.mo-line .gold,.mo-ticks,.lx-marq div,.lux-row,.lux-row span,.lx-dial,.lx-dial *,.lx-scroll i,.cart-lx,.cl-in,.cl-total b,.trk-dot,.lxp-price .now').forEach(el => { if (!el._loopObs) { el._loopObs = 1; loopIO.observe(el); } });
   }, 400); };
+  /* ---------- speed test: a device that can't keep up gets the light version (no blur, glows, endless effects), remembered for a week ---------- */
+  if (!document.documentElement.classList.contains('lite') && 'requestAnimationFrame' in window) {
+    const t0 = performance.now(); let last = 0, n = 0, slow = 0;
+    const tick = now => { if (document.hidden) { last = 0; return requestAnimationFrame(tick); }
+      if (last && now - t0 > 1200) { n++; if (now - last > 28) slow++; }   // skip the first moments while the page is still loading
+      last = now;
+      if (n < 120) return requestAnimationFrame(tick);
+      if (slow / n > .3) { document.documentElement.classList.add('lite'); try { localStorage.setItem('dq-lite', Date.now()); } catch (e) {} } };
+    requestAnimationFrame(tick);
+  }
   DQ.reveal = () => { scanLoops(); document.querySelectorAll('.reveal:not(.in), .op:not(.in)').forEach(el => { if (!pending.includes(el)) pending.push(el); }); queueCheck(); };
   // gentle parallax for section backgrounds (data-parallax) — one rAF per frame, skipped for reduced motion
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite')) {
@@ -99,6 +109,8 @@
   DQ.img = (p, i = 0) => esc((p.images && p.images[i]) || FALLBACK);
   // <img> attributes for a card-sized photo: the small copy first, the full photo if the small one isn't there yet
   DQ.thumb = (p, i = 0) => { const u = (p.images && p.images[i]) || FALLBACK, t = RC.thumb(u); return t === u ? `src="${esc(u)}" onerror="this.onerror=null;this.src=DQ.FALLBACK"` : `src="${esc(t)}" data-full="${esc(u)}" onerror="DQ.imgFail(this)"`; };
+  // <img> attributes for a small spot (thumb strip, option card, cart line) from a photo url: the 720px copy, the full one if it's missing
+  DQ.sm = u => { const t = RC.thumb(u); return t === u ? `src="${esc(u)}"` : `src="${esc(t)}" data-full="${esc(u)}" onerror="DQ.imgFail(this)"`; };
   DQ.imgFail = el => { if (el.dataset.full && !el.dataset.tried) { el.dataset.tried = 1; el.src = el.dataset.full; } else { el.onerror = null; el.src = FALLBACK; } };
   DQ.favs = new Set(); try { DQ.favs = new Set(JSON.parse(localStorage.getItem('dq-favs') || '[]')) } catch (e) {}
   function renderFavs() {
@@ -143,21 +155,20 @@
     if (!matchMedia('(hover: hover)').matches) return;
     let cur = null, timer = null;
     const stop = () => { if (!cur) return; clearInterval(timer); const c = cur; cur = null; c.classList.remove('flipping'); if (c._xf) { c._xf.remove(); c._xf = null; } const img = c.querySelector('.ph img:not(.alt)'), p = DQ.byId(+c.dataset.pid);
-      if (img && p) { img.style.transition = img.style.transform = ''; img.src = c.dataset.picked || DQ.img(p, 0); } c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
+      if (img && p) { img.style.transition = img.style.transform = ''; img.dataset.full = c.dataset.pickedFull || DQ.img(p, 0); delete img.dataset.tried; img.src = c.dataset.picked || RC.thumb(DQ.img(p, 0)); } c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
     document.addEventListener('pointerover', e => {
       const c = e.target.closest && e.target.closest('[data-pid]');
       if (c === cur) return; stop();
       const p = c && DQ.byId(+c.dataset.pid); if (!p || !p.images || p.images.length < 2 || c.dataset.picked) return;
       const img = c.querySelector('.ph img:not(.alt), [data-flip]'), dots = c.querySelectorAll('.ph-dots i'); if (!img) return;
       cur = c; c.classList.add('flipping'); let i = 0;
-      p.images.slice(1).forEach(u => { const im = new Image(); im.src = u; });
       // soft cross-fade: the next photo is decoded first, then fades in over the current one (never stalls half-way)
       const box = img.parentNode, lay = document.createElement('img'); lay.className = 'ph-xf'; lay.alt = ''; lay.setAttribute('aria-hidden', 'true'); box.appendChild(lay); c._xf = lay;
       img.style.transform = 'scale(1.05)';
-      const step = () => { if (cur !== c) return; i = (i + 1) % p.images.length; const k = i, u = DQ.img(p, k), pre = new Image(); pre.src = u;
-        (pre.decode ? pre.decode() : Promise.resolve()).catch(() => {}).then(() => { if (cur !== c) return;
+      const step = () => { if (cur !== c) return; i = (i + 1) % p.images.length; const k = i; let u = RC.thumb(DQ.img(p, k)); const pre = new Image(); pre.src = u;
+        (pre.decode ? pre.decode() : Promise.resolve()).catch(() => { u = DQ.img(p, k); }).then(() => { if (cur !== c) return;
           lay.src = u; lay.classList.add('on');
-          setTimeout(() => { if (cur !== c) return; img.src = u; const done = () => { lay.style.transition = 'none'; lay.classList.remove('on'); void lay.offsetWidth; lay.style.transition = ''; };
+          setTimeout(() => { if (cur !== c) return; img.dataset.full = DQ.img(p, k); delete img.dataset.tried; img.src = u; const done = () => { lay.style.transition = 'none'; lay.classList.remove('on'); void lay.offsetWidth; lay.style.transition = ''; };
             img.complete ? done() : img.addEventListener('load', done, { once: true }); }, 650); });
         dots.forEach((d, j) => d.classList.toggle('on', j === k % dots.length)); };
       dots.forEach((d, j) => d.classList.toggle('on', j === 0));
@@ -244,7 +255,7 @@
       // colour swatch on a card: show that colour's photo (stays until another colour is picked)
       const pk = e.target.closest('.card [data-pick], .lx-card [data-pick]');
       if (pk) { e.preventDefault(); const card = pk.closest('[data-pid]'), p = DQ.byId(+card.dataset.pid), u = p && (pk.dataset.img || RC.colorImg(p, pk.dataset.pick)), img = card.querySelector('.ph img:not(.alt), .lc-pic img');
-        if (u && img) { card.dataset.picked = u; img.style.transition = img.style.transform = ''; img.src = u; card.querySelectorAll('[data-pick]').forEach(b => b.classList.toggle('on', b === pk)); const k = p.images.indexOf(u); card.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === k)); } }
+        if (u && img) { card.dataset.picked = RC.thumb(u); card.dataset.pickedFull = u; img.style.transition = img.style.transform = ''; img.dataset.full = u; delete img.dataset.tried; img.src = RC.thumb(u); card.querySelectorAll('[data-pick]').forEach(b => b.classList.toggle('on', b === pk)); const k = p.images.indexOf(u); card.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === k)); } }
       const fv = e.target.closest('[data-fav]');
       if (fv) { e.preventDefault(); pop(fv); DQ.toggleFav(+fv.dataset.fav); }
     });
@@ -475,7 +486,7 @@
     if (!silent) DQ.toast('اتضافت للسلة ✓', 'ok');
   };
   // an option card on the store: its photo (several linked photos show as small thumbs under it), colour dot, name and short description
-  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}${RC.optOut(o) ? ' so' : ''}${RC.optSoon(o) ? ' sn' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}"${RC.optOut(o) ? ` aria-disabled="true" title="${RC.optSoon(o) ? 'قريبًا · لسه منزلش' : 'نفذ من المخزون'}"` : ''}>${o.img ? `<img src="${esc(o.img)}" alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img src="${esc(u)}" data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span>${RC.optSoon(o) ? '<em class="po-so">قريبًا</em>' : RC.optOut(o) ? '<em class="po-so">نفذ</em>' : RC.optX(o) ? `<em class="po-x">زيادة ${money(RC.optX(o))}</em>` : ''}</button>`;
+  DQ.optCard = (o, on) => `<button type="button" class="po-card ${on ? 'on' : ''}${RC.optOut(o) ? ' so' : ''}${RC.optSoon(o) ? ' sn' : ''}" data-o="${esc(o.n)}" aria-pressed="${!!on}"${RC.optOut(o) ? ` aria-disabled="true" title="${RC.optSoon(o) ? 'قريبًا · لسه منزلش' : 'نفذ من المخزون'}"` : ''}>${o.img ? `<img ${DQ.sm(o.img)} alt="" loading="lazy">` : o.c ? `<i style="background:${esc(o.c)}"></i>` : ''}${o.imgs && o.imgs.length > 1 ? `<span class="po-th">${o.imgs.slice(0, 4).map(u => `<img ${DQ.sm(u)} data-ti="${esc(u)}" alt="" loading="lazy" class="${u === o.img ? 'on' : ''}">`).join('')}</span>` : ''}<span class="po-t"><span>${esc(o.n)}</span>${o.d ? `<small>${esc(o.d)}</small>` : ''}</span>${RC.optSoon(o) ? '<em class="po-so">قريبًا</em>' : RC.optOut(o) ? '<em class="po-so">نفذ</em>' : RC.optX(o) ? `<em class="po-x">زيادة ${money(RC.optX(o))}</em>` : ''}</button>`;
   // tapping a small photo on an option card: picks that option, and also the option of another group that photo belongs to
   // (the green-dial photo on the steel strap picks the green dial) → returns {picks: {k: name}, u: photo}
   DQ.optThumb = (p, el) => { const card = el.closest('.po-card'), gk = card.closest('.po-g').dataset.g, u = el.dataset.ti, picks = { [gk]: card.dataset.o };
@@ -515,7 +526,7 @@
     const m = document.createElement('div'); m.className = 'oc-m qa-m' + (full ? ' qv-m' : '');
     m.innerHTML = `<div class="oc-card qa-card${full ? ' qv-card' : ''}${out ? ' is-out' : ''}" role="dialog" aria-modal="true" aria-labelledby="qaH"><button type="button" class="qa-x" data-no aria-label="إغلاق">✕</button>
       ${full ? `<div class="qv-gal"><div class="qv-main"><img class="qa-im" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="qv-off en">-${off}%</span>` : ''}</div>
-        ${imgs.length > 1 ? `<div class="qv-th">${imgs.slice(0, 8).map((u, k) => `<button type="button" data-qvi="${k}" class="${k ? '' : 'on'}"><img src="${esc(u)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div><div class="qv-info">
+        ${imgs.length > 1 ? `<div class="qv-th">${imgs.slice(0, 8).map((u, k) => `<button type="button" data-qvi="${k}" class="${k ? '' : 'on'}"><img ${DQ.sm(u)} alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div><div class="qv-info">
         <span class="qv-cap en">${esc(p.brand || 'DAQQA')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
         <h3 id="qaH" class="en qv-h">${esc(p.name)}</h3>${DQ.priceHTML(p, 0, true)}
         ${body ? `<p class="qv-d">${esc(body)}</p>` : ''}
@@ -604,7 +615,7 @@
   // the options the buyer picked, as small chips (a colour option shows its dot)
   const optsHTML = l => { const vs = RC.variants(l.p); if (!vs.length || !l.opt) return '';
     // one compact line: a dot of the colour + the choice (the group name stays in the tooltip)
-    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span title="${esc(g.ar)}: ${esc(o.n)}">${o.c ? `<i style="background:${esc(o.c)}"></i>` : o.img ? `<img src="${esc(o.img)}" alt="">` : ''}<small>${esc(g.ar)}</small><b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
+    return `<div class="ci-opts">${vs.map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? `<span title="${esc(g.ar)}: ${esc(o.n)}">${o.c ? `<i style="background:${esc(o.c)}"></i>` : o.img ? `<img ${DQ.sm(o.img)} alt="">` : ''}<small>${esc(g.ar)}</small><b>${esc(o.n)}</b></span>` : ''; }).join('')}</div>`; };
   // a line shows the photo of the option the buyer picked (e.g. the green dial), otherwise the product's main photo
   const lineImg = l => { const u = l.opt && RC.optPhoto(l.p, l.opt); return u ? esc(u) : DQ.img(l.p); };
   const optLine = l => l.opt && RC.variants(l.p).length ? ` [${RC.optText(l.opt, '، ')}]` : '';
@@ -950,7 +961,7 @@
     : `<div class="ao-end"><b>إنت لغيت الطلب ده</b>${o.cancelled_at ? `<p class="en" dir="ltr">${RC.when(o.cancelled_at)}</p>` : ''}</div>`;
   const orderCard = o => `<div class="acc-order${['cancelled', 'removed'].includes(o.status) ? ' ended' : ''}" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
       ${['cancelled', 'removed'].includes(o.status) ? endBox(o) : DQ.tracker(o.status)}
-      <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
+      <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
       <div class="ao-acts">${byShop(o) ? '' : waAsk(o.code)}${cancelBtn(o.code, o.status)}${ENDED.includes(o.status) ? `<button type="button" class="ao-del" data-odel="${esc(o.code)}">مسح من طلباتي</button>` : ''}</div></div>`;
   // green WhatsApp button with the order number already written in the message
