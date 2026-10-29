@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029225719">
+<link rel="stylesheet" href="assets/base.css?v=20261029230140">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -102,7 +102,12 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @keyframes fresh{0%,40%{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}}
 .o-top{display:grid;grid-template-columns:178px 1fr 120px 130px 150px 24px;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
 .o-id{display:flex;align-items:center;gap:10px;min-width:0}.o-sel{display:grid;place-items:center;padding:4px;margin:-4px;cursor:pointer}.o-sel input{width:18px;height:18px;accent-color:var(--amber);cursor:pointer}
-.p-sel,.p-sel-h{width:34px;padding-inline-end:0!important}.p-sel input{width:17px;height:17px;accent-color:var(--amber);cursor:pointer}.p-bulk select{height:34px;width:auto;min-width:140px;padding:0 12px;font-size:13px}
+.p-sel,.p-sel-h{width:64px;padding-inline-end:0!important}.p-sel>div{display:flex;align-items:center;gap:10px}
+.p-hl{width:20px;height:20px;flex:none;padding:0;border-radius:50%;border:1.5px dashed var(--muted-2);background:none;cursor:pointer;transition:transform .15s}.p-hl:hover{transform:scale(1.15);border-color:var(--muted)}.p-hl.on{border:0;background:var(--hl);box-shadow:0 0 0 3px color-mix(in srgb,var(--hl) 25%,transparent)}
+.hl-menu{position:fixed;z-index:60;display:flex;gap:8px;padding:8px;border-radius:14px;border:1px solid var(--line);background:var(--bg-2);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.hl-menu button{width:32px;height:32px;border-radius:50%;border:2px solid transparent;background:var(--hl);cursor:pointer;padding:0;transition:transform .15s}.hl-menu button:hover{transform:scale(1.1)}.hl-menu button.cur{border-color:var(--ink)}
+.hl-menu .x{background:none;border:1px dashed var(--muted);color:var(--muted);font-size:18px;line-height:1}
+.ptable tr.hl td{background:color-mix(in srgb,var(--hl) 13%,transparent)}.ptable tr.hl td:first-child{box-shadow:inset -3px 0 0 var(--hl)}.ptable tr.hl:hover td{background:color-mix(in srgb,var(--hl) 19%,transparent)}.p-sel input{width:17px;height:17px;accent-color:var(--amber);cursor:pointer}.p-bulk select{height:34px;width:auto;min-width:140px;padding:0 12px;font-size:13px}
 .o-bulk #oBulkSt{height:34px;width:auto;min-width:150px;padding:0 12px;font-size:13px}.o-bulk .inv-acts{display:flex;gap:8px;align-items:center;margin-inline-start:auto}
 .o-top .code{font:600 12px var(--f-ui);direction:ltr;text-align:right}
 .o-top .date{font-size:11px;color:var(--muted-2)}
@@ -180,7 +185,8 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
   .ptable .pcell{gap:10px}.ptable .pcell>div{min-width:0}.ptable .pcell b{font-size:14px;line-height:1.35;overflow-wrap:anywhere}.ptable .pcell small{display:block;line-height:1.5}
   .ptable td:nth-child(3) .price-old{display:inline;margin-inline-start:6px;font-size:12px}
   table.ptable tr.row-out td{background:none}.ptable tr.row-out{background:rgb(194 69 58/.1);box-shadow:inset -3px 0 0 #c2453a;border-radius:10px}.ptable tr.row-out td:first-child{box-shadow:none}
-  .ptable .p-del{width:32px;height:32px}}
+  .ptable .p-del{width:32px;height:32px}
+  table.ptable tr.hl td,table.ptable tr.hl:hover td{background:none}.ptable tr.hl{background:color-mix(in srgb,var(--hl) 13%,transparent);box-shadow:inset -3px 0 0 var(--hl);border-radius:10px}.ptable tr.hl td:first-child{box-shadow:none}}
 .o-line{color:var(--ink);font-weight:600}
 @media (max-width:600px){.o-item .q{align-items:flex-start}}
 .o-sum{border-top:1px dashed var(--line-2);padding-top:10px;display:grid;gap:4px;font-size:13px;color:var(--muted)}
@@ -1061,7 +1067,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261029225719"></script>
+<script src="assets/config.js?v=20261029230140"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1271,7 +1277,8 @@ function listen() {
     const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_settings'}, payload => {
     // a fake-notification run started / stopped from another device reaches this dashboard too
-    if (!payload.new || !payload.new.perks) return; settings.perks = payload.new.perks; fkAdmRun(); if (tab === 'fake') renderFake();
+    if (!payload.new || !payload.new.perks) return; const hl0 = JSON.stringify((settings.perks || {}).hl || {}); settings.perks = payload.new.perks; fkAdmRun(); if (tab === 'fake') renderFake();
+    if (SCOPES[tab] && JSON.stringify(settings.perks.hl || {}) !== hl0) renderProducts();   // a highlight set on another device
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_orders'}, payload => {
     // a customer cancelled their order from the store
     const o = orders.find(x => x.id === payload.new.id); if (!o || o.status === payload.new.status) return;
@@ -1324,7 +1331,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261029225719'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261029230140'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1967,7 +1974,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029225719" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029230140" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2001,7 +2008,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029225719" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029230140" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2042,7 +2049,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029225719'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029225719')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029230140'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029230140')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2161,7 +2168,16 @@ document.addEventListener('change', async e => {
 
 /* ---------- products ---------- */
 // products filters (kept after a reload): search, gender, status, type, price range, discount, shown/hidden, sort
-const PF0 = { q: '', g: '', st: '', sty: '', min: '', max: '', off: '', vis: '', sort: '' };
+const PF0 = { q: '', g: '', st: '', sty: '', min: '', max: '', off: '', vis: '', hl: '', sort: '' };
+// highlight: a quick colour mark on a product row, admin only (settings.perks.hl = {product id: 'g'|'y'|'b'}, shared by every admin device)
+const HL = { g: ['#2F9E5B', 'أخضر'], y: ['#E0B021', 'أصفر'], b: ['#3A7BD5', 'أزرق'] };
+const hlOf = p => { const v = ((settings.perks || {}).hl || {})[p.id]; return HL[v] ? v : ''; };
+async function hlSet(ids, v) {
+  const hl = { ...((settings.perks || {}).hl || {}) }; ids.forEach(id => { if (v) hl[id] = v; else delete hl[id]; });
+  Object.keys(hl).forEach(id => { if (!products.some(p => p.id === +id)) delete hl[id]; });   // deleted products drop out
+  const was = settings.perks, perks = { ...(settings.perks || {}), hl }; settings.perks = perks; renderProducts();
+  const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+  if (error) { settings.perks = was; renderProducts(); toast(error.message, 'err'); return false; } return true; }
 let PF = { ...PF0 }; try { PF = { ...PF0, ...JSON.parse(localStorage.getItem('dq-pf') || '{}') }; } catch (er) {}
 const pfSave = () => { try { localStorage.setItem('dq-pf', JSON.stringify(PF)); } catch (er) {} };
 const pfOn = () => Object.keys(PF0).filter(k => PF[k] !== '').length; // PF.open = filters unfolded on phones
@@ -2171,7 +2187,7 @@ function pfApply(list) {
     && (!PF.g || p.category === PF.g) && (!PF.st || pStatus(p) === PF.st) && (!PF.sty || (p.style || '') === PF.sty)
     && (min == null || rawFinal(p) >= min) && (max == null || rawFinal(p) <= max)
     && (!PF.off || (PF.off === 'yes' ? rawOff(p) > 0 || RC.onOffer(p) : !rawOff(p) && !RC.onOffer(p)))
-    && (!PF.vis || (PF.vis === 'on' ? p.active : !p.active)));
+    && (!PF.vis || (PF.vis === 'on' ? p.active : !p.active)) && (!PF.hl || (PF.hl === 'none' ? !hlOf(p) : hlOf(p) === PF.hl)));
   if (PF.sort === 'low') out.sort((a, b) => rawFinal(a) - rawFinal(b)); else if (PF.sort === 'high') out.sort((a, b) => rawFinal(b) - rawFinal(a));
   else if (PF.sort === 'new') out.sort((a, b) => b.id - a.id); else if (PF.sort === 'name') out.sort((a, b) => String(a.name).localeCompare(String(b.name)));
   return out;
@@ -2216,6 +2232,7 @@ function renderProducts() {
       <label class="pf-f pf-pr"><span>السعر</span><span class="pf-rng"><input class="input en" data-pf="min" inputmode="numeric" value="${esc(PF.min)}" placeholder="من" dir="ltr"><i>–</i><input class="input en" data-pf="max" inputmode="numeric" value="${esc(PF.max)}" placeholder="لحد" dir="ltr"></span></label>
       ${sel('off', 'الخصم / العروض', [['', 'الكل'], ['yes', 'عليه خصم أو في العروض'], ['no', 'من غير خصم']])}
       ${sel('vis', 'ظاهر', [['', 'الكل'], ['on', 'ظاهر في المتجر'], ['off', 'مخفي']])}
+      ${sel('hl', 'هايلايت', [['', 'الكل'], ...Object.entries(HL).map(([k, [, t]]) => [k, t]), ['none', 'من غير هايلايت']])}
       ${sel('sort', 'الترتيب', [['', 'الافتراضي'], ['new', 'الأحدث'], ['low', 'السعر: الأقل'], ['high', 'السعر: الأعلى'], ['name', 'الاسم']])}
       <div class="pf-end"><button type="button" class="vo-mini pf-tg" id="pfTg">${PF.open ? 'اقفل الفلاتر' : 'فلاتر أكتر'}${nOn ? ` (${nOn})` : ''}</button><span class="pf-n"><b class="en">${shown.length}</b> من <span class="en">${inKind.length}</span></span>${nOn ? `<button type="button" class="vo-mini" id="pfReset">× امسح الفلاتر (${nOn})</button>` : ''}</div>
     </div>
@@ -2224,11 +2241,12 @@ function renderProducts() {
       <label class="inv-all"><input type="checkbox" id="pAll" ${shown.every(p => prodSel.has(p.id)) ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
       <span class="inv-n">${nSel ? `<b class="en">${nSel}</b> متحدد` : 'علّم على المنتجات عشان تغيّرها أو تمسحها مع بعض'}</span>
       <div class="inv-acts"><select class="input" id="pBulkSt" ${nSel ? '' : 'disabled'} aria-label="الحالة الجديدة"><option value="">الحالة…</option><option value="in">Stock</option><option value="out">Out of Stock</option>${COLS.coming_soon ? '<option value="soon">Coming Soon</option>' : ''}</select>
+        <select class="input" id="pBulkHl" ${nSel ? '' : 'disabled'} aria-label="هايلايت"><option value="">هايلايت…</option>${Object.entries(HL).map(([k, [, t]]) => `<option value="${k}">${t}</option>`).join('')}<option value="none">شيل الهايلايت</option></select>
         <select class="input" id="pBulkVis" ${nSel ? '' : 'disabled'} aria-label="ظاهر"><option value="">ظاهر…</option><option value="on">إظهار في المتجر</option><option value="off">إخفاء من المتجر</option></select>
         <button type="button" class="btn btn-danger btn-sm" id="pBulkDel" ${nSel ? '' : 'disabled'}>حذف${nSel ? ` <span class="en">(${nSel})</span>` : ''}</button></div></div>` : ''}
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${shown.length ? `<table class="ptable"><thead><tr><th class="p-sel-h"></th><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
-      ${shown.map(p => { const off = rawOff(p), st = pStatus(p); return `<tr data-edit="${p.id}"${st === 'out' ? ' class="row-out"' : ''}>
-        <td class="p-sel"><input type="checkbox" data-psel="${p.id}" ${prodSel.has(p.id) ? 'checked' : ''} aria-label="تحديد ${esc(p.name)}"></td>
+      ${shown.map(p => { const off = rawOff(p), st = pStatus(p), hl = hlOf(p); return `<tr data-edit="${p.id}" class="${st === 'out' ? 'row-out' : ''}${hl ? ' hl' : ''}"${hl ? ` style="--hl:${HL[hl][0]}"` : ''}>
+        <td class="p-sel"><div><input type="checkbox" data-psel="${p.id}" ${prodSel.has(p.id) ? 'checked' : ''} aria-label="تحديد ${esc(p.name)}"><button type="button" class="p-hl${hl ? ' on' : ''}" data-hl="${p.id}" title="${hl ? 'هايلايت ' + HL[hl][1] + ' · دوس تغيّره' : 'هايلايت'}" aria-label="هايلايت"></button></div></td>
         <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
         <td class="en">${+p.price > 0 ? `<b>${money(rawFinal(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
@@ -2247,6 +2265,8 @@ function renderProducts() {
     if (!(await confirmBox(`تخلي ${nm(go_.length)} «${T}»؟${noPrice.length ? ` (${noPrice.length} من غير سعر هيفضلوا زي ما هم)` : ''}`, 'تأكيد'))) return renderProducts();
     let ok = 0; for (const p of go_) if (await pSetStatus(p, to)) ok++;
     prodSel.clear(); toast(`${ok} منتج بقوا ${T}`, 'ok'); renderProducts(); });
+  if ($('#pBulkHl')) $('#pBulkHl').onchange = e => once('pBulkHl', async () => { const v = e.target.value; e.target.value = ''; if (!v || !nSel) return;
+    const n = pSel.length; prodSel.clear(); if (await hlSet(pSel.map(p => p.id), v === 'none' ? '' : v)) toast(v === 'none' ? `اتشال الهايلايت من ${n} منتج` : `${n} منتج بقوا ${HL[v][1]}`, 'ok'); });
   if ($('#pBulkVis')) $('#pBulkVis').onchange = e => once('pBulkVis', async () => { const on = e.target.value === 'on'; if (!e.target.value || !nSel) return; e.target.value = '';
     const ids = pSel.filter(p => !!p.active !== on).map(p => p.id); if (!ids.length) { toast(on ? 'كلهم ظاهرين أصلاً' : 'كلهم مخفيين أصلاً', 'ok'); return renderProducts(); }
     const {error} = await sb.from('shop_products').update({ active: on }).in('id', ids); if (error) return toast(error.message, 'err');
@@ -2277,6 +2297,18 @@ async function pSetStatus(p, to) {
   return true;
 }
 document.addEventListener('click', async e => {
+  // highlight dot → small menu of colours (a pick saves straight away)
+  const hs = e.target.closest('[data-hlset]');
+  if (hs) { e.stopPropagation(); const id = +hs.closest('.hl-menu').dataset.p; document.querySelectorAll('.hl-menu').forEach(m => m.remove()); hlSet([id], hs.dataset.hlset); return; }
+  const hb = e.target.closest('[data-hl]');
+  document.querySelectorAll('.hl-menu').forEach(m => { if (!hb || m.dataset.p !== hb.dataset.hl) m.remove(); });
+  if (hb) { e.stopPropagation(); const open = document.querySelector(`.hl-menu[data-p="${hb.dataset.hl}"]`); if (open) return open.remove();
+    const p = products.find(x => x.id === +hb.dataset.hl); if (!p) return; const cur = hlOf(p);
+    document.body.insertAdjacentHTML('beforeend', `<div class="hl-menu" role="menu" data-p="${p.id}">${Object.entries(HL).map(([k, [c, t]]) => `<button type="button" role="menuitem" data-hlset="${k}" class="${cur === k ? 'cur' : ''}" style="--hl:${c}" title="${t}" aria-label="${t}"></button>`).join('')}${cur ? '<button type="button" role="menuitem" data-hlset="" class="x" title="شيل الهايلايت" aria-label="شيل الهايلايت">×</button>' : ''}</div>`);
+    const m = document.body.lastElementChild, b = hb.getBoundingClientRect(), z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1, h = m.offsetHeight * z, w = m.offsetWidth * z;
+    m.style.top = (innerHeight - b.bottom > h + 12 ? b.bottom + 6 : Math.max(8, b.top - h - 6)) / z + 'px';
+    m.style.left = Math.max(8, Math.min(innerWidth - w - 8, b.left + b.width / 2 - w / 2)) / z + 'px';
+    return; }
   if (e.target.closest('.p-sel')) return;   // the row tick box doesn't open the editor
   // status pill → small menu: Stock / Out of Stock / Coming Soon (the last count is remembered and comes back; none = unlimited)
   const sm = e.target.closest('[data-stset]');
