@@ -92,6 +92,11 @@
       if (slow / n > .3) { document.documentElement.classList.add('lite'); try { localStorage.setItem('dq-lite', Date.now()); } catch (e) {} } };
     requestAnimationFrame(tick);
   }
+  // card photos: a photo that isn't square gets the «fit» look (whole photo, blurred copy behind) instead of being cut at the sides
+  document.addEventListener('load', e => { const im = e.target; if (im.tagName !== 'IMG' || im.classList.contains('alt') || im.classList.contains('ph-xf')) return;
+    const ph = im.parentNode; if (!ph || !ph.classList || !ph.classList.contains('ph') || !ph.closest('.card')) return;
+    const r = im.naturalWidth / (im.naturalHeight || 1), wide = Math.abs(r - 1) > .08;
+    ph.classList.toggle('fit', wide); if (wide) ph.style.setProperty('--ph-bg', `url("${im.currentSrc || im.src}")`); }, true);
   DQ.reveal = () => { scanLoops(); document.querySelectorAll('.reveal:not(.in), .op:not(.in)').forEach(el => { if (!pending.includes(el)) pending.push(el); }); queueCheck(); };
   // gentle parallax for section backgrounds (data-parallax) — one rAF per frame, skipped for reduced motion
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !document.documentElement.classList.contains('lite')) {
