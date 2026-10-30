@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029233804">
+<link rel="stylesheet" href="assets/base.css?v=20261030190944">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -102,6 +102,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 @keyframes fresh{0%,40%{border-color:var(--amber);box-shadow:0 0 0 3px var(--glow)}}
 .o-top{display:grid;grid-template-columns:178px 1fr 120px 130px 150px 24px;gap:12px;align-items:center;padding:14px 16px;cursor:pointer}
 .o-id{display:flex;align-items:center;gap:10px;min-width:0}.o-sel{display:grid;place-items:center;padding:4px;margin:-4px;cursor:pointer}.o-sel input{width:18px;height:18px;accent-color:var(--amber);cursor:pointer}
+.gf-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.gf-l{min-width:70px;font-size:13px;color:var(--muted)}.gf-chk{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:14px}.gf-chk:has(input:checked){border-color:var(--amber);background:color-mix(in srgb,var(--amber) 12%,transparent)}.gf-chk input{width:16px;height:16px;accent-color:var(--amber)}#gfDef button:disabled{opacity:.35;cursor:not-allowed}
 .p-sel,.p-sel-h{width:118px;padding-inline-end:0!important}
 .p-drag{width:22px;height:30px;flex:none;display:grid;place-items:center;padding:0;border:0;background:none;color:var(--muted-2);cursor:grab;touch-action:none}.p-drag:hover{color:var(--ink)}.p-drag svg{width:16px;height:16px}
 .p-rank{min-width:24px;height:24px;padding:0 6px;border-radius:999px;display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted);background:var(--surface-2);border:1px solid var(--line);flex:none}
@@ -1071,7 +1072,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261029233804"></script>
+<script src="assets/config.js?v=20261030190944"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1335,7 +1336,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261029233804'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261030190944'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1978,7 +1979,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261029233804" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261030190944" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2012,7 +2013,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261029233804" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261030190944" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2053,7 +2054,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261029233804'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261029233804')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261030190944'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261030190944')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3585,6 +3586,13 @@ function renderSettings() {
         <button class="btn btn-primary" type="submit">حفظ</button>
       </form>
     </div>
+    ${(() => { const GF = RC.gf(s), L = { all: 'الكل', men: 'رجالي', women: 'حريمي' }; return `<div class="panel set-card" id="gfCard">
+      <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="14" r="4.5"/><path d="M12.2 10.8 18 5M14 5h4v4"/></svg></span><div><h2>فلتر رجالي / حريمي</h2><small>الزرار اللي فوق الساعات في الصفحة الرئيسية: اختار أنهي اختيارات تظهر وأنهي واحد يكون مختار أول ما الصفحة تفتح</small></div></div>
+      <div class="gf-row"><span class="gf-l">يظهر</span>${Object.entries(L).map(([g, t]) => `<label class="gf-chk"><input type="checkbox" data-gfs="${g}" ${GF.show.includes(g) ? 'checked' : ''}><span>${t}</span></label>`).join('')}</div>
+      <div class="gf-row"><span class="gf-l">الافتراضي</span><div class="seg" id="gfDef">${Object.entries(L).map(([g, t]) => `<button type="button" data-gfd="${g}" class="${GF.def === g ? 'on' : ''}" ${GF.show.includes(g) ? '' : 'disabled'}>${t}</button>`).join('')}</div></div>
+      <small class="hint">لو سبت اختيار واحد بس، الزرار هيختفي من الصفحة والمنتجات هتظهر على الاختيار ده.</small>
+      <div class="set-acts"><button type="button" class="btn btn-primary" id="gfSave">حفظ</button></div>
+    </div>`; })()}
     <div class="panel set-card" id="govCard">
       <div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><div><h2>المحافظات</h2><small>اختار المحافظات اللي بتشحن لها. العميل هيشوف المتاح بس وهو بيطلب.</small></div></div>
       <div class="gov-top"><span class="zone-tag" id="govCount">${govCount()}</span><button type="button" class="btn btn-sm btn-ghost" id="govAll">${govDraft.length === GOV.length ? 'إلغاء الكل' : 'كل المحافظات'}</button></div>
@@ -3613,6 +3621,16 @@ function renderSettings() {
     if (error) return toast(/orders_closed/.test(error.message) ? 'الخاصية دي محتاجة تحديث في Supabase' : error.message, 'err');
     Object.assign(settings, row); $('#ocSw').classList.toggle('on', !closed); $('#ocCard').classList.toggle('is-off', closed); $('#ocTxt').textContent = ocTxt(closed);
     toast(closed ? 'الطلبات اتقفلت 🔒' : 'الطلبات اتفتحت ✓', 'ok'); });
+  // الكل / رجالي / حريمي switch on the home page: what shows + what's picked first (settings.perks.gf)
+  const gfSync = () => { const on = [...document.querySelectorAll('[data-gfs]')].filter(c => c.checked).map(c => c.dataset.gfs);
+    document.querySelectorAll('[data-gfd]').forEach(b => { b.disabled = !on.includes(b.dataset.gfd); });
+    if (!document.querySelector('[data-gfd].on:not(:disabled)')) { document.querySelectorAll('[data-gfd]').forEach(b => b.classList.remove('on')); const f = document.querySelector('[data-gfd]:not(:disabled)'); if (f) f.classList.add('on'); } };
+  document.querySelectorAll('[data-gfs]').forEach(c => c.onchange = () => { if (![...document.querySelectorAll('[data-gfs]')].some(x => x.checked)) { c.checked = true; return toast('لازم اختيار واحد على الأقل', 'err'); } gfSync(); });
+  $('#gfDef').onclick = e => { const b = e.target.closest('[data-gfd]'); if (!b || b.disabled) return; document.querySelectorAll('[data-gfd]').forEach(x => x.classList.toggle('on', x === b)); };
+  $('#gfSave').onclick = () => once('gf', async () => {
+    const show = [...document.querySelectorAll('[data-gfs]')].filter(c => c.checked).map(c => c.dataset.gfs), d = document.querySelector('[data-gfd].on'), gf = { show, def: d ? d.dataset.gfd : show[0] };
+    const perks = { ...(settings.perks || {}), gf }; const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(error.message, 'err'); settings.perks = perks; toast('اتحفظ ✓ — هيظهر في الموقع على طول', 'ok'); });
   $('#ocSave').onclick = () => once('ocm', async () => {
     const msg = $('#ocMsg').value.trim();
     const {error} = await sb.from('shop_settings').update({ orders_closed_msg: msg || null, updated_at: new Date().toISOString() }).eq('id', 1);

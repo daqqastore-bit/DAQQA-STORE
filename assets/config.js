@@ -60,6 +60,10 @@ RC.optOut = (o) => !!(o && (o.out || o.soon));
 // an option can have up to 3 colours (o.c, o.c2, o.c3 — two-tone / tri-colour watches): 2 = split diagonally, 3 = three slices
 RC.sw = (o) => { const l = !o || !o.c ? [] : [o.c, o.c2, o.c3].filter(Boolean);
   return l.length > 2 ? `conic-gradient(${l[0]} 0 120deg,${l[1]} 0 240deg,${l[2]} 0)` : l.length > 1 ? `linear-gradient(135deg,${l[0]} 50%,${l[1]} 50%)` : l[0] || ''; };
+// the الكل / رجالي / حريمي switch on the home page: which of the 3 show and which one is picked first (Admin → Settings)
+RC.gf = (s) => { const f = ((s || {}).perks || {}).gf || {}, all = ['all', 'men', 'women'];
+  const show = Array.isArray(f.show) ? all.filter(g => f.show.includes(g)) : all, list = show.length ? show : all;
+  return { show: list, def: list.includes(f.def) ? f.def : list[0] }; };
 RC.optX = (o) => Math.max(0, Math.round(Number(o && o.x) || 0));
 RC.optExtra = (p, sel) => !sel ? 0 : RC.variants(p).reduce((s, g) => s + RC.optX(g.o.find(o => o.n === sel[g.k])), 0);
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
@@ -171,7 +175,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261029233804';
+RC.build = '20261030190944';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
