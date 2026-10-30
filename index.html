@@ -30,8 +30,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261029233804">
-<link rel="stylesheet" href="assets/store.css?v=20261029233804">
+<link rel="stylesheet" href="assets/base.css?v=20261030190944">
+<link rel="stylesheet" href="assets/store.css?v=20261030190944">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -189,8 +189,8 @@ html.ld-lite #ldDial{will-change:transform}html.ld-lite .nav-bar,html.ld-lite .f
 .s-find input{width:100%;height:44px;padding-inline:38px 40px;border-radius:999px;border:1px solid rgb(var(--accent-rgb)/.22);background:rgb(var(--accent-rgb)/.08);color:var(--strip-ink);font:inherit;font-size:13.5px;outline:0;transition:border-color .2s,box-shadow .2s}
 .s-find input::placeholder{color:var(--s-muted)}.s-find input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgb(var(--accent-rgb)/.15)}.s-find input::-webkit-search-cancel-button{display:none}
 .s-find button{position:absolute;inset-inline-end:8px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--s-muted)}.s-find button:hover{background:rgb(var(--accent-rgb)/.12);color:var(--strip-ink)}.s-find button svg{position:static;transform:none;width:14px;height:14px}.g-tools .sdd{min-width:150px}.g-tools .sdd-btn{height:44px;font-size:13.5px}
-.gseg{flex:none;position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:4px;border-radius:999px;background:rgb(var(--accent-rgb)/.08);box-shadow:inset 0 0 0 1px rgb(var(--accent-rgb)/.22)}
-.gs-thumb{position:absolute;top:4px;bottom:4px;right:4px;width:calc((100% - 8px) / 3);border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent-2,var(--accent)));box-shadow:0 6px 16px -6px rgb(var(--accent-rgb)/.7);transform:translateX(calc(var(--i,0) * -100%));transition:transform .38s cubic-bezier(.3,1.3,.5,1)}
+.gseg[hidden]{display:none}.gseg{flex:none;position:relative;display:grid;grid-template-columns:repeat(var(--n,3),1fr);padding:4px;border-radius:999px;background:rgb(var(--accent-rgb)/.08);box-shadow:inset 0 0 0 1px rgb(var(--accent-rgb)/.22)}
+.gs-thumb{position:absolute;top:4px;bottom:4px;right:4px;width:calc((100% - 8px) / var(--n,3));border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--accent-2,var(--accent)));box-shadow:0 6px 16px -6px rgb(var(--accent-rgb)/.7);transform:translateX(calc(var(--i,0) * -100%));transition:transform .38s cubic-bezier(.3,1.3,.5,1)}
 .gseg button{position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;min-width:92px;padding:0 14px;border-radius:999px;font-size:13.5px;color:var(--s-muted);transition:color .25s}
 .gseg button svg{width:15px;height:15px;flex:none;opacity:.8}
 .gseg button:hover{color:var(--strip-ink)}.gseg button.on{color:#fff;font-weight:700}.gseg button.on svg{opacity:1}
@@ -336,8 +336,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261029233804"></script>
-<script src="assets/app.js?v=20261029233804"></script>
+<script src="assets/config.js?v=20261030190944"></script>
+<script src="assets/app.js?v=20261030190944"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -549,7 +549,8 @@ function build() {
     const rank = s => { const i = K.styles.indexOf(s); return i < 0 ? 99 : i; };
     const styles = [...new Set(all.map(p => p.style).filter(Boolean))].sort((a, b) => rank(a) - rank(b));
     const sale = all.some(RC.onOffer);
-    state[k] = state[k] || { tab: 'all', all: false, g: ['men', 'women'].includes(gMem[k]) ? gMem[k] : 'all', s: S_OPTS.some(o => o[0] === sMem[k]) ? sMem[k] : 'default', q: typeof qMem[k] === 'string' ? qMem[k] : '' };
+    const GF = RC.gf(DQ.settings), gOpts = G_OPTS.filter(o => GF.show.includes(o[0]));
+    state[k] = state[k] || { tab: 'all', all: false, g: GF.show.includes(gMem[k]) ? gMem[k] : GF.def, s: S_OPTS.some(o => o[0] === sMem[k]) ? sMem[k] : 'default', q: typeof qMem[k] === 'string' ? qMem[k] : '' };
     return `<section class="kind ${i ? '' : 'section-first'}" id="${k}" aria-label="${K.ar}">
       <div data-glow class="banner op ${img.hero ? 'has-photo op-curtain op-zoom' : 'framed op-curtain'}" ${img.hero ? 'data-parallax' : ''}>${img.hero ? `<div class="bg" style="--img:url('${esc(img.hero)}')"></div>` : ''}
         <div class="wrap ${img.hero ? '' : 'bn-grid'}"><div class="txt op op-stagger">
@@ -561,7 +562,7 @@ function build() {
         </div>${img.hero ? '' : `<a class="frame op op-arch" href="${RC.productUrl(img.product)}" aria-label="${esc(img.product.name)}"><span class="fr-card"><span class="fr-tag en">FEATURED</span><img src="${esc(img.product.images[0])}" alt="${esc(img.product.name)}"></span><span class="fr-cap"><span><b>${esc(img.product.name)}</b><small>${DQ.priceTxt(img.product)}</small></span><i>${DQ.ICON.arrow}</i></span></a>`}</div></div>
       <div class="strip" data-glow id="${k}-shop"><div class="wrap strip-in">
         <div class="strip-head op op-stagger"><h3 class="en">${K.en}<small>${K.ar}</small></h3><button class="view-all" data-va="${k}"><span>عرض الكل</span> ${DQ.ICON.arrow}</button></div>
-        <div class="tabs-row"><div class="g-tools"><div class="gseg" role="group" aria-label="الفئة"><i class="gs-thumb" aria-hidden="true"></i>${G_OPTS.map(([g, l, ic]) => `<button type="button" data-g="${g}" data-k="${k}">${ic}<span>${l}</span></button>`).join('')}</div>
+        <div class="tabs-row"><div class="g-tools"><div class="gseg" role="group" aria-label="الفئة" style="--n:${gOpts.length}" ${gOpts.length < 2 ? 'hidden' : ''}><i class="gs-thumb" aria-hidden="true"></i>${gOpts.map(([g, l, ic]) => `<button type="button" data-g="${g}" data-k="${k}">${ic}<span>${l}</span></button>`).join('')}</div>
         <label class="s-find">${DQ.ICON.search}<input type="search" class="s-q" data-k="${k}" value="${esc(state[k].q)}" placeholder="دوّر بالاسم أو الوصف…" aria-label="بحث في ${K.ar}" autocomplete="off" enterkeyhint="search"><button type="button" class="s-qx" data-k="${k}" aria-label="مسح" ${state[k].q ? '' : 'hidden'}>${DQ.ICON.close}</button></label>
         <select class="s-sort" data-k="${k}" aria-label="ترتيب">${S_OPTS.map(([v, l]) => `<option value="${v}" ${state[k].s === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
         <div class="tabs op op-stagger" role="tablist">
