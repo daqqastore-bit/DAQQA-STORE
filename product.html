@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261030190944">
-<link rel="stylesheet" href="assets/store.css?v=20261030190944">
+<link rel="stylesheet" href="assets/base.css?v=20261030201829">
+<link rel="stylesheet" href="assets/store.css?v=20261030201829">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -201,8 +201,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261030190944"></script>
-<script src="assets/app.js?v=20261030190944"></script>
+<script src="assets/config.js?v=20261030201829"></script>
+<script src="assets/app.js?v=20261030201829"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -315,7 +315,8 @@ function render() {
   // watch options (dial, strap, case, movement): cards with the option's photo / colour and name; every group is required
   const vs = RC.variants(p);
   vs.forEach(g => { if (!g.o.some(o => o.n === sel[g.k] && !RC.optOut(o))) { if (g.o.length === 1 && !RC.optOut(g.o[0])) sel[g.k] = g.o[0].n; else delete sel[g.k]; } });
-  const optsBox = !vs.length || p.stock <= 0 ? '' : `<div class="pd-opts" id="opts"><p class="po-need">يجب اختيار الاختيارات الآتية</p>${vs.map(g => `<div class="po-g" data-g="${g.k}">
+  // Coming Soon: the buyer can still try the options and see each photo, there's just no add to cart
+  const optsBox = !vs.length || (p.stock <= 0 && !p.soon) ? '' : `<div class="pd-opts${p.soon ? ' po-preview' : ''}" id="opts"><p class="po-need">${p.soon ? 'جرّب الاختيارات وشوف الشكل · لسه مش متاحة للطلب' : 'يجب اختيار الاختيارات الآتية'}</p>${vs.map(g => `<div class="po-g" data-g="${g.k}">
       <div class="po-h"><span>${esc(g.ar)} <small class="en">${esc(g.en)}</small></span><b class="po-v">${sel[g.k] ? esc(sel[g.k]) : 'لازم تختار'}</b></div>
       <div class="po-cards ${g.o.some(o => o.img) ? 'ph' : ''}">${g.o.map(o => DQ.optCard(o, sel[g.k] === o.n)).join('')}</div>
     </div>`).join('')}</div>`;
@@ -445,19 +446,20 @@ function render() {
     const opt = () => vs.length ? { ...sel } : undefined;
     $('#addBtn').onclick = () => { if (!need()) DQ.addToCart(p.id, q, false, opt()); };
     $('#buyBtn').onclick = () => { if (need()) return; DQ.addToCart(p.id, q, true, opt()); DQ.openCart('checkout'); };
-    if ($('#opts')) {
-      DQ.optApply($('#opts'), p, sel, {});
-      $('#opts').addEventListener('click', e => { const b = e.target.closest('.po-card'); if (!b) return; const g = b.closest('.po-g').dataset.g, t = e.target.closest('[data-ti]');
-        // a small photo on the card: that photo shows (and picks the dial it belongs to); otherwise the photo that fits everything picked
-        const r = t ? DQ.optThumb(p, t) : null; if (DQ.optApply($('#opts'), p, sel, r ? r.picks : { [g]: b.dataset.o }) === false) return; if (r) { b.querySelector(':scope>img').src = r.u; b.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); }
-        const u = r ? r.u : RC.optPhoto(p, sel, g), k = u ? imgs.indexOf(u) : -1;
-        if (k >= 0) { slides.dispatchEvent(new Event('click')); go(k); } });
-      if (askOpts && !window._askedOpts) { window._askedOpts = 1; setTimeout(() => { $('#opts').scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast('اختار المواصفات اللي تعجبك وبعدين أضفها للسلة'); }, 500); }
-    }
     const sb = $('#sbar');
     sb.innerHTML = `<img ${DQ.thumb(p)} alt=""><div class="t"><b class="en">${esc(p.name)}</b>${DQ.priceHTML(p, RC.optExtra(p, sel), true)}</div><button class="btn btn-amber btn-sm" id="sbBuy">اطلب دلوقتي</button>`;
     $('#sbBuy').onclick = () => { if (need()) return; DQ.addToCart(p.id, q, true, opt()); DQ.openCart('checkout'); };
     new IntersectionObserver(([e]) => sb.classList.toggle('on', !e.isIntersecting && e.boundingClientRect.top < 0)).observe($('#buy'));
+  }
+  // options work on Coming Soon pieces too (try them and see the photo; no buying)
+  if ($('#opts')) {
+    DQ.optApply($('#opts'), p, sel, {});
+    $('#opts').addEventListener('click', e => { const b = e.target.closest('.po-card'); if (!b) return; const g = b.closest('.po-g').dataset.g, t = e.target.closest('[data-ti]');
+      // a small photo on the card: that photo shows (and picks the dial it belongs to); otherwise the photo that fits everything picked
+      const r = t ? DQ.optThumb(p, t) : null; if (DQ.optApply($('#opts'), p, sel, r ? r.picks : { [g]: b.dataset.o }) === false) return; if (r) { b.querySelector(':scope>img').src = r.u; b.querySelectorAll('[data-ti]').forEach(x => x.classList.toggle('on', x === t)); }
+      const u = r ? r.u : RC.optPhoto(p, sel, g), k = u ? imgs.indexOf(u) : -1;
+      if (k >= 0) { slides.dispatchEvent(new Event('click')); go(k); } });
+    if (askOpts && !window._askedOpts) { window._askedOpts = 1; setTimeout(() => { $('#opts').scrollIntoView({ behavior: 'smooth', block: 'center' }); DQ.toast('اختار المواصفات اللي تعجبك وبعدين أضفها للسلة'); }, 500); }
   }
   $('#shareBtn').onclick = async () => {
     try { if (navigator.share) { await navigator.share({ title: p.name + ' | DAQQA', url }); return; } } catch (e) { return; }
