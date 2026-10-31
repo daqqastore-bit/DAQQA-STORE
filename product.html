@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261031224216">
-<link rel="stylesheet" href="assets/store.css?v=20261031224216">
+<link rel="stylesheet" href="assets/base.css?v=20261031224518">
+<link rel="stylesheet" href="assets/store.css?v=20261031224518">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -39,6 +39,11 @@
 .slides::-webkit-scrollbar{display:none}
 .slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:var(--ar,1);overflow:hidden;position:relative;cursor:zoom-in}
 .slide img{width:100%;height:100%;object-fit:contain;transition:transform .2s ease-out}
+.zm-lens{position:absolute;z-index:3;pointer-events:none;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.18);box-shadow:0 0 0 1px rgba(0,0,0,.25);border-radius:6px;opacity:0;transition:opacity .15s}
+.zm-lens.on{opacity:1}
+.zm-pane{position:fixed;z-index:70;pointer-events:none;border-radius:18px;border:1px solid var(--line);background-color:var(--bg);background-repeat:no-repeat;box-shadow:0 24px 60px rgba(0,0,0,.35);opacity:0;transform:scale(.98);transition:opacity .18s,transform .18s}
+.zm-pane.on{opacity:1;transform:none}
+@media (hover:hover) and (pointer:fine) and (min-width:900px){.slide{cursor:crosshair}}
 .has-arr .gal-arr{position:absolute;top:50%;z-index:3;width:38px;height:38px;margin-top:-19px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 82%,transparent);color:var(--ink);border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.12);backdrop-filter:blur(6px);opacity:.75;transition:opacity .2s,transform .2s}
 .has-arr .gal-arr svg{width:18px;height:18px}
 .has-arr .gal-arr.ga-n{left:12px}.has-arr .gal-arr.ga-p{right:12px}
@@ -201,8 +206,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261031224216"></script>
-<script src="assets/app.js?v=20261031224216"></script>
+<script src="assets/config.js?v=20261031224518"></script>
+<script src="assets/app.js?v=20261031224518"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -416,7 +421,35 @@ function render() {
     slides.addEventListener('click', quit); slides.addEventListener('touchstart', quit, { passive: true }); slides.addEventListener('wheel', quit, { passive: true });
     if ($('#thumbs')) $('#thumbs').addEventListener('click', quit);
   }
-  slides.querySelectorAll('.slide').forEach((sl, k) => sl.onclick = () => viewer(imgs, k, p.name));
+  // computers (mouse): hovering the photo shows a lens on it and that part magnified beside it; no viewer on click
+  // phones/touch: tapping opens the full-screen viewer as before
+  const zoomOK = () => matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px)').matches;
+  slides.querySelectorAll('.slide').forEach((sl, k) => sl.onclick = () => { if (!zoomOK()) viewer(imgs, k, p.name); });
+  {
+    const host = slides.parentElement, Z = 2.5;
+    const lens = document.createElement('div'); lens.className = 'zm-lens'; host.appendChild(lens);
+    const pane = document.querySelector('body > .zm-pane') || document.body.appendChild(Object.assign(document.createElement('div'), { className: 'zm-pane' }));
+    const hide = () => { lens.classList.remove('on'); pane.classList.remove('on'); };
+    slides.addEventListener('pointermove', e => {
+      if (!zoomOK() || e.pointerType !== 'mouse') return hide();
+      const im = e.target.closest('.slide') && e.target.closest('.slide').querySelector('img'); if (!im || !im.naturalWidth) return hide();
+      // where the photo really sits inside its frame (object-fit: contain)
+      const r = im.getBoundingClientRect(), sc = Math.min(r.width / im.naturalWidth, r.height / im.naturalHeight), dw = im.naturalWidth * sc, dh = im.naturalHeight * sc;
+      const ix = r.left + (r.width - dw) / 2, iy = r.top + (r.height - dh) / 2;
+      if (e.clientX < ix || e.clientX > ix + dw || e.clientY < iy || e.clientY > iy + dh) return hide();
+      // the magnified pane: same height as the photo frame, beside it on whichever side has room
+      const hr = host.getBoundingClientRect(), pw = Math.min(hr.width, Math.max(innerWidth - hr.right, hr.left) - 40), ph = hr.height;
+      if (pw < 240) return hide();
+      const left = hr.left > innerWidth - hr.right ? hr.left - pw - 24 : hr.right + 24;
+      const lw = Math.min(dw, pw / Z), lh = Math.min(dh, ph / Z);
+      const lx = Math.max(ix, Math.min(ix + dw - lw, e.clientX - lw / 2)), ly = Math.max(iy, Math.min(iy + dh - lh, e.clientY - lh / 2));
+      Object.assign(lens.style, { width: lw + 'px', height: lh + 'px', left: lx - hr.left + 'px', top: ly - hr.top + 'px' });
+      Object.assign(pane.style, { width: pw + 'px', height: ph + 'px', left: left + 'px', top: hr.top + 'px', backgroundImage: `url("${im.currentSrc || im.src}")`,
+        backgroundSize: `${dw * Z}px ${dh * Z}px`, backgroundPosition: `${-(lx - ix) * Z}px ${-(ly - iy) * Z}px` });
+      lens.classList.add('on'); pane.classList.add('on');
+    });
+    slides.addEventListener('pointerleave', hide); addEventListener('scroll', hide, { passive: true });
+  }
   // a colour swatch jumps to the photo linked to it in the admin
   document.querySelectorAll('.pd-colors [data-pick]').forEach(b => b.onclick = () => { const k = imgs.indexOf(RC.colorImg(p, b.dataset.pick)); if (k < 0) return;
     slides.dispatchEvent(new Event('click')); go(k); document.querySelectorAll('.pd-colors [data-pick]').forEach(x => x.classList.toggle('on', x === b)); });
