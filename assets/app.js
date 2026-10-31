@@ -3,6 +3,8 @@
   const { money, finalPrice, discountPct, esc, categories } = RC;
   // sessions are kept so a signed-in customer stays signed in and their orders are linked to them
   const sb = supabase.createClient(RC.url, RC.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  // products + settings are public: read them without the visitor's login, so an expired/stuck login (or a refresh that fails) can never block the shop from loading
+  const sbPub = supabase.createClient(RC.url, RC.key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: 'dq-pub' } });
   const $ = (s, r = document) => r.querySelector(s);
   const FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#20160E"/><circle cx="200" cy="200" r="84" fill="none" stroke="#4A3828" stroke-width="10"/><path d="M200 200V140M200 200L250 250" stroke="#4A3828" stroke-width="8" stroke-linecap="round"/></svg>');
   const ICON = {
@@ -391,12 +393,23 @@
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };
   DQ.useCache = c => { DQ.dataSig = c.sig; apply(c.p, c.s); };
-  DQ.load = async () => {
+  const loadOnce = async () => {
     const [p, s] = await Promise.all([
-      sb.from('shop_products').select('*').eq('active', true).order('sort').order('id'),
-      sb.from('shop_settings').select('*').eq('id', 1).maybeSingle()
+      sbPub.from('shop_products').select('*').eq('active', true).order('sort').order('id'),
+      sbPub.from('shop_settings').select('*').eq('id', 1).maybeSingle()
     ]);
     if (p.error) throw p.error;
+    if (s.error) throw s.error;
+    return [p, s];
+  };
+  DQ.load = async () => {
+    // a weak/flaky line: try again a couple of times before giving up
+    let r, err;
+    for (let i = 0; i < 3; i++) {
+      try { r = await loadOnce(); break; } catch (e) { err = e; if (i < 2) await new Promise(ok => setTimeout(ok, 1200 * (i + 1))); }
+    }
+    if (!r) throw err;
+    const [p, s] = r; DQ.loadError = false;
     const sig = JSON.stringify([p.data, s.data]), same = sig === DQ.dataSig; DQ.dataSig = sig;
     try { localStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), sig, p: p.data || [], s: s.data || {} })); } catch (e) {}
     apply(p.data, s.data);
@@ -1214,9 +1227,24 @@
     }
     try { await cap(DQ.load(), 15000); } catch (e) { console.error(e); DQ.loadError = true; }
     DQ._ready = onReady; onReady && onReady(); restoreY();
+    if (DQ.loadError || !DQ.products.length) retryLoad();
     await cap(Promise.all([document.fonts ? document.fonts.ready : null, firstImages()]), 3500);
     window.DQ_reveal(); live();
   };
+
+  // first load failed (no data yet): keep retrying quietly and show the shop as soon as it comes through, no refresh needed
+  let retryT = 0, retryN = 0;
+  function retryLoad(now) {
+    clearTimeout(retryT); if (!now && retryN > 40) return;
+    retryT = setTimeout(async () => {
+      retryN++;
+      try { await DQ.load(); } catch (e) { if (DQ.loadError) return retryLoad(); }
+      try { DQ._ready && DQ._ready(); } catch (e) { console.error(e); } DQ.reveal();
+      if (!DQ.products.length && retryN < 4) retryLoad();
+    }, now ? 0 : Math.min(3000 + retryN * 1500, 15000));
+  }
+  DQ.retryLoad = () => { retryN = 0; retryLoad(true); };
+  addEventListener('online', () => { if (DQ.loadError) DQ.retryLoad(); });
 
   /* ---------- live: what the admin saves (products, prices, covers, settings) and every new site version show up for visitors without a reload ---------- */
   // never swap things under someone who is ordering or typing
