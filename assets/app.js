@@ -853,7 +853,7 @@
     if (error) { btn.disabled = false; btn.classList.remove('sending'); btn.removeAttribute('aria-label'); btn.textContent = label; DQ.toast(error.message || 'حصل خطأ، جرّب تاني', 'err'); if (/كود الخصم/.test(error.message || '')) setCoupon(null); DQ.load(); return; }
     const ls = lines(), cpUsed = +data.coupon_off ? { ...DQ.coupon, off: +data.coupon_off } : null; DQ.cart = []; saveCart(); coState = 'done'; setCoupon(null); coLoc = ''; coAddr = '';
     notifyOrder(data, d, ls, cpUsed);
-    DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name + optLine(l), qty: l.qty, image: (l.p.images || [])[0] || '' })) });
+    DQ.rememberOrder({ code: data.code, phone: d.phone, total: data.total, at: new Date().toISOString(), status: 'new', items: ls.map(l => ({ name: l.p.name, qty: l.qty, image: (l.opt && RC.optPhoto(l.p, l.opt)) || (l.p.images || [])[0] || '', options: l.opt ? RC.variants(l.p).map(g => { const o = g.o.find(x => x.n === l.opt[g.k]); return o ? { k: g.k, g: g.ar, v: o.n, c: o.c || null } : null; }).filter(Boolean) : null })) });
     $('#cartCount').classList.remove('show'); $('#coPage').classList.remove('shown');
     const ask = encodeURIComponent(`أهلاً DAQQA\nعايز أستفسر عن طلبي رقم ${data.code}`);
     $('#coMain').innerHTML = `<ol class="co-steps"><li class="done"><i>${ICON.bag}</i>Shopping Cart</li><li class="done"><i>✓</i>بيانات التوصيل</li><li class="cur"><i>3</i>تأكيد الطلب</li></ol>
@@ -861,7 +861,7 @@
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
         <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
         <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام${cpUsed ? `<br><span class="cd-cp">تم خصم <b class="en">${money(cpUsed.off)}</b> بكود <b class="en">${esc(cpUsed.code)}</b></span>` : ''}</p>
-        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
+        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}${aoBody((mine()[0] || {}).code === data.code ? mine()[0] : {})}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
         <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
         <div class="cd-acts">${DQ.wa() ? `<a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}">${WA_ICON}استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
     $('#cdMore').onclick = () => DQ.closeCheckout();
@@ -972,11 +972,14 @@
     return `${waAsk(code)}${ph && RC.socialHref(ph) ? `<a class="btn btn-ghost ao-call" href="${esc(RC.socialHref(ph))}">${RC.SOCIAL.phone.icon}اتصل بخدمة العملاء</a>` : ''}`; };
   const endBox = o => byShop(o) ? `<div class="ao-end shop"><b>تم إلغاء الطلب من قِبل DAQQA</b><p>لو عندك أي استفسار تواصل مع خدمة العملاء على واتساب أو بالتليفون.</p><div class="ao-end-acts">${contactBtns(o.code)}</div></div>`
     : `<div class="ao-end"><b>إنت لغيت الطلب ده</b>${o.cancelled_at ? `<p class="en" dir="ltr">${RC.when(o.cancelled_at)}</p>` : ''}</div>`;
+  // the pieces of an order + the buyer's options; options the shop changed after a call are marked, with one notice under them
+  const aoBody = o => { const its = o.items || o.shop_order_items || [], chg = its.some(i => (i.options || []).some(x => x && x.chg));
+    return `<div class="ao-body"><div class="ao-items">${its.map(i => `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>${(i.options || []).length ? `<div class="ao-ops">${i.options.map(x => `<span class="ao-op${x.chg ? ' chg' : ''}">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.g)}: <b>${esc(x.v)}</b></span>`).join('')}</div>` : ''}`).join('')}</div>
+      ${chg ? '<div class="ao-chg">تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول</div>' : ''}</div>`; };
+  const optSig = its => JSON.stringify((its || []).map(i => (i.options || []).map(x => x.v)));
   const orderCard = o => `<div class="acc-order${['cancelled', 'removed'].includes(o.status) ? ' ended' : ''}" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
       ${['cancelled', 'removed'].includes(o.status) ? endBox(o) : DQ.tracker(o.status)}
-      <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => { const ch = (i.options || []).some(x => x && x.chg);
-        return `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>${ch ? `<div class="ao-ops">${i.options.map(x => `<span class="ao-op${x.chg ? ' chg' : ''}">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.g)}: <b>${esc(x.v)}</b></span>`).join('')}</div>` : ''}`; }).join('')}</div>
-      ${(o.items || o.shop_order_items || []).some(i => (i.options || []).some(x => x && x.chg)) ? '<div class="ao-chg">تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول</div>' : ''}
+      ${aoBody(o)}
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
       <div class="ao-acts">${byShop(o) ? '' : waAsk(o.code)}${cancelBtn(o.code, o.status)}${ENDED.includes(o.status) ? `<button type="button" class="ao-del" data-odel="${esc(o.code)}">مسح من طلباتي</button>` : ''}</div></div>`;
   // green WhatsApp button with the order number already written in the message
@@ -1059,6 +1062,12 @@
       const c = el.querySelector('.ao-cancel'); if (c && !CANCELABLE.includes(st)) c.remove(); });
     if (was !== st) DQ.toast(st === 'delivered' ? `تم تسليم طلبك ${code} — نتمنى تكون مبسوط بالخدمة` : `طلبك ${code}: ${STATUS[st] || st}`, 'ok');
   }
+  // the shop changed the buyer's options → refresh the pieces on every card + tell the customer once
+  function applyItems(code, items, tell) {
+    const l = mine(), o = l.find(x => x.code === code); if (o) { o.items = items; saveMine(l); }
+    document.querySelectorAll(`.acc-order[data-trk="${CSS.escape(code)}"] .ao-body`).forEach(el => { el.outerHTML = aoBody({ items }); });
+    if (tell && items.some(i => (i.options || []).some(x => x && x.chg))) DQ.toast(`طلبك ${code}: تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول`, 'ok');
+  }
   // live for signed-in customers (realtime) + light polling for orders on this device
   let myCh = null;
   function liveOrders(u) {
@@ -1071,6 +1080,7 @@
       let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {}
       if (r && !r.error && !r.data) applyStatus(o.code, 'removed');
       else if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status, r.data.cancelled_by);
+      if (r && r.data && Array.isArray(r.data.items) && r.data.items.some(i => i.options) && optSig(r.data.items) !== optSig(o.items)) applyItems(o.code, r.data.items, true);
     }
   }
   // every 6s while a tracker is on screen (the order-done page, «حسابي»), otherwise every 90s
