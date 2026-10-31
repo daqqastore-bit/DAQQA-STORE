@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261031180008">
+<link rel="stylesheet" href="assets/base.css?v=20261031200801">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1087,7 +1087,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261031180008"></script>
+<script src="assets/config.js?v=20261031200801"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1292,9 +1292,11 @@ async function loadSettings() { const {data} = await sb.from('shop_settings').se
 function listen() {
   if (channel) sb.removeChannel(channel);
   channel = sb.channel('rc-orders').on('postgres_changes', {event:'INSERT', schema:'public', table:'shop_orders'}, async payload => {
-    freshIds.add(payload.new.id); cash(); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); desktopNotify(payload.new);
+    freshIds.add(payload.new.id); cash(); toast(`طلب جديد ${oLbl(payload.new)}`, 'ok'); const st0 = Object.fromEntries(products.map(p => [p.id, p.stock]));
     await Promise.all([loadOrders(), loadProducts(), payload.new && payload.new.user_id && !mailOf(payload.new.user_id) ? loadUsers() : null]); renderTabs(); go(tab, true);
-    const no = orders.find(x => x.id === payload.new.id); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
+    // the desktop alert waits for the saved order: on insert its total is still 0 (the items are added right after)
+    const no = orders.find(x => x.id === payload.new.id); desktopNotify(no || payload.new);
+    products.forEach(p => { if (p.stock != null && st0[p.id] != null && p.stock < st0[p.id] && p.stock <= LOW_STK) lowNotify(p); }); if (no) { sheetOrder(no); const pc = pastCancels(no); if (pc.length) setTimeout(() => toast(`⚠ رقم ${no.customer_name} عليه ${pc.length === 1 ? 'طلب' : pc.length + ' طلبات'} اتلغى قبل كدا (آخرها ${RC.when(cxAt(pc[0]))})`, 'err'), 1600); }
   }).on('postgres_changes', {event:'UPDATE', schema:'public', table:'shop_settings'}, payload => {
     // a fake-notification run started / stopped from another device reaches this dashboard too
     if (!payload.new || !payload.new.perks) return; const hl0 = JSON.stringify((settings.perks || {}).hl || {}); settings.perks = payload.new.perks; fkAdmRun(); if (tab === 'fake') renderFake();
@@ -1343,6 +1345,13 @@ async function askNotify() {
   b.onclick = e => { if (e.target.closest('[data-later]')) { try { localStorage.setItem('dq-push-later', 1) } catch (er) {} b.remove(); return; } enablePush(); }; document.body.appendChild(b);
 }
 let pushActive = false;
+// stock went down to 10 or fewer after an order: toast here + a desktop alert (phones with push get it from the server)
+function lowNotify(p) {
+  const t = p.stock === 0 ? `خلص ${p.name} من المخزون` : `فاضل ${p.stock} من ${p.name} في المخزون`;
+  setTimeout(() => toast('⚠ ' + t, 'err'), 1200);
+  if (pushActive || !('Notification' in window) || Notification.permission !== 'granted') return;
+  try { const n = new Notification(t + ' — DAQQA', { icon: 'assets/icon-512.png', tag: 'dq-low-' + p.id }); n.onclick = () => { window.focus(); n.close(); }; } catch (e) {}
+}
 function desktopNotify(o) {
   // with push on, the notification comes from sw.js (works with the dashboard closed too), so no second one here
   if (pushActive || !('Notification' in window) || Notification.permission !== 'granted') return;
@@ -1351,7 +1360,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261031180008'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261031200801'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1999,7 +2008,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261031180008" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261031200801" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2033,7 +2042,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261031180008" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261031200801" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2074,7 +2083,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261031180008'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261031180008')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261031200801'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261031200801')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
