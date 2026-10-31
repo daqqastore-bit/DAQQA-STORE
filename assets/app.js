@@ -974,7 +974,9 @@
     : `<div class="ao-end"><b>إنت لغيت الطلب ده</b>${o.cancelled_at ? `<p class="en" dir="ltr">${RC.when(o.cancelled_at)}</p>` : ''}</div>`;
   const orderCard = o => `<div class="acc-order${['cancelled', 'removed'].includes(o.status) ? ' ended' : ''}" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
       ${['cancelled', 'removed'].includes(o.status) ? endBox(o) : DQ.tracker(o.status)}
-      <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>`).join('')}</div>
+      <div class="ao-items">${(o.items || o.shop_order_items || []).map(i => { const ch = (i.options || []).some(x => x && x.chg);
+        return `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>${ch ? `<div class="ao-ops">${i.options.map(x => `<span class="ao-op${x.chg ? ' chg' : ''}">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.g)}: <b>${esc(x.v)}</b></span>`).join('')}</div>` : ''}`; }).join('')}</div>
+      ${(o.items || o.shop_order_items || []).some(i => (i.options || []).some(x => x && x.chg)) ? '<div class="ao-chg">تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول</div>' : ''}
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
       <div class="ao-acts">${byShop(o) ? '' : waAsk(o.code)}${cancelBtn(o.code, o.status)}${ENDED.includes(o.status) ? `<button type="button" class="ao-del" data-odel="${esc(o.code)}">مسح من طلباتي</button>` : ''}</div></div>`;
   // green WhatsApp button with the order number already written in the message
@@ -1175,7 +1177,7 @@
       <h4 class="acc-h">طلباتي</h4><div id="accOrders"><div class="acc-empty">جاري التحميل…</div></div>
       <button class="btn btn-ghost acc-out" id="accOut">تسجيل خروج</button>`;
     $('#accOut').onclick = async () => { await sb.auth.signOut({ scope: 'local' }); DQ.toast('اتسجل الخروج'); };
-    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,cancelled_by,shop_order_items(name,qty,image)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
+    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,cancelled_by,shop_order_items(name,qty,image,options)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
     const el = $('#accOrders'); if (!el) return;
     const acc = error ? [] : data.filter(shown), extra = await trackLocal(acc.map(o => o.code));
     const all = [...acc, ...extra].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
