@@ -414,6 +414,11 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .ao-items span{display:flex;align-items:center;gap:8px}
 .ao-items img{width:34px;height:34px;border-radius:8px;object-fit:cover;flex:none}
 .ao-items em{font-style:normal}
+.ao-ops{display:flex;flex-wrap:wrap;gap:5px;margin:-2px 0 2px}
+.ao-op{display:inline-flex!important;align-items:center;gap:5px!important;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.ao-op i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+.ao-op b{color:inherit;font-weight:600}.ao-op.chg{color:#c9964f;border-color:currentColor}
+.ao-chg{font-size:13px;line-height:1.6;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#c9964f 12%,transparent);color:#c9964f;font-weight:600}
 .acc-out{margin-top:6px}
 #accSheet .wrap{width:100%;box-sizing:border-box}
 @media (max-width:480px){.actions{gap:4px}.actions .icon-btn{width:36px;height:36px}.actions .icon-btn svg{width:18px;height:18px}}
