@@ -76,12 +76,14 @@ RC.dotsHTML = (p, cls = 'sw') => { const d = RC.cardDots(p); if (!d.length) retu
   return `<div class="${cls}">${d.map(x => x.img ? `<button type="button" class="swb" data-pick="${RC.esc(x.c)}" data-img="${RC.esc(x.img)}" style="--c:${RC.esc(x.c)};background:${RC.esc(RC.sw(x))}" title="${RC.esc(x.n)}" aria-label="شوف ${RC.esc(x.n)}"></button>` : `<i style="--c:${RC.esc(x.c)};background:${RC.esc(RC.sw(x))}" title="${RC.esc(x.n)}"></i>`).join('')}</div>`; };
 RC.optImgs = (p, o) => !o ? [] : o.imgs && o.imgs.length ? o.imgs : o.c && RC.colorImg(p, o.c) ? [RC.colorImg(p, o.c)] : [];
 RC.optPhoto = (p, sel, last) => {
-  const vs = RC.variants(p), sets = vs.map(g => RC.optImgs(p, g.o.find(o => o.n === (sel || {})[g.k]))).filter(s => s.length);
+  const vs = RC.variants(p), set = g => RC.optImgs(p, g.o.find(o => o.n === (sel || {})[g.k]));
+  // start from the group just picked (or the first one), then narrow by every other group that shares a photo with it
+  // (a group with no shared photo — e.g. the case-back shot — is skipped, so the steel strap still shows the black-dial photo)
+  const lg = last && vs.find(g => g.k === last), sets = [lg, ...vs.filter(g => g !== lg)].filter(Boolean).map(set).filter(s => s.length);
   if (!sets.length) return null;
-  const both = sets.reduce((a, s) => a.filter(u => s.includes(u)));
-  if (both.length) return both[0];
-  const lg = last && vs.find(g => g.k === last), ls = lg ? RC.optImgs(p, lg.o.find(o => o.n === (sel || {})[last])) : [];
-  return ls[0] || sets[0][0]; };
+  let cur = sets[0];
+  sets.slice(1).forEach(s => { const x = cur.filter(u => s.includes(u)); if (x.length) cur = x; });
+  return cur[0]; };
 // options can be linked across groups: o.links = {dial: [...], strap: [...], movement: [...]} lists what it goes with in that group
 // (an empty or missing list = goes with everything there). Old products kept the dial list as o.dials.
 RC.optLinks = (o, k) => { const l = o && ((o.links && o.links[k]) || (k === 'dial' && o.dials)); return Array.isArray(l) && l.length ? l : null; };
@@ -175,7 +177,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261031222058';
+RC.build = '20261031224216';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
