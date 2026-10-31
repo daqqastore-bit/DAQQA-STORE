@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261031174316">
+<link rel="stylesheet" href="assets/base.css?v=20261031174652">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -123,6 +123,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .o-top .who span{font:12px var(--f-ui);color:var(--muted);direction:ltr;display:inline-block}
 .o-top .who .o-mail{display:block;width:max-content;max-width:100%;margin-top:3px;padding:1px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--ink);font-size:11.5px;overflow:hidden;text-overflow:ellipsis}
 .o-top .who .o-guest{display:block;width:max-content;margin-top:3px;font-size:11px;color:var(--muted);direction:rtl}
+.seg .of-arch{display:inline-flex;align-items:center;gap:6px}
 .o-top .who .rep-chip,.o-top .who .warn-chip{display:block;width:max-content;margin:5px 0 0}
 .ch-mail{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}.ch-mail span{padding:3px 10px;border-radius:999px;background:var(--surface,var(--bg));border:1px solid var(--line);font-size:12px;color:var(--ink)}
 .cu-mail{font-size:12px;color:var(--accent);margin-top:2px}
@@ -1084,7 +1085,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261031174316"></script>
+<script src="assets/config.js?v=20261031174652"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1348,7 +1349,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261031174316'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261031174652'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1373,7 +1374,7 @@ const oLbl = o => [oNum(o), o.code].filter(Boolean).join(' · ');
 
 /* ---------- nav ---------- */
 function renderTabs() {
-  const nNew = lux => orders.filter(o => o.status === 'new' && isLuxOrder(o) === lux).length;
+  const nNew = lux => orders.filter(o => o.status === 'new' && !o.archived_at && isLuxOrder(o) === lux).length;
   const ic = k => ICONS[k] || ICONS[k.replace('lux-', '')] || ICONS.lux;
   const btn = ([k, l]) => { const n = k === 'orders' ? nNew(false) : k === 'lux-orders' ? nNew(true) : 0; return `<button class="tab ${k===tab?'on':''} ${k.startsWith('lux') ? 'tab-lux' : ''}" data-tab="${k}">${ic(k)}<span>${l}</span>${n ? `<span class="pill en">${n}</span>` : ''}</button>`; };
   $('#tabs').innerHTML = TABS.map(t => t[0] === '_h' ? `<div class="tab-h ${t[2] || ''}">${t[1] ? `<span class="${t[2] ? 'en' : ''}">${t[1]}</span>` : ''}</div>` : btn(t)).join('');
@@ -1863,12 +1864,15 @@ function ofApply(list, q) {
   return by ? out.sort(by) : out;
 }
 function renderOrders() {
-  const LUXT = tab === 'lux-orders', ORD0 = orders.filter(o => isLuxOrder(o) === LUXT), ORD = ORD0.filter(o => (orderKind === 'all' || orderHasKind(o, orderKind)) && (orderGen === 'all' || orderHasGen(o, orderGen)) && (orderProd === 'all' || (o.shop_order_items || []).some(i => String(i.product_id) === orderProd)));
+  const LUXT = tab === 'lux-orders', ARCV = orderFilter === 'arch', qq = orderQuery.trim().toLowerCase();
+  // archived orders only show in «الأرشيف» (or when opened by their exact code)
+  const nArch = orders.filter(o => o.archived_at && isLuxOrder(o) === LUXT).length;
+  const ORD0 = orders.filter(o => isLuxOrder(o) === LUXT && (ARCV ? !!o.archived_at : !o.archived_at || (qq && String(o.code).toLowerCase() === qq))), ORD = ORD0.filter(o => (orderKind === 'all' || orderHasKind(o, orderKind)) && (orderGen === 'all' || orderHasGen(o, orderGen)) && (orderProd === 'all' || (o.shop_order_items || []).some(i => String(i.product_id) === orderProd)));
   // every product that was ever ordered here, most ordered first (deleted products keep the name saved on the order)
   const PROD = {}; ORD0.forEach(o => new Set((o.shop_order_items || []).map(i => String(i.product_id))).forEach(id => { const it = o.shop_order_items.find(i => String(i.product_id) === id); PROD[id] = PROD[id] || { name: (products.find(p => String(p.id) === id) || it).name, n: 0 }; PROD[id].n++; }));
   const prodOpts = Object.entries(PROD).sort((a, b) => b[1].n - a[1].n);
   const q = orderQuery.trim().toLowerCase();
-  const byQ = ORD.filter(o => (orderFilter === 'all' || o.status === orderFilter) && (!q || [o.code, oNum(o), o.customer_name, o.phone, o.city, mailOf(o.user_id), ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
+  const byQ = ORD.filter(o => (orderFilter === 'all' || ARCV || o.status === orderFilter) && (!q || [o.code, oNum(o), o.customer_name, o.phone, o.city, mailOf(o.user_id), ...(o.shop_order_items || []).map(i => i.name)].join(' ').toLowerCase().includes(q)));
   const list = ofApply(byQ, q), nOn = ofOn();
   const cities = [...new Set(ORD.map(o => o.city).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ar'));
   const osel = (k, label, opts, cls = '') => `<label class="pf-f${cls}"><span>${label}</span><select class="input" data-ofl="${k}">${opts.map(([v, t]) => `<option value="${esc(v)}" ${OF[k] === v ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
@@ -1881,7 +1885,7 @@ function renderOrders() {
       <select class="input ord-prod" id="opSel" aria-label="فلتر بالمنتج"><option value="all">كل المنتجات</option>${prodOpts.map(([id, v]) => `<option value="${id}" ${orderProd === id ? 'selected' : ''}>${esc(v.name)} (${v.n})</option>`).join('')}</select>
       <div class="seg" id="ogSeg">${[['all','الكل'],['men','رجالي'],['women','حريمي']].map(([g, l]) => `<button data-og="${g}" class="${orderGen===g?'on':''}">${l}${g === 'all' ? '' : ` <span class="en">${ORD0.filter(o => orderHasGen(o, g)).length}</span>`}</button>`).join('')}</div></div>
     <div class="toolbar">
-      <div class="seg" id="ordSeg"><button data-of="all" class="${orderFilter==='all'?'on':''}">الكل</button>${stShown(ORD).map(k => `<button data-of="${k}" class="${orderFilter===k?'on':''}">${statuses[k]} <span class="en">${counts[k]}</span></button>`).join('')}</div>
+      <div class="seg" id="ordSeg"><button data-of="all" class="${orderFilter==='all'?'on':''}">الكل</button>${stShown(ARCV ? orders.filter(o => isLuxOrder(o) === LUXT && !o.archived_at) : ORD).map(k => `<button data-of="${k}" class="${orderFilter===k?'on':''}">${statuses[k]}${ARCV ? '' : ` <span class="en">${counts[k]}</span>`}</button>`).join('')}${nArch || ARCV ? `<button data-of="arch" class="of-arch ${ARCV ? 'on' : ''}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="5" rx="1.5"/><path d="M5 9v9a2 2 0 002 2h10a2 2 0 002-2V9M10 13h4"/></svg>الأرشيف <span class="en">${nArch}</span></button>` : ''}</div>
       <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="oq" placeholder="بحث بالاسم أو الرقم أو الكود أو المنتج" value="${esc(orderQuery)}"></label>
     </div>
     <div class="pf-bar o-fb${OF.open ? ' open' : ''}">
@@ -1895,10 +1899,11 @@ function renderOrders() {
     </div>
     ${list.length ? `<div class="inv-bar o-bulk${nSel ? ' has' : ''}">
       <label class="inv-all"><input type="checkbox" id="oAll" ${list.every(o => ordSel.has(o.id)) ? 'checked' : ''}><span>تحديد <i>الكل</i></span></label>
-      <span class="inv-n">${nSel ? `<b class="en">${nSel}</b> متحدد` : 'علّم على الطلبات عشان تغيّر حالتها أو تمسحها مع بعض'}</span>
+      <span class="inv-n">${nSel ? `<b class="en">${nSel}</b> متحدد` : ARCV ? 'علّم على الطلبات عشان ترجّعها من الأرشيف' : 'علّم على الطلبات عشان تغيّر حالتها أو تأرشفها أو تمسحها مع بعض'}</span>
       <div class="inv-acts"><select class="input" id="oBulkSt" ${nSel ? '' : 'disabled'} aria-label="الحالة الجديدة"><option value="">نقل لحالة…</option>${STATUS_KEYS.map(k => `<option value="${k}">${statuses[k]}</option>`).join('')}</select>
+        <button type="button" class="btn btn-ghost btn-sm" id="oBulkArch" ${nSel ? '' : 'disabled'}>${ARCV ? 'رجّع من الأرشيف' : 'أرشفة'}${nSel ? ` <span class="en">(${nSel})</span>` : ''}</button>
         <button type="button" class="btn btn-danger btn-sm" id="oBulkDel" ${nSel ? '' : 'disabled'}>حذف${nSel ? ` <span class="en">(${nSel})</span>` : ''}</button></div></div>` : ''}
-    <div class="orders">${list.length ? list.map(orderHTML).join('') : `<div class="panel empty">${byQ.length ? 'مفيش طلبات بالفلاتر دي. <button type="button" class="vo-mini" data-ofclear>امسح الفلاتر</button>' : 'مفيش طلبات هنا.'}</div>`}</div>`;
+    <div class="orders">${list.length ? list.map(orderHTML).join('') : `<div class="panel empty">${byQ.length ? 'مفيش طلبات بالفلاتر دي. <button type="button" class="vo-mini" data-ofclear>امسح الفلاتر</button>' : ARCV ? 'الأرشيف فاضي.' : 'مفيش طلبات هنا.'}</div>`}</div>`;
   let ofT; const ofGo = (k, v) => { OF[k] = v; ofSave(); const a = document.activeElement, f = a && a.dataset && a.dataset.ofl, pos = a && a.selectionStart; renderOrders();
     if (f === 'min' || f === 'max') { const el = $(`[data-ofl="${f}"]`); el.focus(); try { el.setSelectionRange(pos, pos); } catch (er) {} } };
   $('#main').querySelectorAll('[data-ofl]').forEach(el => { const k = el.dataset.ofl;
@@ -1913,6 +1918,7 @@ function renderOrders() {
     if (!(await confirmBox(`تنقل ${l.length === 1 ? 'الطلب ده' : l.length + ' طلبات'} لـ «${statuses[st]}»؟`, 'نقل'))) return;
     for (const o of l) await setStatus(o.id, st);
     ordSel.clear(); if (tab === 'orders' || tab === 'lux-orders') renderOrders(); });
+  if ($('#oBulkArch')) $('#oBulkArch').onclick = () => once('oBulkArch', async () => { const l = picked(); if (l.length) await archOrders(l, !ARCV); });
   if ($('#oBulkDel')) $('#oBulkDel').onclick = () => once('oBulkDel', async () => { const l = picked(); if (!l.length) return;
     if (!(await confirmBox(`تحذف ${l.length === 1 ? 'الطلب ده' : l.length + ' طلبات'} نهائياً؟ (لو عاوز ترجّع المخزون غيّر حالتهم لـ "مرتجع" الأول)`, 'حذف'))) return;
     const ids = l.map(o => o.id), { error } = await sb.from('shop_orders').delete().in('id', ids); if (error) return toast(error.message, 'err');
@@ -1991,7 +1997,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261031174316" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261031174652" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2025,7 +2031,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261031174316" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261031174652" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2066,7 +2072,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261031174316'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261031174316')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261031174652'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261031174652')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2164,6 +2170,7 @@ function orderHTML(o) {
           <a class="btn btn-sm btn-ghost" href="tel:${esc(o.phone)}">اتصال</a>
           <button class="btn btn-sm btn-ghost" data-oedit="${o.id}">تعديل البيانات</button>${o.shop_order_items.some(i => (i.options || []).length) ? `<button class="btn btn-sm btn-ghost" data-oopts="${o.id}">تعديل الاختيارات</button>` : ''}
           <button class="btn btn-sm btn-ghost" data-fin="${o.id}">التكاليف</button>
+          <button class="btn btn-sm btn-ghost" data-oarch="${o.id}">${o.archived_at ? 'رجّع من الأرشيف' : 'أرشفة'}</button>
           <button class="btn btn-sm btn-danger" data-del-order="${o.id}">حذف</button>
         </div>
       </div>
@@ -3890,6 +3897,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-offsale]')) return offlineBox();
   const oe = e.target.closest('[data-offedit]'); if (oe) { const x = offs.find(q => q.id === +oe.dataset.offedit); if (x) offlineBox(x); return; }
   const oo = e.target.closest('[data-oedit]'); if (oo) { const o = orders.find(q => q.id === +oo.dataset.oedit); if (o) orderEditBox(o); return; }
+  const oa = e.target.closest('[data-oarch]'); if (oa) { const o = orders.find(q => q.id === +oa.dataset.oarch); if (o) once('oarch', () => archOrders([o], !o.archived_at)); return; }
   const op = e.target.closest('[data-oopts]'); if (op) { const o = orders.find(q => q.id === +op.dataset.oopts); if (o) orderOptsBox(o); return; }
   const xe = e.target.closest('[data-xedit]'); if (xe) { const x = expenses.find(q => q.id === +xe.dataset.xedit); if (x) expEditBox(x); }
 });
@@ -3919,6 +3927,16 @@ function orderEditBox(o) {
     Object.assign(o, patch); m.remove(); toast('اتعدلت بيانات الطلب ✓', 'ok');
     sheetOrder(o); if (tab === 'accounts') renderAccounts(); else renderOrders(); };
   setTimeout(() => form.customer_name.focus(), 60);
+}
+// archive: hides orders from the lists (they still count in accounts) and moves them to the «الأرشيف» tab of the Google Sheet
+async function archOrders(l, on) {
+  const ids = l.map(o => o.id), at = on ? new Date().toISOString() : null;
+  const { error } = await sb.from('shop_orders').update({ archived_at: at }).in('id', ids);
+  if (error) return toast(/archived_at/.test(error.message) ? 'لازم تشغّل ملف supabase/order-archive.sql في Supabase الأول' : error.message, 'err');
+  l.forEach(o => { o.archived_at = at; ordSel.delete(o.id); });
+  sheetSend({ action: 'merge', orders: l.map(orderRow), expenses: [] });
+  toast(on ? `اتأرشف ${l.length === 1 ? 'الطلب' : l.length + ' طلبات'} ✓` : `رجع ${l.length === 1 ? 'الطلب' : l.length + ' طلبات'} من الأرشيف ✓`, 'ok');
+  renderTabs(); if (tab === 'orders' || tab === 'lux-orders') renderOrders(); else if (tab === 'accounts') renderAccounts();
 }
 // change the buyer's picked options after the order (customer is told «تم تغيير اختيارات المشتري…»)
 // changed options keep chg + was (the first pick); picking the original again clears the mark. Price stays as ordered.
@@ -4017,7 +4035,7 @@ function sheetSend(body) {
   if (!sheetOn()) return Promise.resolve(false);
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
-const orderRow = o => { const f = fins[o.id] || {}; return { code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: o.status === 'returned' ? 'مرتجع' : statuses[o.status] || o.status,
+const orderRow = o => { const f = fins[o.id] || {}; return { archived: o.archived_at ? 1 : '', code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: o.status === 'returned' ? 'مرتجع' : statuses[o.status] || o.status,
   sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, extras: finX(f), extras_note: finXs(f).map(x => `${x.label || 'مصروف'}: ${+x.amount}`).join(' | '), received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
 // who paid an expense: the partners first, then any other name typed before (you can always type a new one)
 const PAYERS = ['عليوه', 'حازم', 'مسعد'];

@@ -31,6 +31,7 @@ const SHEETS = {
     cols: [['id', 'رقم', 'text'], ['date', 'التاريخ', 'text'], ['month', 'الشهر', 'text'], ['category', 'البند'], ['amount', 'المبلغ', 'money'], ['note', 'ملاحظة', 'wide']]
   }
 };
+SHEETS.archive = { name: 'الأرشيف', key: 'code', cols: SHEETS.orders.cols };   // الطلبات اللي اتأرشفت من لوحة التحكم
 const SUMMARY = 'الملخص';
 
 /* ---------------- web app ---------------- */
@@ -40,10 +41,12 @@ function doPost(e) {
   if (d.secret !== SECRET) return out({ ok: false, error: 'unauthorized' });
   const lock = LockService.getScriptLock(); lock.waitLock(25000);
   try {
-    if (d.action === 'upsert') upsert(d.sheet, d.row);
-    else if (d.action === 'delete') remove(d.sheet, d.id);
-    else if (d.action === 'merge') { mergeAll('orders', d.orders || []); mergeAll('expenses', d.expenses || []); }
-    else if (d.action === 'replace') { replaceAll('orders', d.orders || []); replaceAll('expenses', d.expenses || []); }
+    if (d.action === 'upsert' && d.sheet === 'orders') mergeOrders([d.row], false);
+    else if (d.action === 'upsert' && SHEETS[d.sheet]) upsert(d.sheet, d.row);
+    else if (d.action === 'delete' && d.sheet === 'orders') { remove('orders', d.id); remove('archive', d.id); }
+    else if (d.action === 'delete' && SHEETS[d.sheet]) remove(d.sheet, d.id);
+    else if (d.action === 'merge') { mergeOrders(d.orders || [], false); mergeAll('expenses', d.expenses || []); }
+    else if (d.action === 'replace') { mergeOrders(d.orders || [], true); replaceAll('expenses', d.expenses || []); }
     refresh();
     return out({ ok: true });
   } finally { lock.releaseLock(); }
@@ -59,9 +62,9 @@ function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setM
 function onOpen() { SpreadsheetApp.getUi().createMenu('DAQQA').addItem('تحديث التنسيق والملخص', 'setup').addToUi(); }
 
 // شغّلها مرة بعد ما تلصق الكود (وتقدر تشغلها في أي وقت)
-function setup() { sheetFor('orders'); sheetFor('expenses'); refresh(); }
+function setup() { sheetFor('orders'); sheetFor('archive'); sheetFor('expenses'); refresh(); }
 
-function refresh() { formatData('orders'); formatData('expenses'); buildSummary(); }
+function refresh() { formatData('orders'); formatData('archive'); formatData('expenses'); buildSummary(); }
 
 /* ---------------- data sheets ---------------- */
 function sheetFor(kind) {
@@ -124,6 +127,20 @@ function mergeAll(kind, rows) {
   rows.forEach(r => { const v = toRow(def, r), i = at[String(r[def.key])]; if (i === undefined) { at[String(r[def.key])] = data.length; data.push(v); } else data[i] = v; });
   if (data.length) sh.getRange(2, 1, data.length, n).setValues(data);
 }
+// الطلبات: المؤرشف (archived) بيروح تاب «الأرشيف» والباقي «الطلبات»، والطلب بيتشال من التاب التاني لو اتنقل
+function mergeOrders(rows, replace) {
+  const arch = rows.filter(r => r.archived), live = rows.filter(r => !r.archived);
+  if (replace) { replaceAll('orders', live); replaceAll('archive', arch); return; }
+  removeMany('orders', arch.map(r => r.code)); removeMany('archive', live.map(r => r.code));
+  mergeAll('orders', live); mergeAll('archive', arch);
+}
+function removeMany(kind, keys) {
+  if (!keys.length) return;
+  const { sh, def } = sheetFor(kind), last = sh.getLastRow(); if (last < 2) return;
+  const ki = def.cols.findIndex(c => c[0] === def.key) + 1, want = {}; keys.forEach(k => want[String(k)] = 1);
+  const vals = sh.getRange(2, ki, last - 1, 1).getValues();
+  for (let i = vals.length - 1; i >= 0; i--) if (want[String(vals[i][0])]) sh.deleteRow(i + 2);
+}
 function replaceAll(kind, rows) {
   const { sh, def } = sheetFor(kind);
   if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, def.cols.length).clearContent();
@@ -147,7 +164,7 @@ function formatData(kind) {
   def.cols.forEach((c, i) => { const w = sh.getColumnWidth(i + 1), max = c[2] === 'wide' ? 280 : 200; sh.setColumnWidth(i + 1, Math.min(max, Math.max(95, w + 24))); });
   if (last > 1) sh.autoResizeRows(2, last - 1);
   // لون الحالة
-  if (kind === 'orders') {
+  if (kind === 'orders' || kind === 'archive') {
     const col = def.cols.findIndex(c => c[0] === 'status') + 1, rng = sh.getRange(2, col, Math.max(1, last - 1), 1);
     sh.setConditionalFormatRules(Object.keys(STATUS_COLORS).map(s => SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo(s).setBackground(STATUS_COLORS[s]).setBold(true).setRanges([rng]).build()));
     const net = def.cols.findIndex(c => c[0] === 'net') + 1; sh.getRange(2, net, Math.max(1, last - 1), 1).setFontWeight('bold');
@@ -173,7 +190,7 @@ function buildSummary() {
   if (s.getMaxColumns() < 12) s.insertColumnsAfter(s.getMaxColumns(), 12 - s.getMaxColumns());
   s.setColumnWidth(1, 24); for (let c = 2; c <= 11; c++) s.setColumnWidth(c, 128); s.setColumnWidth(12, 24);
 
-  const orders = readObjs('orders'), exps = readObjs('expenses');
+  const orders = readObjs('orders').concat(readObjs('archive')), exps = readObjs('expenses');
   const sold = orders.filter(o => SOLD.includes(o.status)), rets = orders.filter(o => o.status === 'مرتجع');
   const saleOf = o => o.sale !== '' ? num(o.sale) : num(o.total);
   const sales = sold.reduce((t, o) => t + saleOf(o), 0), cost = sold.reduce((t, o) => t + num(o.cost), 0);
