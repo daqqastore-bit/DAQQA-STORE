@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261031225005">
-<link rel="stylesheet" href="assets/store.css?v=20261031225005">
+<link rel="stylesheet" href="assets/base.css?v=20261031225629">
+<link rel="stylesheet" href="assets/store.css?v=20261031225629">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -206,8 +206,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261031225005"></script>
-<script src="assets/app.js?v=20261031225005"></script>
+<script src="assets/config.js?v=20261031225629"></script>
+<script src="assets/app.js?v=20261031225629"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -441,9 +441,9 @@ function render() {
       // the magnified pane: same height as the photo frame, beside it on whichever side has room
       // big screens zoom the whole page (html zoom 1.2 / 1.5): measured px are on screen, styles are set in page px
       const z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1, px = v => v / z + 'px';
-      const hr = host.getBoundingClientRect(), rr = innerWidth - hr.right - 32, rl = hr.left - 32, onR = rr >= 280, pw = Math.min(hr.width, onR ? rr : rl), top = Math.max(hr.top, 16), ph = Math.min(hr.height, innerHeight - top - 16);
+      const hr = host.getBoundingClientRect(), rr = innerWidth - hr.right - 32, rl = hr.left - 32, onR = rr >= 280, pw = Math.min(hr.width, onR ? rr : rl), hb = (document.getElementById('hdr')?.getBoundingClientRect().bottom || 0) + 12, top = Math.max(hr.top, hb, 16), ph = Math.min(hr.bottom, innerHeight - 16) - top;
       // no room beside the photo: the photo itself zooms in under the mouse
-      if (!onR) { lens.classList.remove('on'); pane.classList.remove('on'); if (zImg !== im) unzoom(); zImg = im;
+      if (!onR || ph < 200) { lens.classList.remove('on'); pane.classList.remove('on'); if (zImg !== im) unzoom(); zImg = im;
         im.style.transformOrigin = `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`; im.style.transform = 'scale(2.2)'; return; }
       if (pw < 240 || ph < 200) return hide();
       // the empty space beside the photo (away from the text) first; over the text side only when there's no room
