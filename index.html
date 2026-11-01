@@ -30,8 +30,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101160933">
-<link rel="stylesheet" href="assets/store.css?v=20261101160933">
+<link rel="stylesheet" href="assets/base.css?v=20261101172949">
+<link rel="stylesheet" href="assets/store.css?v=20261101172949">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -338,11 +338,12 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
   </div><div class="ld-ring" id="ldRing"></div></section>
 <h1 class="sr-h1">DAQQA | دقّة</h1>
 <main id="sections"><div class="none"><div class="m skeleton" style="border-radius:50%"></div>جاري التحميل…</div></main>
+<div id="vidsBox"></div>
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261101160933"></script>
-<script src="assets/app.js?v=20261101160933"></script>
+<script src="assets/config.js?v=20261101172949"></script>
+<script src="assets/app.js?v=20261101172949"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -505,6 +506,48 @@ function MOTTO() {
       <div class="mo-sign"><span></span><b class="en">D · Q</b><span></span></div>
     </div></section>`;
 }
+// «فيديوهات»: 3 vertical videos right before the footer (Admin → Settings → فيديوهات). Lives outside #sections so live refreshes don't restart the videos
+const VIC = { on: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
+  off: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m17 9.5 5 5M22 9.5l-5 5"/></svg>' };
+function VIDS() {
+  const V = RC.vids(DQ.settings), list = V.items.filter(x => x.src && !x.off);
+  if (!V.on || !list.length) return '';
+  return `<section class="vids" id="videos" data-glow aria-label="${esc(V.title || 'فيديوهات')}"><div class="wrap">
+    <div class="vd-head op op-stagger">${V.cap ? `<span class="vd-cap en" dir="auto">${esc(V.cap)}</span>` : ''}${V.title ? `<h2 dir="auto">${esc(V.title)}</h2>` : ''}${V.sub ? `<p dir="auto">${esc(V.sub)}</p>` : ''}</div>
+    <div class="vd-row" style="--n:${list.length}">${list.map((x, i) => { const p = x.p != null && DQ.products.find(q => q.id === +x.p), name = x.t || (p && p.name) || '';
+      return `<article class="vd op" style="--d:${i * 0.12}s">
+        <div class="vd-media"><video src="${esc(x.src)}" ${x.poster ? `poster="${esc(x.poster)}"` : ''} muted loop playsinline preload="metadata" aria-label="${esc(name)}"></video>
+          <span class="vd-no en">${String(i + 1).padStart(2, '0')}</span>
+          <button type="button" class="vd-snd" aria-label="شغّل الصوت">${VIC.off}</button>
+          <span class="vd-bar" aria-hidden="true"><i></i></span></div>
+        ${name || p ? `<${p ? `a href="${RC.productUrl(p)}"` : 'div'} class="vd-foot"><span><b class="en" dir="auto">${esc(name)}</b>${p ? `<small>${DQ.priceTxt(p)}</small>` : ''}</span>${p ? `<i class="vd-go">شوف الساعة ${DQ.ICON.arrow}</i>` : ''}</${p ? 'a' : 'div'}>` : ''}
+      </article>`; }).join('')}</div>
+    ${list.length > 1 ? `<div class="vd-dots" aria-hidden="true">${list.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>` : ''}
+  </div></section>`;
+}
+let vidsSig = '';
+function renderVids() {
+  const html = VIDS(); if (html === vidsSig) return; vidsSig = html;
+  const box = $('#vidsBox'); box.innerHTML = html; if (!html) return;
+  const vids = [...box.querySelectorAll('video')], row = box.querySelector('.vd-row');
+  const io = new IntersectionObserver(es => es.forEach(e => { const v = e.target;
+    if (e.isIntersecting && e.intersectionRatio > .35) { v.preload = 'auto'; const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); }), { threshold: [0, .35, .7] });
+  vids.forEach(v => { io.observe(v); const bar = v.parentNode.querySelector('.vd-bar i');
+    v.addEventListener('timeupdate', () => { if (v.duration) bar.style.transform = `scaleX(${v.currentTime / v.duration})`; }); });
+  box.addEventListener('click', e => { const b = e.target.closest('.vd-snd'); if (!b) return; e.preventDefault();
+    const v = b.parentNode.querySelector('video'), on = v.muted;
+    vids.forEach(o => { if (o !== v) { o.muted = true; const ob = o.parentNode.querySelector('.vd-snd'); ob.innerHTML = VIC.off; ob.classList.remove('on'); ob.setAttribute('aria-label', 'شغّل الصوت'); } });
+    v.muted = !on; b.innerHTML = on ? VIC.on : VIC.off; b.classList.toggle('on', on); b.setAttribute('aria-label', on ? 'اقفل الصوت' : 'شغّل الصوت');
+    if (on) { if (v.currentTime > v.duration - 1) v.currentTime = 0; const p = v.play(); if (p && p.catch) p.catch(() => {}); } });
+  // tap on the video (not the sound button) = play / pause
+  box.addEventListener('click', e => { const m = e.target.closest('.vd-media'); if (!m || e.target.closest('.vd-snd')) return; const v = m.querySelector('video'); if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); });
+  // phones: the row swipes; the dots follow the card in view
+  const dots = [...box.querySelectorAll('.vd-dots i')];
+  if (dots.length) row.addEventListener('scroll', () => { const cards = [...row.children], mid = row.getBoundingClientRect().left + row.clientWidth / 2;
+    let k = 0, best = 1e9; cards.forEach((c, i) => { const r = c.getBoundingClientRect(), d = Math.abs(r.left + r.width / 2 - mid); if (d < best) { best = d; k = i; } });
+    dots.forEach((d, i) => d.classList.toggle('on', i === k)); }, { passive: true });
+  DQ.reveal();
+}
 // section photos come from Admin → Settings (banners); without them the banner frames a product photo
 function pick(k, list) {
   const set = (DQ.settings.banners || {})[k] || {};
@@ -620,8 +663,9 @@ const setP = k => { const n = c => { const v = document.querySelector(`#${k} .${
 document.addEventListener('input', e => { const i = e.target.closest('.s-pmin,.s-pmax'); if (i) setP(i.dataset.k); });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.closest('.s-price input')) { e.preventDefault(); e.target.blur(); } });
 document.addEventListener('click', e => { const c = e.target.closest('.s-pclr'); if (!c) return; const k = c.dataset.k; document.querySelector(`#${k} .s-pmin`).value = ''; document.querySelector(`#${k} .s-pmax`).value = ''; setP(k); });
-DQ.onRefresh = build;
-DQ.start(RC.kinds[location.hash.slice(1)] ? location.hash.slice(1) : 'home', build);
+const buildAll = () => { build(); renderVids(); };
+DQ.onRefresh = buildAll;
+DQ.start(RC.kinds[location.hash.slice(1)] ? location.hash.slice(1) : 'home', buildAll);
 </script>
 <script>
 // phones show the strip photo whole: give each photo box the picture's own shape
