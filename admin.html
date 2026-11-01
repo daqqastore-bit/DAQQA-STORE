@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101152431">
+<link rel="stylesheet" href="assets/base.css?v=20261101153147">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -259,8 +259,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .sup-card{display:flex;flex-direction:column;gap:12px}.sup-t{flex:1;min-width:0}.sup-t h2{font-size:16px;overflow-wrap:anywhere}.sup-t small{color:var(--muted);font-size:12.5px}
 .sup-phs{display:flex;flex-direction:column;gap:6px}.sup-ph{display:flex;align-items:center;gap:6px}.sup-ph b{flex:1;font-size:14.5px;text-align:right}
 .sup-phin{display:flex;flex-direction:column;gap:6px}.sup-phr{display:flex;gap:6px;align-items:center}.sup-phr .input{flex:1;min-width:0}.sup-addph{align-self:flex-start;margin-top:6px;font-size:13px;color:var(--amber);padding:4px 2px}
-.es-row{display:grid;grid-template-columns:1fr 130px 30px;gap:8px;align-items:center;margin-bottom:8px}.es-row .input{min-width:0}.es-note{color:var(--muted);font-size:12.5px;line-height:1.7;display:block}.es-note:empty{display:none}
-@media (max-width:600px){.es-row{grid-template-columns:1fr 100px 30px}}
+.es-row{display:grid;grid-template-columns:1fr 1fr 30px;gap:8px;align-items:end;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}.es-row>.cat,.es-row>input[data-ess]{grid-column:1/-1}.es-d{display:grid;gap:3px;min-width:0}.es-d span{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.es-d .input{min-width:0}.es-row .sup-x{margin-bottom:6px}.sup-tg{display:block;color:var(--amber)!important}.es-row .input{min-width:0}.es-note{color:var(--muted);font-size:12.5px;line-height:1.7;display:block}.es-note:empty{display:none}
 .sup-line{font-size:13.5px;line-height:1.7;overflow-wrap:anywhere}.sup-line span{display:block;font-size:11.5px;color:var(--muted)}
 .sup-its,.sup-none{display:flex;flex-direction:column;gap:2px}.sup-none{padding:8px}
 .sup-it{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;padding:8px;border-radius:10px}.sup-it:nth-child(odd){background:var(--surface-2)}
@@ -271,11 +270,11 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .sup-box{width:min(600px,100%)}.sup-sel{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.sup-sel:empty{display:none}
 .sup-row{display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:start;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .sup-row img,.sup-row .sup-noimg{width:48px;height:48px;border-radius:9px;object-fit:cover}.sup-rf{display:grid;gap:2px;min-width:0}.sup-rf b{font-size:13.5px;overflow-wrap:anywhere}.sup-rf small{font-size:12px;color:var(--muted)}
-.sup-ri{display:grid;grid-template-columns:130px 1fr;gap:6px;margin-top:6px}.sup-ri .input{height:38px;font-size:13px;min-width:0}
+.sup-ri{display:grid;grid-template-columns:120px 150px 1fr;gap:6px;margin-top:6px;align-items:end}.sup-ri .input{height:38px;font-size:13px;min-width:0}
 .sup-x{width:30px;height:30px;border-radius:50%;font-size:18px;line-height:1;color:var(--muted);border:1px solid var(--line)}.sup-x:hover{color:var(--red);border-color:var(--red)}
 .sup-pick{max-height:240px;overflow:auto;margin-top:6px;padding:4px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:2px}
 .sup-pick .off-opt{min-height:46px;padding:4px 8px;border-radius:9px;font-size:13.5px;color:var(--ink)}.sup-pick .off-opt:hover{background:var(--surface-2)}.sup-pick .off-opt small{color:var(--muted);font-size:11.5px}.sup-pick .off-opt b{color:var(--amber);font-size:16px}
-@media (max-width:600px){.sup-grid{grid-template-columns:1fr}.sup-stats{gap:6px}.sup-stats .ov-c b{font-size:19px}.sup-stats .ov-c span{font-size:11px;text-align:center}.sup-bar .input{max-width:none}.sup-ri{grid-template-columns:1fr 1.3fr}}
+@media (max-width:600px){.sup-grid{grid-template-columns:1fr}.sup-stats{gap:6px}.sup-stats .ov-c b{font-size:19px}.sup-stats .ov-c span{font-size:11px;text-align:center}.sup-bar .input{max-width:none}.sup-ri{grid-template-columns:1fr}}
 
 .off-hint{font-size:12px;color:var(--amber);min-height:1em}
 .who-pays button{min-height:56px;border:1px solid var(--line-2);border-radius:12px;padding:8px 12px;text-align:right;display:flex;flex-direction:column;gap:2px;transition:border-color .2s,background .2s}
@@ -1090,7 +1089,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261101152431"></script>
+<script src="assets/config.js?v=20261101153147"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1363,7 +1362,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261101152431'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261101153147'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2011,7 +2010,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101152431" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101153147" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2045,7 +2044,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101152431" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101153147" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2086,7 +2085,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101152431'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101152431')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101153147'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101153147')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2876,7 +2875,7 @@ async function uploadFiles(files, direct = false) {
   renderEditor(); if (n) toast('اترفعت الصور — متنساش تدوس حفظ', 'ok');
 }
 /* the product editor's «المورد» section: the same links the suppliers page keeps (shop_suppliers.items), edited from the product side */
-const edSupOf = pid => sups.map(s => { const i = supItems(s).find(x => +x.p === pid); return i ? { s: s.id, c: i.c ?? '' } : null; }).filter(Boolean);
+const edSupOf = pid => sups.map(s => { const i = supItems(s).find(x => +x.p === pid); return i ? { s: s.id, c: i.c ?? '', d: i.d || '' } : null; }).filter(Boolean);
 function edSupRows() {
   const box = $('#edSup'); if (!box || !draft) return; const L = draft._sups || (draft._sups = []);
   if (!SUP_OK) { box.innerHTML = '<small class="es-note">صفحة الموردين لسه محتاجة تتفعل في Supabase (supabase/suppliers.sql).</small>'; return; }
@@ -2884,7 +2883,7 @@ function edSupRows() {
   const nm = x => x.s ? ((sups.find(s => s.id === +x.s) || {}).name || '') : (x.t || '');
   box.innerHTML = `<datalist id="edSupDL">${sups.filter(s => s.name && !L.some(y => +y.s === s.id)).map(s => `<option value="${esc(s.name)}">`).join('')}</datalist>`
     + L.map((x, k) => `<div class="es-row"><input class="input" list="edSupDL" data-ess="${k}" value="${esc(nm(x))}" placeholder="اكتب أو اختار المورد" maxlength="80" aria-label="المورد">
-    <input class="input en" inputmode="decimal" data-esc="${k}" value="${esc(x.c ?? '')}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><button type="button" class="sup-x" data-esrm="${k}" aria-label="شيل">×</button></div>`).join('')
+    <input class="input en" inputmode="decimal" data-esc="${k}" value="${esc(x.c ?? '')}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><label class="es-d"><span>تاريخ صور التليجرام</span><input class="input en" type="date" data-esd="${k}" value="${esc(x.d || '')}" aria-label="تاريخ الصور في التليجرام"></label><button type="button" class="sup-x" data-esrm="${k}" aria-label="شيل">×</button></div>`).join('')
     + `<button type="button" class="sup-addph" data-esadd>${L.length ? '+ مورد تاني' : '+ أضف المورد'}</button>`
     + '<small class="es-note" id="edSupNew"></small>'; edSupNote();
 }
@@ -2895,11 +2894,11 @@ function edSupNote() { const L = draft && draft._sups || [], dl = $('#edSupDL'),
 // typing: match an existing supplier by name, otherwise keep the typed name for a new one
 $('#editor').addEventListener('input', e => { const k = e.target.dataset.ess; if (k == null || !draft) return; const x = draft._sups[+k], t = e.target.value.trim(), m = t && sups.find(s => String(s.name || '').trim().toLowerCase() === t.toLowerCase());
   x.s = m ? m.id : null; x.t = m ? '' : e.target.value;
-  if (m && x.c === '') { const i = supItems(m).find(y => draft.id && +y.p === draft.id); x.c = i && i.c != null ? i.c : (draft.id && pcosts[draft.id] != null ? pcosts[draft.id] : ''); const ci = $(`[data-esc="${k}"]`); if (ci) ci.value = x.c; } });
+  if (m && x.c === '') { const i = supItems(m).find(y => draft.id && +y.p === draft.id); if (i && i.d && !x.d) { x.d = i.d; const di = $(`[data-esd="${k}"]`); if (di) di.value = i.d; } x.c = i && i.c != null ? i.c : (draft.id && pcosts[draft.id] != null ? pcosts[draft.id] : ''); const ci = $(`[data-esc="${k}"]`); if (ci) ci.value = x.c; } });
 $('#editor').addEventListener('change', e => { if (e.target.dataset.ess != null && draft) edSupNote(); });
 // moving on to the cost box closes the suppliers list, so it doesn't cover the row under it
 $('#editor').addEventListener('focusin', e => { if (e.target.closest('#edSup')) document.querySelectorAll('#edSup .dd.open').forEach(b => { if (!b.contains(e.target)) b._close(); }); });
-$('#editor').addEventListener('input', e => { const k = e.target.dataset.esc; if (k != null && draft) draft._sups[+k].c = e.target.value.replace(/[^\d.]/g, ''); });
+$('#editor').addEventListener('input', e => { const k = e.target.dataset.esc; if (k != null && draft) draft._sups[+k].c = e.target.value.replace(/[^\d.]/g, ''); const dk = e.target.dataset.esd; if (dk != null && draft) draft._sups[+dk].d = e.target.value; });
 $('#editor').addEventListener('click', e => { if (!draft) return;
   if (e.target.closest('[data-esadd]')) { draft._sups.push({ s: null, c: '' }); edDirty = true; edSupRows(); }
   const r = e.target.closest('[data-esrm]'); if (r) { draft._sups.splice(+r.dataset.esrm, 1); edDirty = true; edSupRows(); } });
@@ -2910,15 +2909,16 @@ async function supSyncProduct(pid, want) {
     const m = sups.find(s => String(s.name || '').trim().toLowerCase() === t.toLowerCase()); if (m) { x.s = m.id; continue; }
     const { data, error } = await sb.from('shop_suppliers').insert({ name: t, items: [] }).select().single(); if (error) { toast(error.message, 'err'); continue; }
     sups.unshift(data); x.s = data.id; x.t = ''; }
-  const W = new Map(); want.forEach(x => { if (x.s && !W.has(+x.s)) W.set(+x.s, x.c === '' || x.c == null || isNaN(+x.c) ? null : +x.c); });
+  const W = new Map(); want.forEach(x => { if (x.s && !W.has(+x.s)) W.set(+x.s, { c: x.c === '' || x.c == null || isNaN(+x.c) ? null : +x.c, d: x.d || null }); });
   const now = new Date().toISOString(), jobs = [];
   sups.forEach(s => { const it = Array.isArray(s.items) ? s.items : [], has = it.find(i => +i.p === pid); let next = null;
-    if (W.has(s.id) && !has) next = [...it, { p: pid, c: W.get(s.id), n: null }];
-    else if (W.has(s.id) && has && (has.c ?? null) !== W.get(s.id)) next = it.map(i => +i.p === pid ? { ...i, c: W.get(s.id) } : i);
+    const w = W.get(s.id);
+    if (w && !has) next = [...it, { p: pid, c: w.c, n: null, d: w.d }];
+    else if (w && has && ((has.c == null ? null : +has.c) !== w.c || (has.d || null) !== w.d)) next = it.map(i => +i.p === pid ? { ...i, c: w.c, d: w.d } : i);
     else if (!W.has(s.id) && has) next = it.filter(i => +i.p !== pid);
     if (next) jobs.push(sb.from('shop_suppliers').update({ items: next, updated_at: now }).eq('id', s.id).select().single().then(({ data, error }) => { if (error) toast(error.message, 'err'); else sups = sups.map(x => x.id === data.id ? data : x); })); });
   // the cost also becomes the product's cost in Accounts, like on the suppliers page
-  const c = [...W.values()].find(v => v != null && v > 0);
+  const c = [...W.values()].map(v => v.c).find(v => v != null && v > 0);
   if (c != null && +pcosts[pid] !== c) jobs.push(sb.from('shop_product_costs').upsert({ product_id: pid, cost: c, updated_at: now }).then(({ error }) => { if (!error) pcosts[pid] = c; }));
   await Promise.all(jobs);
 }
@@ -3536,6 +3536,8 @@ const supsOf = pid => sups.filter(s => supItems(s).some(i => +i.p === pid));
 // Egyptian mobile → WhatsApp number (01xxxxxxxxx → 201xxxxxxxxx)
 const supWa = ph => { let d = String(ph || '').replace(/\D/g, ''); if (/^01\d{9}$/.test(d)) d = '2' + d; return d.length >= 10 ? d : ''; };
 // a supplier can have several numbers: saved one per line in phone
+// the date the product's photos were posted on the supplier's Telegram (items[].d = YYYY-MM-DD), shown as 01/11/2026
+const supDay = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '') ? d.split('-').reverse().join('/') : '';
 const supPhones = s => String(s && s.phone || '').split(/\n+/).map(x => x.trim()).filter(Boolean);
 const SUP_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>';
 function renderSuppliers() {
@@ -3568,13 +3570,13 @@ function supList() {
       ${ph.length ? `<div class="sup-phs">${ph.map(n => { const wa = supWa(n); return `<div class="sup-ph"><b class="en" dir="ltr">${esc(n)}</b><a class="btn btn-ghost btn-sm" href="tel:${esc(n.replace(/[^\d+]/g, ''))}">اتصال</a>${wa ? `<a class="btn btn-ghost btn-sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`; }).join('')}</div>` : ''}
       ${s.address ? `<div class="sup-line"><span>العنوان</span>${esc(s.address)}</div>` : ''}${s.note ? `<div class="sup-line"><span>ملاحظات</span>${esc(s.note).replace(/\n/g, '<br>')}</div>` : ''}
       ${it.length ? `<div class="sup-its">${it.map(i => { const p = products.find(x => x.id === +i.p), c = i.c !== '' && i.c != null ? +i.c : null, pr = finalPrice(p), m = c != null && pr ? pr - c : null;
-        return `<div class="sup-it">${img(p)}<div><b>${esc(p.name)}</b><small>بيتباع بـ ${money(pr)}${i.n ? ` · ${esc(i.n)}` : ''}</small>
+        return `<div class="sup-it">${img(p)}<div><b>${esc(p.name)}</b><small>بيتباع بـ ${money(pr)}${i.n ? ` · ${esc(i.n)}` : ''}</small>${supDay(i.d) ? `<small class="sup-tg">صور التليجرام: <span class="en">${supDay(i.d)}</span></small>` : ''}
           <span class="sup-pa"><a href="${RC.productUrl(p)}" target="_blank" rel="noopener">عرض في الموقع ↗</a><button type="button" data-supopen="${p.id}">تعديل المنتج</button></span></div><div class="sup-c"><b class="en">${c != null ? money(c) : '—'}</b><small>${m != null ? `ربح <em class="${m < 0 ? 'neg' : ''}">${money(m)}</em>` : 'التكلفة'}</small></div></div>`; }).join('')}</div>` : '<div class="sup-line" style="color:var(--muted)">لسه مفيش منتجات متربطة بيه.</div>'}
       <div class="sup-foot"><small>${s.updated_at ? 'آخر تعديل ' + fmtDate(s.updated_at) : ''}</small><button type="button" class="btn btn-ghost btn-sm" data-supedit="${s.id}">تعديل</button><button type="button" class="btn btn-danger btn-sm" data-supdel="${s.id}">مسح</button></div></div>`; }).join('')}</div>`;
 }
 function supBox(ed, addPid) {
   const m = document.createElement('div'); m.className = 'fin-m';
-  let items = (ed ? supItems(ed) : []).map(i => ({ p: +i.p, c: i.c ?? '', n: i.n || '' }));
+  let items = (ed ? supItems(ed) : []).map(i => ({ p: +i.p, c: i.c ?? '', n: i.n || '', d: i.d || '' }));
   if (addPid && !items.some(i => i.p === addPid)) items.push({ p: addPid, c: pcosts[addPid] ?? '', n: '' });
   const opt = '<small style="color:var(--muted-2);font-weight:400">(اختياري)</small>';
   m.innerHTML = `<form class="fin-box sup-box" novalidate><h3>${ed ? 'تعديل مورد' : 'مورد جديد'}</h3>
@@ -3594,13 +3596,13 @@ function supBox(ed, addPid) {
   const thumb = p => p.images && p.images[0] ? `<img src="${esc(RC.thumb(p.images[0]))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<span class="sup-noimg"></span>';
   const sel = () => { m.querySelector('#supSel').innerHTML = items.map((i, k) => { const p = products.find(x => x.id === i.p); if (!p) return '';
     return `<div class="sup-row">${thumb(p)}<div class="sup-rf"><b>${esc(p.name)}</b><small>بيتباع بـ ${money(finalPrice(p))}</small>
-      <div class="sup-ri"><input class="input en" inputmode="decimal" data-ic="${k}" value="${esc(i.c)}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><input class="input" data-in="${k}" value="${esc(i.n)}" placeholder="ملاحظة (اختياري)" maxlength="120"></div></div>
+      <div class="sup-ri"><input class="input en" inputmode="decimal" data-ic="${k}" value="${esc(i.c)}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><label class="es-d"><span>تاريخ صور التليجرام</span><input class="input en" type="date" data-id="${k}" value="${esc(i.d || '')}" aria-label="تاريخ الصور في التليجرام"></label><input class="input" data-in="${k}" value="${esc(i.n)}" placeholder="ملاحظة (اختياري)" maxlength="120"></div></div>
       <button type="button" class="sup-x" data-irm="${k}" aria-label="شيل">×</button></div>`; }).join(''); };
   const pick = () => { const q = pq.value.trim().toLowerCase(), l = products.filter(p => !items.some(i => i.p === p.id) && (!q || p.name.toLowerCase().includes(q))).slice(0, 60);
     m.querySelector('#supPick').innerHTML = l.map(p => { const o = supsOf(p.id).filter(s => !ed || s.id !== ed.id); return `<button type="button" class="off-opt" data-ip="${p.id}">${thumb(p)}<span>${esc(p.name)}${o.length ? `<small> · عند ${esc(o.map(s => s.name || 'مورد').join('، '))}</small>` : ''}</span><b class="en">+</b></button>`; }).join('') || '<div class="off-none">مفيش منتجات تانية</div>'; };
   sel(); pick();
   pq.oninput = pick;
-  m.addEventListener('input', e => { const d = e.target.dataset; if (d.ic != null) items[+d.ic].c = e.target.value.replace(/[^\d.]/g, ''); if (d.in != null) items[+d.in].n = e.target.value; if (d.ph != null) phones[+d.ph] = e.target.value; });
+  m.addEventListener('input', e => { const d = e.target.dataset; if (d.ic != null) items[+d.ic].c = e.target.value.replace(/[^\d.]/g, ''); if (d.in != null) items[+d.in].n = e.target.value; if (d.id != null) items[+d.id].d = e.target.value; if (d.ph != null) phones[+d.ph] = e.target.value; });
   m.onclick = e => { const a = e.target.closest('[data-ip]'), r = e.target.closest('[data-irm]');
     if (a) { const pid = +a.dataset.ip; items.push({ p: pid, c: pcosts[pid] ?? '', n: '' }); sel(); pick(); const i = m.querySelector(`[data-ic="${items.length - 1}"]`); if (i && matchMedia('(hover:hover)').matches) i.focus(); }
     if (r) { items.splice(+r.dataset.irm, 1); sel(); pick(); }
@@ -3608,7 +3610,7 @@ function supBox(ed, addPid) {
     const pr = e.target.closest('[data-phrm]'); if (pr) { phones.splice(+pr.dataset.phrm, 1); phs(); }
     if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault(); const btn = form.querySelector('[type=submit]'), v = k => form.elements[k].value.trim() || null;
-    const it = items.map(i => ({ p: i.p, c: i.c === '' || isNaN(+i.c) ? null : +i.c, n: i.n.trim() || null }));
+    const it = items.map(i => ({ p: i.p, c: i.c === '' || isNaN(+i.c) ? null : +i.c, n: i.n.trim() || null, d: i.d || null }));
     const row = { name: v('name'), phone: [...new Set(phones.map(x => x.trim()).filter(Boolean))].join('\n') || null, address: v('address'), note: v('note'), items: it, updated_at: new Date().toISOString() };
     if (!row.name && !row.phone && !it.length) return toast('اكتب اسم المورد أو اختار منتج على الأقل', 'err');
     btn.disabled = true;
