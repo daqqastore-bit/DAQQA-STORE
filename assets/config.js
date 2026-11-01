@@ -64,6 +64,16 @@ RC.sw = (o) => { const l = !o || !o.c ? [] : [o.c, o.c2, o.c3].filter(Boolean);
 RC.gf = (s) => { const f = ((s || {}).perks || {}).gf || {}, all = ['all', 'men', 'women'];
   const show = Array.isArray(f.show) ? all.filter(g => f.show.includes(g)) : all, list = show.length ? show : all;
   return { show: list, def: list.includes(f.def) ? f.def : list[0] }; };
+// «فيديوهات» showcase at the end of the home page (Admin → Settings → فيديوهات); settings.perks.vids = {on, cap, title, sub, items:[{src, poster, p (product id), t}]}
+// an item with no src uses the default video of the same slot (assets/videos/…)
+RC.VIDS_DEF = { on: true, cap: 'DAQQA · IN MOTION', title: 'الدقّة وهي بتتحرك', sub: 'شوف كل تفصيلة قبل ما تلبسها: اللمعة، الحركة، والإحساس الحقيقي للساعة.',
+  items: [{ src: 'assets/videos/orient.mp4', poster: 'assets/videos/orient.jpg', p: 16, t: 'Orient' },
+    { src: 'assets/videos/nautilus.mp4', poster: 'assets/videos/nautilus.jpg', p: 9, t: 'Patek Philippe Nautilus' },
+    { src: 'assets/videos/gloria.mp4', poster: 'assets/videos/gloria.jpg', p: 25, t: 'Gloria Silver Honeycomb' }] };
+RC.vids = (s) => { const v = ((s || {}).perks || {}).vids, D = RC.VIDS_DEF, o = v && typeof v === 'object' ? v : {}, str = (x, d) => typeof x === 'string' ? x : d;
+  const items = D.items.map((d, i) => { const x = (Array.isArray(o.items) && o.items[i]) || {}; const own = !!x.src;
+    return { src: own ? x.src : d.src, poster: own ? (x.poster || '') : d.poster, p: x.p === undefined ? d.p : x.p, t: str(x.t, d.t), own, off: !!x.off }; });
+  return { on: o.on !== false, cap: str(o.cap, D.cap), title: str(o.title, D.title), sub: str(o.sub, D.sub), items }; };
 RC.optX = (o) => Math.max(0, Math.round(Number(o && o.x) || 0));
 RC.optExtra = (p, sel) => !sel ? 0 : RC.variants(p).reduce((s, g) => s + RC.optX(g.o.find(o => o.n === sel[g.k])), 0);
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
