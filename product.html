@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101213655">
-<link rel="stylesheet" href="assets/store.css?v=20261101213655">
+<link rel="stylesheet" href="assets/base.css?v=20261101224129">
+<link rel="stylesheet" href="assets/store.css?v=20261101224129">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -206,8 +206,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261101213655"></script>
-<script src="assets/app.js?v=20261101213655"></script>
+<script src="assets/config.js?v=20261101224129"></script>
+<script src="assets/app.js?v=20261101224129"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -282,10 +282,16 @@ const ICONS = {
 const key = new URLSearchParams(location.search).get('p') || '';
 const pid = parseInt(key, 10);
 let q = 1, galKey = null, sel = {};
+// live updates (admin saves, someone else's order, fake pop-ups, highlights…) call render() again: only redraw when what this page shows really changed,
+// and then without the entrance animation and on the same photo, so the visitor never sees the page "refresh" under them
+let shownSig = '', relSig = '', galDone = false;
+const sigOf = p => { const s = DQ.settings || {}, { stock, updated_at, created_at, sort, ...rest } = p;
+  return JSON.stringify([rest, stock > 0, RC.perks(s).cards, s.shipping_fee, s.free_shipping_over, DQ.wa()]); };
 // came from a card's add button on a watch with options: point the buyer at them
 const askOpts = location.hash === '#opts';
 
 function notFound() {
+  shownSig = relSig = '';
   document.title = 'المنتج مش موجود · DAQQA | دقّة';
   $('#page').innerHTML = `<div class="nf"><div class="m">${RC.logo()}</div><h1 style="font:400 34px var(--f-display)">المنتج ده مش متاح دلوقتي</h1><p style="color:var(--muted)">ممكن يكون اتباع أو اتشال. شوف باقي الكولكشن.</p><a class="btn btn-amber" href="./">كل المنتجات</a></div>`;
 }
@@ -293,6 +299,10 @@ function notFound() {
 function render() {
   const p = DQ.byId(pid);
   if (!p) return notFound();
+  const sig = sigOf(p), again = !!shownSig && !!$('#slides');
+  if (sig === shownSig && again) { renderRel(p, true); return; }
+  const prevI = again ? Math.round(Math.abs($('#slides').scrollLeft) / ($('#slides').clientWidth || 1)) : 0;
+  shownSig = sig;
   const off = discountPct(p), imgs = (p.images && p.images.length) ? (p.cover_only && p.images.length > 1 ? p.images.slice(1) : p.images) : [DQ.FALLBACK];   // a cover-only first photo shows on cards, not here
   const { specs, body } = RC.splitDesc(p.description);
   const url = location.origin + location.pathname.replace(/[^/]*$/, '') + RC.productUrl(p);
@@ -304,6 +314,7 @@ function render() {
   document.title = `${p.name} · DAQQA | دقّة`;
   const LUX = RC.isLuxury(p);
   if (LUX) document.documentElement.classList.add('lux-mode');
+  document.querySelectorAll('script[data-pld]').forEach(x => x.remove());
   const desc = `${p.name} من DAQQA ${p.soon ? '— قريبًا' : 'بـ ' + money(finalPrice(p))}${off ? ` بدل ${money(p.price)} (خصم ${off}%)` : ''}. ${body ? body.slice(0, 110) + ' — ' : ''}الدفع عند الاستلام وشحن سريع.`;
   document.querySelector('meta[name=description]').content = desc;
   $('#canon').href = url; $('#ogTitle').content = `${p.name} | DAQQA`; $('#ogDesc').content = desc;
@@ -311,7 +322,7 @@ function render() {
   const ld = { '@context': 'https://schema.org', '@type': 'Product', name: p.name, image: imgs.filter(u => !u.startsWith('data:')), description: body || desc, sku: RC.sku(p), category: K.en,
     brand: { '@type': 'Brand', name: p.brand && !/recharge/i.test(p.brand) ? p.brand : 'DAQQA' },
     offers: { '@type': 'Offer', url, priceCurrency: 'EGP', price: finalPrice(p), availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', itemCondition: 'https://schema.org/NewCondition' } };
-  const s = document.createElement('script'); s.type = 'application/ld+json'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
+  const s = document.createElement('script'); s.type = 'application/ld+json'; s.dataset.pld = 1; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
 
   // the real stock stays private; the "N left" line shows only the number the admin chose to show
   const left = p.shown_left > 0 ? p.shown_left : 0;
@@ -401,6 +412,9 @@ function render() {
       </div>
     </article>
     <section class="related lxp-rel" id="related"></section>`;
+  // a live redraw: everything is already on screen, so no curtain/stagger entrance again
+  if (again) $('#page').querySelectorAll('.op, .reveal').forEach(el => el.classList.add('in'));
+  relSig = '';
 
   // gallery
   if (!window._galKeyOn) { window._galKeyOn = 1; addEventListener('keydown', e => galKey && galKey(e)); }
@@ -414,9 +428,9 @@ function render() {
   }, { passive: true });
   const n = slides.querySelectorAll('.slide').length;
   if (n > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    let cur = 0, hold = false, done = false;
+    let cur = 0, hold = false, done = galDone;
     const auto = setInterval(() => { if (done || !document.body.contains(slides)) return clearInterval(auto); if (hold || document.hidden) return; cur = (Math.round(Math.abs(slides.scrollLeft) / slides.clientWidth) + 1) % n; go(cur); }, 3500);
-    const quit = () => { done = true; };
+    const quit = () => { done = galDone = true; };
     slides.addEventListener('pointerenter', () => hold = true); slides.addEventListener('pointerleave', () => hold = false);
     slides.addEventListener('click', quit); slides.addEventListener('touchstart', quit, { passive: true }); slides.addEventListener('wheel', quit, { passive: true });
     if ($('#thumbs')) $('#thumbs').addEventListener('click', quit);
@@ -474,11 +488,14 @@ function render() {
   const first = slides.querySelector('.slide img'), gal = slides.closest('.gal');
   const fit = () => { if (gal && first.naturalWidth) gal.style.setProperty('--ar', Math.min(16 / 9, Math.max(3 / 4, first.naturalWidth / first.naturalHeight)).toFixed(4)); };
   if (first) { if (first.complete) fit(); else first.addEventListener('load', fit, { once: true }); }
+  // a redraw stays on the photo the visitor was looking at
+  if (prevI > 0 && prevI < n) { const at = () => slides.scrollTo({ left: -prevI * slides.clientWidth * (getComputedStyle(slides).direction === 'rtl' ? 1 : -1), behavior: 'instant' }); at(); requestAnimationFrame(at); }
 
   // buy
   if (p.stock > 0) {
     $('#qm').onclick = () => { q = Math.max(1, q - 1); $('#qv').textContent = q; };
-    $('#qp').onclick = () => { q = Math.min(p.stock, 20, q + 1); $('#qv').textContent = q; };
+    q = Math.min(q, Math.max(1, Math.min(p.stock, 20))); $('#qv').textContent = q;
+    $('#qp').onclick = () => { q = Math.min((DQ.byId(pid) || p).stock, 20, q + 1); $('#qv').textContent = q; };
     // every option must be chosen first; the first missing one lights up and says what's needed
     const need = () => { const g = vs.find(g => !sel[g.k]); if (!g) return false;
       const el = document.querySelector(`.po-g[data-g="${g.k}"]`); el.classList.remove('err'); void el.offsetWidth; el.classList.add('err');
@@ -513,18 +530,24 @@ function render() {
     let same = false; try { same = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
     if (same && history.length > 1) history.back(); else location.href = LUX ? 'luxury.html' : './#' + kind;
   });
-  // related
+  renderRel(p);
+  DQ.renderFavs(); DQ.reveal();
+}
+// related: redrawn on its own when only the suggested pieces changed (price, stock, photo…)
+function renderRel(p, live) {
+  const kind = RC.kindOf(p), K = RC.kinds[kind], LUX = RC.isLuxury(p), box = $('#related'); if (!box) return;
   // never another gender's piece: a men's watch suggests men's + unisex, a women's one women's + unisex (unisex suggests all)
   const genOk = x => p.category === 'unisex' || x.category === p.category || x.category === 'unisex';
   const rel = DQ.products.filter(x => x.id !== p.id && RC.isLuxury(x) === RC.isLuxury(p) && genOk(x)).sort((a, b) => ((RC.kindOf(b) === kind) - (RC.kindOf(a) === kind)) || ((b.category === p.category) - (a.category === p.category)) || (b.featured - a.featured)).slice(0, 4);
-  if (rel.length && LUX) $('#related').innerHTML = `<div class="lxp-rel-h"><span class="en">FROM THE PRIVÉ COLLECTION</span><h2 class="en">More <em>Pieces</em></h2><a href="luxury.html">كل المجموعة ←</a></div><div class="grid">${rel.map(DQ.card).join('')}</div>`;
+  const rs = JSON.stringify(rel); if (rs === relSig) return; relSig = rs;
+  if (rel.length && LUX) box.innerHTML = `<div class="lxp-rel-h"><span class="en">FROM THE PRIVÉ COLLECTION</span><h2 class="en">More <em>Pieces</em></h2><a href="luxury.html">كل المجموعة ←</a></div><div class="grid">${rel.map(DQ.card).join('')}</div>`;
   else if (rel.length) {
     // the last tile of the grid leads to the whole section instead of a small text link in the header
     const n = DQ.products.filter(x => RC.kindOf(x) === kind && !RC.isLuxury(x)).length;
     const more = `<a class="rel-more" href="./#${kind}"><span class="rm-cap en">DAQQA · ${K.en.toUpperCase()}</span><b class="en">Explore all<br><em>${K.en}</em></b><span class="rm-ar">اكتشف كل ال${K.ar}</span><span class="rm-foot"><small><b class="en">${n}</b> ${n === 1 ? 'قطعة' : 'قطع'}</small><i>${DQ.ICON.arrow}</i></span></a>`;
-    $('#related').innerHTML = `<div class="sec-head"><h2 class="en">You may <em>also like</em><span class="ar">ممكن تعجبك كمان</span></h2></div><div class="grid">${rel.slice(0, 3).map(DQ.card).join('')}${more}</div>`;
+    box.innerHTML = `<div class="sec-head"><h2 class="en">You may <em>also like</em><span class="ar">ممكن تعجبك كمان</span></h2></div><div class="grid">${rel.slice(0, 3).map(DQ.card).join('')}${more}</div>`;
   }
-  DQ.renderFavs(); DQ.reveal();
+  if (live) { box.querySelectorAll('.op, .reveal').forEach(el => el.classList.add('in')); DQ.renderFavs(); DQ.reveal(); }
 }
 DQ.onRefresh = () => {};
 DQ.start('product', () => { if (!pid || isNaN(pid)) return notFound(); render(); });
