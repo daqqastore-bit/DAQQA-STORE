@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101140847">
+<link rel="stylesheet" href="assets/base.css?v=20261101141313">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -252,6 +252,25 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .off-opt img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--surface-2)}
 .off-opt b{font-size:12.5px;color:var(--muted)}
 .off-none{padding:12px;font-size:12.5px;color:var(--muted)}
+/* QR */
+.qr-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.qr-bar .input{flex:1;min-width:180px;max-width:420px}.qr-bar .btn-amber{margin-inline-start:auto}
+.qr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.qr-card{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:12px}.qr-card.on{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
+.qr-card b{font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}.qr-card small{color:var(--muted);font-size:12px}
+.qr-tick{align-self:stretch;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.qr-code{width:100%;max-width:170px;aspect-ratio:1;background:#fff;border-radius:10px;padding:4px}.qr-code svg{width:100%;height:100%;display:block}
+.qr-acts{display:flex;gap:6px}.qr-acts .btn svg{width:15px;height:15px}
+.qr-scan{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;align-items:start}
+.qr-cam{padding:10px}.qr-view{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:#0b0b0c}
+.qr-view video{width:100%;height:100%;object-fit:cover;display:block;opacity:0}.qr-view.live video{opacity:1}
+.qr-frame{position:absolute;inset:18% 26%;border:2px solid rgba(255,255,255,.85);border-radius:14px;box-shadow:0 0 0 999px rgba(0,0,0,.28);display:none}.qr-view.live .qr-frame{display:block}
+.qr-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px;text-align:center;color:#ddd;font-size:13px;line-height:1.7}.qr-view.live .qr-off{display:none}
+.qr-camacts{display:flex;align-items:center;gap:8px;margin-top:8px;min-height:32px}.qr-st{flex:1;color:var(--muted);font-size:13px}
+.qr-side{display:flex;flex-direction:column;gap:14px}
+.qr-man{display:flex;flex-direction:column;gap:8px}.qr-man label{font-size:13.5px;font-weight:600}.qr-man>div{display:flex;gap:8px}.qr-man .input{flex:1;min-width:0}.qr-man small{color:var(--muted);font-size:12px}
+.qr-log h2{font-size:15px;margin-bottom:8px}.qr-li{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}.qr-li:first-child{border-top:0}
+.qr-li img,.qr-li .sup-noimg{width:40px;height:40px;border-radius:8px;object-fit:cover}.qr-li b{font-size:13.5px;display:block;overflow-wrap:anywhere}.qr-li small{color:var(--muted);font-size:12px}.qr-none{color:var(--muted);font-size:13px}
+@media (max-width:760px){.qr-scan{grid-template-columns:1fr}.qr-view{aspect-ratio:1}.qr-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.qr-card{padding:9px}.qr-bar .btn-amber{margin-inline-start:0;flex:1}}
 /* suppliers */
 .sup-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.sup-stats .ov-c.on{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}.sup-stats .ov-c.warn b{color:var(--red)}.sup-stats div.ov-c:hover{border-color:var(--line)}
 .sup-bar{margin-bottom:14px}.sup-bar .input{max-width:420px}
@@ -1090,7 +1109,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261101140847"></script>
+<script src="assets/config.js?v=20261101141313"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1126,10 +1145,11 @@ const ICONS = {
   covers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15-5-5L5 20"/></svg>',
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   suppliers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
+  qr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>',
   fake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/><path d="M19 3.5l1.5-1M21 7h1.5"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['suppliers','الموردين'], ['invoices','طباعة الفواتير'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['suppliers','الموردين'], ['invoices','طباعة الفواتير'], ['qr','QR الأوردرات'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات'], ['_h',''], ['fake','نوتفكشن وهمية']];
@@ -1363,7 +1383,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261101140847'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261101141313'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1403,7 +1423,8 @@ function go(t, keepScroll) {
   if (chart) { chart.destroy(); chart = null; }
   if (t !== 'tracking') { trkCharts.forEach(c => c.destroy()); trkCharts = []; }
   if (t !== 'fake') { clearInterval(fkTick); fkTick = 0; }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, suppliers: renderSuppliers, fake: renderFake}[t] || renderDash)();
+  if (t !== 'qr') qrStop();
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, suppliers: renderSuppliers, qr: renderQR, fake: renderFake}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   // the class comes off once the entrance is over, or every re-render on the page (a filter, a checkbox…) would replay it and look like a reload
@@ -2011,7 +2032,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101140847" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101141313" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2045,7 +2066,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101140847" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101141313" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2086,7 +2107,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101140847'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101140847')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101141313'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101141313')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3526,6 +3547,177 @@ function fkAdmFire(f, e) {
 try { if (JSON.parse(localStorage.getItem('dq-dev-prefs') || '{}').mute) { localStorage.removeItem('dq-dev-prefs');
   setTimeout(async () => { try { if (!pushReady() || Notification.permission !== 'granted') return; const s = await (await swReg()).pushManager.getSubscription(); if (!s) return; const j = s.toJSON();
     await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB') }); } catch (e) {} }, 3000); } } catch (e) {}
+/* ---------- QR: a code for every product (print it as a sticker) + a camera scanner on the same page that opens «بيع خارج الموقع» for the scanned watch ---------- */
+let qrUI = { v: 'scan', q: '', sel: [], cam: false }, qrLog = [];
+try { Object.assign(qrUI, JSON.parse(localStorage.getItem('dq-qr') || '{}')); } catch (e) {}
+const qrSave = () => { try { localStorage.setItem('dq-qr', JSON.stringify(qrUI)); } catch (e) {} };
+const qrLib = () => window.qrcode ? Promise.resolve() : loadJS('assets/vendor/qrcode.min.js?v=20261101141313');
+// the code holds the product's page on the store: our scanner reads the id from it, any other phone camera just opens the watch on the site
+const qrUrl = p => new URL('product.html?p=' + p.id, location.href).href;
+const qrMake = txt => { const q = qrcode(0, 'M'); q.addData(txt); q.make(); return q; };
+const qrSvg = txt => qrMake(txt).createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+const qrFont = () => getComputedStyle(document.body).fontFamily || 'sans-serif';
+// one sticker: QR + name + price, drawn on a canvas (w × w*1.3)
+function qrLabel(ctx, p, x, y, w) {
+  const q = qrMake(qrUrl(p)), n = q.getModuleCount(), qs = w * .78, cell = qs / n, ox = x + (w - qs) / 2, oy = y + w * .06, f = qrFont();
+  ctx.fillStyle = '#fff'; ctx.fillRect(x, y, w, w * 1.3); ctx.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) ctx.fillRect(Math.floor(ox + c * cell), Math.floor(oy + r * cell), Math.ceil(cell), Math.ceil(cell));
+  ctx.textAlign = 'center'; ctx.direction = 'rtl'; let name = String(p.name || ''), fs = w * .072;
+  ctx.font = `700 ${fs}px ${f}`; while (ctx.measureText(name).width > w * .9 && name.length > 4) name = name.slice(0, -2) + '…';
+  ctx.fillText(name, x + w / 2, oy + qs + w * .1);
+  ctx.font = `600 ${w * .06}px ${f}`; ctx.fillStyle = '#555'; ctx.direction = 'ltr'; ctx.fillText(`DAQQA · #${p.id} · ${RC.money(finalPrice(p))}`, x + w / 2, oy + qs + w * .19);
+}
+function qrBlob(p) { const c = document.createElement('canvas'); c.width = 600; c.height = 780; qrLabel(c.getContext('2d'), p, 0, 0, 600); return c.toDataURL('image/png'); }
+function renderQR() {
+  renderTabs();
+  $('#main').innerHTML = `<div class="head"><div><h1>QR الأوردرات</h1><div class="sub">اطبع QR لكل ساعة والزقه عليها. وقت البيع اعمله سكان من هنا وهيفتحلك «بيع خارج الموقع» للساعة دي على طول.</div></div></div>
+    <div class="acc-tabs" id="qrTabs"><button type="button" data-qv="scan" class="${qrUI.v === 'scan' ? 'on' : ''}">امسح QR</button><button type="button" data-qv="make" class="${qrUI.v === 'make' ? 'on' : ''}">اعمل QR للمنتجات</button></div>
+    <div id="qrBody"></div>`;
+  $('#qrTabs').onclick = e => { const b = e.target.closest('[data-qv]'); if (!b || b.dataset.qv === qrUI.v) return; qrUI.v = b.dataset.qv; qrSave(); qrStop(); renderQR(); };
+  (qrUI.v === 'make' ? qrMakePage : qrScanPage)();
+}
+/* --- make --- */
+async function qrMakePage() {
+  const B = $('#qrBody'); B.innerHTML = '<div class="empty">بنجهّز الأكواد…</div>';
+  try { await qrLib(); } catch (e) { B.innerHTML = '<div class="empty">مكتبة الـ QR مش راضية تحمل. اعمل ريفريش.</div>'; return; }
+  if (tab !== 'qr' || qrUI.v !== 'make') return;
+  qrUI.sel = qrUI.sel.filter(id => products.some(p => p.id === id));
+  B.innerHTML = `<div class="qr-bar"><input class="input" id="qrQ" placeholder="دوّر باسم الساعة" value="${esc(qrUI.q)}" autocomplete="off">
+      <button type="button" class="btn btn-ghost btn-sm" data-qrall>تحديد الكل</button>
+      <button type="button" class="btn btn-amber" data-qrprint disabled>اطبع الملصقات</button></div>
+    <div class="qr-grid" id="qrGrid"></div>`;
+  $('#qrQ').oninput = e => { qrUI.q = e.target.value; qrSave(); qrGrid(); };
+  qrGrid();
+}
+const qrList = () => { const q = qrUI.q.trim().toLowerCase(); return products.filter(p => !q || String(p.name || '').toLowerCase().includes(q) || String(p.id) === q); };
+function qrGrid() {
+  const G = $('#qrGrid'); if (!G) return; const l = qrList(), sel = new Set(qrUI.sel);
+  G.innerHTML = l.length ? l.map(p => `<div class="panel qr-card ${sel.has(p.id) ? 'on' : ''}" data-qp="${p.id}">
+      <label class="qr-tick"><input type="checkbox" data-qsel="${p.id}" ${sel.has(p.id) ? 'checked' : ''}> <span>للطباعة</span></label>
+      <div class="qr-code">${qrSvg(qrUrl(p))}</div>
+      <b>${esc(p.name)}</b><small class="en">#${p.id} · ${money(finalPrice(p))}${p.stock != null ? ` · stock ${p.stock}` : ''}</small>
+      <div class="qr-acts"><button type="button" class="btn btn-ghost btn-sm" data-qdl="${p.id}">${RC.DL_ICON}حمّل</button><button type="button" class="btn btn-ghost btn-sm" data-qsell="${p.id}">بيع</button></div></div>`).join('')
+    : '<div class="empty">مفيش ساعة بالاسم ده.</div>';
+  qrBar();
+}
+function qrBar() {
+  const n = qrUI.sel.length, pb = $('[data-qrprint]'), ab = $('[data-qrall]'), l = qrList();
+  if (pb) { pb.disabled = !n; pb.textContent = n ? `اطبع الملصقات (${n})` : 'اطبع الملصقات'; }
+  if (ab) ab.textContent = l.length && l.every(p => qrUI.sel.includes(p.id)) ? 'شيل التحديد' : 'تحديد الكل';
+}
+// A4 sheet, 4 × 4 stickers a page (~5 cm each) → PDF (iPhone app: share sheet → Print)
+async function qrPrint() {
+  const l = qrUI.sel.map(id => products.find(p => p.id === id)).filter(Boolean); if (!l.length) return;
+  const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = '<div class="fin-box inv-ready"><h3>بنجهّز الملصقات…</h3></div>'; document.body.appendChild(wait);
+  try {
+    await Promise.all([qrLib(), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101141313')]);
+    const pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true }), COLS = 4, ROWS = 4, PER = COLS * ROWS, W = 1240, H = 1754, M = 70, cw = (W - 2 * M) / COLS, lw = cw * .9, lh = lw * 1.3, rh = (H - 2 * M) / ROWS;
+    for (let pg = 0; pg * PER < l.length; pg++) {
+      const c = document.createElement('canvas'); c.width = W; c.height = H; const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+      l.slice(pg * PER, pg * PER + PER).forEach((p, i) => { const x = M + (COLS - 1 - i % COLS) * cw + (cw - lw) / 2, y = M + Math.floor(i / COLS) * rh + (rh - lh) / 2;
+        qrLabel(ctx, p, x, y, lw); ctx.strokeStyle = '#ddd'; ctx.setLineDash([8, 8]); ctx.strokeRect(x, y, lw, lh); ctx.setLineDash([]); });
+      if (pg) pdf.addPage('a4'); pdf.addImage(c.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+    }
+    const name = `DAQQA-QR-${RC.dmy(new Date()).replace(/\//g, '-')}.pdf`, file = new File([pdf.output('blob')], name, { type: 'application/pdf' }), url = URL.createObjectURL(file);
+    const share = matchMedia('(pointer:coarse)').matches && !!(navigator.canShare && navigator.canShare({ files: [file] }));
+    wait.innerHTML = `<div class="fin-box inv-ready"><h3>الملصقات جاهزة <span class="en">(${l.length})</span></h3>
+      <p class="fsub">${share ? 'دوس «طباعة / مشاركة» واختار Print، أو احفظها.' : 'افتح الملف واطبعه، أو حمّله.'} اطبعها بمقاس 100% عشان الكود يتقري كويس.</p>
+      <div class="fin-acts">${share ? '<button class="btn btn-amber" type="button" data-share>طباعة / مشاركة</button>' : `<a class="btn btn-amber" href="${url}" target="_blank" rel="noopener">فتح الملف</a>`}<a class="btn btn-ghost" href="${url}" download="${name}">تحميل</a><button class="btn btn-ghost" type="button" data-later>قفل</button></div></div>`;
+    wait.onclick = async e => {
+      if (e.target.closest('[data-share]')) { try { await navigator.share({ files: [file], title: name }); wait.remove(); } catch (err) { if (err && err.name !== 'AbortError') toast(err.message, 'err'); } return; }
+      if (e.target === wait || e.target.closest('[data-later]')) { wait.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000); }
+    };
+  } catch (err) { wait.remove(); toast('مقدرناش نجهّز الملصقات: ' + (err && err.message || err), 'err'); }
+}
+/* --- scan --- */
+let qrStream = null, qrTimer = 0, qrDet = null, qrHold = false, qrLast = { t: '', at: 0 };   // the same code fires again only after it left the camera for 2s
+function qrScanPage() {
+  const B = $('#qrBody'), camOK = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  B.innerHTML = `<div class="qr-scan">
+      <div class="panel qr-cam"><div class="qr-view" id="qrView"><video id="qrV" playsinline muted autoplay></video><span class="qr-frame"></span>
+        <div class="qr-off" id="qrOff">${camOK ? '<button type="button" class="btn btn-amber" data-qron>افتح الكاميرا</button><small>وجّه الكاميرا على QR الساعة</small>' : '<small>الكاميرا مش متاحة على الجهاز ده. اكتب الكود تحت.</small>'}</div></div>
+        <div class="qr-camacts"><span id="qrSt" class="qr-st"></span><button type="button" class="btn btn-ghost btn-sm" data-qroff hidden>اقفل الكاميرا</button></div></div>
+      <div class="qr-side">
+        <form class="panel qr-man" id="qrMan"><label>أو اكتب رقم الساعة / كود الطلب</label><div><input class="input en" name="t" dir="ltr" placeholder="12 أو DQ-…" autocomplete="off"><button class="btn btn-amber" type="submit">افتح</button></div><small>جهاز باركود (USB / Bluetooth) بيكتب هنا لوحده.</small></form>
+        <div class="panel qr-log"><h2>آخر سكان</h2><div id="qrLog"></div></div></div></div>`;
+  B.querySelector('[data-qron]') && (B.querySelector('[data-qron]').onclick = () => qrStart());
+  B.querySelector('[data-qroff]').onclick = () => { qrUI.cam = false; qrSave(); qrStop(); };
+  $('#qrMan').onsubmit = e => { e.preventDefault(); const t = e.target.t.value.trim(); if (!t) return; if (qrHit(t, true)) e.target.t.value = ''; };
+  qrLogR();
+  if (camOK && qrUI.cam) qrStart();
+}
+function qrLogR() { const L = $('#qrLog'); if (!L) return;
+  L.innerHTML = qrLog.length ? qrLog.map(x => { const p = x.p && products.find(q => q.id === x.p);
+    return `<div class="qr-li">${p && p.images && p.images[0] ? `<img src="${esc(RC.thumb(p.images[0]))}" alt="">` : '<span class="sup-noimg"></span>'}<div><b>${esc(x.l)}</b><small>${new Date(x.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}${x.s ? ' · ' + esc(x.s) : ''}</small></div>${p ? `<button type="button" class="btn btn-ghost btn-sm" data-qsell="${p.id}">بيع تاني</button>` : ''}</div>`; }).join('')
+    : '<div class="qr-none">لسه مفيش. أول ما تعمل سكان لساعة هتظهر هنا.</div>'; }
+const qrStat = t => { const s = $('#qrSt'); if (s) s.textContent = t; };
+async function qrStart() {
+  if (qrStream) return; qrUI.cam = true; qrSave();
+  const off = $('#qrOff'); if (off) off.innerHTML = '<small>بنفتح الكاميرا…</small>';
+  try {
+    qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+  } catch (e) { qrStream = null; qrUI.cam = false; qrSave();
+    if (off) off.innerHTML = `<button type="button" class="btn btn-amber" data-qron>جرّب تاني</button><small>${e && e.name === 'NotAllowedError' ? 'الكاميرا مقفولة. اسمح للموقع يستخدم الكاميرا من إعدادات المتصفح/الموبايل وجرّب تاني.' : 'مقدرناش نفتح الكاميرا: ' + esc(e && e.message || e)}</small>`;
+    off && (off.querySelector('[data-qron]').onclick = () => qrStart()); return; }
+  if (tab !== 'qr' || qrUI.v !== 'scan' || !$('#qrV')) return qrStop();
+  const v = $('#qrV'); v.srcObject = qrStream; try { await v.play(); } catch (e) {}
+  $('#qrView').classList.add('live'); const ob = $('[data-qroff]'); if (ob) ob.hidden = false;
+  if (!qrDet && 'BarcodeDetector' in window) { try { if ((await BarcodeDetector.getSupportedFormats()).includes('qr_code')) qrDet = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) {} }
+  if (!qrDet) { try { await loadJS('assets/vendor/jsqr.min.js?v=20261101141313'); } catch (e) { qrStat('مكتبة المسح مش راضية تحمل'); return; } }
+  qrStat('بيدوّر على QR…'); qrLoop();
+}
+function qrStop() {
+  clearTimeout(qrTimer); qrTimer = 0;
+  if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+  const v = $('#qrV'); if (v) v.srcObject = null;
+  const vw = $('#qrView'); if (vw) { vw.classList.remove('live'); const off = $('#qrOff'); if (off && !off.querySelector('[data-qron]')) { off.innerHTML = '<button type="button" class="btn btn-amber" data-qron>افتح الكاميرا</button><small>وجّه الكاميرا على QR الساعة</small>'; off.querySelector('[data-qron]').onclick = () => qrStart(); } }
+  const ob = $('[data-qroff]'); if (ob) ob.hidden = true; qrStat('');
+}
+const qrCv = document.createElement('canvas');
+async function qrLoop() {
+  if (!qrStream) return;
+  const v = $('#qrV');
+  if (v && !qrHold && v.readyState >= 2 && v.videoWidth) {
+    let txt = '';
+    try {
+      if (qrDet) { const r = await qrDet.detect(v); txt = r && r[0] ? r[0].rawValue : ''; }
+      else { const s = Math.min(1, 720 / Math.max(v.videoWidth, v.videoHeight)), w = qrCv.width = Math.round(v.videoWidth * s), h = qrCv.height = Math.round(v.videoHeight * s), ctx = qrCv.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(v, 0, 0, w, h); const r = window.jsQR && jsQR(ctx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' }); txt = r ? r.data : ''; }
+    } catch (e) {}
+    if (txt) { const again = txt === qrLast.t && Date.now() - qrLast.at < 2000; qrLast = { t: txt, at: Date.now() }; if (!again) qrHit(txt); }
+  }
+  if (qrStream) qrTimer = setTimeout(qrLoop, 160);
+}
+const qrPing = () => { try { navigator.vibrate && navigator.vibrate(60); } catch (e) {} try { const a = new (window.AudioContext || window.webkitAudioContext)(), o = a.createOscillator(), g = a.createGain(); o.frequency.value = 1320; g.gain.value = .08; o.connect(g).connect(a.destination); o.start(); o.stop(a.currentTime + .09); setTimeout(() => a.close(), 300); } catch (e) {} };
+// what was read → our product (store link / number) or one of our orders (its code)
+function qrHit(raw, typed) {
+  const t = String(raw).trim(); let pid = null;
+  try { const u = new URL(t, location.href); if (/product\.html$/.test(u.pathname)) pid = parseInt(u.searchParams.get('p') || '', 10) || null; } catch (e) {}
+  if (!pid && /^#?\d{1,7}$/.test(t)) pid = +t.replace('#', '');
+  const p = pid && products.find(x => x.id === pid);
+  if (p) { qrPing(); qrLog.unshift({ p: p.id, l: p.name, at: Date.now(), s: 'اتفتحت البيعة' }); qrLog = qrLog.slice(0, 12); qrLogR(); qrSell(p); return true; }
+  const o = orders.find(x => x.code && t.toUpperCase().includes(String(x.code).toUpperCase()));
+  if (o) { qrPing(); qrStop(); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(isLuxOrder(o) ? 'lux-orders' : 'orders'); toast('الطلب ' + oLbl(o), 'ok'); return true; }
+  if (!typed) { qrLog.unshift({ l: t.slice(0, 60), at: Date.now(), s: 'مش من منتجاتنا' }); qrLog = qrLog.slice(0, 12); qrLogR(); }
+  toast(pid ? 'مفيش ساعة بالرقم ده' : 'الكود ده مش لساعة أو طلب عندنا', 'err'); return false;
+}
+// open the sale for this watch; the camera waits until the form is closed, then keeps scanning
+function qrSell(p) {
+  qrHold = true; qrStat('سجّل البيعة…');
+  const box = offlineBox(null, p);
+  if (!box) { qrHold = false; return; }
+  const ob = new MutationObserver(() => { if (!box.isConnected) { ob.disconnect(); qrHold = false; qrLast.at = Date.now(); if (qrStream) qrStat('بيدوّر على QR…'); } });
+  ob.observe(document.body, { childList: true });
+}
+document.addEventListener('click', e => {
+  const s = e.target.closest('[data-qsell]'); if (s) { const p = products.find(x => x.id === +s.dataset.qsell); if (p) qrSell(p); return; }
+  const d = e.target.closest('[data-qdl]'); if (d) { const p = products.find(x => x.id === +d.dataset.qdl); if (p) RC.saveImg(qrBlob(p), `QR-${p.id}-${p.name}`); return; }
+  if (e.target.closest('[data-qrprint]')) return qrPrint();
+  if (e.target.closest('[data-qrall]')) { const l = qrList().map(p => p.id), all = l.length && l.every(id => qrUI.sel.includes(id)); qrUI.sel = all ? qrUI.sel.filter(id => !l.includes(id)) : [...new Set([...qrUI.sel, ...l])]; qrSave(); qrGrid(); }
+});
+document.addEventListener('change', e => { const c = e.target.closest('[data-qsel]'); if (!c) return; const id = +c.dataset.qsel; qrUI.sel = c.checked ? [...new Set([...qrUI.sel, id])] : qrUI.sel.filter(x => x !== id); qrSave(); c.closest('.qr-card').classList.toggle('on', c.checked); qrBar(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { if (qrStream) { qrStop(); } } else if (tab === 'qr' && qrUI.v === 'scan' && qrUI.cam && !qrStream && $('#qrV')) qrStart(); });
+
 /* ---------- suppliers: who we buy each watch from and what it costs us (admin only, every field optional) ---------- */
 let sups = [], SUP_OK = true, supUI = { q: '', v: 'all' };
 try { Object.assign(supUI, JSON.parse(localStorage.getItem('dq-sup') || '{}')); } catch (e) {}
@@ -3897,7 +4089,7 @@ function finBox(o) {
   setTimeout(() => { const first = m.querySelector('[data-pc]'); first && !first.value && first.focus(); }, 60);
 }
 // a sale made outside the website: pick one of our products or type any name, then its numbers
-function offlineBox(ed) {
+function offlineBox(ed, preset) {
   if (!OFF_OK) return toast('جدول البيع خارج الموقع مش متفعل في Supabase', 'err');
   let payer = ed ? ed.ship_payer : 'buyer', pid = ed ? ed.product_id : null;
   const today = new Date().toISOString().slice(0, 10), num = v => Math.max(0, +String(v).replace(/[^\d.]/g, '') || 0);
@@ -3942,7 +4134,8 @@ function offlineBox(ed) {
     form.seller.value = ed.seller || ''; form.note.value = ed.note || ''; m.querySelector('.off-stock').hidden = true;
     m.querySelector('#offHint').textContent = 'تعديل البيعة دي مش بيغيّر المخزون';
   }
-  calc(); setTimeout(() => inp.focus(), 60);
+  if (preset && !ed) pick(preset);   // came from a QR scan: the watch is already picked
+  calc(); setTimeout(() => (preset && !ed ? form.price : inp).focus(), 60);
   form.onsubmit = async e => { e.preventDefault(); const name = inp.value.trim(), v = calc(), btn = form.querySelector('[type=submit]');
     if (!name) { inp.focus(); return toast('اختار المنتج أو اكتب اسمه', 'err'); }
     if (!v.pr) { form.price.focus(); return toast('اكتب سعر البيع', 'err'); }
@@ -3958,6 +4151,7 @@ function offlineBox(ed) {
     }
     m.remove(); toast((ed ? 'اتعدلت البيعة ✓ صافي الربح ' : 'اتسجلت البيعة ✓ صافي الربح ') + signMoney(offNet(data)), 'ok');
     if (tab === 'dash') renderDash(); else if (tab === 'accounts') renderAccounts(); };
+  return m;
 }
 document.addEventListener('click', e => {
   if (e.target.closest('[data-offsale]')) return offlineBox();
