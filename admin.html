@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101130043">
+<link rel="stylesheet" href="assets/base.css?v=20261101130654">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -259,13 +259,13 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .sup-card{display:flex;flex-direction:column;gap:12px}.sup-t{flex:1;min-width:0}.sup-t h2{font-size:16px;overflow-wrap:anywhere}.sup-t small{color:var(--muted);font-size:12.5px}
 .sup-phs{display:flex;flex-direction:column;gap:6px}.sup-ph{display:flex;align-items:center;gap:6px}.sup-ph b{flex:1;font-size:14.5px;text-align:right}
 .sup-phin{display:flex;flex-direction:column;gap:6px}.sup-phr{display:flex;gap:6px;align-items:center}.sup-phr .input{flex:1;min-width:0}.sup-addph{align-self:flex-start;margin-top:6px;font-size:13px;color:var(--amber);padding:4px 2px}
-.es-row{display:grid;grid-template-columns:1fr 130px 30px;gap:8px;align-items:center;margin-bottom:8px}.es-row .input{min-width:0}.es-note{color:var(--muted);font-size:12.5px;line-height:1.7}
+.es-row{display:grid;grid-template-columns:1fr 130px 30px;gap:8px;align-items:center;margin-bottom:8px}.es-row .input{min-width:0}.es-note{color:var(--muted);font-size:12.5px;line-height:1.7;display:block}.es-note:empty{display:none}
 @media (max-width:600px){.es-row{grid-template-columns:1fr 100px 30px}}
 .sup-line{font-size:13.5px;line-height:1.7;overflow-wrap:anywhere}.sup-line span{display:block;font-size:11.5px;color:var(--muted)}
 .sup-its,.sup-none{display:flex;flex-direction:column;gap:2px}.sup-none{padding:8px}
 .sup-it{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;padding:8px;border-radius:10px}.sup-it:nth-child(odd){background:var(--surface-2)}
 .sup-it img,.sup-noimg{width:42px;height:42px;border-radius:9px;object-fit:cover;background:var(--surface-2);display:block}.off-opt .sup-noimg{width:38px;height:38px}
-.sup-it b{font-size:13.5px;display:block;overflow-wrap:anywhere}.sup-it small{font-size:12px;color:var(--muted)}
+.sup-it b{font-size:13.5px;display:block;overflow-wrap:anywhere}.sup-pa{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.sup-pa a,.sup-pa button{font-size:12px;padding:4px 10px;border:1px solid var(--line-2);border-radius:99px;color:var(--ink);text-decoration:none;background:transparent}.sup-pa a:hover,.sup-pa button:hover{border-color:var(--amber);color:var(--amber)}.sup-it small{font-size:12px;color:var(--muted)}
 .sup-c{text-align:left;display:grid;justify-items:end}.sup-c b{font-size:14px}.sup-c em{font-style:normal;color:var(--green)}.sup-c em.neg{color:var(--red)}
 .sup-foot{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1px solid var(--line)}.sup-foot small{flex:1;color:var(--muted-2);font-size:11.5px}
 .sup-box{width:min(600px,100%)}.sup-sel{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}.sup-sel:empty{display:none}
@@ -1090,7 +1090,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261101130043"></script>
+<script src="assets/config.js?v=20261101130654"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1363,7 +1363,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261101130043'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261101130654'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2011,7 +2011,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101130043" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101130654" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2045,7 +2045,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101130043" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101130654" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2086,7 +2086,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101130043'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101130043')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101130654'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101130654')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2880,13 +2880,25 @@ const edSupOf = pid => sups.map(s => { const i = supItems(s).find(x => +x.p === 
 function edSupRows() {
   const box = $('#edSup'); if (!box || !draft) return; const L = draft._sups || (draft._sups = []);
   if (!SUP_OK) { box.innerHTML = '<small class="es-note">صفحة الموردين لسه محتاجة تتفعل في Supabase (supabase/suppliers.sql).</small>'; return; }
-  if (!sups.length) { box.innerHTML = '<small class="es-note">لسه مفيش موردين. ضيفهم الأول من صفحة «الموردين» وبعدين اختارهم هنا.</small>'; return; }
-  box.innerHTML = L.map((x, k) => `<div class="es-row"><select class="input" data-ess="${k}" aria-label="المورد"><option value="">اختار المورد</option>${sups.map(s => `<option value="${s.id}" ${+x.s === s.id ? 'selected' : ''} ${+x.s !== s.id && L.some(y => +y.s === s.id) ? 'hidden' : ''}>${esc(s.name || 'مورد من غير اسم')}</option>`).join('')}</select>
+  // type any name: an existing supplier is picked from the list, a new name becomes a new supplier when the product is saved
+  const nm = x => x.s ? ((sups.find(s => s.id === +x.s) || {}).name || '') : (x.t || '');
+  box.innerHTML = `<datalist id="edSupDL">${sups.filter(s => s.name && !L.some(y => +y.s === s.id)).map(s => `<option value="${esc(s.name)}">`).join('')}</datalist>`
+    + L.map((x, k) => `<div class="es-row"><input class="input" list="edSupDL" data-ess="${k}" value="${esc(nm(x))}" placeholder="اكتب أو اختار المورد" maxlength="80" aria-label="المورد">
     <input class="input en" inputmode="decimal" data-esc="${k}" value="${esc(x.c ?? '')}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><button type="button" class="sup-x" data-esrm="${k}" aria-label="شيل">×</button></div>`).join('')
-    + (L.length < sups.length ? `<button type="button" class="sup-addph" data-esadd>${L.length ? '+ مورد تاني' : '+ اختار المورد'}</button>` : '');
+    + `<button type="button" class="sup-addph" data-esadd>${L.length ? '+ مورد تاني' : '+ أضف المورد'}</button>`
+    + '<small class="es-note" id="edSupNew"></small>'; edSupNote();
 }
-$('#editor').addEventListener('change', e => { const k = e.target.dataset.ess; if (k == null || !draft) return; draft._sups[+k].s = e.target.value ? +e.target.value : null;
-  const c = draft._sups[+k]; if (c.s && c.c === '') { const i = supItems(sups.find(s => s.id === c.s) || {}).find(x => draft.id && +x.p === draft.id); c.c = i && i.c != null ? i.c : (draft.id && pcosts[draft.id] != null ? pcosts[draft.id] : ''); } edSupRows(); });
+// refresh the suggestions and the «new supplier» hint without redrawing the rows (redrawing on blur would eat the next tap)
+function edSupNote() { const L = draft && draft._sups || [], dl = $('#edSupDL'), n = $('#edSupNew');
+  if (dl) dl.innerHTML = sups.filter(s => s.name && !L.some(y => +y.s === s.id)).map(s => `<option value="${esc(s.name)}">`).join('');
+  if (n) n.textContent = L.some(x => !x.s && String(x.t || '').trim()) ? 'المورد الجديد هيتضاف لصفحة الموردين لما تحفظ المنتج.' : ''; }
+// typing: match an existing supplier by name, otherwise keep the typed name for a new one
+$('#editor').addEventListener('input', e => { const k = e.target.dataset.ess; if (k == null || !draft) return; const x = draft._sups[+k], t = e.target.value.trim(), m = t && sups.find(s => String(s.name || '').trim().toLowerCase() === t.toLowerCase());
+  x.s = m ? m.id : null; x.t = m ? '' : e.target.value;
+  if (m && x.c === '') { const i = supItems(m).find(y => draft.id && +y.p === draft.id); x.c = i && i.c != null ? i.c : (draft.id && pcosts[draft.id] != null ? pcosts[draft.id] : ''); const ci = $(`[data-esc="${k}"]`); if (ci) ci.value = x.c; } });
+$('#editor').addEventListener('change', e => { if (e.target.dataset.ess != null && draft) edSupNote(); });
+// moving on to the cost box closes the suppliers list, so it doesn't cover the row under it
+$('#editor').addEventListener('focusin', e => { if (e.target.closest('#edSup')) document.querySelectorAll('#edSup .dd.open').forEach(b => { if (!b.contains(e.target)) b._close(); }); });
 $('#editor').addEventListener('input', e => { const k = e.target.dataset.esc; if (k != null && draft) draft._sups[+k].c = e.target.value.replace(/[^\d.]/g, ''); });
 $('#editor').addEventListener('click', e => { if (!draft) return;
   if (e.target.closest('[data-esadd]')) { draft._sups.push({ s: null, c: '' }); edDirty = true; edSupRows(); }
@@ -2894,6 +2906,10 @@ $('#editor').addEventListener('click', e => { if (!draft) return;
 // after the product is saved: add / update / remove it in each supplier's list, so the suppliers page shows the same thing
 async function supSyncProduct(pid, want) {
   if (!SUP_OK || !Array.isArray(want)) return;
+  for (const x of want) { const t = String(x.t || '').trim(); if (x.s || !t) continue;
+    const m = sups.find(s => String(s.name || '').trim().toLowerCase() === t.toLowerCase()); if (m) { x.s = m.id; continue; }
+    const { data, error } = await sb.from('shop_suppliers').insert({ name: t, items: [] }).select().single(); if (error) { toast(error.message, 'err'); continue; }
+    sups.unshift(data); x.s = data.id; x.t = ''; }
   const W = new Map(); want.forEach(x => { if (x.s && !W.has(+x.s)) W.set(+x.s, x.c === '' || x.c == null || isNaN(+x.c) ? null : +x.c); });
   const now = new Date().toISOString(), jobs = [];
   sups.forEach(s => { const it = Array.isArray(s.items) ? s.items : [], has = it.find(i => +i.p === pid); let next = null;
@@ -3552,7 +3568,8 @@ function supList() {
       ${ph.length ? `<div class="sup-phs">${ph.map(n => { const wa = supWa(n); return `<div class="sup-ph"><b class="en" dir="ltr">${esc(n)}</b><a class="btn btn-ghost btn-sm" href="tel:${esc(n.replace(/[^\d+]/g, ''))}">اتصال</a>${wa ? `<a class="btn btn-ghost btn-sm" href="https://wa.me/${wa}" target="_blank" rel="noopener">واتساب</a>` : ''}</div>`; }).join('')}</div>` : ''}
       ${s.address ? `<div class="sup-line"><span>العنوان</span>${esc(s.address)}</div>` : ''}${s.note ? `<div class="sup-line"><span>ملاحظات</span>${esc(s.note).replace(/\n/g, '<br>')}</div>` : ''}
       ${it.length ? `<div class="sup-its">${it.map(i => { const p = products.find(x => x.id === +i.p), c = i.c !== '' && i.c != null ? +i.c : null, pr = finalPrice(p), m = c != null && pr ? pr - c : null;
-        return `<div class="sup-it">${img(p)}<div><b>${esc(p.name)}</b><small>بيتباع بـ ${money(pr)}${i.n ? ` · ${esc(i.n)}` : ''}</small></div><div class="sup-c"><b class="en">${c != null ? money(c) : '—'}</b><small>${m != null ? `ربح <em class="${m < 0 ? 'neg' : ''}">${money(m)}</em>` : 'التكلفة'}</small></div></div>`; }).join('')}</div>` : '<div class="sup-line" style="color:var(--muted)">لسه مفيش منتجات متربطة بيه.</div>'}
+        return `<div class="sup-it">${img(p)}<div><b>${esc(p.name)}</b><small>بيتباع بـ ${money(pr)}${i.n ? ` · ${esc(i.n)}` : ''}</small>
+          <span class="sup-pa"><a href="${RC.productUrl(p)}" target="_blank" rel="noopener">عرض في الموقع ↗</a><button type="button" data-supopen="${p.id}">تعديل المنتج</button></span></div><div class="sup-c"><b class="en">${c != null ? money(c) : '—'}</b><small>${m != null ? `ربح <em class="${m < 0 ? 'neg' : ''}">${money(m)}</em>` : 'التكلفة'}</small></div></div>`; }).join('')}</div>` : '<div class="sup-line" style="color:var(--muted)">لسه مفيش منتجات متربطة بيه.</div>'}
       <div class="sup-foot"><small>${s.updated_at ? 'آخر تعديل ' + fmtDate(s.updated_at) : ''}</small><button type="button" class="btn btn-ghost btn-sm" data-supedit="${s.id}">تعديل</button><button type="button" class="btn btn-danger btn-sm" data-supdel="${s.id}">مسح</button></div></div>`; }).join('')}</div>`;
 }
 function supBox(ed, addPid) {
@@ -3606,6 +3623,7 @@ function supBox(ed, addPid) {
 }
 document.addEventListener('click', async e => {
   if (e.target.closest('[data-supnew]')) return supBox();
+  const po = e.target.closest('[data-supopen]'); if (po) { const p = products.find(x => x.id === +po.dataset.supopen); if (p) { go(RC.isLuxury(p) ? 'lux' : 'products'); openEditor(p.id); } return; }
   const v = e.target.closest('[data-supv]'); if (v) { supUI.v = v.dataset.supv; supUI.q = ''; supSave(); return renderSuppliers(); }
   const ed = e.target.closest('[data-supedit]'); if (ed) { const s = sups.find(x => x.id === +ed.dataset.supedit); if (s) supBox(s); return; }
   const ln = e.target.closest('[data-suplink]'); if (ln) { const pid = +ln.dataset.suplink;   // pick which supplier (or a new one)
