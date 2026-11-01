@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101172949">
+<link rel="stylesheet" href="assets/base.css?v=20261101175520">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -538,11 +538,12 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .soc-pick b small{font-weight:400;color:var(--muted);font-size:12px}
 .soc-pick-acts{display:flex;gap:8px}
 .set-card{display:flex;flex-direction:column;gap:14px}
+.ho-list{display:flex;flex-direction:column;gap:8px}.ho-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2,transparent)}.ho-row.is-off{opacity:.55}.ho-row small{color:var(--muted);font-size:12px}.ho-n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber);font-weight:700;font-size:13px;flex:none}.ho-mv{display:flex;gap:4px;margin-inline-start:auto}.ho-mv button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer}.ho-mv button:disabled{opacity:.3;cursor:default}
 .vd-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.vd-slot{display:flex;flex-direction:column;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2,transparent)}.vd-slot.is-off .vd-pv,.vd-slot.is-off .field{opacity:.45}
-.vd-pv{position:relative;aspect-ratio:9/16;max-height:420px;border-radius:12px;overflow:hidden;background:#0b0805;cursor:pointer}.vd-pv video{width:100%;height:100%;object-fit:cover;display:block}.vd-tag{position:absolute;top:8px;inset-inline-start:8px;font-size:11px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.55);color:#F2E9D8}
+.vd-pv{position:relative;height:400px;aspect-ratio:var(--ar,9/16);max-width:100%;margin:0 auto;border-radius:12px;overflow:hidden;background:#0b0805;cursor:pointer}.vd-pv video{width:100%;height:100%;object-fit:contain;display:block}.vd-mv{display:flex;gap:4px;margin-inline-start:auto;margin-inline-end:10px}.vd-mv button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:14px}.vd-mv button:disabled{opacity:.3;cursor:default}.vd-tag{position:absolute;top:8px;inset-inline-start:8px;font-size:11px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.55);color:#F2E9D8}
 .vd-up{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;background:rgba(10,8,6,.7);color:#F2E9D8;font-size:13px}.vd-up i{width:30px;height:30px;border-radius:50%;border:3px solid rgba(242,233,216,.25);border-top-color:#C9A96E;animation:vdSpin 1s linear infinite}@keyframes vdSpin{to{transform:rotate(360deg)}}
 .vd-f{display:flex;flex-direction:column;gap:10px}.vd-f .field{margin:0}.vd-top{display:flex;align-items:center;justify-content:space-between}.vd-pick{cursor:pointer;justify-content:center}#vdCard.is-off .field{opacity:.55}
-@media (max-width:900px){.vd-slots{grid-template-columns:1fr}.vd-slot{display:grid;grid-template-columns:130px 1fr;align-items:start}.vd-pv{max-height:none}}
+@media (max-width:900px){.vd-slots{grid-template-columns:1fr}.vd-slot{display:grid;grid-template-columns:130px 1fr;align-items:start}.vd-pv{height:auto;width:100%;max-height:300px}}
 .fk-in{display:grid;grid-template-columns:1fr 1fr;gap:16px}.fk-in .field{margin:0}.fk-in .input{height:46px;font:600 17px var(--f-ui);text-align:center}
 .fk-in .field>label{min-height:36px;display:flex;align-items:center;margin-bottom:8px}.fk-lb{justify-content:space-between;gap:8px}.fk-to-f{padding-top:14px;border-top:1px solid var(--line)}.fk-to-f>label{display:block;margin-bottom:8px}.fk-to-f .fk-q{margin-top:0}.fk-u{display:inline-flex;padding:3px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line)}.fk-u button{padding:4px 12px;border-radius:99px;font-size:12.5px;color:var(--muted);background:none;border:0}.fk-u button.on{background:var(--amber);color:#fff;font-weight:600}
 .fk-q{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.fk-q .gchip{padding:5px 11px;font-size:12.5px;font-family:var(--f-ui)}
@@ -1097,7 +1098,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261101172949"></script>
+<script src="assets/config.js?v=20261101175520"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1370,7 +1371,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261101172949'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261101175520'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2019,7 +2020,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101172949" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101175520" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2053,7 +2054,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101172949" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101175520" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2094,7 +2095,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101172949'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101172949')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101175520'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101175520')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3097,7 +3098,7 @@ function zonesHTML() {
     || '<div class="empty" style="padding:14px">مفيش أسعار حسب المحافظة لسه. كل المحافظات بتاخد السعر اللي فوق.</div>';
 }
 let setTab = (() => { try { return localStorage.getItem('dq-set-tab') || 'general'; } catch (e) { return 'general'; } })(), socDraft = [];
-const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="policy" class="${setTab === 'policy' ? 'on' : ''}">السياسة</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="vids" class="${setTab === 'vids' ? 'on' : ''}">فيديوهات</button><button type="button" data-st="pages" class="${setTab === 'pages' ? 'on' : ''}">رجالي وحريمي</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
+const setTabs = () => `<div class="acc-tabs" id="setTabs"><button type="button" data-st="general" class="${setTab === 'general' ? 'on' : ''}">عام</button><button type="button" data-st="social" class="${setTab === 'social' ? 'on' : ''}">سوشيال</button><button type="button" data-st="perks" class="${setTab === 'perks' ? 'on' : ''}">كروت المنتج</button><button type="button" data-st="footer" class="${setTab === 'footer' ? 'on' : ''}">الفوتر</button><button type="button" data-st="policy" class="${setTab === 'policy' ? 'on' : ''}">السياسة</button><button type="button" data-st="bands" class="${setTab === 'bands' ? 'on' : ''}">السكاشن</button><button type="button" data-st="vids" class="${setTab === 'vids' ? 'on' : ''}">فيديوهات</button><button type="button" data-st="order" class="${setTab === 'order' ? 'on' : ''}">ترتيب الرئيسية</button><button type="button" data-st="pages" class="${setTab === 'pages' ? 'on' : ''}">رجالي وحريمي</button><button type="button" data-st="coupons" class="${setTab === 'coupons' ? 'on' : ''}">أكواد خصم</button></div>`;
 /* ---------- settings → men / women pages: show or hide each page + its texts (empty = the default) ---------- */
 let pgDraft = null;   // unsaved texts survive the re-render after a cover photo upload
 function renderPagesCfg(s) {
@@ -3127,6 +3128,26 @@ function renderPagesCfg(s) {
     if (error) return toast(/page_cfg/.test(error.message) ? 'الخاصية دي محتاجة تحديث في Supabase' : error.message, 'err');
     settings.page_cfg = C; pgDraft = null; toast('اتحفظ ✓', 'ok'); renderPagesCfg(settings); });
 }
+/* ---------- settings → ترتيب الرئيسية: the order of the home page sections (settings.perks.order) ---------- */
+let ordDraft = null;
+function renderOrderCfg(s) {
+  const L = Object.fromEntries(RC.HOME_PARTS()), O = ordDraft || RC.homeOrder(s); ordDraft = O;
+  const live = Object.keys(RC.kinds).filter(k => products.some(p => RC.kindOf(p) === k && !RC.isLuxury(p) && p.active !== false && p.images && p.images.length));
+  const off = k => RC.kinds[k] ? !live.includes(k) : k === 'videos' ? !RC.vids(s).on : false;
+  $('#main').innerHTML = `
+    <div class="head"><div><h1>الإعدادات</h1><div class="sub">ترتيب السكاشن في الصفحة الرئيسية من فوق لتحت</div></div></div>
+    ${setTabs()}
+    <div class="panel set-card"><div class="set-h"><span class="set-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></span><div><h2>ترتيب الرئيسية</h2><small>رتّب بالأسهم. الأول هنا = أول حاجة بعد الواجهة، والأخير = آخر حاجة قبل الفوتر.</small></div></div>
+      <div class="ho-list" id="hoList">${O.map((k, i) => `<div class="ho-row ${off(k) ? 'is-off' : ''}" data-ho="${k}"><span class="ho-n en">${i + 1}</span><b>${esc(L[k] || k)}</b>${off(k) ? '<small>مش ظاهر دلوقتي</small>' : ''}
+        <span class="ho-mv"><button type="button" data-hmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-hmv="${i}" data-to="${i + 1}" ${i < O.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span></div>`).join('')}</div>
+      <div class="set-acts"><button class="btn btn-primary" type="button" id="hoSave">حفظ</button><button class="btn btn-ghost" type="button" id="hoReset">الترتيب الأصلي</button><a class="btn btn-ghost" href="./" target="_blank" rel="noopener">شوفه في الموقع</a></div></div>`;
+  bindSetTabs();
+  $('#hoList').onclick = e => { const b = e.target.closest('[data-hmv]'); if (!b || b.disabled) return; const i = +b.dataset.hmv, j = +b.dataset.to; [O[i], O[j]] = [O[j], O[i]]; renderOrderCfg(s); };
+  $('#hoReset').onclick = () => { ordDraft = RC.HOME_PARTS().map(x => x[0]); renderOrderCfg(s); toast('رجع الترتيب الأصلي، دوس حفظ عشان يتطبق'); };
+  $('#hoSave').onclick = () => once('hoSave', async () => {
+    const perks = { ...(settings.perks || {}), order: O.slice() }; const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+    if (error) return toast(error.message, 'err'); settings.perks = perks; ordDraft = null; toast('اتحفظ ✓ — هيظهر في الموقع على طول', 'ok'); renderOrderCfg(settings); });
+}
 /* ---------- settings → فيديوهات: the 3 vertical videos at the end of the home page (settings.perks.vids) ---------- */
 let vdDraft = null;   // unsaved edits survive the re-render after an upload
 const VD_MAX = 50 * 1024 * 1024;
@@ -3144,9 +3165,9 @@ function renderVidsCfg(s) {
   const D = RC.VIDS_DEF, opts = sel => `<option value="">— من غير منتج —</option>${products.map(p => `<option value="${p.id}" ${+sel === p.id ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}`;
   const slot = (x, i) => { const src = x.src || D.items[i].src, poster = x.src ? x.poster : D.items[i].poster;
     return `<div class="vd-slot ${x.off ? 'is-off' : ''}" data-vi="${i}">
-      <div class="vd-pv"><video src="${esc(src)}" ${poster ? `poster="${esc(poster)}"` : ''} muted loop playsinline preload="metadata"></video><span class="vd-tag">${x.src ? 'فيديو مرفوع' : 'الفيديو الأصلي'}</span>
+      <div class="vd-pv"><video src="${esc(src)}" ${poster ? `poster="${esc(poster)}"` : ''} muted loop playsinline preload="metadata"></video><span class="vd-tag">${x.src && !/^assets\//.test(x.src) ? 'فيديو مرفوع' : 'الفيديو الأصلي'}</span>
         <div class="vd-up" hidden><i></i><b>جاري الرفع…</b></div></div>
-      <div class="vd-f"><div class="vd-top"><b>فيديو ${i + 1}</b><button type="button" class="switch ${x.off ? '' : 'on'}" data-vdsw="${i}" aria-label="إظهار/إخفاء فيديو ${i + 1}"></button></div>
+      <div class="vd-f"><div class="vd-top"><b>فيديو ${i + 1}</b><span class="vd-mv"><button type="button" data-vdmv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="قدّمه" title="قدّمه">→</button><button type="button" data-vdmv="${i}" data-to="${i + 1}" ${i < V.items.length - 1 ? '' : 'disabled'} aria-label="أخّره" title="أخّره">←</button></span><button type="button" class="switch ${x.off ? '' : 'on'}" data-vdsw="${i}" aria-label="إظهار/إخفاء فيديو ${i + 1}"></button></div>
         <label class="btn btn-sm btn-ghost vd-pick">${x.src ? 'غيّر الفيديو' : 'ارفع فيديو'}<input type="file" accept="video/mp4,video/webm,video/quicktime,video/*" data-vdf="${i}" hidden></label>
         ${x.src ? `<button type="button" class="btn btn-sm btn-ghost" data-vdreset="${i}">رجّع الأصلي</button>` : ''}
         <div class="field"><label>الساعة اللي في الفيديو</label><select class="input" data-vdp="${i}">${opts(x.p)}</select></div>
@@ -3172,10 +3193,15 @@ function renderVidsCfg(s) {
   // a product picked fills the name under the video (when it was empty or still the old product's name)
   document.querySelectorAll('[data-vdp]').forEach(sl => sl.addEventListener('change', () => { const i = +sl.dataset.vdp, p = products.find(x => x.id === +sl.value), t = document.querySelector(`[data-vdt="${i}"]`);
     if (p) { t.value = p.name; V.items[i].t = p.name; } }));
+  document.querySelectorAll('.vd-pv video').forEach(v => { const ar = () => { if (v.videoWidth) v.parentNode.style.setProperty('--ar', v.videoWidth + ' / ' + v.videoHeight); }; ar(); v.addEventListener('loadedmetadata', ar); });
   document.querySelectorAll('.vd-pv video').forEach(v => { v.parentNode.onclick = () => v.paused ? v.play().catch(() => {}) : v.pause(); });
   W.onclick = e => { const sw = e.target.closest('[data-vdsw]'), rs = e.target.closest('[data-vdreset]');
     if (e.target.closest('#vdOn')) { keep(); V.on = !V.on; renderVidsCfg(s); }
     if (sw) { keep(); const it = V.items[+sw.dataset.vdsw]; it.off = !it.off; renderVidsCfg(s); }
+    const mv = e.target.closest('[data-vdmv]'); if (mv && !mv.disabled) { keep(); const i = +mv.dataset.vdmv, j = +mv.dataset.to;
+      // a slot still on its default video takes that video along, so the order follows what the admin sees
+      [i, j].forEach(k => { const it = V.items[k]; if (!it.src) { it.src = D.items[k].src; it.poster = D.items[k].poster; } });
+      [V.items[i], V.items[j]] = [V.items[j], V.items[i]]; renderVidsCfg(s); toast('اترتب، دوس حفظ عشان يتطبق'); return; }
     if (rs) { keep(); const i = +rs.dataset.vdreset; V.items[i].src = ''; V.items[i].poster = ''; renderVidsCfg(s); toast('رجع الفيديو الأصلي، دوس حفظ عشان يتطبق'); } };
   async function vdUpload(i, file) {
     if (!/^video\//.test(file.type) && !/\.(mp4|mov|webm|m4v)$/i.test(file.name)) return toast('ده مش فيديو', 'err');
@@ -3737,6 +3763,7 @@ function renderSettings() {
   if (setTab === 'policy') return renderPolicy(s);
   if (setTab === 'pages') return renderPagesCfg(s);
   if (setTab === 'vids') return renderVidsCfg(s);
+  if (setTab === 'order') return renderOrderCfg(s);
   if (setTab === 'social') { socDraft = JSON.parse(JSON.stringify(Array.isArray(s.socials) ? s.socials : [])); return renderSocial(); }
   zonesDraft = JSON.parse(JSON.stringify(Array.isArray(s.shipping_zones) ? s.shipping_zones : []));
   govDraft = AV();
