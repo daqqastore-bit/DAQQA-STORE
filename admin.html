@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101043308">
+<link rel="stylesheet" href="assets/base.css?v=20261101130043">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -259,6 +259,8 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .sup-card{display:flex;flex-direction:column;gap:12px}.sup-t{flex:1;min-width:0}.sup-t h2{font-size:16px;overflow-wrap:anywhere}.sup-t small{color:var(--muted);font-size:12.5px}
 .sup-phs{display:flex;flex-direction:column;gap:6px}.sup-ph{display:flex;align-items:center;gap:6px}.sup-ph b{flex:1;font-size:14.5px;text-align:right}
 .sup-phin{display:flex;flex-direction:column;gap:6px}.sup-phr{display:flex;gap:6px;align-items:center}.sup-phr .input{flex:1;min-width:0}.sup-addph{align-self:flex-start;margin-top:6px;font-size:13px;color:var(--amber);padding:4px 2px}
+.es-row{display:grid;grid-template-columns:1fr 130px 30px;gap:8px;align-items:center;margin-bottom:8px}.es-row .input{min-width:0}.es-note{color:var(--muted);font-size:12.5px;line-height:1.7}
+@media (max-width:600px){.es-row{grid-template-columns:1fr 100px 30px}}
 .sup-line{font-size:13.5px;line-height:1.7;overflow-wrap:anywhere}.sup-line span{display:block;font-size:11.5px;color:var(--muted)}
 .sup-its,.sup-none{display:flex;flex-direction:column;gap:2px}.sup-none{padding:8px}
 .sup-it{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:10px;padding:8px;border-radius:10px}.sup-it:nth-child(odd){background:var(--surface-2)}
@@ -1088,7 +1090,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261101043308"></script>
+<script src="assets/config.js?v=20261101130043"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1361,7 +1363,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261101043308'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261101130043'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2009,7 +2011,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101043308" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261101130043" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2043,7 +2045,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101043308" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261101130043" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2084,7 +2086,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101043308'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101043308')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261101130043'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261101130043')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2467,6 +2469,7 @@ function openEditor(id, init) {
   if (!p && init) Object.assign(draft, init);
   // a new product goes last in its own section (regular and Luxury are numbered separately) until the admin types a number
   if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
+  if (!draft._sups) draft._sups = p ? edSupOf(p.id) : [];
   openTexts(draft); edDirty = false;
   $('#editor').innerHTML = ''; renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
@@ -2617,9 +2620,10 @@ function renderEditor() {
       </div>
       <label class="check lux-check" ${COLS.luxury ? '' : 'title="محتاج تفعيل من Supabase (daqqa-pages.sql)" style="opacity:.5;pointer-events:none"'}><input type="checkbox" id="f_lux" ${d.luxury?'checked':''}> <span>منتج Luxury <small>— يظهر في صفحة Luxury</small></span></label>
       <div class="field"><label>الترتيب (الأصغر يظهر الأول)</label><input class="input en" id="f_sort" inputmode="numeric" value="${esc(d.sort)}"></div></section>
+      <section class="ed-sec"><h4>المورد <small>اختياري · بيتحفظ كمان في صفحة الموردين</small></h4><div id="edSup"></div></section>
     </div></div>
     <div class="ed-foot"><button class="btn btn-primary" id="saveP" style="flex:1">حفظ</button>${d.id ? '<button class="btn btn-danger" id="delP">حذف</button>' : ''}</div>${edNavHTML()}`;
-  bindEdNav();
+  bindEdNav(); edSupRows();
   updatePreview();
   $('#edClose').onclick = closeEditor;
   $('#f_kind').onchange = () => { const k0 = draft.kind; syncDraft(); const k = draft.kind;
@@ -2871,6 +2875,37 @@ async function uploadFiles(files, direct = false) {
   }
   renderEditor(); if (n) toast('اترفعت الصور — متنساش تدوس حفظ', 'ok');
 }
+/* the product editor's «المورد» section: the same links the suppliers page keeps (shop_suppliers.items), edited from the product side */
+const edSupOf = pid => sups.map(s => { const i = supItems(s).find(x => +x.p === pid); return i ? { s: s.id, c: i.c ?? '' } : null; }).filter(Boolean);
+function edSupRows() {
+  const box = $('#edSup'); if (!box || !draft) return; const L = draft._sups || (draft._sups = []);
+  if (!SUP_OK) { box.innerHTML = '<small class="es-note">صفحة الموردين لسه محتاجة تتفعل في Supabase (supabase/suppliers.sql).</small>'; return; }
+  if (!sups.length) { box.innerHTML = '<small class="es-note">لسه مفيش موردين. ضيفهم الأول من صفحة «الموردين» وبعدين اختارهم هنا.</small>'; return; }
+  box.innerHTML = L.map((x, k) => `<div class="es-row"><select class="input" data-ess="${k}" aria-label="المورد"><option value="">اختار المورد</option>${sups.map(s => `<option value="${s.id}" ${+x.s === s.id ? 'selected' : ''} ${+x.s !== s.id && L.some(y => +y.s === s.id) ? 'hidden' : ''}>${esc(s.name || 'مورد من غير اسم')}</option>`).join('')}</select>
+    <input class="input en" inputmode="decimal" data-esc="${k}" value="${esc(x.c ?? '')}" placeholder="سعر التكلفة" aria-label="سعر التكلفة"><button type="button" class="sup-x" data-esrm="${k}" aria-label="شيل">×</button></div>`).join('')
+    + (L.length < sups.length ? `<button type="button" class="sup-addph" data-esadd>${L.length ? '+ مورد تاني' : '+ اختار المورد'}</button>` : '');
+}
+$('#editor').addEventListener('change', e => { const k = e.target.dataset.ess; if (k == null || !draft) return; draft._sups[+k].s = e.target.value ? +e.target.value : null;
+  const c = draft._sups[+k]; if (c.s && c.c === '') { const i = supItems(sups.find(s => s.id === c.s) || {}).find(x => draft.id && +x.p === draft.id); c.c = i && i.c != null ? i.c : (draft.id && pcosts[draft.id] != null ? pcosts[draft.id] : ''); } edSupRows(); });
+$('#editor').addEventListener('input', e => { const k = e.target.dataset.esc; if (k != null && draft) draft._sups[+k].c = e.target.value.replace(/[^\d.]/g, ''); });
+$('#editor').addEventListener('click', e => { if (!draft) return;
+  if (e.target.closest('[data-esadd]')) { draft._sups.push({ s: null, c: '' }); edDirty = true; edSupRows(); }
+  const r = e.target.closest('[data-esrm]'); if (r) { draft._sups.splice(+r.dataset.esrm, 1); edDirty = true; edSupRows(); } });
+// after the product is saved: add / update / remove it in each supplier's list, so the suppliers page shows the same thing
+async function supSyncProduct(pid, want) {
+  if (!SUP_OK || !Array.isArray(want)) return;
+  const W = new Map(); want.forEach(x => { if (x.s && !W.has(+x.s)) W.set(+x.s, x.c === '' || x.c == null || isNaN(+x.c) ? null : +x.c); });
+  const now = new Date().toISOString(), jobs = [];
+  sups.forEach(s => { const it = Array.isArray(s.items) ? s.items : [], has = it.find(i => +i.p === pid); let next = null;
+    if (W.has(s.id) && !has) next = [...it, { p: pid, c: W.get(s.id), n: null }];
+    else if (W.has(s.id) && has && (has.c ?? null) !== W.get(s.id)) next = it.map(i => +i.p === pid ? { ...i, c: W.get(s.id) } : i);
+    else if (!W.has(s.id) && has) next = it.filter(i => +i.p !== pid);
+    if (next) jobs.push(sb.from('shop_suppliers').update({ items: next, updated_at: now }).eq('id', s.id).select().single().then(({ data, error }) => { if (error) toast(error.message, 'err'); else sups = sups.map(x => x.id === data.id ? data : x); })); });
+  // the cost also becomes the product's cost in Accounts, like on the suppliers page
+  const c = [...W.values()].find(v => v != null && v > 0);
+  if (c != null && +pcosts[pid] !== c) jobs.push(sb.from('shop_product_costs').upsert({ product_id: pid, cost: c, updated_at: now }).then(({ error }) => { if (!error) pcosts[pid] = c; }));
+  await Promise.all(jobs);
+}
 async function saveProduct() {
   const sbtn = $('#saveP'); if (!sbtn || sbtn.disabled || sbtn.dataset.busy) return;
   syncDraft(); const d = draft;
@@ -2903,6 +2938,7 @@ async function saveProduct() {
   const res = d.id ? await sb.from('shop_products').update(row).eq('id', d.id).select().single() : await sb.from('shop_products').insert(row).select().single();
   b.disabled = false; b.textContent = 'حفظ';
   if (res.error) return toast(res.error.message, 'err');
+  await supSyncProduct(res.data.id, d._sups);
   // saving keeps the editor open on the same product and the same scroll spot (the admin keeps editing)
   const ed = $('#editor'), bd = () => ed.querySelector('.ed-body'), y = bd() ? bd().scrollTop : 0;
   await loadProducts(); renderProducts();
