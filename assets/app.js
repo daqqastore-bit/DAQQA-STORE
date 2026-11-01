@@ -702,7 +702,7 @@
             <div class="co-items">${items}</div>
             <div class="co-sums" id="coSums">${sumsHTML(t)}</div>
             <button class="btn ${viaWA() ? 'wa-btn' : 'btn-amber'} co-place" id="place">${placeLbl(t.total)}</button>
-            <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن سريع</span><span>استبدال خلال 14 يوم</span></p>
+            <p class="co-trust"><span>الدفع عند الاستلام</span><span>شحن سريع</span><span>استرجاع واستبدال 14 يوم</span></p>
           </div></aside>
         </div>`;
       // phone counter: red until the number has all its digits (11, or 12 when it starts with 20), then green
