@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101130654">
-<link rel="stylesheet" href="assets/store.css?v=20261101130654">
+<link rel="stylesheet" href="assets/base.css?v=20261101140847">
+<link rel="stylesheet" href="assets/store.css?v=20261101140847">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -206,8 +206,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261101130654"></script>
-<script src="assets/app.js?v=20261101130654"></script>
+<script src="assets/config.js?v=20261101140847"></script>
+<script src="assets/app.js?v=20261101140847"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -460,15 +460,15 @@ function render() {
   // a colour swatch jumps to the photo linked to it in the admin
   document.querySelectorAll('.pd-colors [data-pick]').forEach(b => b.onclick = () => { const k = imgs.indexOf(RC.colorImg(p, b.dataset.pick)); if (k < 0) return;
     slides.dispatchEvent(new Event('click')); go(k); document.querySelectorAll('.pd-colors [data-pick]').forEach(x => x.classList.toggle('on', x === b)); });
-  // small arrows on the photo + keyboard ←/→ (right = next photo, user's ask)
+  // small arrows on the photo + keyboard ←/→ move the way they point: the page is RTL, so photo 1 is on the right and the next one is to its left (← = next, → = previous)
   if (n > 1) {
     const at = () => Math.round(Math.abs(slides.scrollLeft) / slides.clientWidth), step = d => go((at() + d + n) % n);
     const host = slides.parentElement; host.classList.add('has-arr');
-    host.insertAdjacentHTML('beforeend', '<button type="button" class="gal-arr ga-n" aria-label="الصورة اللي بعدها"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button><button type="button" class="gal-arr ga-p" aria-label="الصورة اللي قبلها"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>');
-    host.querySelector('.gal-arr.ga-n').onclick = e => { e.stopPropagation(); slides.dispatchEvent(new Event('click')); step(1); };
-    host.querySelector('.gal-arr.ga-p').onclick = e => { e.stopPropagation(); slides.dispatchEvent(new Event('click')); step(-1); };
+    host.insertAdjacentHTML('beforeend', '<button type="button" class="gal-arr ga-n" aria-label="الصورة اللي قبلها"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button><button type="button" class="gal-arr ga-p" aria-label="الصورة اللي بعدها"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></button>');
+    host.querySelector('.gal-arr.ga-n').onclick = e => { e.stopPropagation(); slides.dispatchEvent(new Event('click')); step(-1); };
+    host.querySelector('.gal-arr.ga-p').onclick = e => { e.stopPropagation(); slides.dispatchEvent(new Event('click')); step(1); };
     galKey = e => { if (e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || '') || document.querySelector('body > .pv')) return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); slides.dispatchEvent(new Event('click')); step(1); } else if (e.key === 'ArrowLeft') { e.preventDefault(); slides.dispatchEvent(new Event('click')); step(-1); } };
+      if (e.key === 'ArrowLeft') { e.preventDefault(); slides.dispatchEvent(new Event('click')); step(1); } else if (e.key === 'ArrowRight') { e.preventDefault(); slides.dispatchEvent(new Event('click')); step(-1); } };
   } else galKey = null;
   // the frame takes the main photo's own shape (kept between tall 3:4 and wide 16:9); other photos fit inside it uncropped
   const first = slides.querySelector('.slide img'), gal = slides.closest('.gal');
