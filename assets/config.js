@@ -74,6 +74,10 @@ RC.vids = (s) => { const v = ((s || {}).perks || {}).vids, D = RC.VIDS_DEF, o = 
   const items = D.items.map((d, i) => { const x = (Array.isArray(o.items) && o.items[i]) || {}; const own = !!x.src;
     return { src: own ? x.src : d.src, poster: own ? (x.poster || '') : d.poster, p: x.p === undefined ? d.p : x.p, t: str(x.t, d.t), own, off: !!x.off }; });
   return { on: o.on !== false, cap: str(o.cap, D.cap), title: str(o.title, D.title), sub: str(o.sub, D.sub), items }; };
+// home page order (Admin → Settings → ترتيب الرئيسية); settings.perks.order = ['watches', 'glasses', 'accessories', 'videos', 'motto'] in any order
+RC.HOME_PARTS = () => [...Object.keys(RC.kinds).map(k => [k, 'قسم ' + RC.kinds[k].ar]), ['videos', 'سكشن الفيديوهات'], ['motto', '«متبقاش دقّة قديمة»']];
+RC.homeOrder = (s) => { const all = RC.HOME_PARTS().map(x => x[0]), o = ((s || {}).perks || {}).order, got = Array.isArray(o) ? o.filter(k => all.includes(k)) : [];
+  return [...new Set([...got, ...all])]; };
 RC.optX = (o) => Math.max(0, Math.round(Number(o && o.x) || 0));
 RC.optExtra = (p, sel) => !sel ? 0 : RC.variants(p).reduce((s, g) => s + RC.optX(g.o.find(o => o.n === sel[g.k])), 0);
 // one option can be linked to several photos (the same strap on more than one dial): the photo shown is the one shared by everything picked
@@ -187,7 +191,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261101172949';
+RC.build = '20261101175520';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {

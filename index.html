@@ -30,8 +30,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261101172949">
-<link rel="stylesheet" href="assets/store.css?v=20261101172949">
+<link rel="stylesheet" href="assets/base.css?v=20261101175520">
+<link rel="stylesheet" href="assets/store.css?v=20261101175520">
 <style>
 
 /* ---------- desktop landing: scroll through the Q ---------- */
@@ -342,8 +342,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261101172949"></script>
-<script src="assets/app.js?v=20261101172949"></script>
+<script src="assets/config.js?v=20261101175520"></script>
+<script src="assets/app.js?v=20261101175520"></script>
 <script>
 const { discountPct, esc } = RC;
 const $ = s => document.querySelector(s);
@@ -533,6 +533,8 @@ function renderVids() {
   const io = new IntersectionObserver(es => es.forEach(e => { const v = e.target;
     if (e.isIntersecting && e.intersectionRatio > .35) { v.preload = 'auto'; const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); }), { threshold: [0, .35, .7] });
   vids.forEach(v => { io.observe(v); const bar = v.parentNode.querySelector('.vd-bar i');
+    // each card takes its own video's shape (9:16, 4:5, 1:1…)
+    const ar = () => { if (v.videoWidth) v.parentNode.style.aspectRatio = v.videoWidth + ' / ' + v.videoHeight; }; ar(); v.addEventListener('loadedmetadata', ar);
     v.addEventListener('timeupdate', () => { if (v.duration) bar.style.transform = `scaleX(${v.currentTime / v.duration})`; }); });
   box.addEventListener('click', e => { const b = e.target.closest('.vd-snd'); if (!b) return; e.preventDefault();
     const v = b.parentNode.querySelector('video'), on = v.muted;
@@ -598,15 +600,19 @@ function storyHTML(k) {
 }
 function build() {
   const live = DQ.liveKinds();
-  if (!live.length) { $('#sections').innerHTML = `<div class="none"><div class="m">${RC.logo()}</div>${DQ.loadError ? 'النت بطيء شوية… بنحاول نحمّل تاني.<br><button type="button" class="btn btn-amber" style="margin-top:16px" onclick="this.disabled=true;this.textContent=\'جاري التحميل…\';DQ.retryLoad()">حاول تاني</button>' : 'المنتجات جاية قريب.'}</div>`; return; }
-  $('#sections').innerHTML = live.map((k, i) => {
+  // the videos box survives every rebuild (so playing videos don't restart): lift it out, put it back in its place after
+  const vb = $('#vidsBox'); vb.remove();
+  const putVids = () => { const slot = document.getElementById('vidsSlot'); if (slot) slot.replaceWith(vb); else $('#sections').after(vb); };
+  if (!live.length) { putVids(); $('#sections').innerHTML = `<div class="none"><div class="m">${RC.logo()}</div>${DQ.loadError ? 'النت بطيء شوية… بنحاول نحمّل تاني.<br><button type="button" class="btn btn-amber" style="margin-top:16px" onclick="this.disabled=true;this.textContent=\'جاري التحميل…\';DQ.retryLoad()">حاول تاني</button>' : 'المنتجات جاية قريب.'}</div>`; return; }
+  const firstK = RC.homeOrder(DQ.settings).find(k => live.includes(k));
+  const parts = Object.fromEntries(live.map((k, i) => [k, (() => {
     const K = RC.kinds[k], B = RC.band(k, DQ.settings), all = DQ.products.filter(p => RC.kindOf(p) === k && !RC.isLuxury(p)), img = pick(k, all);
     const rank = s => { const i = K.styles.indexOf(s); return i < 0 ? 99 : i; };
     const styles = [...new Set(all.map(p => p.style).filter(Boolean))].sort((a, b) => rank(a) - rank(b));
     const sale = all.some(RC.onOffer);
     const GF = RC.gf(DQ.settings), gOpts = G_OPTS.filter(o => GF.show.includes(o[0]));
     state[k] = state[k] || { tab: 'all', all: false, g: GF.show.includes(gMem[k]) ? gMem[k] : GF.def, s: S_OPTS.some(o => o[0] === sMem[k]) ? sMem[k] : 'default', q: typeof qMem[k] === 'string' ? qMem[k] : '', min: (pMem[k] || {}).min ?? null, max: (pMem[k] || {}).max ?? null };
-    return `<section class="kind ${i ? '' : 'section-first'}" id="${k}" aria-label="${K.ar}">
+    return `<section class="kind ${k === firstK ? 'section-first' : ''}" id="${k}" aria-label="${K.ar}">
       <div data-glow class="banner op ${img.hero ? 'has-photo op-curtain op-zoom' : 'framed op-curtain'}" ${img.hero ? 'data-parallax' : ''}>${img.hero ? `<div class="bg" style="--img:url('${esc(img.hero)}')"></div>` : ''}
         <div class="wrap ${img.hero ? '' : 'bn-grid'}"><div class="txt op op-stagger">
           <div class="mini-brand"><b>DAQQA</b><small>${K.en.toUpperCase()}</small></div>
@@ -632,7 +638,10 @@ function build() {
           <div class="feats op op-stagger" style="--n:${B.feats.length}">${B.feats.map(([ic, t, l]) => l ? `<a href="${RC.esc(l)}" ${/^https:/.test(l) ? 'target="_blank" rel="noopener"' : ''}>${RC.featIcon(ic)}<span>${t}</span></a>` : `<div>${RC.featIcon(ic)}<span>${t}</span></div>`).join('')}</div></div></div>
       ${storyHTML(k)}
     </section>`;
-  }).join('') + MOTTO();
+  })()]));
+  parts.videos = '<div id="vidsSlot"></div>'; parts.motto = MOTTO();
+  $('#sections').innerHTML = RC.homeOrder(DQ.settings).map(k => parts[k] || '').join('');
+  putVids();
   live.forEach(renderStrip);
   // jump to the #section only on the first paint: live refreshes re-render this, and the scroll-spy keeps the hash updated, so jumping again would yank the visitor up to the section's top
   const h = DQ._hashDone ? '' : location.hash.slice(1); DQ._hashDone = true;
