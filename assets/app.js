@@ -988,7 +988,10 @@
     return `<div class="ao-body"><div class="ao-items">${its.map(i => `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>${(i.options || []).length ? `<div class="ao-ops">${i.options.map(x => `<span class="ao-op${x.chg ? ' chg' : ''}">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.g)}: <b>${esc(x.v)}</b></span>`).join('')}</div>` : ''}`).join('')}</div>
       ${chg ? '<div class="ao-chg">تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول</div>' : ''}</div>`; };
   // the shop took the shipping on itself (admin «على حسابي» / «بدون شحن») → one gift line for the customer
-  const shipGift = o => o && +o.ship_was > 0 && !+o.shipping ? `<div class="ao-gift">🎁 <b>الشحن علينا!</b> فريق DAQQA شال مصاريف الشحن من طلبك. الإجمالي الجديد: <b class="en">${money(o.total)}</b> بدل <b class="en">${money(+o.total + +o.ship_was)}</b>.</div>` : '';
+  // all of it → «الشحن علينا!» · part of it (split) → «خصم على الشحن!» with the new shipping
+  const shipGift = o => { if (!o || !(+o.ship_was > +o.shipping)) return ''; const old = +o.total + +o.ship_was - +o.shipping;
+    return !+o.shipping ? `<div class="ao-gift">🎁 <b>الشحن علينا!</b> فريق DAQQA شال مصاريف الشحن من طلبك. الإجمالي الجديد: <b class="en">${money(o.total)}</b> بدل <b class="en">${money(old)}</b>.</div>`
+      : `<div class="ao-gift">🎁 <b>خصم على الشحن!</b> فريق DAQQA اتحمّل جزء من مصاريف الشحن: بقت <b class="en">${money(o.shipping)}</b> بدل <b class="en">${money(o.ship_was)}</b>. الإجمالي الجديد: <b class="en">${money(o.total)}</b> بدل <b class="en">${money(old)}</b>.</div>`; };
   const optSig = its => JSON.stringify((its || []).map(i => (i.options || []).map(x => x.v)));
   const orderCard = o => `<div class="acc-order${['cancelled', 'removed'].includes(o.status) ? ' ended' : ''}" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
       ${['cancelled', 'removed'].includes(o.status) ? endBox(o) : DQ.tracker(o.status)}
@@ -1091,7 +1094,7 @@
     document.querySelectorAll(`[data-trk="${CSS.escape(code)}"]`).forEach(el => { const t = el.querySelector('.ao-bot b'); if (t) t.textContent = money(d.total);
       const old = el.querySelector('.ao-gift'); if (old) old.remove();
       if (g) { const body = el.querySelector('.ao-body'); body ? body.insertAdjacentHTML('afterend', g) : el.insertAdjacentHTML('beforeend', g); } });
-    if (g && !before) DQ.toast(`🎁 الشحن علينا! فريق DAQQA شال مصاريف الشحن من طلبك ${code}`, 'ok');
+    if (g && g !== before) DQ.toast(!+d.shipping ? `🎁 الشحن علينا! فريق DAQQA شال مصاريف الشحن من طلبك ${code}` : `🎁 خصم على الشحن! فريق DAQQA اتحمّل جزء من شحن طلبك ${code}`, 'ok');
   }
   // live for signed-in customers (realtime) + light polling for orders on this device
   let myCh = null;
