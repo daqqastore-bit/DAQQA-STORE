@@ -872,7 +872,7 @@
         <h1>طلبك وصل!</h1><p class="co-lead">شكراً ${esc(d.name.split(' ')[0])}، هنكلمك قريب لتأكيد الطلب.</p>
         <div class="cd-code"><span>رقم الطلب</span><code class="en" id="cdCode">${esc(data.code)}</code><button type="button" class="cd-copy" id="cdCopy">نسخ</button></div>
         <p class="cd-total">الإجمالي <b class="en">${money(data.total)}</b> · كاش عند الاستلام${cpUsed ? `<br><span class="cd-cp">تم خصم <b class="en">${money(cpUsed.off)}</b> بكود <b class="en">${esc(cpUsed.code)}</b></span>` : ''}</p>
-        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}${aoBody((mine()[0] || {}).code === data.code ? mine()[0] : {})}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
+        <div class="acc-order" data-trk="${esc(data.code)}" style="text-align:right">${DQ.tracker('new')}${aoBody((mine()[0] || {}).code === data.code ? mine()[0] : {})}${shipGift((mine()[0] || {}).code === data.code ? mine()[0] : {})}<div class="ao-acts">${cancelBtn(data.code, 'new')}</div></div>
         <p class="cd-note">${DQ.user ? 'اتحفظ في حسابك، تقدر تتابعه من «حسابي».' : 'هتشوف كل خطوة هنا وفي «حسابي» أول ما تحصل.'}</p>
         <div class="cd-acts">${DQ.wa() ? `<a class="btn wa-btn cd-wa" target="_blank" rel="noopener" href="https://wa.me/${DQ.wa()}?text=${ask}">${WA_ICON}استفسر عن طلبك على واتساب</a>` : ''}<button type="button" class="btn btn-ghost" id="cdMore">كمّل تسوّق</button></div></div>`;
     $('#cdMore').onclick = () => DQ.closeCheckout();
@@ -987,10 +987,12 @@
   const aoBody = o => { const its = o.items || o.shop_order_items || [], chg = its.some(i => (i.options || []).some(x => x && x.chg));
     return `<div class="ao-body"><div class="ao-items">${its.map(i => `<span>${i.image ? `<img ${DQ.sm(i.image)} alt="" loading="lazy">` : ''}<em class="en">${esc(i.name)}</em> × ${i.qty}</span>${(i.options || []).length ? `<div class="ao-ops">${i.options.map(x => `<span class="ao-op${x.chg ? ' chg' : ''}">${x.c ? `<i style="background:${esc(x.c)}"></i>` : ''}${esc(x.g)}: <b>${esc(x.v)}</b></span>`).join('')}</div>` : ''}`).join('')}</div>
       ${chg ? '<div class="ao-chg">تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول</div>' : ''}</div>`; };
+  // the shop took the shipping on itself (admin «على حسابي» / «بدون شحن») → one gift line for the customer
+  const shipGift = o => o && +o.ship_was > 0 && !+o.shipping ? `<div class="ao-gift">🎁 <b>الشحن علينا!</b> فريق DAQQA شال مصاريف الشحن من طلبك. الإجمالي الجديد: <b class="en">${money(o.total)}</b> بدل <b class="en">${money(+o.total + +o.ship_was)}</b>.</div>` : '';
   const optSig = its => JSON.stringify((its || []).map(i => (i.options || []).map(x => x.v)));
   const orderCard = o => `<div class="acc-order${['cancelled', 'removed'].includes(o.status) ? ' ended' : ''}" data-trk="${esc(o.code)}"><div class="ao-top"><code class="en">${esc(o.code)}</code><span class="ao-st st-${esc(o.status)}">${esc(STATUS[o.status] || o.status)}</span></div>
       ${['cancelled', 'removed'].includes(o.status) ? endBox(o) : DQ.tracker(o.status)}
-      ${aoBody(o)}
+      ${aoBody(o)}${shipGift(o)}
       <div class="ao-bot"><span class="en" dir="ltr">${RC.when(o.created_at || o.at)}</span><b class="en">${money(o.total)}</b></div>
       <div class="ao-acts">${byShop(o) ? '' : waAsk(o.code)}${cancelBtn(o.code, o.status)}${ENDED.includes(o.status) ? `<button type="button" class="ao-del" data-odel="${esc(o.code)}">مسح من طلباتي</button>` : ''}</div></div>`;
   // green WhatsApp button with the order number already written in the message
@@ -1057,7 +1059,7 @@
     const list = mine().filter(o => !codesToSkip.includes(o.code)), out = [];
     for (const o of list) { let r = null; try { r = await sb.rpc('shop_track_order', { p_code: o.code, p_phone: o.phone }); } catch (e) {}
       if (r && !r.error && !r.data && o.status !== 'removed') { o.status = 'removed'; saveMine(mine().map(x => x.code === o.code ? { ...x, status: 'removed' } : x)); }   // gone from the shop = deleted from the dashboard
-      if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, created_at: o.at, cancelled_at: o.cancelled_at, cancelled_by: o.cancelled_by, items: o.items || [] }); }
+      if (r && r.data) out.push(r.data); else out.push({ code: o.code, status: o.status || 'new', total: o.total, shipping: o.shipping, ship_was: o.ship_was, created_at: o.at, cancelled_at: o.cancelled_at, cancelled_by: o.cancelled_by, items: o.items || [] }); }
     return out.filter(shown);
   }
   // a status changed → update every tracker on the page + tell the customer
@@ -1079,11 +1081,23 @@
     document.querySelectorAll(`.acc-order[data-trk="${CSS.escape(code)}"] .ao-body`).forEach(el => { el.outerHTML = aoBody({ items }); });
     if (tell && items.some(i => (i.options || []).some(x => x && x.chg))) DQ.toast(`طلبك ${code}: تم تغيير اختيارات المشتري بعد تواصل فريق العمل المسؤول`, 'ok');
   }
+  // the shop changed the shipping / total → update the cards; a waived shipping shows the gift line + one toast
+  const shipSig = o => [+o.total || 0, +o.shipping || 0, +o.ship_was || 0].join('|');
+  function applyShip(code, d) {
+    if (!d || d.total == null || d.shipping === undefined) return;
+    const l = mine(), o = l.find(x => x.code === code), before = o ? shipGift(o) : '';
+    if (o) { o.total = d.total; o.shipping = d.shipping; o.ship_was = d.ship_was; saveMine(l); }
+    const g = shipGift(d);
+    document.querySelectorAll(`[data-trk="${CSS.escape(code)}"]`).forEach(el => { const t = el.querySelector('.ao-bot b'); if (t) t.textContent = money(d.total);
+      const old = el.querySelector('.ao-gift'); if (old) old.remove();
+      if (g) { const body = el.querySelector('.ao-body'); body ? body.insertAdjacentHTML('afterend', g) : el.insertAdjacentHTML('beforeend', g); } });
+    if (g && !before) DQ.toast(`🎁 الشحن علينا! فريق DAQQA شال مصاريف الشحن من طلبك ${code}`, 'ok');
+  }
   // live for signed-in customers (realtime) + light polling for orders on this device
   let myCh = null;
   function liveOrders(u) {
     if (myCh) { sb.removeChannel(myCh); myCh = null; }
-    if (u) myCh = sb.channel('my-orders-' + u.id).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'shop_orders', filter: 'user_id=eq.' + u.id }, p => p.new && p.new.code && applyStatus(p.new.code, p.new.status, p.new.cancelled_by)).subscribe();
+    if (u) myCh = sb.channel('my-orders-' + u.id).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'shop_orders', filter: 'user_id=eq.' + u.id }, p => { if (!p.new || !p.new.code) return; applyStatus(p.new.code, p.new.status, p.new.cancelled_by); applyShip(p.new.code, p.new); }).subscribe();
   }
   async function pollMine() {
     if (document.hidden) return;
@@ -1092,6 +1106,7 @@
       if (r && !r.error && !r.data) applyStatus(o.code, 'removed');
       else if (r && r.data && r.data.status && r.data.status !== o.status) applyStatus(o.code, r.data.status, r.data.cancelled_by);
       if (r && r.data && Array.isArray(r.data.items) && r.data.items.some(i => i.options) && optSig(r.data.items) !== optSig(o.items)) applyItems(o.code, r.data.items, true);
+      if (r && r.data && r.data.shipping !== undefined && shipSig(r.data) !== shipSig(o)) applyShip(o.code, r.data);
     }
   }
   // every 6s while a tracker is on screen (the order-done page, «حسابي»), otherwise every 90s
@@ -1198,7 +1213,7 @@
       <h4 class="acc-h">طلباتي</h4><div id="accOrders"><div class="acc-empty">جاري التحميل…</div></div>
       <button class="btn btn-ghost acc-out" id="accOut">تسجيل خروج</button>`;
     $('#accOut').onclick = async () => { await sb.auth.signOut({ scope: 'local' }); DQ.toast('اتسجل الخروج'); };
-    const { data, error } = await sb.from('shop_orders').select('code,status,total,created_at,cancelled_at,cancelled_by,shop_order_items(name,qty,image,options)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
+    const { data, error } = await sb.from('shop_orders').select('*,shop_order_items(name,qty,image,options)').eq('user_id', u.id).order('created_at', { ascending: false }).limit(50);
     const el = $('#accOrders'); if (!el) return;
     const acc = error ? [] : data.filter(shown), extra = await trackLocal(acc.map(o => o.code));
     const all = [...acc, ...extra].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
