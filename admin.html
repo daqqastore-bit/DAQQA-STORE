@@ -1296,7 +1296,7 @@ $('#gLogin').onclick = async () => {
 };
 RC.googleOn().then(on => { $('#gLogin').hidden = !on; document.querySelector('.g-or').hidden = !on; });
 // change password: a popup from the sidebar
-$('#pushBtn').onclick = async () => { document.body.classList.remove('side-open'); if (await pushOn()) { const { error } = await sb.rpc('shop_push_test'); toast(error ? error.message : 'بعتنا إشعار تجربة ✓', error ? 'err' : 'ok'); } else enablePush(); };
+$('#pushBtn').onclick = async () => { document.body.classList.remove('side-open'); if (await pushOn()) { await pushResync(); const { error } = await sb.rpc('shop_push_test'); toast(error ? error.message : 'بعتنا إشعار تجربة ✓', error ? 'err' : 'ok'); } else enablePush(); };
 $('#pwBtn').onclick = () => {
   const m = document.createElement('div'); m.className = 'fin-m';
   m.innerHTML = `<form class="fin-box" novalidate style="width:min(420px,100%)"><h3>تغيير الباسورد</h3><p class="fsub">8 حروف على الأقل. هتفضل داخل بعد التغيير.</p>
@@ -1374,12 +1374,24 @@ async function enablePush() {
 async function askNotify() {
   document.querySelectorAll('.notify-ask').forEach(b => b.remove());
   const on = pushActive = await pushOn();
+  if (on) pushResync();
   const sb_ = $('#pushBtn'); if (sb_) sb_.querySelector('span').textContent = on ? 'الإشعارات شغالة ✓ (جرّب)' : 'إشعارات الطلبات';
   if (on || localStorage.getItem('dq-push-later')) return;
   const b = document.createElement('button'); b.className = 'btn btn-amber btn-sm notify-ask'; b.innerHTML = 'فعّل إشعارات الطلبات على الجهاز ده <i data-later aria-label="بعدين">×</i>';
   b.onclick = e => { if (e.target.closest('[data-later]')) { try { localStorage.setItem('dq-push-later', 1) } catch (er) {} b.remove(); return; } enablePush(); }; document.body.appendChild(b);
 }
 let pushActive = false;
+// a device that already has push on re-saves its subscription on every open: if it was dropped from the list (or iOS rotated it),
+// the server would skip this device silently while the button still says «شغالة»
+async function pushResync() {
+  try {
+    const r = await swReg(), sub = await r.pushManager.getSubscription(); if (!sub) return;
+    const j = sub.toJSON(); const { data } = await sb.from('shop_push_subs').select('endpoint').eq('endpoint', j.endpoint).maybeSingle();
+    if (data) return;
+    const dev = (isIOS ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Computer') + ' · ' + new Date().toLocaleDateString('en-GB');
+    await sb.from('shop_push_subs').upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, device: dev });
+  } catch (e) {}
+}
 // stock went down to 10 or fewer after an order: toast here + a desktop alert (phones with push get it from the server)
 function lowNotify(p) {
   const t = p.stock === 0 ? `خلص ${p.name} من المخزون` : `فاضل ${p.stock} من ${p.name} في المخزون`;
