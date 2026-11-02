@@ -391,7 +391,7 @@
   DQ.readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c && Date.now() - c.t < 7 * 864e5 && Array.isArray(c.p) ? c : null; } catch (e) { return null; } };
   const apply = (prods, sets) => {
     // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
-    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x).map(x => RC.soon(x) ? { ...x, stock: 0, soon: true } : x).map(x => RC.jp(x, sets) ? { ...x, jp: true } : x); DQ.settings = sets || {};
+    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x).map(x => RC.soon(x) ? { ...x, stock: 0, soon: true } : x).map(x => RC.jp(x, sets) ? { ...x, jp: true } : x).map(x => { const v = RC.pvid(x, sets); return v ? { ...x, vid: v } : x; }); DQ.settings = sets || {};
     renderSocial(); renderClosed(); fakeRun();
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };

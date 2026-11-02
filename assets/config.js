@@ -12,6 +12,10 @@ RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits
 // coming soon: no price yet, or the admin switched «Coming Soon» on (coming_soon) — shown without a price, can't be ordered
 // Japanese movement: admin marks it per product (settings.perks.jp = [product ids]); unmarked = Chinese movement
 RC.jp = (p, s) => !!p && ((((s || {}).perks || {}).jp) || []).map(Number).includes(Number(p.id));
+// product video (Admin → product editor «فيديو المنتج»): settings.perks.pv = {id: {src, poster, t (caption), at (slide number, 2 = right after the main photo), s/e (trim: plays only from s to e seconds; e 0 = to the end)}}
+RC.pvid = (p, s) => { const v = p && ((((s || {}).perks || {}).pv) || {})[p.id]; if (!(v && typeof v === 'object' && typeof v.src === 'string' && v.src)) return null;
+  const a = Math.max(0, +v.s || 0), b = +v.e > a + .3 ? +v.e : 0, r = x => Math.round(x * 10) / 10;
+  return { src: v.src, poster: v.poster || '', t: String(v.t || '').slice(0, 80), at: Math.max(1, parseInt(v.at, 10) || 2), s: r(a), e: r(b) }; };
 RC.soon = (p) => !!(p && p.coming_soon) || !(Number(p && p.price) > 0);
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
 RC.onOffer = (p) => !!(p && p.on_offer);
@@ -195,7 +199,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261102013251';
+RC.build = '20261102022914';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
