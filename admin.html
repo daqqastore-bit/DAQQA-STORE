@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102161555">
+<link rel="stylesheet" href="assets/base.css?v=20261102195959">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -405,7 +405,12 @@ html:has(#editor.on),html:has(#editor.on) body{overflow:hidden}
 .oo-c.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent);font-weight:700}
 .oo-c.out{opacity:.6}.oo-na{font-style:normal;font-size:12px;color:var(--muted)}
 .o-chg{font-style:normal;font-size:11px;color:var(--amber);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent);border-radius:999px;padding:1px 7px;flex:none}
-.o-opt img{width:30px;height:30px;border-radius:7px;object-fit:cover;flex:none}
+.o-oimg{all:unset;flex:none;width:64px;height:64px;border-radius:9px;overflow:hidden;cursor:zoom-in;position:relative;box-shadow:0 0 0 1px var(--line);background:var(--bg-2)}
+.o-oimg img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}.o-oimg:hover img{transform:scale(1.06)}
+.o-oimg::after{content:'⤢';position:absolute;inset-inline-end:3px;bottom:3px;width:18px;height:18px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;line-height:18px;text-align:center}
+.o-oimg:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.o-oimg.big{width:180px;height:180px;border-radius:12px}.o-oimg.big::after{width:24px;height:24px;line-height:24px;font-size:15px;inset-inline-end:6px;bottom:6px}
+@media (max-width:600px){.o-oimg{width:56px;height:56px}.o-oimg.big{width:100%;max-width:240px;height:auto;aspect-ratio:1}}
 .o-opt i{width:16px;height:16px;border-radius:50%;flex:none;box-shadow:0 0 0 1px var(--line),0 0 0 3px var(--bg-2)}
 .o-opt small{color:var(--muted);font-size:12px;flex:none;min-width:58px}.o-opt b{flex:1;min-width:0;color:var(--ink);font-weight:700;font-size:14px;overflow-wrap:break-word}
 @media (max-width:600px){.o-item .q{width:100%;padding-inline-start:58px}.o-opts{max-width:none}}
@@ -1123,7 +1128,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102161555"></script>
+<script src="assets/config.js?v=20261102195959"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1175,7 +1180,11 @@ let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
 // what the buyer picked (dial, strap…): one clear row each, with the option's colour and photo, so it can't be missed when packing
 // orders keep one colour per option: a two-tone one gets its second colour back from the product (same option, same first colour)
 const ordSw = (i, x) => { if (x.c2) return RC.sw(x); const p = products.find(y => y.id === i.product_id), g = p && RC.variants(p).find(y => y.k === x.k), vo = g && g.o.find(y => y.n === x.v); return vo && vo.c && vo.c.toUpperCase() === String(x.c).toUpperCase() ? RC.sw(vo) : x.c; };
-const optChips = i => (i.options || []).length ? `<span class="o-opts"><em>اختيارات العميل</em>${i.options.map(o => `<span class="o-opt">${o.img ? `<img src="${esc(o.img)}" alt="">` : ''}${o.c ? `<i style="background:${esc(ordSw(i, o))}"></i>` : ''}<small>${esc(o.g)}</small><b>${esc(o.v)}</b>${o.chg ? `<em class="o-chg" title="العميل كان مختار: ${esc(o.was || '')}">اتغيّر · كان ${esc(o.was || '')}</em>` : ''}</span>`).join('')}</span>` : '';
+const optChips = i => { const os = i.options || []; if (!os.length) return '';
+  // every option points to the same watch photo → show that photo once, big; otherwise each option gets its own photo
+  const ims = [...new Set(os.map(o => o.img).filter(Boolean))], one = ims.length === 1 && os.every(o => o.img === ims[0]);
+  const ob = (u, nm, cls = '') => `<button type="button" class="o-oimg${cls}" data-oimg="${esc(u)}" data-oname="${esc(nm)}" aria-label="كبّر الصورة"><img src="${esc(RC.thumb(u))}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(u)}'"></button>`;
+  return `<span class="o-opts${one ? ' one' : ''}"><em>اختيارات العميل</em>${one ? ob(ims[0], os.map(o => o.v).join(' · '), ' big') : ''}${os.map(o => `<span class="o-opt">${!one && o.img ? ob(o.img, o.g + ' ' + o.v) : ''}${o.c ? `<i style="background:${esc(ordSw(i, o))}"></i>` : ''}<small>${esc(o.g)}</small><b>${esc(o.v)}</b>${o.chg ? `<em class="o-chg" title="العميل كان مختار: ${esc(o.was || '')}">اتغيّر · كان ${esc(o.was || '')}</em>` : ''}</span>`).join('')}</span>`; };
 const orderProds = o => (o.shop_order_items || []).map(i => products.find(x => x.id === i.product_id)).filter(Boolean);
 const orderHasKind = (o, k) => orderProds(o).some(p => RC.kindOf(p) === k);
 const orderHasGen = (o, g) => orderProds(o).some(p => p.category === g || p.category === 'unisex');
@@ -1409,7 +1418,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102161555'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102195959'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2058,7 +2067,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102161555" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102195959" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2092,7 +2101,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102161555" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102195959" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2133,7 +2142,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102161555'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102161555')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102195959'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102195959')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2595,6 +2604,9 @@ function imgView(list, i, name) {
   // the page was pinch-zoomed before opening: fit the preview to what's on screen, so × and the bars aren't off-screen
   const vv = window.visualViewport; if (vv && vv.scale > 1.01) Object.assign(m.style, { inset: 'auto', left: vv.offsetLeft + 'px', top: vv.offsetTop + 'px', width: vv.width * vv.scale + 'px', height: vv.height * vv.scale + 'px', transform: `scale(${1 / vv.scale})`, transformOrigin: '0 0' });
 }
+// order: tap a buyer-option photo → big preview of all that item's option photos
+document.addEventListener('click', e => { const b = e.target.closest('.o-oimg'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  const bs = [...b.closest('.o-opts').querySelectorAll('.o-oimg')], us = [...new Set(bs.map(x => x.dataset.oimg))]; imgView(us, us.indexOf(b.dataset.oimg), b.dataset.oname); }, true);
 function openEditor(id, init) {
   const p = id ? products.find(x => x.id === id) : null;
   draft = p ? {...p, images: [...p.images], kind: RC.kindOf(p), colors: RC.colors(p)} : {kind: pKind !== 'all' ? pKind : 'watches', style:'', colors:[], name:'', brand:'DAQQA', category:'men', description:'', price:'', sale_price:null, images:[], stock:'', shown_left:'', featured:false, cover_only:true, luxury:false, active:true};
