@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102013251">
+<link rel="stylesheet" href="assets/base.css?v=20261102022914">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -606,6 +606,21 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .check{display:flex;align-items:center;gap:12px;cursor:pointer;font-size:15px;font-weight:600;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);transition:border-color .2s,background .2s}
 .check:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--bg))}
 .lux-check{margin-top:10px;border-style:dashed}
+.pv-add{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 14px;border:1.5px dashed var(--line);border-radius:14px;background:transparent;color:var(--ink);cursor:pointer;font:inherit;transition:border-color .2s,background .2s}
+.pv-add:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent)}.pv-add svg{width:30px;height:30px;color:var(--accent)}.pv-add b{font-size:14px}.pv-add small{color:var(--muted);font-size:12px}
+#pvBody{position:relative}.pv-ed{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start}
+.pv-pv{border-radius:12px;overflow:hidden;background:#0b0805;aspect-ratio:9/16;max-height:270px}.pv-pv video{width:100%;height:100%;object-fit:contain;display:block}
+.pv-f{display:flex;flex-direction:column;gap:4px}.pv-acts{display:flex;gap:8px;flex-wrap:wrap}.pv-rm{color:#d9534f}
+.pv-up{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;border-radius:14px;background:rgba(10,8,6,.72);color:#F2E9D8;font-size:13px;z-index:2}.pv-up i{width:30px;height:30px;border-radius:50%;border:3px solid rgba(242,233,216,.25);border-top-color:#C9A96E;animation:vdSpin 1s linear infinite}
+.pv-trim{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:6px}.pv-trim small{color:var(--muted);font-size:11.5px}
+.pt-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}.pt-h span{font-size:12px;color:var(--muted)}.pt-h span b{color:var(--ink)}
+.pt-bar{position:relative;height:28px;direction:ltr}.pt-bar::before{content:"";position:absolute;inset:11px 0;border-radius:4px;background:var(--line)}.pt-bar i{position:absolute;top:11px;bottom:11px;inset-inline:0;border-radius:4px;background:var(--accent)}
+.pt-bar input{position:absolute;inset:0;width:100%;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none}
+.pt-bar input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:grab}
+.pt-bar input::-moz-range-thumb{pointer-events:auto;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:grab}
+.pt-bar input::-webkit-slider-runnable-track{background:none}.pt-bar input::-moz-range-track{background:none}
+.pt-v{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px}.pt-v label{display:inline-flex;align-items:center;gap:6px}.pt-v .input{width:72px;padding:6px 8px;text-align:center}
+@media (max-width:560px){.pv-ed{grid-template-columns:1fr;gap:12px}.pv-pv{max-height:none;width:120px;margin:0 auto}}
 .cov-sw{display:flex;align-items:center;gap:12px;margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid #d9534f55;background:#d9534f0d;cursor:pointer;transition:background .2s,border-color .2s}
 .cov-sw:has(input:checked){border-color:#2f9e5b66;background:#2f9e5b12}
 .cov-sw input{position:absolute;opacity:0;pointer-events:none}
@@ -1100,7 +1115,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102013251"></script>
+<script src="assets/config.js?v=20261102022914"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1373,7 +1388,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102013251'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102022914'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2022,7 +2037,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102013251" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102022914" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2056,7 +2071,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102013251" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102022914" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2097,7 +2112,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102013251'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102013251')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102022914'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102022914')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2227,6 +2242,62 @@ async function hlSet(ids, v) {
   const was = settings.perks, perks = { ...(settings.perks || {}), hl }; settings.perks = perks; renderProducts();
   const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
   if (error) { settings.perks = was; renderProducts(); toast(error.message, 'err'); return false; } return true; }
+// product video (settings.perks.pv = {id: {src, poster, t, at}}); null = no video
+async function pvSet(id, v) {
+  const pv = { ...(((settings.perks || {}).pv) || {}) }; if (v && v.src) pv[id] = { src: v.src, poster: v.poster || '', t: String(v.t || '').trim().slice(0, 80), at: Math.max(1, parseInt(v.at, 10) || 2), s: +v.s || 0, e: +v.e || 0 }; else delete pv[id];
+  Object.keys(pv).forEach(k => { if (+k !== +id && !products.some(p => p.id === +k)) delete pv[k]; });   // deleted products drop out
+  const was = settings.perks, perks = { ...(settings.perks || {}), pv }; settings.perks = perks;
+  const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+  if (error) { settings.perks = was; toast(error.message, 'err'); return false; } return true; }
+const PV_MAX = 30 * 1024 * 1024;
+function pvHTML(d) {
+  const v = d.pv, n = Math.max(1, (d.images || []).length - (d.cover_only && (d.images || []).length > 1 ? 1 : 0));
+  if (!v || !v.src) return `<button type="button" class="pv-add" data-pvup><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="m16 10 5-3v10l-5-3"/></svg><b>رفع فيديو</b><small>فيديو قصير 5–20 ثانية · رأسي أو مربع · أقصى حجم 30 ميجا</small></button>`;
+  const at = Math.min(Math.max(1, parseInt(v.at, 10) || 2), n + 1);
+  return `<div class="pv-ed"><div class="pv-pv"><video id="pvVid" src="${esc(v.src)}" ${v.poster ? `poster="${esc(v.poster)}"` : ''} muted loop autoplay playsinline preload="auto"></video></div>
+    <div class="pv-f"><div class="pv-trim" id="pvTrim"><div class="pt-h"><b>✂️ قص الفيديو</b><span id="pvLen"></span></div>
+        <div class="pt-bar"><i id="pvSel"></i><input type="range" data-pvs min="0" step="0.1" value="${+v.s || 0}" aria-label="البداية"><input type="range" data-pve min="0" step="0.1" value="${+v.e || 0}" aria-label="النهاية"></div>
+        <div class="pt-v"><label>من <input class="input en" type="number" data-pvsn min="0" step="0.1" value="${+v.s || 0}" inputmode="decimal"> ث</label><label>لحد <input class="input en" type="number" data-pven min="0" step="0.1" value="${+v.e || ''}" inputmode="decimal"> ث</label><button type="button" class="vo-mini" data-pvtr0>من غير قص</button></div>
+        <small>الجزء ده بس اللي هيتعرض ويتكرر في صفحة المنتج.</small></div><div class="field"><label>كلمة على الفيديو <small>(اختياري)</small></label><input class="input" data-pvt value="${esc(v.t || '')}" maxlength="80" dir="auto" placeholder="مثلاً: الأستيك بيتمط ويرجع لمقاسه لوحده"></div>
+      <div class="field"><label>مكانه في صور صفحة المنتج</label><select class="input" data-pvat>${Array.from({ length: n + 1 }, (_, k) => `<option value="${k + 1}" ${k + 1 === at ? 'selected' : ''}>${k ? `بعد الصورة ${k}${k === 1 ? ' (الرئيسية)' : ''}` : 'الأول خالص (قبل الصور)'}</option>`).join('')}</select></div>
+      <div class="pv-acts"><button type="button" class="btn btn-ghost btn-sm" data-pvup>تغيير الفيديو</button><button type="button" class="btn btn-ghost btn-sm pv-rm" data-pvrm>مسح الفيديو</button></div></div></div>`;
+}
+const pvBox = () => { const b = $('#pvBody'); if (b && draft) { b.innerHTML = pvHTML(draft); pvTrimBind(); } };
+// trim: two handles on one bar (start / end, in seconds) + typed numbers; the preview loops just that part
+function pvTrimBind() {
+  const v = $('#pvVid'), box = $('#pvTrim'); if (!v || !box || !draft || !draft.pv) return;
+  const S = box.querySelector('[data-pvs]'), E = box.querySelector('[data-pve]'), SN = box.querySelector('[data-pvsn]'), EN = box.querySelector('[data-pven]'), sel = $('#pvSel'), len = $('#pvLen'), r1 = x => Math.round(x * 10) / 10;
+  let D = 0;
+  const paint = () => { const P = draft.pv, s = +P.s || 0, e = +P.e || D; if (!D) return;
+    S.value = s; E.value = e; SN.value = s; EN.value = r1(e); sel.style.insetInlineStart = (s / D * 100) + '%'; sel.style.insetInlineEnd = (100 - e / D * 100) + '%';
+    len.innerHTML = `المدة: <b class="en">${r1(e - s)}</b> ث <small class="en">من ${r1(D)}</small>`; };
+  const set = (k, x, seek) => { const P = draft.pv; let s = +P.s || 0, e = +P.e || D; x = Math.max(0, Math.min(D, +x || 0));
+    if (k === 's') s = Math.min(x, e - .5); else e = Math.max(x, s + .5); s = r1(Math.max(0, s)); e = r1(Math.min(D, e));
+    P.s = s; P.e = e >= D - .05 ? 0 : e; edDirty = true; paint(); try { v.currentTime = seek === 'e' ? Math.max(s, e - .6) : s; } catch (er) {} };
+  const init = () => { D = v.duration || 0; if (!D || !isFinite(D)) return; [S, E, SN, EN].forEach(x => x.max = r1(D)); paint(); try { v.currentTime = +draft.pv.s || 0; } catch (er) {} };
+  if (v.readyState >= 1) init(); else v.addEventListener('loadedmetadata', init, { once: true });
+  v.addEventListener('timeupdate', () => { const P = draft && draft.pv; if (!P || !D) return; const s = +P.s || 0, e = +P.e || D; if (v.currentTime >= e - .02 || v.currentTime < s - .25) v.currentTime = s; });
+  S.oninput = () => set('s', S.value); E.oninput = () => set('e', E.value, 'e'); SN.onchange = () => set('s', SN.value); EN.onchange = () => set('e', EN.value || D, 'e');
+  box.querySelector('[data-pvtr0]').onclick = () => { draft.pv.s = 0; draft.pv.e = 0; edDirty = true; paint(); try { v.currentTime = 0; } catch (er) {} };
+}
+async function pvUpload(file) {
+  if (!/^video\//.test(file.type) && !/\.(mp4|mov|webm|m4v)$/i.test(file.name)) return toast('ده مش فيديو', 'err');
+  if (file.size > PV_MAX) return toast(`الفيديو ${(file.size / 1048576).toFixed(0)} ميجا، الحد 30 ميجا. صدّره 720p وأقصر وارفعه تاني`, 'err');
+  const box = $('#pvBody'); if (!box) return; box.insertAdjacentHTML('beforeend', '<div class="pv-up"><i></i><span>جاري رفع الفيديو…</span></div>');
+  try {
+    const ext = (file.name.match(/\.(mp4|mov|webm|m4v)$/i) || [, 'mp4'])[1].toLowerCase(), base = `videos/p${draft.id || 'new'}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const { error } = await sb.storage.from(RC.bucket).upload(`${base}.${ext}`, file, { contentType: file.type || 'video/mp4', cacheControl: '31536000' }); if (error) throw error;
+    const src = sb.storage.from(RC.bucket).getPublicUrl(`${base}.${ext}`).data.publicUrl;
+    let poster = ''; const pb = await vdPoster(file);
+    if (pb) { const { error: pe } = await sb.storage.from(RC.bucket).upload(`${base}.jpg`, pb, { contentType: 'image/jpeg', cacheControl: '31536000' }); if (!pe) poster = sb.storage.from(RC.bucket).getPublicUrl(`${base}.jpg`).data.publicUrl; }
+    draft.pv = { src, poster, t: (draft.pv && draft.pv.t) || '', at: (draft.pv && draft.pv.at) || 2, s: 0, e: 0 }; edDirty = true; pvBox(); keepDraft(); toast('اترفع ✓ — دوس حفظ عشان يظهر في صفحة المنتج', 'ok');
+  } catch (e) { const u = box.querySelector('.pv-up'); if (u) u.remove(); toast(e.message || 'الرفع فشل', 'err'); }
+}
+$('#editor').addEventListener('click', e => { if (!draft) return;
+  if (e.target.closest('[data-pvup]')) { const f = Object.assign(document.createElement('input'), { type: 'file', accept: 'video/mp4,video/quicktime,video/webm,video/*' }); f.onchange = () => f.files[0] && pvUpload(f.files[0]); f.click(); }
+  if (e.target.closest('[data-pvrm]')) { draft.pv = null; edDirty = true; pvBox(); toast('الفيديو اتشال، دوس حفظ عشان يتطبق'); } });
+$('#editor').addEventListener('input', e => { if (draft && draft.pv && e.target.matches('[data-pvt]')) draft.pv.t = e.target.value; });
+$('#editor').addEventListener('change', e => { if (draft && draft.pv && e.target.matches('[data-pvat]')) draft.pv.at = +e.target.value; });
 // Japanese movement mark (settings.perks.jp = [product ids]); off = Chinese movement (the default)
 async function jpSet(ids, on) {
   const cur = new Set((((settings.perks || {}).jp) || []).map(Number)); ids.forEach(id => on ? cur.add(+id) : cur.delete(+id));
@@ -2499,6 +2570,7 @@ function openEditor(id, init) {
   if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
   if (!draft._sups) draft._sups = p ? edSupOf(p.id) : [];
   if (draft.jp == null) draft.jp = p ? RC.jp(p, settings) : false;
+  if (draft.pv === undefined) { const v = p ? RC.pvid(p, settings) : null; draft.pv = v ? { ...v } : null; }
   openTexts(draft); edDirty = false;
   $('#editor').innerHTML = ''; renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
@@ -2575,6 +2647,7 @@ function renderEditor() {
           <span class="tx"><b>الصورة الرئيسية غلاف بس <em class="st-on">شغال</em><em class="st-off">مقفول</em></b>
             <small class="st-on">الصورة الرئيسية هتظهر في كارت المنتج بس، ولما العميل يفتح المنتج مش هيشوفها.</small>
             <small class="st-off">الصورة الرئيسية بتظهر في الكارت وجوه صفحة المنتج عادي.</small></span></label></div></section>
+      <section class="ed-sec" id="pvSec"><h4>فيديو المنتج <small>اختياري · بيظهر مع صور المنتج بعلامة ▶ (زي الأستيك وهو بيتمط)</small></h4><div id="pvBody">${pvHTML(d)}</div></section>
       <section class="ed-sec" id="varSec" ${COLS.variants ? '' : 'style="opacity:.5;pointer-events:none"'}><h4>اختيارات المشتري <small>اكتب اسم الاختيار، ولو ليه لون اختاره من «لون»، واضغط إضافة، وبعدها اختار صورة الساعة بتاعته. كل اختيار كارت باسم ولون وصورة (اللون والصورة اختياري). أي خانة فيها اختيارات المشتري لازم يختار منها، ولما يختار بتظهرله الصورة، والاختيار بيوصلك مع الطلب</small></h4>
         ${d.variants.map(g => { const V = RC.varDef(g.k), OG = d.variants.filter(x => x.k !== g.k && x.o.some(y => String(y.n || '').trim())); const fold = vgFold().includes(g.k), n = g.o.filter(o => String(o.n || '').trim()).length; return `<div class="vg${fold ? ' fold' : ''}" data-vg="${g.k}">
           <div class="vg-h"><div class="vg-t" title="عنوان الخانة اللي بيظهر للعميل، تقدر تغيره"><input class="input" data-vtar value="${esc(g.ar)}" placeholder="${V.x ? 'اسم الخانة' : esc(V.ar)}" dir="auto" maxlength="30" aria-label="العنوان بالعربي"><input class="input en" data-vten value="${esc(g.en)}" placeholder="${esc(V.en)}" dir="ltr" maxlength="30" aria-label="العنوان بالإنجليزي"></div><p>${V.hint}</p><button type="button" class="vg-fold" data-vgfold aria-expanded="${!fold}" title="${fold ? 'افتح الخانة' : 'اقفل الخانة'}"><span class="vg-n">${n ? n + ' اختيار' : 'فاضية'}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button><label class="vg-ord" title="ترتيب الخانة دي عند العميل: 1 بتظهر الأول"><span>ترتيب الخانة</span><select data-vgord aria-label="ترتيب الخانة">${d.variants.map((_, k) => `<option value="${k}" ${d.variants[k] === g ? 'selected' : ''}>${k + 1}</option>`).join('')}</select></label>${V.x ? '<button type="button" class="vg-rm" data-vgrm title="امسح الخانة دي كلها">× امسح الخانة</button>' : ''}</div>
@@ -2655,7 +2728,7 @@ function renderEditor() {
       <section class="ed-sec"><h4>المورد <small>اختياري · بيتحفظ كمان في صفحة الموردين</small></h4><div id="edSup"></div></section>
     </div></div>
     <div class="ed-foot"><button class="btn btn-primary" id="saveP" style="flex:1">حفظ</button>${d.id ? '<button class="btn btn-danger" id="delP">حذف</button>' : ''}</div>${edNavHTML()}`;
-  bindEdNav(); edSupRows();
+  bindEdNav(); edSupRows(); pvTrimBind();
   updatePreview();
   $('#edClose').onclick = closeEditor;
   // start another new product right from the editor (same page's section, asks first if this one has unsaved changes)
@@ -2991,6 +3064,8 @@ async function saveProduct() {
   if (res.error) return toast(res.error.message, 'err');
   await supSyncProduct(res.data.id, d._sups);
   if (!!d.jp !== RC.jp(res.data, settings)) await jpSet([res.data.id], !!d.jp);
+  { const was = RC.pvid(res.data, settings), now = d.pv && d.pv.src ? RC.pvid({ id: res.data.id }, { perks: { pv: { [res.data.id]: d.pv } } }) : null;
+    if (JSON.stringify(was) !== JSON.stringify(now)) await pvSet(res.data.id, now); }
   // saving keeps the editor open on the same product and the same scroll spot (the admin keeps editing)
   const ed = $('#editor'), bd = () => ed.querySelector('.ed-body'), y = bd() ? bd().scrollTop : 0;
   await loadProducts(); renderProducts();
