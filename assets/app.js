@@ -142,7 +142,7 @@
     const nImg = (p.images || []).length;
     return `<article class="card reveal${p.jp ? ' jp' : ''}" data-pid="${p.id}" style="transition-delay:${Math.min(i, 8) * 50}ms">
       <div class="ph-w"><a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" ${DQ.thumb(p)} alt="">
-        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.soon ? '' : p.stock <= 0 ? `<div class="out en">OUT OF STOCK</div>` : ''}</a>
+        ${p.vid ? `<span class="ph-vb" aria-label="فيه فيديو"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>فيديو</span>` : ''}${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.soon ? '' : p.stock <= 0 ? `<div class="out en">OUT OF STOCK</div>` : ''}</a>
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <button type="button" class="qv-eye" data-qv="${p.id}" aria-label="عرض سريع لـ ${esc(p.name)}" title="عرض سريع">${QV_EYE}</button></div>
       <div class="bd">${p.jp ? '<div class="jp-nm">' : ''}<h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>${p.jp ? DQ.jpTag + '</div>' : ''}
@@ -159,12 +159,20 @@
   function imageFlip() {
     if (!matchMedia('(hover: hover)').matches) return;
     let cur = null, timer = null;
-    const stop = () => { if (!cur) return; clearInterval(timer); const c = cur; cur = null; c.classList.remove('flipping'); if (c._xf) { c._xf.remove(); c._xf = null; } const img = c.querySelector('.ph img:not(.alt)'), p = DQ.byId(+c.dataset.pid);
+    const stop = () => { if (!cur) return; clearInterval(timer); const c = cur; cur = null; c.classList.remove('flipping', 'vplay'); if (c._xf) { c._xf.remove(); c._xf = null; } if (c._vd) { const v = c._vd; c._vd = null; v.pause(); setTimeout(() => v.remove(), 350); } const img = c.querySelector('.ph img:not(.alt)'), p = DQ.byId(+c.dataset.pid);
       if (img && p) { img.style.transition = img.style.transform = ''; img.dataset.full = c.dataset.pickedFull || DQ.img(p, 0); delete img.dataset.tried; img.src = c.dataset.picked || RC.thumb(DQ.img(p, 0)); } c.querySelectorAll('.ph-dots i').forEach((d, j) => d.classList.toggle('on', j === 0)); };
     document.addEventListener('pointerover', e => {
       const c = e.target.closest && e.target.closest('[data-pid]');
       if (c === cur) return; stop();
-      const p = c && DQ.byId(+c.dataset.pid); if (!p || !p.images || p.images.length < 2 || c.dataset.picked) return;
+      const p = c && DQ.byId(+c.dataset.pid);
+      // a product with a video (Admin → «فيديو المنتج»): hovering plays its (trimmed) video instead of flipping the photos
+      if (p && p.vid && !c.dataset.picked && c.querySelector('.ph')) { const V = p.vid, ph = c.querySelector('.ph'); cur = c;
+        const v = document.createElement('video'); v.className = 'ph-vid'; v.muted = true; v.playsInline = true; v.loop = true; v.setAttribute('playsinline', ''); v.setAttribute('aria-hidden', 'true');
+        if (V.poster) v.poster = V.poster; v.src = V.src + (V.s || V.e ? `#t=${V.s}${V.e ? ',' + V.e : ''}` : '');
+        if (V.s || V.e) v.addEventListener('timeupdate', () => { if ((V.e && v.currentTime >= V.e) || v.currentTime < V.s - .25) v.currentTime = V.s; });
+        v.addEventListener('playing', () => { if (cur === c) c.classList.add('vplay'); }, { once: true });
+        ph.appendChild(v); c._vd = v; const r = v.play(); if (r && r.catch) r.catch(() => {}); return; }
+      if (!p || !p.images || p.images.length < 2 || c.dataset.picked) return;
       const img = c.querySelector('.ph img:not(.alt), [data-flip]'), dots = c.querySelectorAll('.ph-dots i'); if (!img) return;
       cur = c; c.classList.add('flipping'); let i = 0;
       // soft cross-fade: the next photo is decoded first, then fades in over the current one (never stalls half-way)

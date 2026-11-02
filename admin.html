@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102022914">
+<link rel="stylesheet" href="assets/base.css?v=20261102023659">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -614,7 +614,14 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .pv-up{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;border-radius:14px;background:rgba(10,8,6,.72);color:#F2E9D8;font-size:13px;z-index:2}.pv-up i{width:30px;height:30px;border-radius:50%;border:3px solid rgba(242,233,216,.25);border-top-color:#C9A96E;animation:vdSpin 1s linear infinite}
 .pv-trim{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:6px}.pv-trim small{color:var(--muted);font-size:11.5px}
 .pt-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}.pt-h span{font-size:12px;color:var(--muted)}.pt-h span b{color:var(--ink)}
-.pt-bar{position:relative;height:28px;direction:ltr}.pt-bar::before{content:"";position:absolute;inset:11px 0;border-radius:4px;background:var(--line)}.pt-bar i{position:absolute;top:11px;bottom:11px;inset-inline:0;border-radius:4px;background:var(--accent)}
+.pt-bar{position:relative;height:28px;direction:ltr}.pt-bar::before{content:"";position:absolute;inset:11px 0;border-radius:4px;background:var(--line)}.pt-bar i{position:absolute;top:11px;bottom:11px;left:0;right:0;border-radius:4px;background:var(--accent)}
+.pt-bar em{position:absolute;top:4px;bottom:4px;width:2px;margin-left:-1px;left:0;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.35);border-radius:2px;pointer-events:none;z-index:1}
+.pv-trim.wait .pt-bar,.pv-trim.wait .pt-v,.pv-trim.wait .pt-play{opacity:.4;pointer-events:none}
+.pt-play{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pt-play span{font-size:12.5px;color:var(--muted)}
+.pv-pv{position:relative}.pv-pv video{cursor:pointer}
+.pv-big{position:absolute;inset:0;margin:auto;width:54px;height:54px;border-radius:50%;border:0;background:rgba(10,7,4,.55);color:#fff;font-size:20px;cursor:pointer;backdrop-filter:blur(4px);transition:opacity .2s}
+.pv-ed.playing .pv-big{opacity:0;pointer-events:none}
+.pv-snd{position:absolute;top:8px;left:8px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(10,7,4,.55);font-size:14px;cursor:pointer}
 .pt-bar input{position:absolute;inset:0;width:100%;margin:0;background:none;pointer-events:none;-webkit-appearance:none;appearance:none}
 .pt-bar input::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.3);cursor:grab}
 .pt-bar input::-moz-range-thumb{pointer-events:auto;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:grab}
@@ -1115,7 +1122,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102022914"></script>
+<script src="assets/config.js?v=20261102023659"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1388,7 +1395,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102022914'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102023659'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2037,7 +2044,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102022914" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102023659" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2071,7 +2078,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102022914" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102023659" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2112,7 +2119,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102022914'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102022914')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102023659'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102023659')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2254,10 +2261,11 @@ function pvHTML(d) {
   const v = d.pv, n = Math.max(1, (d.images || []).length - (d.cover_only && (d.images || []).length > 1 ? 1 : 0));
   if (!v || !v.src) return `<button type="button" class="pv-add" data-pvup><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="m16 10 5-3v10l-5-3"/></svg><b>رفع فيديو</b><small>فيديو قصير 5–20 ثانية · رأسي أو مربع · أقصى حجم 30 ميجا</small></button>`;
   const at = Math.min(Math.max(1, parseInt(v.at, 10) || 2), n + 1);
-  return `<div class="pv-ed"><div class="pv-pv"><video id="pvVid" src="${esc(v.src)}" ${v.poster ? `poster="${esc(v.poster)}"` : ''} muted loop autoplay playsinline preload="auto"></video></div>
-    <div class="pv-f"><div class="pv-trim" id="pvTrim"><div class="pt-h"><b>✂️ قص الفيديو</b><span id="pvLen"></span></div>
-        <div class="pt-bar"><i id="pvSel"></i><input type="range" data-pvs min="0" step="0.1" value="${+v.s || 0}" aria-label="البداية"><input type="range" data-pve min="0" step="0.1" value="${+v.e || 0}" aria-label="النهاية"></div>
+  return `<div class="pv-ed"><div class="pv-pv"><video id="pvVid" src="${esc(v.src)}" ${v.poster ? `poster="${esc(v.poster)}"` : ''} muted playsinline preload="auto"></video><button type="button" class="pv-big" id="pvBig" aria-label="شغّل">▶</button><button type="button" class="pv-snd" id="pvSnd" aria-label="الصوت">🔇</button></div>
+    <div class="pv-f"><div class="pv-trim wait" id="pvTrim"><div class="pt-h"><b>✂️ قص الفيديو</b><span id="pvLen">بيحمّل الفيديو…</span></div>
+        <div class="pt-bar"><i id="pvSel"></i><em id="pvHead"></em><input type="range" data-pvs min="0" step="0.1" value="${+v.s || 0}" aria-label="البداية"><input type="range" data-pve min="0" step="0.1" value="${+v.e || 0}" aria-label="النهاية"></div>
         <div class="pt-v"><label>من <input class="input en" type="number" data-pvsn min="0" step="0.1" value="${+v.s || 0}" inputmode="decimal"> ث</label><label>لحد <input class="input en" type="number" data-pven min="0" step="0.1" value="${+v.e || ''}" inputmode="decimal"> ث</label><button type="button" class="vo-mini" data-pvtr0>من غير قص</button></div>
+        <div class="pt-play"><button type="button" class="btn btn-amber btn-sm" id="pvPP">▶ شغّل الجزء المقصوص</button><span class="en" id="pvNow"></span></div>
         <small>الجزء ده بس اللي هيتعرض ويتكرر في صفحة المنتج.</small></div><div class="field"><label>كلمة على الفيديو <small>(اختياري)</small></label><input class="input" data-pvt value="${esc(v.t || '')}" maxlength="80" dir="auto" placeholder="مثلاً: الأستيك بيتمط ويرجع لمقاسه لوحده"></div>
       <div class="field"><label>مكانه في صور صفحة المنتج</label><select class="input" data-pvat>${Array.from({ length: n + 1 }, (_, k) => `<option value="${k + 1}" ${k + 1 === at ? 'selected' : ''}>${k ? `بعد الصورة ${k}${k === 1 ? ' (الرئيسية)' : ''}` : 'الأول خالص (قبل الصور)'}</option>`).join('')}</select></div>
       <div class="pv-acts"><button type="button" class="btn btn-ghost btn-sm" data-pvup>تغيير الفيديو</button><button type="button" class="btn btn-ghost btn-sm pv-rm" data-pvrm>مسح الفيديو</button></div></div></div>`;
@@ -2266,19 +2274,30 @@ const pvBox = () => { const b = $('#pvBody'); if (b && draft) { b.innerHTML = pv
 // trim: two handles on one bar (start / end, in seconds) + typed numbers; the preview loops just that part
 function pvTrimBind() {
   const v = $('#pvVid'), box = $('#pvTrim'); if (!v || !box || !draft || !draft.pv) return;
-  const S = box.querySelector('[data-pvs]'), E = box.querySelector('[data-pve]'), SN = box.querySelector('[data-pvsn]'), EN = box.querySelector('[data-pven]'), sel = $('#pvSel'), len = $('#pvLen'), r1 = x => Math.round(x * 10) / 10;
+  const S = box.querySelector('[data-pvs]'), E = box.querySelector('[data-pve]'), SN = box.querySelector('[data-pvsn]'), EN = box.querySelector('[data-pven]'), sel = $('#pvSel'), len = $('#pvLen'), head = $('#pvHead'), now = $('#pvNow'), pp = $('#pvPP'), snd = $('#pvSnd'), r1 = x => Math.round(x * 10) / 10;
   let D = 0;
-  const paint = () => { const P = draft.pv, s = +P.s || 0, e = +P.e || D; if (!D) return;
-    S.value = s; E.value = e; SN.value = s; EN.value = r1(e); sel.style.insetInlineStart = (s / D * 100) + '%'; sel.style.insetInlineEnd = (100 - e / D * 100) + '%';
+  const rng = () => { const P = (draft && draft.pv) || {}, s = +P.s || 0; return [s, +P.e || D]; };
+  const paint = () => { if (!D) return; const [s, e] = rng();
+    S.value = s; E.value = e; SN.value = s; EN.value = r1(e); sel.style.left = (s / D * 100) + '%'; sel.style.right = (100 - e / D * 100) + '%';
     len.innerHTML = `المدة: <b class="en">${r1(e - s)}</b> ث <small class="en">من ${r1(D)}</small>`; };
-  const set = (k, x, seek) => { const P = draft.pv; let s = +P.s || 0, e = +P.e || D; x = Math.max(0, Math.min(D, +x || 0));
+  const tick = () => { if (!D) return; const [s, e] = rng(); head.style.left = (Math.min(D, v.currentTime) / D * 100) + '%'; now.textContent = `${r1(Math.max(0, v.currentTime - s))} / ${r1(e - s)} ث`; };
+  const ui = () => { const on = !v.paused; box.closest('.pv-ed').classList.toggle('playing', on); pp.innerHTML = on ? '❚❚ وقّف' : '▶ شغّل الجزء المقصوص'; snd.textContent = v.muted ? '🔇' : '🔊'; };
+  const seek = t => { try { v.currentTime = t; } catch (er) {} tick(); };
+  const set = (k, x, at) => { if (!D) return; const P = draft.pv; let [s, e] = rng(); x = Math.max(0, Math.min(D, +x || 0));
     if (k === 's') s = Math.min(x, e - .5); else e = Math.max(x, s + .5); s = r1(Math.max(0, s)); e = r1(Math.min(D, e));
-    P.s = s; P.e = e >= D - .05 ? 0 : e; edDirty = true; paint(); try { v.currentTime = seek === 'e' ? Math.max(s, e - .6) : s; } catch (er) {} };
-  const init = () => { D = v.duration || 0; if (!D || !isFinite(D)) return; [S, E, SN, EN].forEach(x => x.max = r1(D)); paint(); try { v.currentTime = +draft.pv.s || 0; } catch (er) {} };
-  if (v.readyState >= 1) init(); else v.addEventListener('loadedmetadata', init, { once: true });
-  v.addEventListener('timeupdate', () => { const P = draft && draft.pv; if (!P || !D) return; const s = +P.s || 0, e = +P.e || D; if (v.currentTime >= e - .02 || v.currentTime < s - .25) v.currentTime = s; });
+    P.s = s; P.e = e >= D - .05 ? 0 : e; edDirty = true; paint(); v.pause(); seek(at === 'e' ? Math.max(s, e - .05) : s); };
+  // the length can arrive late (or as Infinity for some phone recordings): keep trying until it's known
+  const init = () => { if (D) return; let d = v.duration; if (d === Infinity) { v.addEventListener('timeupdate', function f() { v.removeEventListener('timeupdate', f); seek(+draft.pv.s || 0); init(); }); try { v.currentTime = 1e7; } catch (er) {} return; }
+    if (!d || !isFinite(d)) return; D = d; [S, E, SN, EN].forEach(x => x.max = r1(D)); paint(); seek(+draft.pv.s || 0); box.classList.remove('wait'); };
+  ['loadedmetadata', 'durationchange', 'loadeddata', 'canplay'].forEach(t => v.addEventListener(t, init)); init();
+  v.addEventListener('timeupdate', () => { if (!D || !document.body.contains(v)) return; const [s, e] = rng(); if (!v.paused && (v.currentTime >= e - .02 || v.currentTime < s - .25)) v.currentTime = s; tick(); });
+  v.addEventListener('play', ui); v.addEventListener('pause', ui); v.addEventListener('volumechange', ui);
+  const toggle = () => { if (!D) return; if (v.paused) { const [s, e] = rng(); if (v.currentTime < s || v.currentTime >= e - .05) seek(s); v.play().catch(() => {}); } else v.pause(); };
+  pp.onclick = toggle; v.onclick = toggle; $('#pvBig').onclick = toggle;
+  snd.onclick = () => { v.muted = !v.muted; ui(); };
   S.oninput = () => set('s', S.value); E.oninput = () => set('e', E.value, 'e'); SN.onchange = () => set('s', SN.value); EN.onchange = () => set('e', EN.value || D, 'e');
-  box.querySelector('[data-pvtr0]').onclick = () => { draft.pv.s = 0; draft.pv.e = 0; edDirty = true; paint(); try { v.currentTime = 0; } catch (er) {} };
+  box.querySelector('[data-pvtr0]').onclick = () => { draft.pv.s = 0; draft.pv.e = 0; edDirty = true; paint(); seek(0); };
+  ui();
 }
 async function pvUpload(file) {
   if (!/^video\//.test(file.type) && !/\.(mp4|mov|webm|m4v)$/i.test(file.name)) return toast('ده مش فيديو', 'err');
