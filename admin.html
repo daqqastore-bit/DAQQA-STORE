@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102023659">
+<link rel="stylesheet" href="assets/base.css?v=20261102153726">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -245,6 +245,7 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .fin-it .input{height:40px;font-family:var(--f-ui)}
 .fin-box .field .input{font-family:var(--f-ui)}
 .who-pays{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fin-box [hidden]{display:none!important}
 .off-btn{display:inline-flex;align-items:center;gap:8px}.off-btn svg{width:18px;height:18px}
 .off-box{width:min(620px,100%)}
 .off-pick .cat-pop{max-height:300px}
@@ -1122,7 +1123,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102023659"></script>
+<script src="assets/config.js?v=20261102153726"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1407,7 +1408,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102023659'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102153726'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2056,7 +2057,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102023659" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102153726" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2090,7 +2091,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102023659" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102153726" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2131,7 +2132,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102023659'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102023659')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102153726'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102153726')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -4040,6 +4041,10 @@ const OFF_BTN = '<button type="button" class="btn btn-amber off-btn" data-offsal
 const finXs = f => (f && Array.isArray(f.extras) ? f.extras : []).filter(x => +x.amount > 0);
 const finX = f => finXs(f).reduce((s, x) => s + +x.amount, 0);
 const orderNet = o => { const f = fins[o.id]; if (o.status === 'returned') return -(f ? +f.return_loss : 0); if (!COUNTED.includes(o.status) || !f) return 0; return +f.sale - +f.cost - (f.ship_payer === 'me' ? +f.ship_cost : 0) - finX(f); };
+// who carried the delivery shipping, read back from the saved numbers (no extra column):
+// me + the order still charges shipping → split (customer paid o.shipping, ship_cost = our share) · nothing on either side → none (offline)
+const shipMode = (o, f) => !f ? null : f.ship_payer === 'me' ? (+o.shipping > 0 ? 'split' : 'me') : (!+f.ship_cost && !+o.shipping ? 'none' : 'buyer');
+const shipLbl = (o, f, short) => { const m = shipMode(o, f); return m === 'me' ? (short ? 'عليك' : 'على حسابك') : m === 'split' ? `مقسوم · العميل ${money(o.shipping)}${short ? '' : ' وإحنا الباقي'}` : m === 'none' ? 'بدون شحن' : 'على المشتري'; };
 const signMoney = n => (n < 0 ? '− ' : '') + money(Math.abs(n));
 function stPicker(o) {
   return `<div class="stp" data-stp="${o.id}"><button type="button" class="stp-btn st-${o.status}" aria-haspopup="listbox"><i></i><span>${statuses[o.status] || o.status}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
@@ -4051,11 +4056,11 @@ function finPanel(o) {
   if (o.status === 'returned') { const r = f && f.return_loss != null; return `<div class="o-fin"><h4>ربح الأوردر ده</h4>${r ? `<div><span>خسارة المرتجع</span><b class="${+f.return_loss ? 'neg' : ''}">${+f.return_loss ? '− ' : ''}${money(f.return_loss)}</b></div>` : ''}<div class="net"><span>صافي الربح</span><b class="${r && +f.return_loss ? 'neg' : ''}">${signMoney(orderNet(o))}</b></div><small>${!r ? 'لسه متسجلش مين اتحمّل الشحن.' : +f.return_loss ? 'الشحن علينا · المنتجات رجعت للمخزون.' : 'الشحن على العميل · المنتجات رجعت للمخزون من غير خسارة.'}</small>${r ? '' : `<button class="btn btn-sm btn-amber" data-fin="${o.id}">مين اتحمّل الشحن؟</button>`}</div>`; }
   if (!COUNTED.includes(o.status)) return o.status === 'new' ? `<div class="o-fin muted"><h4>ربح الأوردر ده</h4><small>بتتسجّل لما تخلي الحالة «تم الاستلام».</small></div>` : '';
   if (!f) return `<div class="o-fin warn"><h4>ربح الأوردر ده</h4><small>لسه مسجّلتش تكلفة الأوردر ده (اشتريت الساعة بكام والشحن عليك بكام)، فمش محسوب كسبت منه كام.</small><button class="btn btn-sm btn-amber" data-fin="${o.id}">احسب ربح الأوردر</button></div>`;
-  const n = orderNet(o), me = f.ship_payer === 'me';
+  const n = orderNet(o), me = f.ship_payer === 'me', sm = shipMode(o, f);
   return `<div class="o-fin"><h4>ربح الأوردر ده</h4>
     <div><span>سعر البيع</span><b>${money(f.sale)}</b></div>
     <div><span>تكلفة المنتجات</span><b>− ${money(f.cost)}</b></div>
-    <div><span>تكلفة الشحن · ${me ? 'على حسابك' : 'على المشتري'}</span><b>${me ? '− ' : ''}${money(f.ship_cost)}${me ? '' : ' <i>(مش بتتخصم)</i>'}</b></div>
+    <div><span>${sm === 'none' ? 'الشحن' : sm === 'split' ? 'نصيبنا من الشحن' : 'تكلفة الشحن'} · ${shipLbl(o, f)}</span><b>${sm === 'none' ? '—' : `${me ? '− ' : ''}${money(f.ship_cost)}${me ? '' : ' <i>(مش بتتخصم)</i>'}`}</b></div>
     ${finXs(f).map(x => `<div><span>${esc(x.label || 'مصروف إضافي')}</span><b>− ${money(x.amount)}</b></div>`).join('')}
     ${f.received_by ? `<div><span>استلم الفلوس</span><b>${esc(f.received_by)}</b></div>` : ''}
     <div class="net"><span>صافي الربح</span><b class="${n < 0 ? 'neg' : ''}">${signMoney(n)}</b></div></div>`;
@@ -4101,16 +4106,20 @@ function needFinTable() { if (FIN_OK) return true; toast('جداول الحسا�
 function finBox(o) {
   if (!needFinTable()) return;
   const f = fins[o.id] || {}, items = o.shop_order_items || [];
-  const shipDef = f.ship_cost != null ? +f.ship_cost : (+o.shipping || +settings.shipping_fee || 0);
-  let payer = f.ship_payer || (+o.shipping > 0 ? 'buyer' : 'me');
+  const mode0 = fins[o.id] ? shipMode(o, f) : null, fee = +o.shipping || +settings.shipping_fee || 0;
+  const shipDef = mode0 === 'split' ? +f.ship_cost + +o.shipping : f.ship_cost != null ? +f.ship_cost : fee;
+  let payer = mode0 || (+o.shipping > 0 ? 'buyer' : 'me');
+  const custDef = mode0 === 'split' ? +o.shipping : (+o.shipping > 0 && +o.shipping < shipDef ? +o.shipping : Math.round(shipDef / 2));
   const m = document.createElement('div'); m.className = 'fin-m';
   m.innerHTML = `<form class="fin-box" novalidate>
     <h3>تكاليف الطلب <span class="en">${esc(oLbl(o))}</span></h3>
     <p class="fsub">سجّل الأرقام دي مرة واحدة وصافي الربح بيتحسب لوحده في صفحة الحسابات والشيت. تكلفة كل منتج بتتحفظ للطلبات الجاية.</p>
     <div class="fin-items">${items.map(i => `<div class="fin-it"><img src="${esc(i.image || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(i.name)}</b><small>${i.qty} × ${money(i.unit_price)}</small></div><label class="fin-pc"><span>تكلفة القطعة (اشتريتها بكام)</span><input class="input" inputmode="decimal" placeholder="مثلاً 1800" data-pc="${i.product_id ?? ''}" data-q="${i.qty}" value="${f.cost != null && items.length === 1 ? +f.cost / i.qty : (pcosts[i.product_id] ?? '')}" aria-label="تكلفة القطعة"></label></div>`).join('')}</div>
     <div class="two"><div class="field"><label>سعر البيع (المنتجات)</label><input class="input" name="sale" inputmode="decimal" value="${f.sale != null ? +f.sale : +o.subtotal - (+o.coupon_off || 0)}"></div>
-      <div class="field"><label>تكلفة الشحن (لشركة الشحن)</label><input class="input" name="ship" inputmode="decimal" value="${shipDef}"></div></div>
-    <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button></div></div>
+      <div class="field" data-shipf><label>تكلفة الشحن (لشركة الشحن)</label><input class="input" name="ship" inputmode="decimal" value="${shipDef}"></div></div>
+    <div class="field"><label>الشحن على حساب مين؟</label><div class="who-pays four"><button type="button" data-pay="buyer"><b>على المشتري</b><small>مش بيقلّ من ربحك</small></button><button type="button" data-pay="me"><b>على حسابي</b><small>بيتخصم من صافي الربح</small></button><button type="button" data-pay="split"><b>بالتقسيم</b><small>العميل جزء وإحنا جزء</small></button><button type="button" data-pay="none"><b>بدون شحن</b><small>طلب أوفلاين · محدش بيدفع</small></button></div></div>
+    <div class="two" data-splitf hidden><div class="field"><label>العميل بيدفع</label><input class="input" name="cust" inputmode="decimal" value="${custDef}"></div><div class="field"><label>إحنا بندفع <small style="color:var(--muted);font-weight:400">(بيتخصم من الربح)</small></label><input class="input" name="mine" inputmode="decimal" value="${Math.max(0, shipDef - custDef)}"></div></div>
+    <p class="fsub" data-invnote hidden></p>
     <div class="field"><label>مصاريف إضافية <small style="color:var(--muted);font-weight:400">(تغليف، مواصلات، تصليح… بتتخصم من الربح)</small></label><div class="fx-list" id="fxList"></div><button type="button" class="fx-add" id="fxAdd">+ إضافة مصروف</button></div>
     <div class="field"><label>مين استلم الفلوس؟</label><input class="input" name="received_by" list="rcvList" autocomplete="off" placeholder="اختار أو اكتب" value="${esc(f.received_by || '')}"><datalist id="rcvList">${[...new Set([...PARTNERS, ...Object.values(fins).map(x => (x.received_by || '').trim()).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></div>
     <div class="fin-calc" id="finCalc"></div>
@@ -4122,16 +4131,35 @@ function finBox(o) {
   const extras = () => [...m.querySelectorAll('.fx-row')].map(r => ({ label: r.querySelector('[data-fxl]').value.trim().slice(0, 60), amount: num(r.querySelector('[data-fxa]').value) })).filter(x => x.amount > 0);
   $('#fxAdd').onclick = () => { $('#fxList').insertAdjacentHTML('beforeend', fxRow()); const ls = $('#fxList').querySelectorAll('[data-fxl]'); ls[ls.length - 1].focus(); };
   const vals = () => { const cost = [...m.querySelectorAll('[data-pc]')].reduce((s, x) => s + num(x.value) * +x.dataset.q, 0), xs = extras(); return { sale: num(form.sale.value), cost, ship: num(form.ship.value), xs, xt: xs.reduce((s, x) => s + x.amount, 0) }; };
-  const calc = () => { const v = vals(), net = v.sale - v.cost - (payer === 'me' ? v.ship : 0) - v.xt;
+  // what gets saved for the picked mode: our share of the shipping (ship_cost when payer = me) and what the customer pays on the order
+  const shipPlan = v => { const cust = Math.min(num(form.cust.value), v.ship), mine = Math.max(0, v.ship - cust);
+    if (payer === 'none') return { mode: 'none', payer: 'buyer', cost: 0, mine: 0, cust: 0 };
+    if (payer === 'me' || (payer === 'split' && !cust)) return { mode: 'me', payer: 'me', cost: v.ship, mine: v.ship, cust: 0 };
+    if (payer === 'split' && mine) return { mode: 'split', payer: 'me', cost: mine, mine, cust };
+    return { mode: 'buyer', payer: 'buyer', cost: v.ship, mine: 0, cust: +o.shipping > 0 && mode0 !== 'split' && mode0 !== 'none' && mode0 !== 'me' ? +o.shipping : v.ship }; };
+  const calc = () => { const v = vals(), sp = shipPlan(v), net = v.sale - v.cost - sp.mine - v.xt;
     m.querySelectorAll('[data-pay]').forEach(b => b.classList.toggle('on', b.dataset.pay === payer));
-    $('#finCalc').innerHTML = `<div><span>سعر البيع</span><b>${money(v.sale)}</b></div><div><span>− تكلفة المنتجات</span><b>${money(v.cost)}</b></div><div><span>− الشحن ${payer === 'me' ? '(على حسابك)' : '(على المشتري، مش بيتخصم)'}</span><b>${money(payer === 'me' ? v.ship : 0)}</b></div>${v.xs.map(x => `<div><span>− ${esc(x.label || 'مصروف إضافي')}</span><b>${money(x.amount)}</b></div>`).join('')}<div class="net"><span>صافي الربح</span><b class="${net < 0 ? 'neg' : ''}">${signMoney(net)}</b></div>`; };
-  m.addEventListener('input', calc); calc();
-  m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay; calc(); } const fd = e.target.closest('[data-fxdel]'); if (fd) { fd.parentNode.remove(); calc(); } if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
-  form.onsubmit = async e => { e.preventDefault(); const v = vals(), btn = form.querySelector('[type=submit]'); btn.disabled = true;
-    const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: v.ship, ship_payer: payer, extras: v.xs, return_loss: f.return_loss || 0, received_by: form.received_by.value.trim().slice(0, 40) || null, updated_at: new Date().toISOString() };
+    m.querySelector('[data-shipf]').hidden = payer === 'none'; m.querySelector('[data-splitf]').hidden = payer !== 'split';
+    const ni = m.querySelector('[data-invnote]'), ch = sp.cust !== +o.shipping; ni.hidden = !ch;
+    if (ch) ni.innerHTML = `فاتورة العميل هتتعدل: الشحن <b>${sp.cust ? money(sp.cust) : 'مجاني'}</b> · الإجمالي <b>${money(+o.total - +o.shipping + sp.cust)}</b>`;
+    $('#finCalc').innerHTML = `<div><span>سعر البيع</span><b>${money(v.sale)}</b></div><div><span>− تكلفة المنتجات</span><b>${money(v.cost)}</b></div><div><span>− الشحن ${{ me: '(على حسابك)', split: `(العميل ${money(sp.cust)} · إحنا الباقي)`, none: '(بدون شحن)', buyer: '(على المشتري، مش بيتخصم)' }[sp.mode]}</span><b>${money(sp.mine)}</b></div>${v.xs.map(x => `<div><span>− ${esc(x.label || 'مصروف إضافي')}</span><b>${money(x.amount)}</b></div>`).join('')}<div class="net"><span>صافي الربح</span><b class="${net < 0 ? 'neg' : ''}">${signMoney(net)}</b></div>`; };
+  // the two split boxes always add up to the shipping cost
+  m.addEventListener('input', e => { const S = num(form.ship.value);
+    if (e.target === form.cust) form.mine.value = Math.max(0, S - Math.min(num(form.cust.value), S));
+    else if (e.target === form.mine) form.cust.value = Math.max(0, S - Math.min(num(form.mine.value), S));
+    else if (e.target === form.ship) form.mine.value = Math.max(0, S - Math.min(num(form.cust.value), S));
+    calc(); }); calc();
+  m.onclick = e => { const pb = e.target.closest('[data-pay]'); if (pb) { payer = pb.dataset.pay;
+      if (payer !== 'none' && !num(form.ship.value) && fee) { form.ship.value = fee; form.cust.value = Math.round(fee / 2); form.mine.value = fee - Math.round(fee / 2); }
+      calc(); if (payer === 'split') { form.cust.focus(); form.cust.select(); } } const fd = e.target.closest('[data-fxdel]'); if (fd) { fd.parentNode.remove(); calc(); } if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
+  form.onsubmit = async e => { e.preventDefault(); const v = vals(), sp = shipPlan(v), btn = form.querySelector('[type=submit]'); btn.disabled = true;
+    const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: sp.cost, ship_payer: sp.payer, extras: v.xs, return_loss: f.return_loss || 0, received_by: form.received_by.value.trim().slice(0, 40) || null, updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
     const pc = [...m.querySelectorAll('[data-pc]')].filter(x => x.dataset.pc && x.value.trim() !== '').map(x => ({ product_id: +x.dataset.pc, cost: num(x.value), updated_at: row.updated_at }));
     if (pc.length) { await sb.from('shop_product_costs').upsert(pc); pc.forEach(r => pcosts[r.product_id] = r.cost); }
+    if (sp.cust !== +o.shipping) { // the customer's invoice / tracking page follow what they really pay for shipping
+      const op = { shipping: sp.cust, total: Math.max(0, +o.total - +o.shipping + sp.cust) };
+      const r2 = await sb.from('shop_orders').update(op).eq('id', o.id); if (r2.error) toast('التكاليف اتحفظت بس الفاتورة متعدلتش: ' + r2.error.message, 'err'); else Object.assign(o, op); }
     fins[o.id] = row; m.remove(); toast('اتسجلت التكاليف ✓ صافي الربح ' + signMoney(orderNet(o)), 'ok'); refreshOrderUI(o); sheetOrder(o); };
   setTimeout(() => { const first = m.querySelector('[data-pc]'); first && !first.value && first.focus(); }, 60);
 }
@@ -4341,7 +4369,7 @@ function sheetSend(body) {
   return fetch(adminSet.sheet_url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ secret: adminSet.sheet_secret, ...body }) }).then(() => true).catch(() => false);
 }
 const orderRow = o => { const f = fins[o.id] || {}; return { archived: o.archived_at ? 1 : '', code: o.code, date: RC.when(o.created_at), total: +o.total, customer: o.customer_name, phone: o.phone, city: o.city || '', items: (o.shop_order_items || []).map(i => `${i.name}${(i.options || []).length ? ` [${RC.optText(i.options, '، ')}]` : ''} × ${i.qty}`).join(' | '), section: isLuxOrder(o) ? 'Luxury' : 'عادي', status: o.status === 'returned' ? 'مرتجع' : statuses[o.status] || o.status,
-  sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? (f.ship_payer === 'me' ? 'عليا' : 'على المشتري') : '', return_loss: +f.return_loss || 0, extras: finX(f), extras_note: finXs(f).map(x => `${x.label || 'مصروف'}: ${+x.amount}`).join(' | '), received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
+  sale: f.sale != null ? +f.sale : '', cost: f.cost != null ? +f.cost : '', ship_cost: f.ship_cost != null ? +f.ship_cost : '', ship_payer: f.ship_payer ? { me: 'عليا', split: `مقسوم: العميل ${+o.shipping} وعليا ${+f.ship_cost}`, none: 'بدون شحن', buyer: 'على المشتري' }[shipMode(o, f)] : '', return_loss: +f.return_loss || 0, extras: finX(f), extras_note: finXs(f).map(x => `${x.label || 'مصروف'}: ${+x.amount}`).join(' | '), received_by: f.received_by || '', net: orderNet(o), location: o.location || '' }; };
 // who paid an expense: the partners first, then any other name typed before (you can always type a new one)
 const PAYERS = ['عليوه', 'حازم', 'مسعد'];
 const PARTNERS = ['مسعد', 'عليوه', 'حازم'];   // net profit is split equally between them
@@ -4413,7 +4441,7 @@ function renderAccounts() {
     body = `<div class="toolbar"><div class="seg" id="missSeg"><button data-miss="0" class="${!accMissing ? 'on' : ''}">كل الطلبات <span class="en">${sold.length + rets.length}</span></button><button data-miss="1" class="${accMissing ? 'on' : ''}">من غير تكاليف <span class="en">${missing.length}</span></button></div></div>
     <div class="panel scroll-x" style="padding:6px 14px">${list.length ? `<table class="atable"><thead><tr><th>الطلب</th><th>العميل</th><th>الحالة</th><th>البيع</th><th>تكلفة المنتجات</th><th>الشحن</th><th>صافي الربح</th><th></th></tr></thead><tbody>
       ${list.map(o => { const f = fins[o.id], n = orderNet(o); return `<tr class="rowlink" data-fin="${o.id}" title="اضغط للتعديل"><td class="n"><b>${oNo(o)}${esc(o.code)}</b><div style="color:var(--muted-2);font-size:11px">${fmtDate(o.created_at)}</div></td><td>${esc(o.customer_name)}</td><td><span class="badge st-${o.status}">${statuses[o.status]}</span></td>
-        <td class="n">${f ? money(f.sale) : '—'}</td><td class="n">${f ? money(f.cost) : '—'}${finX(f) ? `<div style="color:var(--muted);font-size:11px">+ ${money(finX(f))} إضافي</div>` : ''}</td><td class="n">${f ? `${money(f.ship_cost)} <small style="color:var(--muted)">${f.ship_payer === 'me' ? '· عليك' : '· على المشتري'}</small>` : '—'}</td>
+        <td class="n">${f ? money(f.sale) : '—'}</td><td class="n">${f ? money(f.cost) : '—'}${finX(f) ? `<div style="color:var(--muted);font-size:11px">+ ${money(finX(f))} إضافي</div>` : ''}</td><td class="n">${f ? `${shipMode(o, f) === 'none' ? '—' : money(f.ship_cost)} <small style="color:var(--muted)">· ${shipLbl(o, f, 1)}</small>` : '—'}</td>
         <td class="n">${o.status === 'returned' ? `<span class="neg">${signMoney(n)}</span>` : f ? `<span class="${n < 0 ? 'neg' : 'pos'}">${signMoney(n)}</span>` : '<span class="miss">مش متسجل</span>'}</td>
         <td><button class="btn btn-sm ${f ? 'btn-ghost' : 'btn-amber'}" data-fin="${o.id}">${f ? 'تعديل' : 'سجّل التكاليف'}</button></td></tr>`; }).join('')}</tbody></table>` : '<div class="empty">مفيش طلبات متأكدة في الفترة دي.</div>'}</div>`;
   } else if (accTab === 'off') {
