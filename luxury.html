@@ -21,8 +21,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102010118">
-<link rel="stylesheet" href="assets/store.css?v=20261102010118">
+<link rel="stylesheet" href="assets/base.css?v=20261102012645">
+<link rel="stylesheet" href="assets/store.css?v=20261102012645">
 <style>
 /* DAQQA PRIVÉ — the luxury room: near-black, champagne gold, slow light */
 :root{--lx-bg:var(--L-bg);--lx-bg2:var(--L-bg2);--lx-gold:var(--L-gold);--lx-gold-2:var(--L-gold2);--lx-gold-3:var(--L-gold3);--lx-ink:var(--L-ink);--lx-mute:var(--L-mute);--lx-line:rgb(var(--L-rgb)/.22);
@@ -269,8 +269,8 @@ html.lx-intro-on .lx-hero *{animation-play-state:paused!important}
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261102010118"></script>
-<script src="assets/app.js?v=20261102010118"></script>
+<script src="assets/config.js?v=20261102012645"></script>
+<script src="assets/app.js?v=20261102012645"></script>
 <script>
 const { esc, money, finalPrice, discountPct } = RC;
 const ORDER = Object.keys(RC.kinds); // watches first
@@ -288,7 +288,7 @@ DQ.start('luxury', () => {
   // Luxury pieces as a grid of Privé cards; the full editorial view lives on each product page
   const chapter = (p, i) => {
     const off = discountPct(p), url = RC.productUrl(p), n = (p.images || []).length, fav = DQ.favs.has(p.id);
-    return `<article class="lx-card op op-stagger" data-pid="${p.id}">
+    return `<article class="lx-card op op-stagger${p.jp ? ' jp' : ''}" data-pid="${p.id}">
       <a class="lc-pic" href="${url}" aria-label="${esc(p.name)}"><img ${DQ.thumb(p)} alt="${esc(p.name)}" loading="${i < 4 ? 'eager' : 'lazy'}">
         ${n > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(n, 6))}</span>` : ''}
         ${p.featured ? '<span class="lc-tag en">SIGNATURE</span>' : ''}${off ? `<span class="lc-off en">-${off}%</span>` : ''}
@@ -296,7 +296,7 @@ DQ.start('luxury', () => {
       <button class="lc-fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-label="المفضلة" aria-pressed="${fav}">${DQ.ICON.heart}</button><button type="button" class="lc-fav lc-eye" data-qv="${p.id}" aria-label="عرض سريع" title="عرض سريع">${DQ.QV_EYE}</button>
       <div class="lc-txt">
         <span class="lc-cap en">N° ${String(i + 1).padStart(2, '0')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
+        <h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>${p.jp ? DQ.jpTag : ''}
         <div class="lc-row"><div class="lc-price"><span class="gold${p.soon ? ' en soon' : ''}">${DQ.priceTxt(p)}</span>${off ? `<s>${money(p.price)}</s>` : ''}</div>
           ${p.stock > 0 ? `<button class="lc-add" data-add="${p.id}" aria-label="أضف ${esc(p.name)} للسلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v6.2M12 14.3v6.2M3.5 12h6.2M14.3 12h6.2"/><path d="M12 9.6 14.4 12 12 14.4 9.6 12Z" fill="currentColor" stroke="none"/></svg></button>` : ''}</div>
         ${RC.dotsHTML(p, 'sw lc-sw')}

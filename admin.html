@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102010118">
+<link rel="stylesheet" href="assets/base.css?v=20261102012645">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -617,6 +617,8 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .cov-sw em{font-style:normal;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
 .cov-sw em.st-on{background:#2f9e5b}.cov-sw em.st-off{background:#d9534f}
 .cov-sw small{font-size:12.5px;color:var(--muted);line-height:1.6}
+.jp-sw{border-color:var(--line);background:transparent}.jp-sw .tg{background:#8a8a8a}.jp-sw em.st-off{background:#8a8a8a}.jp-sw:has(input:checked){border-color:#c9a96e;background:#c9a96e14}.jp-sw input:checked + .tg,.jp-sw em.st-on{background:#b8893f}
+.p-jp{color:#b8893f;font-weight:700}
 .cov-sw input:checked ~ .tx .st-off,.cov-sw input:not(:checked) ~ .tx .st-on{display:none}
 .lux-check small{font-weight:400;color:var(--muted)}
 .check input{width:20px;height:20px;accent-color:var(--accent);flex:none}
@@ -1098,7 +1100,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102010118"></script>
+<script src="assets/config.js?v=20261102012645"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1371,7 +1373,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102010118'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102012645'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2020,7 +2022,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102010118" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102012645" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2054,7 +2056,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102010118" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102012645" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2095,7 +2097,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102010118'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102010118')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102012645'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102012645')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2225,6 +2227,13 @@ async function hlSet(ids, v) {
   const was = settings.perks, perks = { ...(settings.perks || {}), hl }; settings.perks = perks; renderProducts();
   const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
   if (error) { settings.perks = was; renderProducts(); toast(error.message, 'err'); return false; } return true; }
+// Japanese movement mark (settings.perks.jp = [product ids]); off = Chinese movement (the default)
+async function jpSet(ids, on) {
+  const cur = new Set((((settings.perks || {}).jp) || []).map(Number)); ids.forEach(id => on ? cur.add(+id) : cur.delete(+id));
+  const jp = [...cur].filter(id => products.some(p => p.id === id) || ids.includes(id)).sort((a, b) => a - b);
+  const was = settings.perks, perks = { ...(settings.perks || {}), jp }; settings.perks = perks;
+  const { error } = await sb.from('shop_settings').update({ perks, updated_at: new Date().toISOString() }).eq('id', 1);
+  if (error) { settings.perks = was; toast(error.message, 'err'); return false; } return true; }
 let PF = { ...PF0 }; try { PF = { ...PF0, ...JSON.parse(localStorage.getItem('dq-pf') || '{}') }; } catch (er) {}
 const pfSave = () => { try { localStorage.setItem('dq-pf', JSON.stringify(PF)); } catch (er) {} };
 const pfOn = () => Object.keys(PF0).filter(k => PF[k] !== '').length; // PF.open = filters unfolded on phones
@@ -2304,7 +2313,7 @@ function renderProducts() {
     <div class="panel scroll-x" style="padding:6px 14px">${tab === 'lux' && !COLS.luxury ? `<div class="empty" style="padding:16px">علامة Luxury محتاجة تفعيل: شغّل <b class="en">daqqa-pages.sql</b> في Supabase.</div>` : ''}${shown.length ? `<table class="ptable"><thead><tr><th class="p-sel-h"></th><th>المنتج</th><th>السعر</th><th>الخصم</th><th>الحالة</th><th>ظاهر</th><th></th></tr></thead><tbody>
       ${shown.map(p => { const off = rawOff(p), st = pStatus(p), hl = hlOf(p); return `<tr data-edit="${p.id}" class="${st === 'out' ? 'row-out' : ''}${hl ? ' hl' : ''}"${hl ? ` style="--hl:${HL[hl][0]}"` : ''}>
         <td class="p-sel"><div>${canDrag ? `<button type="button" class="p-drag" data-pdrag="${p.id}" title="اسحب عشان تغيّر مكانه في الصفحة" aria-label="اسحب لتغيير الترتيب"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></button>` : ''}<span class="p-rank en" title="مكانه في صفحة ${esc(SC.title)}">${rank.get(p.id)}</span><input type="checkbox" data-psel="${p.id}" ${prodSel.has(p.id) ? 'checked' : ''} aria-label="تحديد ${esc(p.name)}"><button type="button" class="p-hl${hl ? ' on' : ''}" data-hl="${p.id}" title="${hl ? 'هايلايت ' + HL[hl][1] + ' · دوس تغيّره' : 'هايلايت'}" aria-label="هايلايت"></button></div></td>
-        <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}</small></div></div></td>
+        <td><div class="pcell"><img src="${esc(p.images[0] || '')}" alt="" onerror="this.style.visibility='hidden'"><div><b>${esc(p.name)}</b><small>${RC.kinds[RC.kindOf(p)].ar} · ${esc(categories[p.category] || p.category)}${p.style ? ' · ' + esc(p.style) : ''}${p.featured ? ' · مميز' : ''}${RC.isLuxury(p) ? ' · Luxury' : ''}${RC.jp(p, settings) ? ' · <span class="p-jp">🇯🇵 ياباني</span>' : ''}</small></div></div></td>
         <td class="en">${+p.price > 0 ? `<b>${money(rawFinal(p))}</b>` : '<span style="color:var(--muted-2)">—</span>'}${off ? `<div class="price-old">${money(p.price)}</div>` : ''}</td>
         <td>${off ? `<span class="badge-off en">-${off}%</span>` : '<span style="color:var(--muted-2)">—</span>'}</td>
         <td><div class="stk-wrap"><button type="button" class="stk ${st === 'soon' ? 'soon' : st === 'out' ? 'out' : p.stock != null && p.stock <= LOW_STK ? 'low' : 'in'}" data-stk="${p.id}" aria-haspopup="menu" title="غيّر الحالة"><i></i><span class="en">${st === 'soon' ? 'Coming Soon' : st === 'out' ? 'Out of Stock' : 'In Stock'}</span>${st === 'in' && p.stock > 0 ? `<b class="en">${p.stock}</b>` : ''}<svg class="stk-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button></div></td>
@@ -2489,6 +2498,7 @@ function openEditor(id, init) {
   // a new product goes last in its own section (regular and Luxury are numbered separately) until the admin types a number
   if (!p) { draft.sort = nextSort(!!draft.luxury); draft._autoSort = true; }
   if (!draft._sups) draft._sups = p ? edSupOf(p.id) : [];
+  if (draft.jp == null) draft.jp = p ? RC.jp(p, settings) : false;
   openTexts(draft); edDirty = false;
   $('#editor').innerHTML = ''; renderEditor(); $('#editor').scrollTop = 0;
   $('#editor').classList.add('on'); $('#overlay').classList.add('on');
@@ -2594,7 +2604,11 @@ function renderEditor() {
       <div class="two">
         <div class="field"><label>الماركة</label><input class="input en" id="f_brand" value="${esc(d.brand)}"></div>
         <div class="field"><label>الفئة</label><select class="input" id="f_cat">${Object.entries(categories).map(([k,v]) => `<option value="${k}" ${k===d.category?'selected':''}>${v}</option>`).join('')}</select></div>
-      </div></section>
+      </div>
+      <label class="cov-sw jp-sw"><input type="checkbox" id="f_jp" ${d.jp ? 'checked' : ''}><span class="tg" aria-hidden="true"></span>
+        <span class="tx"><b>ماكينة يابانية 🇯🇵 <em class="st-on">ياباني</em><em class="st-off">صيني</em></b>
+          <small class="st-on">الكارت هيلمع وهيتكتب عليه «ماكينة يابانية»، وفي صفحة المنتج كمان.</small>
+          <small class="st-off">ماكينة صيني (العادي): الكارت عادي من غير شارة.</small></span></label></section>
       <section class="ed-sec"><h4>عن ال${(RC.kinds[d.kind] || RC.kinds.watches).one}</h4>
         <textarea class="input ed-txt" id="f_about" rows="4" dir="rtl" placeholder="اكتب وصف قصير يشد العميل">${esc(d._about)}</textarea></section>
       <section class="ed-sec"><h4>المواصفات <small>بتظهر كبنود في صفحة المنتج · البند الفاضي مش بيظهر</small></h4>
@@ -2785,7 +2799,7 @@ const composeDesc = d => { const about = String(d._about || '').trim();
 function syncDraft() {
   Object.assign(draft, { kind: $('#f_kind').value, style: $('#f_style').value.trim(), name: $('#f_name').value.trim(), brand: $('#f_brand').value.trim(), category: $('#f_cat').value, price: $('#f_price').value,
     stock: $('#f_stock').value, sale_price: $('#f_sale').value === '' ? null : $('#f_sale').value, _about: $('#f_about').value, _ship: $('#f_ship').value, _specs: [...document.querySelectorAll('#specRows .spec-row')].map(r => [r.querySelector('[data-sk]').value, r.querySelector('[data-sv]').value]),
-    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, status: $('#f_status') ? $('#f_status').value : pStatus(draft), active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
+    colors_label: $('#f_clabel') ? $('#f_clabel').value.trim() : (draft.colors_label || ''), shown_left: $('#f_shownleft') ? $('#f_shownleft').value : draft.shown_left, featured: $('#f_feat').checked, jp: $('#f_jp') ? $('#f_jp').checked : !!draft.jp, cover_only: $('#f_cover') ? $('#f_cover').checked : !!draft.cover_only, on_offer: $('#f_offer') ? $('#f_offer').checked : !!draft.on_offer, status: $('#f_status') ? $('#f_status').value : pStatus(draft), active: $('#f_active').checked, show_colors: $('#f_dots') ? $('#f_dots').checked : draft.show_colors !== false, luxury: $('#f_lux').checked, sort: $('#f_sort').value });
 }
 $('#fileIn').onchange = e => { uploadFiles([...e.target.files]); e.target.value = ''; };
 // a photo dropped off-target must not make the browser open it and lose the unsaved product
@@ -2977,6 +2991,7 @@ async function saveProduct() {
   b.disabled = false; b.textContent = 'حفظ';
   if (res.error) return toast(res.error.message, 'err');
   await supSyncProduct(res.data.id, d._sups);
+  if (!!d.jp !== RC.jp(res.data, settings)) await jpSet([res.data.id], !!d.jp);
   // saving keeps the editor open on the same product and the same scroll spot (the admin keeps editing)
   const ed = $('#editor'), bd = () => ed.querySelector('.ed-body'), y = bd() ? bd().scrollTop : 0;
   await loadProducts(); renderProducts();

@@ -10,6 +10,8 @@ window.RC = {
 };
 RC.money = (n) => Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' ' + RC.currency;
 // coming soon: no price yet, or the admin switched «Coming Soon» on (coming_soon) — shown without a price, can't be ordered
+// Japanese movement: admin marks it per product (settings.perks.jp = [product ids]); unmarked = Chinese movement
+RC.jp = (p, s) => !!p && ((((s || {}).perks || {}).jp) || []).map(Number).includes(Number(p.id));
 RC.soon = (p) => !!(p && p.coming_soon) || !(Number(p && p.price) > 0);
 RC.finalPrice = (p) => (p.sale_price != null && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
 RC.onOffer = (p) => !!(p && p.on_offer);
@@ -193,7 +195,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261102010118';
+RC.build = '20261102012645';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
