@@ -422,6 +422,7 @@ html.vt-theme::view-transition-new(root){animation:themeReveal .75s cubic-bezier
 .ao-op{display:inline-flex!important;align-items:center;gap:5px!important;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
 .ao-op i{width:11px;height:11px;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
 .ao-op b{color:inherit;font-weight:600}.ao-op.chg{color:#c9964f;border-color:currentColor}
+.ao-gift{margin-top:10px;font-size:13px;line-height:1.7;padding:9px 12px;border-radius:10px;background:color-mix(in srgb,#3fa66b 13%,transparent);border:1px solid color-mix(in srgb,#3fa66b 35%,transparent);color:var(--ink,inherit);text-align:right}.ao-gift b{color:#3fa66b}
 .ao-chg{font-size:13px;line-height:1.6;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#c9964f 12%,transparent);color:#c9964f;font-weight:600}
 .acc-out{margin-top:6px}
 #accSheet .wrap{width:100%;box-sizing:border-box}
