@@ -40,11 +40,12 @@ RC.colorImg = (p, c) => { const m = p && p.image_colors; if (!m || typeof m !== 
   const u = Object.keys(m).find(k => String(m[k]).toLowerCase() === c); return u && (p.images || []).includes(u) ? u : null; };
 RC.colors = (p) => (Array.isArray(p.colors) ? p.colors : String(p.colors || '').split(/[\s,]+/)).filter(c => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)).slice(0, 6);
 // watch options the buyer must pick (set per product in the admin): p.variants = [{k, ar, en, o: [{n, c?, img?}]}] — each option is a card with an optional colour and photo
-// default order of the groups on a new product (user asked 2026-11-02): strap, dial, back, case, then the rest
+// default order of the groups on a new product (user asked 2026-11-02): strap, dial, back, face, then the rest
 RC.VARS = [
   { k: 'strap', ar: 'السوار', en: 'Strap / Bracelet', hint: 'ستانلس ستيل، جلد، سيليكون، أو قماش، مع اختلاف اللون والقفل' },
   { k: 'dial', ar: 'المينا', en: 'Dial', hint: 'لون المينا، الأرقام، المؤشرات، شكل العقارب، وعرض التاريخ' },
   { k: 'back', ar: 'ضهر الساعة', en: 'Case Back', hint: 'مقفول، شفاف يبان منه الماكينة، أو محفور عليه اسم أو نقشة' },
+  { k: 'face', ar: 'وش الساعة', en: 'Watch Face', hint: 'شكل الساعة من قدّام: الإطار (البيزل)، الزجاج، والتصميم العام' },
   { k: 'case', ar: 'جسم الساعة', en: 'Case', hint: 'دائري، مربع، مستطيل، أو Tonneau، مع اختلاف الحجم والسُمك والخامة' },
   { k: 'movement', ar: 'الماكينة', en: 'Movement', hint: 'Quartz بالبطارية · Automatic بتتشحن من حركة المعصم · Mechanical تعبئة يدوية' }
 ];
@@ -192,7 +193,7 @@ RC.socials = (settings) => { const l = (Array.isArray(settings && settings.socia
   if (m > f) l.splice(f, 0, l.splice(m, 1)[0]); return l; };
 
 // site version — set by tools/release.sh; open pages reload when version.json changes
-RC.build = '20261102005502';
+RC.build = '20261102010118';
 
 // icons for the section feature strips (Admin → Settings → السكاشن); the perk icons can be picked there too
 RC.FEAT_IC = {
