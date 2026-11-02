@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102012645">
+<link rel="stylesheet" href="assets/base.css?v=20261102013018">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -617,7 +617,7 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .cov-sw em{font-style:normal;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff}
 .cov-sw em.st-on{background:#2f9e5b}.cov-sw em.st-off{background:#d9534f}
 .cov-sw small{font-size:12.5px;color:var(--muted);line-height:1.6}
-.jp-sw{border-color:var(--line);background:transparent}.jp-sw .tg{background:#8a8a8a}.jp-sw em.st-off{background:#8a8a8a}.jp-sw:has(input:checked){border-color:#c9a96e;background:#c9a96e14}.jp-sw input:checked + .tg,.jp-sw em.st-on{background:#b8893f}
+.jp-sw{border-color:var(--line);background:transparent}.jp-sw .tg{background:#8a8a8a}.jp-sw:has(input:checked){border-color:#c9a96e;background:#c9a96e14}.jp-sw input:checked + .tg,.jp-sw em.st-on{background:#b8893f}
 .p-jp{color:#b8893f;font-weight:700}
 .cov-sw input:checked ~ .tx .st-off,.cov-sw input:not(:checked) ~ .tx .st-on{display:none}
 .lux-check small{font-weight:400;color:var(--muted)}
@@ -1100,7 +1100,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102012645"></script>
+<script src="assets/config.js?v=20261102013018"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1373,7 +1373,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102012645'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102013018'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2022,7 +2022,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102012645" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102013018" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2056,7 +2056,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102012645" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102013018" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2097,7 +2097,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102012645'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102012645')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102013018'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102013018')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -2606,9 +2606,8 @@ function renderEditor() {
         <div class="field"><label>الفئة</label><select class="input" id="f_cat">${Object.entries(categories).map(([k,v]) => `<option value="${k}" ${k===d.category?'selected':''}>${v}</option>`).join('')}</select></div>
       </div>
       <label class="cov-sw jp-sw"><input type="checkbox" id="f_jp" ${d.jp ? 'checked' : ''}><span class="tg" aria-hidden="true"></span>
-        <span class="tx"><b>ماكينة يابانية 🇯🇵 <em class="st-on">ياباني</em><em class="st-off">صيني</em></b>
-          <small class="st-on">الكارت هيلمع وهيتكتب عليه «ماكينة يابانية»، وفي صفحة المنتج كمان.</small>
-          <small class="st-off">ماكينة صيني (العادي): الكارت عادي من غير شارة.</small></span></label></section>
+        <span class="tx"><b>ماكينة يابانية 🇯🇵 <em class="st-on">ياباني</em></b>
+          <small>الكارت هيلمع وهيتكتب عليه «ماكينة يابانية»، وفي صفحة المنتج كمان.</small></span></label></section>
       <section class="ed-sec"><h4>عن ال${(RC.kinds[d.kind] || RC.kinds.watches).one}</h4>
         <textarea class="input ed-txt" id="f_about" rows="4" dir="rtl" placeholder="اكتب وصف قصير يشد العميل">${esc(d._about)}</textarea></section>
       <section class="ed-sec"><h4>المواصفات <small>بتظهر كبنود في صفحة المنتج · البند الفاضي مش بيظهر</small></h4>

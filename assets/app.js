@@ -136,7 +136,7 @@
   DQ.QV_EYE = QV_EYE;
   // «ماكينة يابانية» label (card photo, quick view, product page)
   DQ.jpTag = '<span class="jp-tag" title="Japanese Movement"><i aria-hidden="true"></i>ماكينة يابانية</span>';
-  DQ.jpLine = '<div class="jp-line"><span class="jp-tag"><i aria-hidden="true"></i>ماكينة يابانية</span><small>Japanese Movement · دقة أعلى وعمر أطول من المكن العادي</small></div>';
+  DQ.jpLine = '<div class="jp-line"><span class="jp-tag"><i aria-hidden="true"></i>ماكينة يابانية</span><small>Japanese Movement · دقة أعلى وعمر أطول</small></div>';
   DQ.card = (p, i = 0) => {
     const off = discountPct(p), url = RC.productUrl(p), cols = RC.colors(p), fav = DQ.favs && DQ.favs.has(p.id);
     const nImg = (p.images || []).length;
