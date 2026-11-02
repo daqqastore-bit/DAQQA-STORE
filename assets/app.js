@@ -134,12 +134,15 @@
   DQ.renderFavs = renderFavs;
   const QV_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   DQ.QV_EYE = QV_EYE;
+  // «ماكينة يابانية» label (card photo, quick view, product page)
+  DQ.jpTag = '<span class="jp-tag" title="Japanese Movement"><i aria-hidden="true"></i>ماكينة يابانية</span>';
+  DQ.jpLine = '<div class="jp-line"><span class="jp-tag"><i aria-hidden="true"></i>ماكينة يابانية</span><small>Japanese Movement · دقة أعلى وعمر أطول من المكن العادي</small></div>';
   DQ.card = (p, i = 0) => {
     const off = discountPct(p), url = RC.productUrl(p), cols = RC.colors(p), fav = DQ.favs && DQ.favs.has(p.id);
     const nImg = (p.images || []).length;
-    return `<article class="card reveal" data-pid="${p.id}" style="transition-delay:${Math.min(i, 8) * 50}ms">
+    return `<article class="card reveal${p.jp ? ' jp' : ''}" data-pid="${p.id}" style="transition-delay:${Math.min(i, 8) * 50}ms">
       <div class="ph-w"><a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" ${DQ.thumb(p)} alt="">
-        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.soon ? '' : p.stock <= 0 ? `<div class="out en">OUT OF STOCK</div>` : ''}</a>
+        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.jp ? DQ.jpTag : ''}${p.soon ? '' : p.stock <= 0 ? `<div class="out en">OUT OF STOCK</div>` : ''}</a>
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <button type="button" class="qv-eye" data-qv="${p.id}" aria-label="عرض سريع لـ ${esc(p.name)}" title="عرض سريع">${QV_EYE}</button></div>
       <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
@@ -388,7 +391,7 @@
   DQ.readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE) || 'null'); return c && Date.now() - c.t < 7 * 864e5 && Array.isArray(c.p) ? c : null; } catch (e) { return null; } };
   const apply = (prods, sets) => {
     // an empty stock means "not tracked": always orderable (orders are capped at 20 per item anyway)
-    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x).map(x => RC.soon(x) ? { ...x, stock: 0, soon: true } : x); DQ.settings = sets || {};
+    DQ.products = (prods || []).map(x => x.stock == null ? { ...x, stock: 999 } : x).map(x => RC.soon(x) ? { ...x, stock: 0, soon: true } : x).map(x => RC.jp(x, sets) ? { ...x, jp: true } : x); DQ.settings = sets || {};
     renderSocial(); renderClosed(); fakeRun();
     renderCart(); renderSearch(''); syncKinds(); renderFavs();
   };
@@ -541,7 +544,7 @@
       ${full ? `<div class="qv-gal"><div class="qv-main"><img class="qa-im" src="${DQ.img(p)}" alt="${esc(p.name)}" onerror="this.src='${FALLBACK}'">${off ? `<span class="qv-off en">-${off}%</span>` : ''}</div>
         ${imgs.length > 1 ? `<div class="qv-th">${imgs.slice(0, 8).map((u, k) => `<button type="button" data-qvi="${k}" class="${k ? '' : 'on'}"><img ${DQ.sm(u)} alt="" loading="lazy"></button>`).join('')}</div>` : ''}</div><div class="qv-info">
         <span class="qv-cap en">${esc(p.brand || 'DAQQA')} · ${RC.kinds[RC.kindOf(p)].en}${p.style ? ' · ' + esc(p.style) : ''}</span>
-        <h3 id="qaH" class="en qv-h">${esc(p.name)}</h3>${DQ.priceHTML(p, 0, true)}
+        <h3 id="qaH" class="en qv-h">${esc(p.name)}</h3>${p.jp ? DQ.jpLine : ''}${DQ.priceHTML(p, 0, true)}
         ${body ? `<p class="qv-d">${esc(body)}</p>` : ''}
         ${specs.length ? `<ul class="qv-sp">${specs.slice(0, 6).map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>` : ''}`
       : `<div class="qa-top"><img class="qa-im" src="${DQ.img(p)}" alt="" onerror="this.src='${FALLBACK}'"><div><h3 id="qaH" class="en">${esc(p.name)}</h3>${DQ.priceHTML(p, 0, true)}</div></div>`}

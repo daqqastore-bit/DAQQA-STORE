@@ -1164,3 +1164,25 @@ a.vd-foot:hover .vd-go{color:var(--accent);border-color:rgb(var(--accent-rgb)/.6
 }
 html.lite .vd-head h2{animation:none!important}
 @media (prefers-reduced-motion:reduce){.vd{opacity:1;transform:none}.vd-head h2{animation:none}}
+/* Japanese movement («ماكينة يابانية»): label on the photo + a gold light running round the card + a sweep of light across the photo */
+@property --jpa{syntax:'<angle>';inherits:false;initial-value:0deg}
+.jp-tag{position:relative;display:inline-flex;align-items:center;gap:6px;width:max-content;padding:6px 11px 6px 10px;border-radius:999px;overflow:hidden;font:700 11.5px/1 var(--f-ar);letter-spacing:0;color:#F3DDB0;background:linear-gradient(135deg,#1d140b,#3b2a17);border:1px solid rgb(214 182 128/.75);box-shadow:0 6px 18px -6px rgb(0 0 0/.55),inset 0 1px 0 rgb(255 240 210/.18);white-space:nowrap}
+.jp-tag i{flex:none;width:8px;height:8px;border-radius:50%;background:#D7263D;box-shadow:0 0 0 2px #fff,0 0 8px 2px rgb(215 38 61/.55)}
+.jp-tag::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgb(255 244 220/.55) 50%,transparent 70%);transform:translateX(130%);animation:jpSweep 4.5s cubic-bezier(.4,0,.2,1) infinite 1.3s;pointer-events:none}
+.card .ph .jp-tag{position:absolute;bottom:12px;left:12px;z-index:2}
+.card.jp{--jpbg:var(--surface);border:2px solid transparent;background:linear-gradient(var(--jpbg),var(--jpbg)) padding-box,conic-gradient(from var(--jpa),var(--accent) 0deg,rgb(var(--accent-rgb)/.75) 200deg,#FFF6E0 275deg,#FFFFFF 290deg,var(--accent) 320deg,var(--accent) 360deg) border-box;animation:jpSpin 5s linear infinite}
+.card.jp .ph::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(105deg,transparent 32%,rgb(255 255 255/.34) 47%,rgb(255 248 230/.12) 53%,transparent 68%);transform:translateX(130%);animation:jpSweep 4.5s cubic-bezier(.4,0,.2,1) infinite 1s}
+.strip .card.jp{--jpbg:#fff}
+:root.lux-mode .lxp-rel .card.jp{--jpbg:var(--L-bg2)}
+@keyframes jpSpin{to{--jpa:360deg}}
+@keyframes jpSweep{0%{transform:translateX(130%)}38%,100%{transform:translateX(-130%)}}
+/* product page / quick view line */
+.jp-line{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:4px 0 2px}
+.jp-line small{font-size:12px;color:var(--muted);line-height:1.5}
+.jp-line .jp-tag{font-size:12.5px;padding:7px 12px 7px 11px}
+/* Luxury cards: the label sits under the name */
+.lx-card .jp-tag{font-size:10.5px;padding:5px 10px 5px 9px}
+.lx-card.jp{border-color:rgb(var(--L-rgb,214 182 128)/.5)}
+.lx-card.jp .lc-pic::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(105deg,transparent 32%,rgb(255 255 255/.28) 47%,transparent 68%);transform:translateX(130%);animation:jpSweep 4.5s cubic-bezier(.4,0,.2,1) infinite 1s}
+@media (max-width:560px){.card .ph .jp-tag{bottom:8px;left:8px;font-size:10.5px;padding:5px 9px 5px 8px;gap:5px}.jp-tag i{width:7px;height:7px}}
+@media (prefers-reduced-motion:reduce){.jp-tag::after,.card.jp,.card.jp .ph::before,.lx-card.jp .lc-pic::after{animation:none}.card.jp .ph::before,.jp-tag::after,.lx-card.jp .lc-pic::after{display:none}}
