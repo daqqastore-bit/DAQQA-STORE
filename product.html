@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="assets/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Archivo:wght@400;500;600;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102195959">
-<link rel="stylesheet" href="assets/store.css?v=20261102195959">
+<link rel="stylesheet" href="assets/base.css?v=20261102200551">
+<link rel="stylesheet" href="assets/store.css?v=20261102200551">
 <style>
 .crumbs{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted-2);padding:22px 0;flex-wrap:wrap}
 .crumbs a:hover{color:var(--accent)}
@@ -218,8 +218,8 @@ setTimeout(function(){if(d.classList.contains('dq-loading')&&window.DQ_reveal)wi
 <div id="ftr"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="assets/config.js?v=20261102195959"></script>
-<script src="assets/app.js?v=20261102195959"></script>
+<script src="assets/config.js?v=20261102200551"></script>
+<script src="assets/app.js?v=20261102200551"></script>
 <script>
 const { money, finalPrice, discountPct, esc, categories } = RC;
 /* full-screen photo viewer: zoom with buttons / wheel / pinch / double-tap, drag to look around, arrows to flip */
@@ -313,7 +313,7 @@ function render() {
   if (!p) return notFound();
   const sig = sigOf(p), again = !!shownSig && !!$('#slides');
   if (sig === shownSig && again) { renderRel(p, true); return; }
-  const prevI = again ? Math.round(Math.abs($('#slides').scrollLeft) / ($('#slides').clientWidth || 1)) : 0;
+  let prevI = again ? Math.round(Math.abs($('#slides').scrollLeft) / ($('#slides').clientWidth || 1)) : 0;
   shownSig = sig;
   const off = discountPct(p), imgs = (p.images && p.images.length) ? (p.cover_only && p.images.length > 1 ? p.images.slice(1) : p.images) : [DQ.FALLBACK];   // a cover-only first photo shows on cards, not here
   // the product video (if any) is one more slide in the gallery, at the place the admin picked (2 = right after the main photo)
@@ -321,7 +321,7 @@ function render() {
   const si = k => VID && k >= VI ? k + 1 : k, ik = j => !VID || j < VI ? j : j === VI ? -1 : j - 1;   // photo index ↔ slide index
   const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
   const slideHTML = () => Array.from({ length: NS }, (_, j) => { const k = ik(j);
-    if (k < 0) return `<div class="slide vs" data-vs><video ${VID.poster ? `poster="${esc(VID.poster)}"` : ''} data-src="${esc(VID.src)}" muted loop playsinline preload="none" aria-label="فيديو ${esc(p.name)}"></video>
+    if (k < 0) return `<div class="slide vs" data-vs><video ${VID.poster ? `poster="${esc(VID.poster)}"` : ''} data-src="${esc(VID.src)}" muted autoplay loop playsinline webkit-playsinline disablepictureinpicture preload="none" aria-label="فيديو ${esc(p.name)}"></video>
       <button type="button" class="vs-snd" aria-label="شغّل الصوت"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="m" d="m17 9 5 6m0-6-5 6"/><path class="s" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
       <span class="vs-big" aria-hidden="true">${PLAY}</span>${VID.t ? `<span class="vs-cap">${esc(VID.t)}</span>` : ''}</div>`;
     return `<div class="slide"><img src="${esc(imgs[k])}" alt="${esc(p.name)} — صورة ${k + 1}" ${j ? 'loading="lazy"' : ''} onerror="this.src='${DQ.FALLBACK}'"></div>`; }).join('');
@@ -329,6 +329,7 @@ function render() {
     return k < 0 ? `<button class="vt ${j ? '' : 'on'}" data-i="${j}" aria-label="الفيديو">${VID.poster ? `<img src="${esc(VID.poster)}" alt="" loading="lazy">` : ''}<span>${PLAY}</span></button>`
       : `<button class="${j ? '' : 'on'}" data-i="${j}" aria-label="صورة ${k + 1}"><img ${DQ.sm(imgs[k])} alt="" loading="lazy"></button>`; }).join('')}</div>
         <div class="dots" id="dots">${Array.from({ length: NS }, (_, j) => `<i class="${j ? '' : 'on'}${ik(j) < 0 ? ' dv' : ''}"></i>`).join('')}</div>` : '';
+  if (!again && VID) prevI = VI;   // the page opens on the video, so it starts playing right away
   const vidPill = VID && VI > 0 ? `<button type="button" class="vid-pill" id="vidPill">${PLAY}<span>شوف الفيديو</span></button>` : '';
   const { specs, body } = RC.splitDesc(p.description);
   const url = location.origin + location.pathname.replace(/[^/]*$/, '') + RC.productUrl(p);
@@ -469,17 +470,30 @@ function render() {
   const vsl = slides.querySelector('[data-vs]');
   if (vsl) {
     const v = vsl.querySelector('video'), snd = vsl.querySelector('.vs-snd');
+    // iPhone only autoplays a video that is muted + inline, set as properties too (not just attributes)
+    v.muted = true; v.defaultMuted = true; v.playsInline = true;
+    let held = false;   // the visitor paused it: don't restart it on our own
+    const load = () => { if (!v.src) { v.preload = 'auto'; v.src = v.dataset.src + (VID.s || VID.e ? `#t=${VID.s}${VID.e ? ',' + VID.e : ''}` : ''); v.load(); } };
     // trimmed in the admin: only the part from VID.s to VID.e plays, over and over
-    const load = () => { if (!v.src) { v.src = v.dataset.src + (VID.s || VID.e ? `#t=${VID.s}${VID.e ? ',' + VID.e : ''}` : ''); v.preload = 'auto'; } };
-    if (VID.s || VID.e) v.addEventListener('timeupdate', () => { if ((VID.e && v.currentTime >= VID.e) || v.currentTime < VID.s - .25) { v.currentTime = VID.s; if (v.paused && vsl.dataset.on) v.play().catch(() => {}); } });
+    if (VID.s || VID.e) v.addEventListener('timeupdate', () => { if ((VID.e && v.currentTime >= VID.e) || v.currentTime < VID.s - .25) { v.currentTime = VID.s; if (v.paused && on()) v.play().catch(() => {}); } });
+    const at = () => Math.round(Math.abs(slides.scrollLeft) / (slides.clientWidth || 1));
+    let seen = true; const on = () => seen && at() === VI && !document.hidden;
     const play = () => { load(); const r = v.play(); if (r && r.catch) r.catch(() => vsl.classList.add('paused')); };
+    const sync = () => { if (on()) { if (!held && v.paused) play(); } else if (!v.paused) v.pause(); };
     v.addEventListener('playing', () => vsl.classList.remove('paused')); v.addEventListener('pause', () => vsl.classList.add('paused'));
+    ['loadedmetadata', 'canplay'].forEach(t => v.addEventListener(t, sync));
     vsl.classList.add('paused');
-    new IntersectionObserver(([e]) => { vsl.dataset.on = e.isIntersecting && e.intersectionRatio > .6 ? '1' : ''; if (vsl.dataset.on) play(); else if (!v.paused) v.pause(); }, { root: slides, threshold: [0, .6] }).observe(vsl);
+    slides.addEventListener('scroll', () => { clearTimeout(vsl._t); vsl._t = setTimeout(sync, 120); }, { passive: true });
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: .35 }).observe(slides);
+    document.addEventListener('visibilitychange', sync);
+    // phones that still block it (e.g. Low Power Mode): the first touch anywhere on the page starts it
+    const kick = () => { if (on() && v.paused && !held) play(); };
+    ['touchstart', 'pointerdown', 'scroll'].forEach(t => addEventListener(t, kick, { once: true, passive: true }));
     // its neighbours being looked at = load it ahead, so it starts at once
     new IntersectionObserver(([e]) => { if (e.isIntersecting) load(); }, { root: slides, rootMargin: '0px 100% 0px 100%' }).observe(vsl);
-    vsl.onclick = e => { if (e.target.closest('.vs-snd')) return; slides.dispatchEvent(new Event('click')); if (v.paused) play(); else v.pause(); };
-    snd.onclick = e => { e.stopPropagation(); v.muted = !v.muted; vsl.classList.toggle('sound', !v.muted); snd.setAttribute('aria-label', v.muted ? 'شغّل الصوت' : 'اكتم الصوت'); if (v.paused) play(); };
+    load(); setTimeout(sync, 0);
+    vsl.onclick = e => { if (e.target.closest('.vs-snd')) return; slides.dispatchEvent(new Event('click')); if (v.paused) { held = false; play(); } else { held = true; v.pause(); } };
+    snd.onclick = e => { e.stopPropagation(); v.muted = !v.muted; vsl.classList.toggle('sound', !v.muted); snd.setAttribute('aria-label', v.muted ? 'شغّل الصوت' : 'اكتم الصوت'); if (v.paused) { held = false; play(); } };
   }
   if ($('#vidPill')) $('#vidPill').onclick = e => { e.stopPropagation(); slides.dispatchEvent(new Event('click')); go(VI); };
   {
