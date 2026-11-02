@@ -104,6 +104,10 @@ html,body{overflow-x:clip}
 .card:hover .ph img{transform:scale(1.06)}
 .card:hover .ph img.alt{opacity:1}
 .card .ph .badge-off{position:absolute;top:12px;right:12px}
+.card .ph .ph-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s;z-index:1;pointer-events:none}
+.card.vplay .ph .ph-vid{opacity:1}.card.vplay .ph-dots{opacity:0!important}.card .ph .badge-off,.card .ph .out{z-index:2}
+.card .ph .ph-vb{position:absolute;bottom:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:4px;padding:4px 9px 4px 7px;border-radius:99px;background:rgba(14,10,6,.55);backdrop-filter:blur(6px);color:#fff;font:600 11px var(--f-ui,inherit);transition:opacity .25s}
+.card .ph .ph-vb svg{width:11px;height:11px;color:#E9C98F}.card.vplay .ph .ph-vb{opacity:0}
 .card .ph .feat{position:absolute;top:12px;left:12px;background:color-mix(in srgb,var(--bg) 75%,transparent);border:1px solid var(--line);color:var(--accent);font:600 10px var(--f-ui);letter-spacing:.18em;padding:5px 10px;border-radius:999px}
 .card .ph .out{position:absolute;inset:0;background:rgb(var(--bg-rgb)/.72);display:grid;place-items:center;color:var(--ink);font-weight:700}
 .card .bd{padding:16px 16px 18px;display:flex;flex-direction:column;gap:5px;flex:1}
