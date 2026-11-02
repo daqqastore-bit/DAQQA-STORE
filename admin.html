@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102153726">
+<link rel="stylesheet" href="assets/base.css?v=20261102154000">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -1123,7 +1123,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102153726"></script>
+<script src="assets/config.js?v=20261102154000"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1408,7 +1408,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102153726'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261102154000'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -2057,7 +2057,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102153726" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102154000" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2091,7 +2091,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102153726" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102154000" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2132,7 +2132,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102153726'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102153726')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102154000'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102154000')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -4085,13 +4085,20 @@ async function setStatus(id, st) {
 async function setStatus_(id, st) {
   const o = orders.find(x => x.id === id); if (!o || o.status === st) return;
   const prev = o.status;
+  // new → «تم الاستلام»: the status only changes when the costs popup is saved; إلغاء leaves the order (and the customer's view) as it was
+  if (st === 'confirmed' && prev === 'new' && FIN_OK) return finBox(o, () => applyStatus(o, st, prev));
+  return applyStatus(o, st, prev);
+}
+async function applyStatus(o, st, prev) {
+  const id = o.id;
   const patch = st === 'cancelled' ? { status: st, cancelled_at: new Date().toISOString(), cancelled_by: 'admin' } : { status: st };
   const { error } = await sb.from('shop_orders').update(patch).eq('id', id);
-  if (error) return toast(st === 'returned' && /check|constraint/i.test(error.message) ? 'حالة «مرتجع» محتاجة السطر اللي اتبعتلك يتشغّل في Supabase الأول' : error.message, 'err');
+  if (error) { toast(st === 'returned' && /check|constraint/i.test(error.message) ? 'حالة «مرتجع» محتاجة السطر اللي اتبعتلك يتشغّل في Supabase الأول' : error.message, 'err'); return false; }
   Object.assign(o, patch); toast('الحالة: ' + statuses[st], 'ok');
   loadProducts(); renderTabs(); refreshOrderUI(o); sheetOrder(o);
-  if (st === 'confirmed' && prev === 'new') finBox(o);
+  if (st === 'confirmed' && prev === 'new' && !FIN_OK) finBox(o);
   else if (st === 'returned') returnBox(o);
+  return true;
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('.stp-btn'), pick = e.target.closest('[data-stp] [data-st]');
@@ -4103,7 +4110,7 @@ document.addEventListener('click', e => {
 addEventListener('keydown', e => { if (e.key === 'Escape') { document.querySelectorAll('.stp.open').forEach(x => x.classList.remove('open')); const m = $('.fin-m'); if (m) m.remove(); } });
 function needFinTable() { if (FIN_OK) return true; toast('جداول الحسابات مش موجودة في Supabase لسه', 'err'); return false; }
 // popup with the order's money: sale price, product cost, shipping cost and who carried the shipping
-function finBox(o) {
+function finBox(o, pending) {  // pending: status change that waits for حفظ
   if (!needFinTable()) return;
   const f = fins[o.id] || {}, items = o.shop_order_items || [];
   const mode0 = fins[o.id] ? shipMode(o, f) : null, fee = +o.shipping || +settings.shipping_fee || 0;
@@ -4153,6 +4160,8 @@ function finBox(o) {
       if (payer !== 'none' && !num(form.ship.value) && fee) { form.ship.value = fee; form.cust.value = Math.round(fee / 2); form.mine.value = fee - Math.round(fee / 2); }
       calc(); if (payer === 'split') { form.cust.focus(); form.cust.select(); } } const fd = e.target.closest('[data-fxdel]'); if (fd) { fd.parentNode.remove(); calc(); } if (e.target === m || e.target.closest('[data-later]')) m.remove(); };
   form.onsubmit = async e => { e.preventDefault(); const v = vals(), sp = shipPlan(v), btn = form.querySelector('[type=submit]'); btn.disabled = true;
+    if (pending && !(await pending())) { btn.disabled = false; return; }
+    pending = null;
     const row = { order_id: o.id, sale: v.sale, cost: v.cost, ship_cost: sp.cost, ship_payer: sp.payer, extras: v.xs, return_loss: f.return_loss || 0, received_by: form.received_by.value.trim().slice(0, 40) || null, updated_at: new Date().toISOString() };
     const { error } = await sb.from('shop_order_fin').upsert(row); if (error) { btn.disabled = false; return toast(error.message, 'err'); }
     const pc = [...m.querySelectorAll('[data-pc]')].filter(x => x.dataset.pc && x.value.trim() !== '').map(x => ({ product_id: +x.dataset.pc, cost: num(x.value), updated_at: row.updated_at }));
