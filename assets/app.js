@@ -142,10 +142,10 @@
     const nImg = (p.images || []).length;
     return `<article class="card reveal${p.jp ? ' jp' : ''}" data-pid="${p.id}" style="transition-delay:${Math.min(i, 8) * 50}ms">
       <div class="ph-w"><a class="ph" href="${url}" tabindex="-1" aria-hidden="true"><img loading="lazy" ${DQ.thumb(p)} alt="">
-        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.jp ? DQ.jpTag : ''}${p.soon ? '' : p.stock <= 0 ? `<div class="out en">OUT OF STOCK</div>` : ''}</a>
+        ${nImg > 1 ? `<span class="ph-dots" aria-hidden="true">${'<i></i>'.repeat(Math.min(nImg, 6))}</span>` : ''}${off ? `<span class="badge-off"><small>خصم</small>${off}%</span>` : ''}${p.soon ? '' : p.stock <= 0 ? `<div class="out en">OUT OF STOCK</div>` : ''}</a>
       <button class="fav ${fav ? 'on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="أضف ${esc(p.name)} للمفضلة">${ICON.heart}</button>
       <button type="button" class="qv-eye" data-qv="${p.id}" aria-label="عرض سريع لـ ${esc(p.name)}" title="عرض سريع">${QV_EYE}</button></div>
-      <div class="bd"><h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>
+      <div class="bd">${p.jp ? '<div class="jp-nm">' : ''}<h3 class="en"><a href="${url}">${esc(p.name)}</a></h3>${p.jp ? DQ.jpTag + '</div>' : ''}
         <span class="sku en">${RC.sku(p)}${p.style ? ' · ' + esc(p.style) : ''}</span>
         <div class="row">${DQ.priceHTML(p)}${p.stock > 0 ? `<button class="add" data-add="${p.id}" aria-label="${RC.variants(p).length ? 'اختار مواصفات' : 'أضف'} ${esc(p.name)}${RC.variants(p).length ? '' : ' للسلة'}">${ICON.plus}</button>` : ''}</div>
         ${RC.dotsHTML(p)}
