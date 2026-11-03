@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Bodoni+Moda:wght@500&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/base.css?v=20261102200551">
+<link rel="stylesheet" href="assets/base.css?v=20261103183253">
 <script>try{const t=localStorage.getItem('rc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 body{font-size:14px}
@@ -253,6 +253,15 @@ main{flex:1;min-width:0;padding:28px 32px 60px}
 .off-opt img{width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--surface-2)}
 .off-opt b{font-size:12.5px;color:var(--muted)}
 .off-none{padding:12px;font-size:12.5px;color:var(--muted)}
+/* offices */
+.ofc-bar{display:flex;align-items:center;gap:12px;margin-bottom:14px}.ofc-bar .input{max-width:420px;flex:1}.ofc-n{color:var(--muted);font-size:13px;white-space:nowrap}
+.ofc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;align-items:start}
+.ofc-card{display:flex;flex-direction:column;gap:12px}.ofc-top{display:flex;align-items:center;gap:6px}.ofc-top h2{flex:1;min-width:0;font-size:16px;overflow-wrap:anywhere}
+.ofc-acts{display:flex;flex-wrap:wrap;gap:8px}
+.ofc-b{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:700;color:#fff}.ofc-b svg{width:16px;height:16px;flex:none}.ofc-b b{font-weight:600;opacity:.92}
+.ofc-b.wa{background:#22b357}.ofc-b.ph{background:#6d5ce8}.ofc-b.tg{background:#2a9fd8}.ofc-b.mp{background:#e0573c}.ofc-gps{display:flex;gap:6px}.ofc-gps .input{flex:1;min-width:0}.ofc-gps .btn{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}.ofc-gps svg{width:15px;height:15px}.ofc-b:hover{filter:brightness(1.08)}
+.ofc-bk{margin-top:16px}.ofc-bk h2{font-size:16px;margin-bottom:4px}.ofc-bk p{color:var(--muted);font-size:13px;margin-bottom:10px}.ofc-bk-a{display:flex;flex-wrap:wrap;gap:8px}.ofc-bk-a label{cursor:pointer}
+@media (max-width:600px){.ofc-grid{grid-template-columns:1fr}.ofc-b{flex:1 1 auto;justify-content:center}}
 /* suppliers */
 .sup-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.sup-stats .ov-c.on{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}.sup-stats .ov-c.warn b{color:var(--red)}.sup-stats div.ov-c:hover{border-color:var(--line)}
 .sup-bar{margin-bottom:14px}.sup-bar .input{max-width:420px}
@@ -1128,7 +1137,7 @@ html{--z:1}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="assets/config.js?v=20261102200551"></script>
+<script src="assets/config.js?v=20261103183253"></script>
 <script>
 const {money, finalPrice, discountPct, esc, categories, statuses} = RC;
 addEventListener('scroll', () => document.querySelectorAll('.stk-menu').forEach(m => m.remove()), true);
@@ -1164,10 +1173,11 @@ const ICONS = {
   covers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m21 15-5-5L5 20"/></svg>',
   products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M9 2h6M9 22h6"/></svg>',
   suppliers: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>',
+  offices: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3"/></svg>',
   fake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10 20a2 2 0 0 0 4 0"/><path d="M19 3.5l1.5-1M21 7h1.5"/></svg>',
   settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L10 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>'
 };
-const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['suppliers','الموردين'], ['invoices','طباعة الفواتير'],
+const TABS = [['overview','نظرة عامة'], ['accounts','الحسابات'], ['dash','المبيعات'], ['tracking','Tracking'], ['customers','العملاء'], ['suppliers','الموردين'], ['offices','المكاتب'], ['invoices','طباعة الفواتير'],
   ['_h','المتجر العادي'], ['orders','الطلبات'], ['products','المنتجات'], ['men','رجالي'], ['women','حريمي'],
   ['_h','Luxury', 'lux'], ['lux-orders','طلبات Luxury'], ['lux','منتجات Luxury'], ['lux-men','Luxury رجالي'], ['lux-women','Luxury حريمي'],
   ['_h',''], ['covers','صور الأقسام'], ['stories','قصة الأقسام'], ['settings','الإعدادات'], ['_h',''], ['fake','نوتفكشن وهمية']];
@@ -1326,7 +1336,7 @@ $('#logoutBtn').onclick = async () => { $('#appView').classList.add('hidden'); a
 
 /* ---------- data ---------- */
 async function detectCols() { await Promise.all(Object.keys(COLS).map(async c => { const { error } = await sb.from('shop_products').select(c).limit(1); COLS[c] = !error; })); }
-async function loadAll() { await Promise.all([loadProducts(), loadOrders(), loadSettings(), detectCols(), loadFin(), loadUsers(), loadSups()]); }
+async function loadAll() { await Promise.all([loadProducts(), loadOrders(), loadSettings(), detectCols(), loadFin(), loadUsers(), loadSups(), loadOffices()]); }
 // the site's accounts: every order placed while signed in shows that account's email
 async function loadUsers() { try { const { data, error } = await sb.rpc('shop_admin_users'); if (!error) users = data || []; } catch (e) {} }
 const mailOf = id => { const u = id && (users || []).find(x => x.id === id); return u ? u.email || u.phone || '' : ''; };
@@ -1418,7 +1428,7 @@ function desktopNotify(o) {
   n.onclick = () => { window.focus(); const full = orders.find(x => x.id === o.id); orderQuery = o.code; orderFilter = 'all'; openOrders.add(o.id); go(full && isLuxOrder(full) ? 'lux-orders' : 'orders'); n.close(); }; } catch (e) {}
 }
 // New-order sound (cash register); iOS only lets audio play after a tap, so the first tap anywhere unlocks it.
-const orderSnd = new Audio('assets/order.mp3?v=20261102200551'); orderSnd.preload = 'auto';
+const orderSnd = new Audio('assets/order.mp3?v=20261103183253'); orderSnd.preload = 'auto';
 // one sound only: if the phone blocks it (screen locked before the first tap), it stays quiet rather than switching to the beep
 function cash() { try { orderSnd.currentTime = 0; const p = orderSnd.play(); if (p) p.catch(() => {}); } catch (e) {} }
 // fake alerts: the same <audio> as real orders (iPhone plays it cleanly, also in the background); several at once play one after another, each in full
@@ -1459,7 +1469,7 @@ function go(t, keepScroll) {
   if (t !== 'tracking') { trkCharts.forEach(c => c.destroy()); trkCharts = []; }
   if (t !== 'fake') { clearInterval(fkTick); fkTick = 0; }
   if (!SCOPES[t] && $('#newPFab')) { $('#newPFab').classList.remove('on'); if (fabIO) { fabIO.disconnect(); fabIO = null; } }
-  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, suppliers: renderSuppliers, fake: renderFake}[t] || renderDash)();
+  ({overview: renderOverview, customers: renderCustomers, accounts: renderAccounts, dash: renderDash, tracking: renderTracking, offices: renderOffices, orders: renderOrders, 'lux-orders': renderOrders, products: renderProducts, lux: renderProducts, men: renderProducts, women: renderProducts, 'lux-men': renderProducts, 'lux-women': renderProducts, covers: renderCovers, stories: renderStories, invoices: renderInvoices, settings: renderSettings, suppliers: renderSuppliers, fake: renderFake}[t] || renderDash)();
   if (!keepScroll) scrollTo(0, 0);
   // soft page entrance (opacity + transform only, so it stays light); live refreshes of the same page don't replay it
   // the class comes off once the entrance is over, or every re-render on the page (a filter, a checkbox…) would replay it and look like a reload
@@ -2067,7 +2077,7 @@ function invoiceHTML(o) {
       <div class="inv-brand"><div><span class="inv-logo">${RC.logo()}</span><div class="inv-wm"><b>DAQQA</b><small>${lux ? 'PRIVÉ' : 'STORE'}</small></div></div><div class="inv-tag"><i></i>EVERY DETAIL, ON TIME.</div></div>
       <span class="inv-div"></span>
       <div class="inv-tt"><b>فاتورة</b><span>INVOICE</span></div>
-      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261102200551" alt=""></div>
+      <div class="inv-ph"><img src="assets/invoice-watch.jpg?v=20261103183253" alt=""></div>
     </header>
     <div class="inv-body">
       <div class="inv-meta">
@@ -2101,7 +2111,7 @@ function invoiceHTML(o) {
         </div>
       </div>
     </div>
-    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261102200551" alt=""></div>
+    <footer class="inv-f"><div class="inv-f-bg"></div><div class="inv-f-ph"><img src="assets/invoice-watch.jpg?v=20261103183253" alt=""></div>
       ${soc.length ? `<div class="inv-soc">${soc.map(x => `<span><i>${RC.SOCIAL[x.type].icon}</i>${esc(RC.socialLabel(x))}</span>`).join('')}</div>` : ''}</footer>
   </section>`;
 }
@@ -2142,7 +2152,7 @@ async function invoicesPDF(l) {
   const wait = document.createElement('div'); wait.className = 'fin-m'; wait.innerHTML = `<div class="fin-box inv-ready"><h3>بنجهّز الفواتير…</h3><p class="fsub" id="invProg">0 / ${l.length}</p></div>`; document.body.appendChild(wait);
   const stage = document.createElement('div'); stage.className = 'inv-stage';
   try {
-    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261102200551'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261102200551')]);
+    await Promise.all([loadJS('assets/vendor/html-to-image.min.js?v=20261103183253'), loadJS('assets/vendor/jspdf.umd.min.js?v=20261103183253')]);
     stage.innerHTML = l.map(o => invoiceHTML(o)).join(''); document.body.appendChild(stage);
     await imgsIn(stage); try { await document.fonts.ready; } catch (e) {}
     const pages = [...stage.children], ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || navigator.maxTouchPoints > 1;
@@ -3887,6 +3897,99 @@ document.addEventListener('click', async e => {
   const dl = e.target.closest('[data-supdel]'); if (dl) { const s = sups.find(x => x.id === +dl.dataset.supdel); if (!s || !await confirmBox(`تمسح المورد «${s.name || 'من غير اسم'}»؟`, 'مسح')) return;
     const { error } = await sb.from('shop_suppliers').delete().eq('id', s.id); if (error) return toast(error.message, 'err');
     sups = sups.filter(x => x.id !== s.id); toast('اتمسح المورد', 'ok'); renderSuppliers(); }
+});
+
+/* ---------- offices: the offices we deal with — name, WhatsApp, phone, Telegram (admin only, table shop_offices) ---------- */
+let offices = [], OFC_OK = true, ofcQ = '';
+try { ofcQ = localStorage.getItem('dq-ofc-q') || ''; } catch (e) {}
+async function loadOffices() { try { const { data, error } = await sb.from('shop_offices').select('*').order('name'); OFC_OK = !error; offices = data || []; } catch (e) { OFC_OK = false; } }
+const ofcTg = v => { v = String(v || '').trim(); if (!v) return ''; if (/^https?:\/\//i.test(v)) return v; v = v.replace(/^@/, '').replace(/^(t\.me|telegram\.me)\//i, ''); return /^[\w]{3,}$/.test(v) ? 'https://t.me/' + v : ''; };
+// GPS: a maps link as is, or "lat, lng" → Google Maps
+const ofcMap = v => { v = String(v || '').trim(); if (!v) return ''; if (/^https?:\/\//i.test(v)) return v; const m = v.match(/^(-?\d{1,2}(?:\.\d+)?)\s*[,،\s]\s*(-?\d{1,3}(?:\.\d+)?)$/); return m ? `https://www.google.com/maps?q=${m[1]},${m[2]}` : ''; };
+const OFC_IC = { map: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>', wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-3.9-4.7-4.1-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.4.6-.4.4c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.7-.1 1.4z"/></svg>',
+  ph: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>',
+  tg: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2l-11 6.9L1.8 11.8c-1-.3-1-1 .2-1.5L20.6 3.2c.9-.3 1.6.2 1.3 1.1z"/></svg>' };
+function renderOffices() {
+  renderTabs();
+  const head = `<div class="head"><div><h1>المكاتب</h1><div class="sub">أرقام المكاتب اللي بنتعامل معاها: واتساب وتليفون وتليجرام في مكان واحد.</div></div>${OFC_OK ? '<button type="button" class="btn btn-amber" data-ofcnew>+ مكتب جديد</button>' : ''}</div>`;
+  if (!OFC_OK) { $('#main').innerHTML = head + `<div class="panel" style="color:var(--muted);line-height:1.8">الصفحة محتاجة جدول المكاتب في Supabase.<br>افتح Supabase ← SQL Editor والصق ملف <b class="en">supabase/offices.sql</b> ودوس Run، وبعدين اعمل ريفريش.</div>`; return; }
+  $('#main').innerHTML = head + `<div class="ofc-bar"><input class="input" id="ofcQ" placeholder="دوّر باسم المكتب أو الرقم أو العنوان" value="${esc(ofcQ)}" autocomplete="off"><span class="ofc-n" id="ofcN"></span></div>
+    <div id="ofcList"></div>
+    <div class="panel ofc-bk"><h2>نسخة احتياطية</h2><p>نزّل ملف بكل المكاتب، أو ارفع ملف (JSON أو CSV) يضيف المكاتب اللي فيه.</p>
+      <div class="ofc-bk-a"><button type="button" class="btn btn-ghost btn-sm" data-ofcexp="json">تصدير JSON</button><button type="button" class="btn btn-ghost btn-sm" data-ofcexp="csv">تصدير Excel (CSV)</button><label class="btn btn-ghost btn-sm">استيراد<input type="file" id="ofcImp" accept=".json,.csv,application/json,text/csv" hidden></label></div></div>`;
+  $('#ofcQ').oninput = e => { ofcQ = e.target.value; try { localStorage.setItem('dq-ofc-q', ofcQ); } catch (er) {} ofcList(); };
+  $('#ofcImp').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) ofcImport(f); };
+  ofcList();
+}
+function ofcList() {
+  const L = $('#ofcList'); if (!L) return;
+  const q = ofcQ.trim().toLowerCase(), dq = q.replace(/\D/g, ''), l = offices.filter(o => !q || String(o.name || '').toLowerCase().includes(q) || String(o.note || '').toLowerCase().includes(q) || String(o.address || '').toLowerCase().includes(q) || (dq.length > 2 && (String(o.wa || '') + ' ' + String(o.phone || '')).replace(/\D/g, '').includes(dq)));
+  $('#ofcN').textContent = q ? `${l.length} من ${offices.length} مكتب` : `${offices.length} مكتب`;
+  if (!l.length) { L.innerHTML = `<div class="empty">${q ? 'مفيش مكتب بالاسم أو الرقم ده.' : 'لسه مفيش مكاتب. دوس «+ مكتب جديد».'}</div>`; return; }
+  L.innerHTML = `<div class="ofc-grid">${l.map(o => { const wa = supWa(o.wa), tg = ofcTg(o.tg), mp = ofcMap(o.gps), ph = String(o.phone || '').replace(/[^\d+]/g, '');
+    return `<div class="panel ofc-card"><div class="ofc-top"><h2>${esc(o.name)}</h2><button type="button" class="btn btn-ghost btn-sm" data-ofcedit="${o.id}">تعديل</button><button type="button" class="btn btn-danger btn-sm" data-ofcdel="${o.id}">مسح</button></div>
+      <div class="ofc-acts">${wa ? `<a class="ofc-b wa" href="https://wa.me/${wa}" target="_blank" rel="noopener">${OFC_IC.wa}<span>واتساب</span><b class="en" dir="ltr">${esc(o.wa)}</b></a>` : ''}${ph ? `<a class="ofc-b ph" href="tel:${esc(ph)}">${OFC_IC.ph}<span>اتصال</span><b class="en" dir="ltr">${esc(o.phone)}</b></a>` : ''}${tg ? `<a class="ofc-b tg" href="${esc(tg)}" target="_blank" rel="noopener">${OFC_IC.tg}<span>تليجرام</span></a>` : ''}${mp ? `<a class="ofc-b mp" href="${esc(mp)}" target="_blank" rel="noopener">${OFC_IC.map}<span>الموقع</span></a>` : ''}${!wa && !ph && !tg && !mp ? '<small style="color:var(--muted)">مفيش أرقام متسجلة.</small>' : ''}</div>
+      ${o.address ? `<div class="sup-line"><span>العنوان</span>${esc(o.address)}</div>` : ''}${o.note ? `<div class="sup-line"><span>ملاحظات</span>${esc(o.note).replace(/\n/g, '<br>')}</div>` : ''}</div>`; }).join('')}</div>`;
+}
+function ofcBox(ed) {
+  const m = document.createElement('div'); m.className = 'fin-m', opt = '<small style="color:var(--muted-2);font-weight:400">(اختياري)</small>';
+  m.innerHTML = `<form class="fin-box" novalidate><h3>${ed ? 'تعديل مكتب' : 'مكتب جديد'}</h3>
+    <div class="field"><label>اسم المكتب</label><input class="input" name="name" value="${esc(ed ? ed.name : '')}" placeholder="مثلاً: مكتب النور" maxlength="80" required></div>
+    <div class="two"><div class="field"><label>رقم الواتساب ${opt}</label><input class="input en" dir="ltr" name="wa" inputmode="tel" value="${esc(ed ? ed.wa || '' : '')}" placeholder="01xxxxxxxxx" maxlength="30"></div>
+      <div class="field"><label>رقم التليفون ${opt}</label><input class="input en" dir="ltr" name="phone" inputmode="tel" value="${esc(ed ? ed.phone || '' : '')}" placeholder="01xxxxxxxxx" maxlength="30"></div></div>
+    <div class="field"><label>لينك التليجرام ${opt}</label><input class="input en" dir="ltr" name="tg" value="${esc(ed ? ed.tg || '' : '')}" placeholder="https://t.me/username أو ‎@username" maxlength="200"></div>
+    <div class="field"><label>العنوان ${opt}</label><input class="input" name="address" value="${esc(ed ? ed.address || '' : '')}" placeholder="مثلاً: العتبة، شارع الموسكي" maxlength="160"></div>
+    <div class="field"><label>الموقع GPS ${opt}</label><div class="ofc-gps"><input class="input en" dir="ltr" name="gps" value="${esc(ed ? ed.gps || '' : '')}" placeholder="لينك جوجل ماب أو 30.05, 31.25" maxlength="300"><button type="button" class="btn btn-ghost btn-sm" data-ofchere>${OFC_IC.map} موقعي دلوقتي</button></div><small class="hint">لو إنت في المكتب دوس «موقعي دلوقتي»، أو الصق لينك اللوكيشن من جوجل ماب.</small></div>
+    <div class="field"><label>ملاحظات ${opt}</label><textarea class="input" name="note" rows="2" maxlength="600" placeholder="بيبيع إيه، مواعيده، طريقة الدفع…">${esc(ed ? ed.note || '' : '')}</textarea></div>
+    <div class="fin-acts"><button class="btn btn-amber" type="submit">${ed ? 'حفظ التعديل' : 'إضافة'}</button><button class="btn btn-ghost" type="button" data-later>إلغاء</button></div></form>`;
+  document.body.appendChild(m);
+  const form = m.querySelector('form');
+  m.onclick = e => { if (e.target === m || e.target.closest('[data-later]')) m.remove();
+    const h = e.target.closest('[data-ofchere]'); if (h) { if (!navigator.geolocation) return toast('الجهاز ده مش بيدّي الموقع', 'err'); h.disabled = true;
+      navigator.geolocation.getCurrentPosition(p => { h.disabled = false; form.elements.gps.value = `${p.coords.latitude.toFixed(6)}, ${p.coords.longitude.toFixed(6)}`; toast('اتسجل موقعك ✓', 'ok'); },
+        () => { h.disabled = false; toast('معرفناش ناخد الموقع، اسمح بالموقع للمتصفح', 'err'); }, { enableHighAccuracy: true, timeout: 15000 }); } };
+  form.onsubmit = async e => { e.preventDefault(); const v = k => form.elements[k].value.trim() || null, btn = form.querySelector('[type=submit]');
+    if (v('gps') && !ofcMap(v('gps'))) { form.elements.gps.focus(); return toast('الموقع لازم يبقى لينك أو إحداثيات زي 30.05, 31.25', 'err'); }
+    const row = { name: v('name'), wa: v('wa'), phone: v('phone'), tg: v('tg'), address: v('address'), gps: v('gps'), note: v('note'), updated_at: new Date().toISOString() };
+    if (!row.name) { form.elements.name.focus(); return toast('اكتب اسم المكتب', 'err'); }
+    if (!ed && offices.some(o => o.name.trim() === row.name)) return toast('فيه مكتب بنفس الاسم ده', 'err');
+    btn.disabled = true;
+    const { data, error } = await (ed ? sb.from('shop_offices').update(row).eq('id', ed.id) : sb.from('shop_offices').insert(row)).select().single();
+    if (error) { btn.disabled = false; return toast(error.message, 'err'); }
+    offices = ed ? offices.map(x => x.id === data.id ? data : x) : [...offices, data].sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+    m.remove(); toast(ed ? 'اتعدل المكتب ✓' : 'اتضاف المكتب ✓', 'ok'); if (tab === 'offices') ofcList(); };
+  setTimeout(() => form.elements.name.focus(), 60);
+}
+const OFC_COLS = [['name', 'اسم المكتب'], ['wa', 'واتساب'], ['phone', 'تليفون'], ['tg', 'تليجرام'], ['address', 'العنوان'], ['gps', 'GPS'], ['note', 'ملاحظات']];
+function ofcExport(kind) {
+  const day = new Date().toISOString().slice(0, 10), rows = offices.map(o => Object.fromEntries(OFC_COLS.map(([k]) => [k, o[k] || ''])));
+  const body = kind === 'json' ? JSON.stringify(rows, null, 2) : '﻿' + [OFC_COLS.map(c => c[1]), ...rows.map(r => OFC_COLS.map(([k]) => r[k]))].map(r => r.map(x => `"${String(x).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([body], { type: kind === 'json' ? 'application/json' : 'text/csv;charset=utf-8' })); a.download = `daqqa-offices-${day}.${kind}`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function ofcCsv(t) { const out = [], row = [], cell = []; let q = false, c = '', r = [];
+  for (let i = 0; i < t.length; i++) { const ch = t[i];
+    if (q) { if (ch === '"' && t[i + 1] === '"') { c += '"'; i++; } else if (ch === '"') q = false; else c += ch; }
+    else if (ch === '"') q = true; else if (ch === ',' || ch === ';') { r.push(c); c = ''; } else if (ch === '\n' || ch === '\r') { if (ch === '\r' && t[i + 1] === '\n') i++; r.push(c); c = ''; if (r.some(x => x.trim())) out.push(r); r = []; } else c += ch; }
+  r.push(c); if (r.some(x => x.trim())) out.push(r); return out; }
+async function ofcImport(file) {
+  let t = await file.text(), list = [];
+  try {
+    if (/^\s*[\[{]/.test(t)) { const j = JSON.parse(t); list = (Array.isArray(j) ? j : j.offices || []).map(o => ({ name: o.name || o['اسم المكتب'], wa: o.wa || o.whatsapp, phone: o.phone, tg: o.tg || o.telegram, address: o.address, gps: o.gps, note: o.note })); }
+    else { const rows = ofcCsv(t.replace(/^﻿/, '')), h = rows.shift() || [], idx = OFC_COLS.map(([k, ar]) => h.findIndex(x => [k, ar].includes(x.trim()))); list = rows.map(r => Object.fromEntries(OFC_COLS.map(([k], n) => [k, idx[n] >= 0 ? r[idx[n]] : '']))); }
+  } catch (e) { return toast('الملف ده مش مفهوم، لازم JSON أو CSV متصدّر من هنا', 'err'); }
+  const have = new Set(offices.map(o => o.name.trim())), now = new Date().toISOString();
+  const rows = list.map(o => ({ name: String(o.name || '').trim().slice(0, 80), wa: String(o.wa || '').trim() || null, phone: String(o.phone || '').trim() || null, tg: String(o.tg || '').trim() || null, address: String(o.address || '').trim() || null, gps: String(o.gps || '').trim() || null, note: String(o.note || '').trim() || null, updated_at: now })).filter(o => o.name && !have.has(o.name) && (have.add(o.name), true));
+  if (!rows.length) return toast('مفيش مكاتب جديدة في الملف (اللي بنفس الاسم مش بتتكرر)', 'err');
+  const { data, error } = await sb.from('shop_offices').insert(rows).select(); if (error) return toast(error.message, 'err');
+  offices = [...offices, ...data].sort((a, b) => a.name.localeCompare(b.name, 'ar')); toast(`اتضاف ${data.length} مكتب ✓`, 'ok'); if (tab === 'offices') ofcList();
+}
+document.addEventListener('click', async e => {
+  if (e.target.closest('[data-ofcnew]')) return ofcBox();
+  const ex = e.target.closest('[data-ofcexp]'); if (ex) { if (!offices.length) return toast('مفيش مكاتب تتصدّر', 'err'); return ofcExport(ex.dataset.ofcexp); }
+  const ed = e.target.closest('[data-ofcedit]'); if (ed) { const o = offices.find(x => x.id === +ed.dataset.ofcedit); if (o) ofcBox(o); return; }
+  const dl = e.target.closest('[data-ofcdel]'); if (dl) { const o = offices.find(x => x.id === +dl.dataset.ofcdel); if (!o || !await confirmBox(`تمسح «${o.name}»؟`, 'مسح')) return;
+    const { error } = await sb.from('shop_offices').delete().eq('id', o.id); if (error) return toast(error.message, 'err');
+    offices = offices.filter(x => x.id !== o.id); toast('اتمسح المكتب', 'ok'); ofcList(); }
 });
 
 function renderSettings() {
