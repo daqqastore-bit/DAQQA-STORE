@@ -601,6 +601,13 @@ input.input[type=date]::-webkit-date-and-time-value{text-align:right}
 .imgs .it .star{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:2px 10px}.imgs .it .star:hover{color:var(--ink);border-color:var(--amber)}
 .imgs .it .ord{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;margin:0}.imgs .it .ord small{font-size:10.5px;color:var(--muted)}
 .imgs .it .ord .input{width:64px;height:38px;padding:0 6px;text-align:center;font-weight:700;font-size:15px}
+/* per-photo description: one dropdown per option group (dial, strap…); two photos with the same description turn red */
+.imgs .it .itg{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;max-width:100%}
+.imgs .it .itg-f{display:flex;flex-direction:column;gap:1px;margin:0}.imgs .it .itg-f small{font-size:10.5px;color:var(--muted)}
+.imgs .it .itg-f select{height:30px;max-width:150px;padding:0 6px;font-size:12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.imgs .it.dup{border-color:#c0392b;background:rgb(192 57 43/.12)}.imgs .it.dup .itg-f select{border-color:#c0392b}
+.imgs .it .itg-bad{flex-basis:100%;font-style:normal;font-size:11.5px;font-weight:700;color:#e5604f}
+.itg-err{margin:0 0 8px;padding:9px 12px;border-radius:10px;border:1px solid #c0392b;background:rgb(192 57 43/.14);color:#f0a79d;font-size:12.5px;font-weight:600;line-height:1.6}
 .imgs .it .mv{flex:none;display:flex;flex-direction:column;gap:3px}
 .imgs .it .mv button{width:30px;height:20px;border-radius:6px;border:1px solid var(--line);font-size:9px;color:var(--muted)}.imgs .it .mv button:disabled{opacity:.3}.imgs .it .mv button:not(:disabled):hover{border-color:var(--amber);color:var(--ink)}
 .imgs .it .x{flex:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);color:var(--muted);display:grid;place-items:center}.imgs .it .x svg{width:17px;height:17px}.imgs .it .x:hover{color:#c0392b;border-color:#c0392b66}
@@ -1192,9 +1199,11 @@ let dashScope = 'all', orderKind = 'all', orderGen = 'all', orderProd = 'all';
 const ordSw = (i, x) => { if (x.c2) return RC.sw(x); const p = products.find(y => y.id === i.product_id), g = p && RC.variants(p).find(y => y.k === x.k), vo = g && g.o.find(y => y.n === x.v); return vo && vo.c && vo.c.toUpperCase() === String(x.c).toUpperCase() ? RC.sw(vo) : x.c; };
 const optChips = i => { const os = i.options || []; if (!os.length) return '';
   // every option points to the same watch photo → show that photo once, big; otherwise each option gets its own photo
-  const ims = [...new Set(os.map(o => o.img).filter(Boolean))], one = ims.length === 1 && os.every(o => o.img === ims[0]);
+  // the store saves the exact photo the buyer's picks resolve to with the order: shown once, big. Older orders without it fall back to the options' own photos
+  const pr = products.find(y => y.id === i.product_id), big = i.image || (pr && RC.optPhoto(pr, Object.fromEntries(os.filter(o => o.k).map(o => [o.k, o.v])))) || '';
+  const ims = [...new Set(os.map(o => o.img).filter(Boolean))], one = !!big || (ims.length === 1 && os.every(o => o.img === ims[0]));
   const ob = (u, nm, cls = '') => `<button type="button" class="o-oimg${cls}" data-oimg="${esc(u)}" data-oname="${esc(nm)}" aria-label="كبّر الصورة"><img src="${esc(RC.thumb(u))}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${esc(u)}'"></button>`;
-  return `<span class="o-opts${one ? ' one' : ''}"><em>اختيارات العميل</em>${one ? ob(ims[0], os.map(o => o.v).join(' · '), ' big') : ''}${os.map(o => `<span class="o-opt">${!one && o.img ? ob(o.img, o.g + ' ' + o.v) : ''}${o.c ? `<i style="background:${esc(ordSw(i, o))}"></i>` : ''}<small>${esc(o.g)}</small><b>${esc(o.v)}</b>${o.chg ? `<em class="o-chg" title="العميل كان مختار: ${esc(o.was || '')}">اتغيّر · كان ${esc(o.was || '')}</em>` : ''}</span>`).join('')}</span>`; };
+  return `<span class="o-opts${one ? ' one' : ''}"><em>اختيارات العميل</em>${one ? ob(big || ims[0], os.map(o => o.v).join(' · '), ' big') : ''}${os.map(o => `<span class="o-opt">${!one && o.img ? ob(o.img, o.g + ' ' + o.v) : ''}${o.c ? `<i style="background:${esc(ordSw(i, o))}"></i>` : ''}<small>${esc(o.g)}</small><b>${esc(o.v)}</b>${o.chg ? `<em class="o-chg" title="العميل كان مختار: ${esc(o.was || '')}">اتغيّر · كان ${esc(o.was || '')}</em>` : ''}</span>`).join('')}</span>`; };
 const orderProds = o => (o.shop_order_items || []).map(i => products.find(x => x.id === i.product_id)).filter(Boolean);
 const orderHasKind = (o, k) => orderProds(o).some(p => RC.kindOf(p) === k);
 const orderHasGen = (o, g) => orderProds(o).some(p => p.category === g || p.category === 'unisex');
@@ -2671,6 +2680,19 @@ function restoreDraft() {
 $('#overlay').onclick = closeEditor;
 addEventListener('keydown', e => { if (e.key === 'Escape') closeEditor(); });
 function curOff() { const pr = +draft.price, sp = draft.sale_price == null || draft.sale_price === '' ? null : +draft.sale_price; return pr && sp != null && sp < pr ? Math.round((1 - sp / pr) * 100) : 0; }
+// per-photo description: the option each group (dial, strap…) links to this photo. An option's photo list is the single source of truth, so this stays in sync with «اختيارات المشتري»
+const imgTagOf = (d, u) => d.variants.map(g => g.o.map((o, i) => String(o.n || '').trim() && (o.imgs || []).includes(u) ? i : -1).filter(i => i >= 0));
+// photos that share exactly the same (non-empty) description: the buyer's picks can't tell them apart, so each photo's description must differ
+function imgDups(d) { const m = new Map();
+  (d.images || []).forEach(u => { const t = imgTagOf(d, u); if (!t.some(x => x.length)) return; const k = JSON.stringify(t); m.set(k, [...(m.get(k) || []), u]); });
+  return new Set([...m.values()].filter(a => a.length > 1).flat()); }
+function imgTagUI(d, u, ii, dups) {
+  const gs = d.variants.map((g, gi) => ({ g, gi })).filter(({ g }) => g.o.some(o => String(o.n || '').trim())); if (!gs.length) return '';
+  const t = imgTagOf(d, u), key = JSON.stringify(t);
+  const same = dups.has(u) ? d.images.map((x, k) => k).filter(k => k !== ii && dups.has(d.images[k]) && JSON.stringify(imgTagOf(d, d.images[k])) === key).map(k => k + 1) : [];
+  return `<span class="itg">${gs.map(({ g, gi }) => { const V = RC.varDef(g.k), cur = t[gi], nm = g.ar || V.ar;
+    return `<label class="itg-f"><small>${esc(nm)}</small><select data-itag="${ii}" data-itg="${g.k}" aria-label="${esc(nm)}"><option value="">—</option>${cur.length > 1 ? '<option value="*" selected>أكتر من اختيار</option>' : ''}${g.o.map((o, i) => String(o.n || '').trim() ? `<option value="${i}" ${cur.length === 1 && cur[0] === i ? 'selected' : ''}>${esc(o.n)}</option>` : '').join('')}</select></label>`; }).join('')}${same.length ? `<em class="itg-bad">نفس توصيف صورة ${same.join(' و ')} — مينفعش</em>` : ''}</span>`;
+}
 function renderEditor() {
   // re-drawing (delete a colour, move a photo…) keeps the page where it was
   const d = draft, off = curOff(), ob = $('#editor .ed-body'), keepY = ob ? ob.scrollTop : 0;
@@ -2685,15 +2707,16 @@ function renderEditor() {
   d.variants = vDefs.sort((a, b) => vKey(a) - vKey(b)).map(v => { const g = (Array.isArray(d.variants) ? d.variants : []).find(x => x && x.k === v.k); return { k: v.k, ar: g && g.ar && g.ar !== v.ar ? g.ar : '', en: g && g.en && g.en !== v.en ? g.en : '', o: g && Array.isArray(g.o) ? g.o.filter(o => o && o.n != null).map(o => ({ ...o, img: undefined, dials: undefined, imgs: [...new Set([...(Array.isArray(o.imgs) ? o.imgs : []), o.img].filter(Boolean))], links: Object.fromEntries(Object.entries({ ...(Array.isArray(o.dials) && o.dials.length ? { dial: o.dials } : {}), ...(o.links && typeof o.links === 'object' ? o.links : {}) }).filter(([, l]) => Array.isArray(l)).map(([k, l]) => [k, [...l]])) })) : [] }; });
   // older products kept their colours in a separate list: they become dial options once (with the photo each colour was linked to)
   if (!d._varMig) { d._varMig = true; if (d.variants.every(g => !g.o.length) && (d.colors || []).length) d.variants.find(g => g.k === 'dial').o = d.colors.map(c => ({ n: c.toUpperCase(), c: c.toUpperCase(), imgs: Object.keys(d.image_colors || {}).filter(u => String(d.image_colors[u]).toLowerCase() === c.toLowerCase() && d.images.includes(u)) })); }
+  const dups = imgDups(d);
   $('#editor').innerHTML = `
     <div class="ed-head"><h3>${d.id ? 'تعديل المنتج' : 'منتج جديد'}${d.id ? ` <a href="${RC.productUrl(d)}" target="_blank" rel="noopener" style="font-size:12px;font-weight:500;color:var(--accent);margin-inline-start:8px">فتح صفحة المنتج ↗</a>` : ''}</h3><div class="ed-hacts"><button type="button" class="btn btn-amber btn-sm" id="edNew">+ منتج جديد</button><button class="icon-btn" id="edClose" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
     <div class="ed-body"><div class="ed-col ed-main">
       <section class="ed-sec"><h4>الصور</h4>
-      <div class="field"><label>رتّب الصور بالرقم أو بالأسهم ▲▼ أو بالسحب. رقم 1 هي الصورة الرئيسية. وتقدر تربط أي صورة باختيار من «اختيارات المشتري» تحت. وتقدر تسحب صور من جهازك وتسيبها هنا ترتفع.</label>
-        <div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}" draggable="true" data-ii="${i}">
+      <div class="field"><label>رتّب الصور بالرقم أو بالأسهم ▲▼ أو بالسحب. رقم 1 هي الصورة الرئيسية. ولكل صورة اختار توصيفها (المينا، السوار…) من تحتها: لما العميل يختار، بتظهر الصورة اللي توصيفها بيطابق اختياراته بالظبط. ممنوع صورتين بنفس التوصيف. وتقدر تسحب صور من جهازك وتسيبها هنا ترتفع.</label>
+        ${dups.size ? '<div class="itg-err" role="alert">فيه صور ليها نفس التوصيف بالظبط (متعلّمة بالأحمر). لازم كل صورة يكون توصيفها مختلف عشان لما العميل يطلب نعرف هو طلب أنهي صورة بالظبط. غيّر توصيف واحدة منهم.</div>' : ''}<div class="imgs" id="imgs">${d.images.map((u, i) => `<div class="it ${i?'':'main'}${dups.has(u) ? ' dup' : ''}" draggable="true" data-ii="${i}">
           <span class="grip" title="اسحب عشان ترتب" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>
           <img src="${esc(u)}" alt="" draggable="false">
-          <span class="nm"><b class="en" dir="ltr">${esc(imgName(u, i))}</b>${i ? `<button type="button" class="star" data-star="${i}">خليها الرئيسية</button>` : '<span class="tag">★ الرئيسية</span>'}</span>
+          <span class="nm"><b class="en" dir="ltr">${esc(imgName(u, i))}</b>${i ? `<button type="button" class="star" data-star="${i}">خليها الرئيسية</button>` : '<span class="tag">★ الرئيسية</span>'}${imgTagUI(d, u, i, dups)}</span>
           <label class="ord"><small>الترتيب</small><input class="input en" type="number" min="1" max="${d.images.length}" value="${i + 1}" data-ord="${i}" inputmode="numeric"></label>
           <span class="mv"><button type="button" data-mv="${i}" data-to="${i - 1}" ${i ? '' : 'disabled'} aria-label="لفوق">▲</button><button type="button" data-mv="${i}" data-to="${i + 1}" ${i < d.images.length - 1 ? '' : 'disabled'} aria-label="لتحت">▼</button></span>
           <button type="button" class="x" data-rmimg="${i}" aria-label="حذف الصورة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg></button></div>`).join('')}
@@ -2888,7 +2911,10 @@ function renderEditor() {
   zone.addEventListener('dragend', () => { dragI = null; zone.querySelectorAll('.it').forEach(x => x.classList.remove('dragging', 'over')); });
   zone.addEventListener('dragover', e => { if (dragI == null) return; const it = e.target.closest('[data-ii]'); e.preventDefault(); zone.querySelectorAll('.it.over').forEach(x => x !== it && x.classList.remove('over')); if (it && +it.dataset.ii !== dragI) it.classList.add('over'); });
   zone.addEventListener('drop', e => { if (dragI == null) return; e.preventDefault(); e.stopImmediatePropagation(); const it = e.target.closest('[data-ii]'); const from = dragI; dragI = null; if (it) moveImg(from, +it.dataset.ii); }, true);
-  $('#imgs').onchange = e => { const o = e.target.closest('[data-ord]'); if (!o) return; const n = Math.round(+o.value); if (!o.isConnected) return; if (!(n >= 1)) { o.value = +o.dataset.ord + 1; return; } moveImg(+o.dataset.ord, Math.min(n, draft.images.length) - 1); };
+  $('#imgs').onchange = e => { const tg = e.target.closest('[data-itag]');
+    if (tg) { if (tg.value === '*') return; syncDraft(); const u = draft.images[+tg.dataset.itag], g = draft.variants.find(x => x.k === tg.dataset.itg); if (!u || !g) return;
+      g.o.forEach(x => { x.imgs = (x.imgs || []).filter(y => y !== u); }); if (tg.value !== '' && g.o[+tg.value]) g.o[+tg.value].imgs.push(u); renderEditor(); return; }
+    const o = e.target.closest('[data-ord]'); if (!o) return; const n = Math.round(+o.value); if (!o.isConnected) return; if (!(n >= 1)) { o.value = +o.dataset.ord + 1; return; } moveImg(+o.dataset.ord, Math.min(n, draft.images.length) - 1); };
   $('#imgs').onkeydown = e => { if (e.key === 'Enter' && e.target.closest('[data-ord]')) { e.preventDefault(); e.target.blur(); } };
   $('#imgs').addEventListener('click', e => { const im = e.target.closest('.it > img'); if (im) imgView(draft.images, +im.closest('[data-ii]').dataset.ii, draft.name); });
   $('#imgs').onclick = e => { const mv = e.target.closest('[data-mv]'); if (mv) return moveImg(+mv.dataset.mv, +mv.dataset.to);
@@ -3089,6 +3115,7 @@ async function saveProduct() {
   const sbtn = $('#saveP'); if (!sbtn || sbtn.disabled || sbtn.dataset.busy) return;
   syncDraft(); const d = draft;
   if (!d.name) return toast('اكتب اسم المنتج', 'err');
+  if (imgDups(d).size) { const er = document.querySelector('.itg-err'); if (er) er.scrollIntoView({ block: 'center', behavior: 'smooth' }); return toast('فيه صور ليها نفس التوصيف بالظبط (متعلّمة بالأحمر). كل صورة لازم يكون توصيفها مختلف.', 'err'); }
   const price = String(d.price).trim() === '' ? 0 : +d.price; if (!(price >= 0)) return toast('اكتب سعر صحيح', 'err');
   let sale = d.sale_price == null ? null : +d.sale_price;
   if (sale != null && (isNaN(sale) || sale >= price || sale < 0)) sale = null;
